@@ -1,0 +1,520 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet" font-family="Arial, Helvetica, sans-serif">
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#e6e9ed"/>
+
+  <!-- Top title bar -->
+  <rect x="0" y="0" width="1200" height="36" fill="#e6e9ed"/>
+  <text x="24" y="26" font-size="22" font-weight="bold" fill="#1e3a7a">OCULUS  -  PENTACAM   Cataract Pre-OP</text>
+  <text x="1168" y="32" font-size="10" fill="#555" text-anchor="end">1.30r04</text>
+
+  <!-- Patient header -->
+  <g transform="translate(16,42)">
+    <rect width="1168" height="44" rx="3" fill="#f5f5f5" stroke="#b5b5b5"/>
+    <text x="12" y="17" font-size="11" font-weight="bold" fill="#000">Nombre:</text>
+    <rect x="70" y="6" width="410" height="15" fill="#fff" stroke="#888"/>
+    <text x="76" y="17" font-size="11" fill="#000">Saracco, Agustina</text>
+    <text x="12" y="37" font-size="11" font-weight="bold" fill="#000">Fecha Nacimien.</text>
+    <rect x="112" y="26" width="110" height="15" fill="#fff" stroke="#888"/>
+    <text x="118" y="37" font-size="11" fill="#000">12/09/1997</text>
+    <text x="236" y="37" font-size="11" font-weight="bold" fill="#000">ID Paciente:</text>
+    <rect x="316" y="26" width="160" height="15" fill="#fff" stroke="#888"/>
+    <text x="322" y="37" font-size="11" fill="#000">369302</text>
+    <text x="500" y="17" font-size="11" font-weight="bold" fill="#000">Fecha Exámen:</text>
+    <rect x="595" y="6" width="110" height="15" fill="#fff" stroke="#888"/>
+    <text x="601" y="17" font-size="11" fill="#000">15/05/2024</text>
+    <text x="500" y="37" font-size="11" font-weight="bold" fill="#000">Hora Examen:</text>
+    <rect x="595" y="26" width="110" height="15" fill="#fff" stroke="#888"/>
+    <text x="601" y="37" font-size="11" fill="#000">13:30:44</text>
+    <text x="720" y="17" font-size="11" font-weight="bold" fill="#000">QS:</text>
+    <rect x="760" y="6" width="170" height="15" fill="#fff" stroke="#888"/>
+    <text x="766" y="17" font-size="11" fill="#000">OK</text>
+    <text x="720" y="37" font-size="11" font-weight="bold" fill="#000">Examen Info:</text>
+    <rect x="800" y="26" width="130" height="15" fill="#fff" stroke="#888"/>
+    <text x="945" y="17" font-size="11" font-weight="bold" fill="#000">Ojo:</text>
+    <rect x="985" y="6" width="170" height="15" fill="#fff" stroke="#888"/>
+    <text x="991" y="17" font-size="11" fill="#000">Derecho</text>
+  </g>
+
+  <!-- Define the 12-stop color scale used by all 3 maps -->
+  <defs>
+    <!-- Warm (high values) at top, cool (low values) at bottom -->
+    <linearGradient id="axialScale" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#7f0a14"/>
+      <stop offset="0.1" stop-color="#b81e2a"/>
+      <stop offset="0.2" stop-color="#e64a3f"/>
+      <stop offset="0.3" stop-color="#f59033"/>
+      <stop offset="0.4" stop-color="#f6c736"/>
+      <stop offset="0.5" stop-color="#c7d83a"/>
+      <stop offset="0.6" stop-color="#6ab04a"/>
+      <stop offset="0.7" stop-color="#2b7fbf"/>
+      <stop offset="0.8" stop-color="#27408a"/>
+      <stop offset="0.9" stop-color="#2b2683"/>
+      <stop offset="1" stop-color="#3b1766"/>
+    </linearGradient>
+    <!-- Pachymetry scale (inverted: thin cornea = warm, thick = cool) -->
+    <linearGradient id="pachyScale" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#8a1628"/>
+      <stop offset="0.1" stop-color="#d13838"/>
+      <stop offset="0.2" stop-color="#f28735"/>
+      <stop offset="0.3" stop-color="#f6c535"/>
+      <stop offset="0.4" stop-color="#bfd63a"/>
+      <stop offset="0.5" stop-color="#6eb54d"/>
+      <stop offset="0.6" stop-color="#2d9bc4"/>
+      <stop offset="0.7" stop-color="#2b68b4"/>
+      <stop offset="0.8" stop-color="#243b87"/>
+      <stop offset="0.9" stop-color="#2a2578"/>
+      <stop offset="1" stop-color="#3f1670"/>
+    </linearGradient>
+
+    <!-- Color bands for axial maps (discrete steps) -->
+    <radialGradient id="axialMap" cx="50%" cy="50%" r="50%">
+      <stop offset="0.0" stop-color="#f6c736"/>
+      <stop offset="0.2" stop-color="#c7d83a"/>
+      <stop offset="0.38" stop-color="#6ab04a"/>
+      <stop offset="0.55" stop-color="#6ab04a"/>
+      <stop offset="0.72" stop-color="#2b7fbf"/>
+      <stop offset="0.88" stop-color="#27408a"/>
+      <stop offset="1" stop-color="#2b2683"/>
+    </radialGradient>
+    <radialGradient id="totalMap" cx="50%" cy="50%" r="50%">
+      <stop offset="0.0" stop-color="#f6c736"/>
+      <stop offset="0.25" stop-color="#c7d83a"/>
+      <stop offset="0.55" stop-color="#6ab04a"/>
+      <stop offset="0.8" stop-color="#2b7fbf"/>
+      <stop offset="1" stop-color="#27408a"/>
+    </radialGradient>
+    <radialGradient id="pachyMap" cx="50%" cy="50%" r="55%">
+      <stop offset="0.0" stop-color="#f6c535"/>
+      <stop offset="0.18" stop-color="#bfd63a"/>
+      <stop offset="0.38" stop-color="#6eb54d"/>
+      <stop offset="0.58" stop-color="#2d9bc4"/>
+      <stop offset="0.8" stop-color="#2b68b4"/>
+      <stop offset="1" stop-color="#243b87"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 3 topography panels -->
+  <!-- PANEL 1: Curvatura Sagital (Axial) -->
+  <g transform="translate(16,96)">
+    <rect width="392" height="372" fill="#f8f8f8" stroke="#b5b5b5"/>
+    <!-- Title bar -->
+    <rect x="0" y="0" width="392" height="20" fill="#d8dde2"/>
+    <text x="196" y="15" font-size="12" font-weight="bold" fill="#000" text-anchor="middle">Curvatura Sagital (Frontal)</text>
+    <!-- Color scale on left -->
+    <g transform="translate(4,28)">
+      <rect x="0" y="0" width="22" height="320" fill="url(#axialScale)" stroke="#333" stroke-width="0.4"/>
+      <!-- Scale labels -->
+      <g font-size="9" fill="#000" text-anchor="end">
+        <text x="40" y="8">90.0</text>
+        <text x="40" y="34">80.0</text>
+        <text x="40" y="58">70.0</text>
+        <text x="40" y="82">60.0</text>
+        <text x="40" y="106">50.0</text>
+        <text x="40" y="130" font-weight="bold">46.0</text>
+        <text x="40" y="154" font-weight="bold">44.0</text>
+        <text x="40" y="178" font-weight="bold">42.0</text>
+        <text x="40" y="202">40.0</text>
+        <text x="40" y="226">38.0</text>
+        <text x="40" y="250">36.0</text>
+        <text x="40" y="274">34.0</text>
+        <text x="40" y="296">32.0</text>
+        <text x="40" y="316">30.0</text>
+        <text x="6" y="338" font-size="8">D</text>
+      </g>
+      <text x="10" y="355" font-size="9" fill="#000" text-anchor="middle">Curvatura</text>
+      <text x="10" y="366" font-size="9" fill="#000" text-anchor="middle">Abs.</text>
+    </g>
+    <!-- Map (circular) with axial data -->
+    <g transform="translate(50,30)">
+      <!-- Outer ring + labels -->
+      <circle cx="165" cy="160" r="150" fill="#2b2683"/>
+      <circle cx="165" cy="160" r="136" fill="#27408a"/>
+      <circle cx="165" cy="160" r="118" fill="#2b7fbf"/>
+      <circle cx="165" cy="160" r="98" fill="#6ab04a"/>
+      <circle cx="165" cy="160" r="78" fill="#c7d83a"/>
+      <circle cx="165" cy="160" r="60" fill="#6ab04a"/>
+      <circle cx="165" cy="160" r="42" fill="#c7d83a" stroke="#7a7" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <circle cx="165" cy="160" r="6" fill="none" stroke="#000" stroke-width="0.7"/>
+      <!-- OD label -->
+      <text x="310" y="45" font-size="28" font-weight="bold" fill="#000">OD</text>
+      <!-- 9mm zoom indicator -->
+      <text x="38" y="36" font-size="10" fill="#000">🔍</text>
+      <text x="22" y="52" font-size="9" fill="#000">9mm</text>
+      <!-- Meridian axis labels -->
+      <g font-size="8" fill="#000">
+        <text x="165" y="8" text-anchor="middle">90°</text>
+        <text x="88" y="18" text-anchor="middle">120°</text>
+        <text x="236" y="18" text-anchor="middle">60°</text>
+        <text x="32" y="70" text-anchor="middle">150°</text>
+        <text x="298" y="70" text-anchor="middle">30°</text>
+        <text x="12" y="164" text-anchor="middle">180°</text>
+        <text x="319" y="164" text-anchor="middle">0°</text>
+        <text x="32" y="258" text-anchor="middle">210°</text>
+        <text x="298" y="258" text-anchor="middle">330°</text>
+        <text x="88" y="304" text-anchor="middle">240°</text>
+        <text x="236" y="304" text-anchor="middle">300°</text>
+        <text x="165" y="317" text-anchor="middle">270°</text>
+      </g>
+      <!-- N / T markers (Nasal / Temporal) -->
+      <text x="298" y="330" font-size="12" font-weight="bold" fill="#000">N</text>
+      <text x="30" y="330" font-size="12" font-weight="bold" fill="#000">T</text>
+      <!-- Numeric overlay (K values at sample points) -->
+      <g font-size="9" fill="#000">
+        <text x="165" y="68" text-anchor="middle">42.9</text>
+        <text x="130" y="78" text-anchor="middle">42.8</text>
+        <text x="200" y="78" text-anchor="middle">42.4</text>
+        <text x="95" y="110" text-anchor="middle">42.3</text>
+        <text x="165" y="108" text-anchor="middle">43.5</text>
+        <text x="235" y="108" text-anchor="middle">41.3</text>
+        <text x="75" y="138" text-anchor="middle">42.5</text>
+        <text x="128" y="145" text-anchor="middle">42.1</text>
+        <text x="200" y="145" text-anchor="middle">41.0</text>
+        <text x="255" y="138" text-anchor="middle">40.4</text>
+        <text x="132" y="172" text-anchor="middle">42.4</text>
+        <text x="200" y="172" text-anchor="middle">41.0</text>
+        <text x="75" y="178" text-anchor="middle">41.7</text>
+        <text x="258" y="178" text-anchor="middle">40.4</text>
+        <text x="128" y="210" text-anchor="middle">42.5</text>
+        <text x="200" y="210" text-anchor="middle">41.9</text>
+        <text x="75" y="222" text-anchor="middle">41.7</text>
+        <text x="255" y="222" text-anchor="middle">40.4</text>
+        <text x="95" y="248" text-anchor="middle">42.0</text>
+        <text x="165" y="245" text-anchor="middle">43.1</text>
+        <text x="235" y="248" text-anchor="middle">41.6</text>
+        <text x="165" y="278" text-anchor="middle">42.0</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- PANEL 2: Potencia Refractiva Total Corneal -->
+  <g transform="translate(414,96)">
+    <rect width="392" height="372" fill="#f8f8f8" stroke="#b5b5b5"/>
+    <rect x="0" y="0" width="392" height="20" fill="#d8dde2"/>
+    <text x="196" y="15" font-size="12" font-weight="bold" fill="#000" text-anchor="middle">Potencia Refractiva Total Corneal</text>
+    <g transform="translate(4,28)">
+      <rect x="0" y="0" width="22" height="320" fill="url(#axialScale)" stroke="#333" stroke-width="0.4"/>
+      <g font-size="9" fill="#000" text-anchor="end">
+        <text x="40" y="8">90.0</text>
+        <text x="40" y="34">80.0</text>
+        <text x="40" y="58">70.0</text>
+        <text x="40" y="82">60.0</text>
+        <text x="40" y="106">50.0</text>
+        <text x="40" y="130" font-weight="bold">46.0</text>
+        <text x="40" y="154" font-weight="bold">44.0</text>
+        <text x="40" y="178" font-weight="bold">42.0</text>
+        <text x="40" y="202">40.0</text>
+        <text x="40" y="226">38.0</text>
+        <text x="40" y="250">36.0</text>
+        <text x="40" y="274">34.0</text>
+        <text x="40" y="296">32.0</text>
+        <text x="40" y="316">30.0</text>
+        <text x="6" y="338" font-size="8">D</text>
+      </g>
+      <text x="10" y="355" font-size="9" fill="#000" text-anchor="middle">Curvatura</text>
+      <text x="10" y="366" font-size="9" fill="#000" text-anchor="middle">Abs.</text>
+    </g>
+    <g transform="translate(50,30)">
+      <circle cx="165" cy="160" r="150" fill="#27408a"/>
+      <circle cx="165" cy="160" r="128" fill="#2b7fbf"/>
+      <circle cx="165" cy="160" r="108" fill="#6ab04a"/>
+      <circle cx="165" cy="160" r="82" fill="#6ab04a"/>
+      <circle cx="165" cy="160" r="58" fill="#c7d83a"/>
+      <circle cx="165" cy="160" r="42" fill="#6ab04a" stroke="#7a7" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <circle cx="165" cy="160" r="6" fill="none" stroke="#000" stroke-width="0.7"/>
+      <text x="310" y="45" font-size="28" font-weight="bold" fill="#000">OD</text>
+      <text x="38" y="36" font-size="10" fill="#000">🔍</text>
+      <text x="22" y="52" font-size="9" fill="#000">9mm</text>
+      <g font-size="8" fill="#000">
+        <text x="165" y="8" text-anchor="middle">90°</text>
+        <text x="32" y="70" text-anchor="middle">150°</text>
+        <text x="298" y="70" text-anchor="middle">60°</text>
+        <text x="12" y="164" text-anchor="middle">180°</text>
+        <text x="319" y="164" text-anchor="middle">0°</text>
+        <text x="32" y="258" text-anchor="middle">210°</text>
+        <text x="298" y="258" text-anchor="middle">330°</text>
+        <text x="165" y="317" text-anchor="middle">270°</text>
+      </g>
+      <text x="298" y="330" font-size="12" font-weight="bold" fill="#000">N</text>
+      <text x="30" y="330" font-size="12" font-weight="bold" fill="#000">T</text>
+      <g font-size="9" fill="#000">
+        <text x="130" y="78" text-anchor="middle">43.4</text>
+        <text x="165" y="78" text-anchor="middle">43.3</text>
+        <text x="200" y="78" text-anchor="middle">43.0</text>
+        <text x="128" y="110" text-anchor="middle">42.9</text>
+        <text x="165" y="108" text-anchor="middle">43.0</text>
+        <text x="235" y="108" text-anchor="middle">41.8</text>
+        <text x="75" y="138" text-anchor="middle">42.3</text>
+        <text x="128" y="145" text-anchor="middle">41.8</text>
+        <text x="200" y="145" text-anchor="middle">41.2</text>
+        <text x="255" y="138" text-anchor="middle">40.8</text>
+        <text x="132" y="172" text-anchor="middle">41.9</text>
+        <text x="200" y="172" text-anchor="middle">40.6</text>
+        <text x="75" y="178" text-anchor="middle">41.7</text>
+        <text x="258" y="178" text-anchor="middle">40.9</text>
+        <text x="128" y="210" text-anchor="middle">42.2</text>
+        <text x="200" y="210" text-anchor="middle">41.6</text>
+        <text x="75" y="222" text-anchor="middle">42.4</text>
+        <text x="95" y="248" text-anchor="middle">43.0</text>
+        <text x="165" y="245" text-anchor="middle">42.7</text>
+        <text x="235" y="248" text-anchor="middle">42.6</text>
+        <text x="165" y="278" text-anchor="middle">42.6</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- PANEL 3: Espesor Corneal (Pachymetry) -->
+  <g transform="translate(812,96)">
+    <rect width="372" height="372" fill="#f8f8f8" stroke="#b5b5b5"/>
+    <rect x="0" y="0" width="372" height="20" fill="#d8dde2"/>
+    <text x="186" y="15" font-size="12" font-weight="bold" fill="#000" text-anchor="middle">Espesor Corneal</text>
+    <g transform="translate(4,28)">
+      <rect x="0" y="0" width="22" height="320" fill="url(#pachyScale)" stroke="#333" stroke-width="0.4"/>
+      <g font-size="9" fill="#000" text-anchor="end">
+        <text x="40" y="8">300</text>
+        <text x="40" y="32">340</text>
+        <text x="40" y="56">380</text>
+        <text x="40" y="80">420</text>
+        <text x="40" y="104">460</text>
+        <text x="40" y="128" font-weight="bold">500</text>
+        <text x="40" y="152" font-weight="bold">540</text>
+        <text x="40" y="176" font-weight="bold">580</text>
+        <text x="40" y="200">620</text>
+        <text x="40" y="224">660</text>
+        <text x="40" y="248">700</text>
+        <text x="40" y="272">740</text>
+        <text x="40" y="296">780</text>
+        <text x="40" y="316">820</text>
+        <text x="6" y="338" font-size="8">10 µm</text>
+      </g>
+      <text x="10" y="355" font-size="9" fill="#000" text-anchor="middle">Paquim.</text>
+      <text x="10" y="366" font-size="9" fill="#000" text-anchor="middle">Abs.</text>
+    </g>
+    <g transform="translate(50,30)">
+      <circle cx="155" cy="160" r="150" fill="#2a2578"/>
+      <circle cx="155" cy="160" r="130" fill="#2b68b4"/>
+      <circle cx="155" cy="160" r="108" fill="#2d9bc4"/>
+      <circle cx="155" cy="160" r="82" fill="#6eb54d"/>
+      <circle cx="155" cy="160" r="58" fill="#bfd63a"/>
+      <circle cx="155" cy="160" r="42" fill="#f6c535" stroke="#7a7" stroke-width="0.5" stroke-dasharray="2,2"/>
+      <circle cx="155" cy="160" r="6" fill="none" stroke="#000" stroke-width="0.7"/>
+      <text x="290" y="45" font-size="28" font-weight="bold" fill="#000">OD</text>
+      <text x="28" y="36" font-size="10" fill="#000">🔍</text>
+      <text x="12" y="52" font-size="9" fill="#000">9mm</text>
+      <g font-size="8" fill="#000">
+        <text x="155" y="8" text-anchor="middle">90°</text>
+        <text x="25" y="70" text-anchor="middle">150°</text>
+        <text x="285" y="70" text-anchor="middle">60°</text>
+        <text x="5" y="164" text-anchor="middle">180°</text>
+        <text x="305" y="164" text-anchor="middle">0°</text>
+        <text x="25" y="258" text-anchor="middle">210°</text>
+        <text x="285" y="258" text-anchor="middle">330°</text>
+        <text x="155" y="317" text-anchor="middle">270°</text>
+      </g>
+      <text x="285" y="330" font-size="12" font-weight="bold" fill="#000">N</text>
+      <text x="20" y="330" font-size="12" font-weight="bold" fill="#000">T</text>
+      <!-- Pachymetry numbers -->
+      <g font-size="9" fill="#000">
+        <text x="120" y="78" text-anchor="middle">611</text>
+        <text x="155" y="78" text-anchor="middle">636</text>
+        <text x="195" y="78" text-anchor="middle">643</text>
+        <text x="85" y="110" text-anchor="middle">590</text>
+        <text x="120" y="110" text-anchor="middle">539</text>
+        <text x="155" y="108" text-anchor="middle">563</text>
+        <text x="195" y="108" text-anchor="middle">570</text>
+        <text x="235" y="110" text-anchor="middle">641</text>
+        <text x="65" y="138" text-anchor="middle">572</text>
+        <text x="118" y="145" text-anchor="middle">510</text>
+        <text x="190" y="145" text-anchor="middle">524</text>
+        <text x="245" y="138" text-anchor="middle">633</text>
+        <text x="120" y="172" text-anchor="middle">506</text>
+        <text x="190" y="172" text-anchor="middle">518</text>
+        <text x="65" y="178" text-anchor="middle">521</text>
+        <text x="248" y="178" text-anchor="middle">559</text>
+        <text x="120" y="210" text-anchor="middle">521</text>
+        <text x="190" y="210" text-anchor="middle">503</text>
+        <text x="65" y="222" text-anchor="middle">546</text>
+        <text x="248" y="222" text-anchor="middle">612</text>
+        <text x="85" y="248" text-anchor="middle">566</text>
+        <text x="120" y="248" text-anchor="middle">574</text>
+        <text x="155" y="245" text-anchor="middle">535</text>
+        <text x="195" y="248" text-anchor="middle">597</text>
+        <text x="230" y="248" text-anchor="middle">587</text>
+        <text x="155" y="278" text-anchor="middle">595</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- BOTTOM SECTION -->
+  <!-- Scheimpflug slit image -->
+  <g transform="translate(16,478)">
+    <rect width="580" height="300" fill="#000" stroke="#b5b5b5"/>
+    <!-- Slit simulation: cornea arc (bright) + lens glare -->
+    <defs>
+      <linearGradient id="sclera-glow" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="0" stop-color="#fff" stop-opacity="0.9"/>
+        <stop offset="0.15" stop-color="#fff" stop-opacity="0.2"/>
+        <stop offset="0.85" stop-color="#fff" stop-opacity="0.2"/>
+        <stop offset="1" stop-color="#fff" stop-opacity="0.9"/>
+      </linearGradient>
+    </defs>
+    <!-- Cornea curve (front and back) -->
+    <path d="M 30 180 Q 290 60 550 180" stroke="#ff3a3a" stroke-width="2.2" fill="none"/>
+    <path d="M 30 180 Q 290 70 550 180" stroke="#2de267" stroke-width="1.5" fill="none" opacity="0.9"/>
+    <path d="M 30 180 Q 290 95 550 180" stroke="#fff" stroke-width="1.2" fill="none" opacity="0.6"/>
+    <!-- Iris/lens glare left -->
+    <rect x="0" y="130" width="30" height="100" fill="url(#sclera-glow)"/>
+    <rect x="550" y="130" width="30" height="100" fill="url(#sclera-glow)"/>
+    <!-- Iris planes -->
+    <path d="M 60 198 L 140 214 L 180 212 L 195 214" stroke="#fff" stroke-width="2" fill="none" opacity="0.75"/>
+    <path d="M 385 214 L 420 212 L 460 214 L 520 198" stroke="#fff" stroke-width="2" fill="none" opacity="0.75"/>
+    <!-- Anterior lens -->
+    <path d="M 195 214 Q 290 240 385 214" stroke="#fddb6a" stroke-width="1.5" fill="none"/>
+    <!-- Specular spot -->
+    <circle cx="290" cy="204" r="6" fill="#fff" opacity="0.95"/>
+    <!-- Specular flash over cornea -->
+    <ellipse cx="240" cy="105" rx="10" ry="4" fill="#fff" opacity="0.9"/>
+    <ellipse cx="337" cy="95" rx="6" ry="2" fill="#fff" opacity="0.8"/>
+    <!-- Watermark -->
+    <text x="40" y="275" font-size="10" fill="#fff" opacity="0.75">SonomedEscalon</text>
+    <!-- Corner tool icons -->
+    <g transform="translate(8,275)" fill="#fff" opacity="0.8" font-size="9">
+      <rect x="0" y="-12" width="14" height="14" fill="none" stroke="#fff"/>
+      <text x="3" y="0" fill="#fff">34°</text>
+    </g>
+  </g>
+
+  <!-- Right-side measurements panel -->
+  <g transform="translate(602,478)" font-size="10" fill="#000">
+    <rect width="582" height="300" fill="#f3f3f3" stroke="#b5b5b5"/>
+    <!-- SimK + TCRP headers -->
+    <g transform="translate(10,14)">
+      <text x="0" y="0" font-weight="bold">SimK (n=1.3375, 15°)</text>
+      <text x="210" y="0" font-weight="bold">TCRP 3.0mm, zona, pupila</text>
+      <text x="470" y="0" font-weight="bold">Dif.</text>
+    </g>
+    <!-- Row 1: K1 -->
+    <g transform="translate(10,24)">
+      <circle cx="10" cy="20" r="14" fill="none" stroke="#000"/><line x1="-4" y1="20" x2="24" y2="20" stroke="#000"/><line x1="10" y1="6" x2="10" y2="34" stroke="#000"/>
+      <text x="34" y="18" font-weight="bold">K1:</text>
+      <rect x="60" y="8" width="110" height="18" fill="#fff" stroke="#888"/>
+      <text x="68" y="22" fill="#0080c0">41.4 / 8.2 (2.4°)</text>
+      <circle cx="190" cy="20" r="14" fill="none" stroke="#000"/><line x1="176" y1="20" x2="204" y2="20" stroke="#c00"/><line x1="190" y1="6" x2="190" y2="34" stroke="#c00"/>
+      <text x="214" y="18" font-weight="bold">K1:</text>
+      <rect x="240" y="8" width="110" height="18" fill="#fff" stroke="#888"/>
+      <text x="248" y="22">40.7 D (3.7°)</text>
+      <text x="370" y="18" font-weight="bold">Eje:</text>
+      <rect x="405" y="8" width="90" height="18" fill="#fff" stroke="#888"/>
+      <text x="413" y="22">-1.3°</text>
+    </g>
+    <!-- Row 2: K2 -->
+    <g transform="translate(10,48)">
+      <text x="34" y="18" font-weight="bold">K2:</text>
+      <rect x="60" y="8" width="110" height="18" fill="#fff" stroke="#888"/>
+      <text x="68" y="22" fill="#c00">43.4 / 7.8 (92°)</text>
+      <text x="214" y="18" font-weight="bold">K2:</text>
+      <rect x="240" y="8" width="110" height="18" fill="#fff" stroke="#888"/>
+      <text x="248" y="22">42.7 D (93.7°)</text>
+      <text x="370" y="18" font-weight="bold">Km:</text>
+      <rect x="405" y="8" width="90" height="18" fill="#ffd54a" stroke="#888"/>
+      <text x="413" y="22">0.7 D</text>
+    </g>
+    <!-- Row 3 -->
+    <g transform="translate(10,72)">
+      <text x="34" y="18" font-weight="bold">Km:</text>
+      <rect x="60" y="8" width="110" height="18" fill="#fff" stroke="#888"/>
+      <text x="68" y="22">42.4 D</text>
+      <text x="214" y="18" font-weight="bold">Km:</text>
+      <rect x="240" y="8" width="110" height="18" fill="#fff" stroke="#888"/>
+      <text x="248" y="22">41.7 D</text>
+      <text x="370" y="18" font-weight="bold">Astig:</text>
+      <rect x="405" y="8" width="90" height="18" fill="#fff" stroke="#888"/>
+      <text x="413" y="22">0.1 D</text>
+    </g>
+    <!-- Row 4 -->
+    <g transform="translate(10,96)">
+      <text x="34" y="18" font-weight="bold">Astig:</text>
+      <rect x="70" y="8" width="100" height="18" fill="#fff" stroke="#888"/>
+      <text x="78" y="22">2.1 D</text>
+      <text x="214" y="18" font-weight="bold">Astig:</text>
+      <rect x="250" y="8" width="100" height="18" fill="#fff" stroke="#888"/>
+      <text x="258" y="22">2.0 D</text>
+    </g>
+    <!-- Chord section -->
+    <g transform="translate(10,128)">
+      <text x="0" y="0" font-weight="bold">Chord µ:</text>
+      <rect x="70" y="-12" width="120" height="18" fill="#fff" stroke="#888"/>
+      <text x="78" y="2">0.11 mm @188°</text>
+      <text x="220" y="0" font-weight="bold">HOA Corneal Total (4mm):</text>
+      <rect x="420" y="-12" width="90" height="18" fill="#fff" stroke="#888"/>
+      <text x="428" y="2">0.093 µm</text>
+    </g>
+    <g transform="translate(10,152)">
+      <text x="0" y="0" font-weight="bold">Chord a:</text>
+      <rect x="70" y="-12" width="120" height="18" fill="#fff" stroke="#888"/>
+      <text x="78" y="2">0.51 mm@196°</text>
+      <text x="220" y="0" font-weight="bold">z40 Corneal Total (6mm):</text>
+      <rect x="420" y="-12" width="90" height="18" fill="#fff" stroke="#888"/>
+      <text x="428" y="2">0.147 µm</text>
+    </g>
+    <g transform="translate(10,176)">
+      <text x="0" y="0" font-weight="bold">BAD D:</text>
+      <rect x="70" y="-12" width="120" height="18" fill="#ffd54a" stroke="#888"/>
+      <text x="78" y="2" font-weight="bold">1.71</text>
+      <text x="240" y="0" font-weight="bold">Axial/Sag. B/F Ratio:</text>
+      <rect x="420" y="-12" width="90" height="18" fill="#fff" stroke="#888"/>
+      <text x="428" y="2">81.4%</text>
+    </g>
+    <g transform="translate(10,200)">
+      <text x="250" y="0" font-weight="bold">COD post. 60µm Ann. 0-2mm:</text>
+      <rect x="420" y="-12" width="90" height="18" fill="#fff" stroke="#888"/>
+      <text x="428" y="2">12.6%</text>
+    </g>
+    <!-- Paqui -->
+    <g transform="translate(10,228)">
+      <text x="0" y="0" font-weight="bold">Paqui Vértice N</text>
+      <rect x="120" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="128" y="2">506 µm</text>
+      <text x="200" y="0" font-weight="bold">Más delgado:</text>
+      <rect x="300" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="308" y="2">501 µm</text>
+      <text x="380" y="0" font-weight="bold">Diferencia:</text>
+      <rect x="460" y="-12" width="50" height="18" fill="#fff" stroke="#888"/>
+      <text x="468" y="2">4 µm</text>
+    </g>
+    <g transform="translate(10,252)">
+      <text x="0" y="0" font-weight="bold">Ø Córnea:</text>
+      <rect x="80" y="-12" width="80" height="18" fill="#fff" stroke="#888"/>
+      <text x="88" y="2">11.6 mm</text>
+      <text x="180" y="0" font-weight="bold">Diá. Pupil. (vir</text>
+      <rect x="290" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="298" y="2">2.99 mm</text>
+      <text x="370" y="0" font-weight="bold">Diá. Pupil. (3D</text>
+      <rect x="470" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="478" y="2">2.97 mm</text>
+    </g>
+    <g transform="translate(10,276)">
+      <text x="0" y="0" font-weight="bold">ACA (180°):</text>
+      <rect x="90" y="-12" width="70" height="18" fill="#ffd54a" stroke="#888"/>
+      <text x="98" y="2" font-weight="bold">29.4°</text>
+      <text x="180" y="0" font-weight="bold">Prof. cámara ant (Ext.):</text>
+      <rect x="320" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="328" y="2">3.04 mm</text>
+    </g>
+    <g transform="translate(10,300)" font-size="9.5">
+      <text x="0" y="0" font-weight="bold">PNS:</text>
+      <rect x="50" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="58" y="2">0</text>
+      <text x="150" y="0" font-weight="bold">Prof. cámara ant (Int.):</text>
+      <rect x="290" y="-12" width="70" height="18" fill="#fff" stroke="#888"/>
+      <text x="298" y="2">2.54 mm</text>
+    </g>
+    <g transform="translate(10,324)" font-size="9.5">
+      <text x="0" y="0" font-weight="bold">AXL (óptico):</text>
+      <rect x="90" y="-12" width="150" height="18" fill="#fff" stroke="#888"/>
+      <text x="98" y="2">22.863 mm (SNR: 52.0)</text>
+      <text x="300" y="0" font-weight="bold">Estado del Ojo:</text>
+      <rect x="410" y="-12" width="80" height="18" fill="#fff" stroke="#888"/>
+      <text x="418" y="2">Fáquico</text>
+    </g>
+  </g>
+</svg>

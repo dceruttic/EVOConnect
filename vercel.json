@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/dashboard/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/intelligence/assets/:path*", "destination": "/assets/:path*" }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+}

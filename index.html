@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>REVAI · STAAR — Live demo environment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#001E60; --purple:#7F21E0; --blue:#0080C7; --teal:#08B1C2; --ink:#0A1028; --mute:#5A6478; --line:#E4E6EF; --bg:#F5F7FD; }
+  *{box-sizing:border-box}
+  body { margin:0; font-family:'Inter',system-ui,sans-serif; background:radial-gradient(1200px 600px at 15% -5%, rgba(127,33,224,0.08), transparent 60%), radial-gradient(1000px 500px at 90% 0%, rgba(0,128,199,0.06), transparent 55%), var(--bg); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px; }
+  .wrap { max-width:920px; width:100%; }
+  .eyebrow { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
+  h1 { font-size:clamp(28px, 4vw, 44px); font-weight:900; letter-spacing:-.02em; margin:0 0 12px; line-height:1.1; }
+  h1 b { background:linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { font-size:15px; color:var(--mute); margin:0 0 38px; max-width:640px; line-height:1.5; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:680px){ .grid { grid-template-columns:1fr; } }
+  .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px 24px 22px; text-decoration:none; color:inherit; transition: transform .15s ease, box-shadow .15s ease, border-color .15s; position:relative; overflow:hidden; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 12px 32px -8px rgba(0,30,96,.18); border-color:rgba(127,33,224,.30); }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--purple), var(--blue)); }
+  .card.intel::before { background:linear-gradient(90deg, var(--teal), var(--blue)); }
+  .card-tag { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--purple); margin-bottom:14px; }
+  .card.intel .card-tag { color:var(--teal); }
+  .card h2 { font-size:21px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px; }
+  .card p { font-size:13.5px; color:var(--mute); margin:0 0 18px; line-height:1.5; }
+  .card .cta { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--navy); }
+  .card .cta svg { width:14px; height:14px; transition:transform .15s; }
+  .card:hover .cta svg { transform:translateX(3px); }
+  .foot { margin-top:34px; font-size:12px; color:var(--mute); display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .foot .dot { width:6px; height:6px; border-radius:50%; background:var(--teal); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">REVAI × STAAR · live demo environment</div>
+  <h1>Two surfaces · one <b>connected platform</b></h1>
+  <p class="sub">Walk through the clinical workflow surgeons see day-to-day, or jump to the HQ-side Intelligence Center built for STAAR leadership.</p>
+  <div class="grid">
+    <a class="card" href="/dashboard">
+      <div class="card-tag"><span>● CLINIC</span></div>
+      <h2>EVO Connect Dashboard</h2>
+      <p>Per-patient workflow: pre-op, ICL Selection, surgical planner, surgery, post-op tracking. Includes Phase Demo Mode to walk through phase-by-phase rollout.</p>
+      <span class="cta">Open dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+    </a>
+    <a class="card intel" href="/intelligence">
+      <div class="card-tag"><span>● HQ</span></div>
+      <h2>STAAR Intelligence Center</h2>
+      <p>Network-wide command center: clinical analytics, operations pulse, lens supply chain, AI agents + Copilot — for STAAR leadership.</p>
+      <span class="cta">Open intelligence <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+    </a>
+  </div>
+  <div class="foot"><span class="dot"></span><span>Static demo · no PHI · data is mocked for illustration</span></div>
+</div>
+</body>
+</html>

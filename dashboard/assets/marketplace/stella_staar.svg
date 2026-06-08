@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="stellaBg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#1B3792"/>
+      <stop offset="55%" stop-color="#0A1B5C"/>
+      <stop offset="100%" stop-color="#001E60"/>
+    </radialGradient>
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(255,215,128,0.55)"/>
+      <stop offset="55%" stop-color="rgba(255,180,80,0.10)"/>
+      <stop offset="100%" stop-color="rgba(255,180,80,0)"/>
+    </radialGradient>
+    <linearGradient id="starFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE5A8"/>
+      <stop offset="60%" stop-color="#FFC857"/>
+      <stop offset="100%" stop-color="#F4A623"/>
+    </linearGradient>
+    <linearGradient id="lensRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3FA8DC"/>
+      <stop offset="100%" stop-color="#08B1C2"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="400" fill="url(#stellaBg)"/>
+
+  <!-- Subtle constellation dots in the background -->
+  <g fill="rgba(255,255,255,0.30)">
+    <circle cx="50"  cy="60"  r="1.4"/>
+    <circle cx="120" cy="35"  r="1.0"/>
+    <circle cx="250" cy="50"  r="1.6"/>
+    <circle cx="320" cy="80"  r="1.2"/>
+    <circle cx="365" cy="140" r="1.0"/>
+    <circle cx="40"  cy="180" r="1.0"/>
+    <circle cx="370" cy="240" r="1.4"/>
+    <circle cx="35"  cy="290" r="1.2"/>
+    <circle cx="80"  cy="350" r="1.0"/>
+    <circle cx="200" cy="380" r="1.0"/>
+    <circle cx="320" cy="365" r="1.4"/>
+    <circle cx="290" cy="320" r="1.0"/>
+    <circle cx="105" cy="310" r="1.2"/>
+  </g>
+
+  <!-- Connecting lines forming a constellation -->
+  <g fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1">
+    <line x1="50"  y1="60"  x2="120" y2="35"/>
+    <line x1="120" y1="35"  x2="250" y2="50"/>
+    <line x1="250" y1="50"  x2="320" y2="80"/>
+    <line x1="320" y1="80"  x2="365" y2="140"/>
+    <line x1="35"  y1="290" x2="80"  y2="350"/>
+    <line x1="80"  y1="350" x2="200" y2="380"/>
+    <line x1="200" y1="380" x2="320" y2="365"/>
+  </g>
+
+  <!-- Outer eye/lens halo -->
+  <circle cx="200" cy="200" r="148" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1" stroke-dasharray="2 5"/>
+
+  <!-- Lens ring (cyan, references the EVO ICL lens) -->
+  <ellipse cx="200" cy="200" rx="120" ry="120" fill="none" stroke="url(#lensRing)" stroke-width="2.4" stroke-opacity="0.85"/>
+
+  <!-- Star glow behind central star -->
+  <rect width="400" height="400" fill="url(#starGlow)"/>
+
+  <!-- Central 5-pointed star (Stella) -->
+  <g transform="translate(200 200)">
+    <path d="M 0,-78 L 18.3,-24 L 74.2,-24 L 29.0,8.7 L 46.3,62.9 L 0,30.0 L -46.3,62.9 L -29.0,8.7 L -74.2,-24 L -18.3,-24 Z"
+          fill="url(#starFill)" stroke="#FFD66B" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Inner highlight to give the star depth -->
+    <path d="M 0,-78 L 18.3,-24 L 74.2,-24 L 29.0,8.7 Z" fill="rgba(255,255,255,0.20)"/>
+  </g>
+
+  <!-- Small lens orbiting nodes (clinics + ordering steps) -->
+  <g>
+    <circle cx="200" cy="80"  r="5"   fill="rgba(63,168,220,0.18)"/>
+    <circle cx="200" cy="80"  r="2.5" fill="#3FA8DC"/>
+    <circle cx="320" cy="200" r="5"   fill="rgba(8,177,194,0.18)"/>
+    <circle cx="320" cy="200" r="2.5" fill="#08B1C2"/>
+    <circle cx="200" cy="320" r="5"   fill="rgba(63,168,220,0.18)"/>
+    <circle cx="200" cy="320" r="2.5" fill="#3FA8DC"/>
+    <circle cx="80"  cy="200" r="5"   fill="rgba(8,177,194,0.18)"/>
+    <circle cx="80"  cy="200" r="2.5" fill="#08B1C2"/>
+  </g>
+</svg>

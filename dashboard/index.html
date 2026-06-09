@@ -5882,6 +5882,213 @@ a { color: inherit; text-decoration: none; }
 .dch-tbl .sev-med{ color:#cf8a13;font-weight:700; }
 .dch-tbl .sev-low{ color:#5C18AB;font-weight:600; }
 
+/* ── IOL Benchmark renderer (dchAnsBestIol) — pixel-port of REVAI dashboard ── */
+/* All tokens scoped to .dch-iol-card to avoid leaking into the rest of the chat */
+.dch-iol-card{
+  --rv-blue:#2784E7; --rv-teal:#00999B; --rv-navy:#2F2D40; --rv-text:#354052; --rv-muted:#6C757D;
+  --rv-bg:#F7F8FA; --rv-white:#fff; --rv-blue-soft:#E3F1FE;
+  --rv-border:rgba(0,0,0,0.12); --rv-border-l:rgba(0,0,0,0.06);
+  font-family:Inter,sans-serif;color:var(--rv-text);
+  margin:10px 0 4px;
+  width:100%;max-width:100%;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+.dch-iol-card *{box-sizing:border-box}
+.dch-iol-card h4{font-size:14px;font-weight:700;color:var(--rv-navy);margin:0 0 4px 0;letter-spacing:-0.1px}
+.dch-iol-card .iol-sub{font-size:11px;color:var(--rv-muted);margin-bottom:12px}
+
+/* Inner card (one per section: podium / radar / detail) */
+.iol-card-inner{
+  background:var(--rv-white);
+  border-radius:8px;
+  border:1px solid var(--rv-border);
+  margin-bottom:10px;
+  overflow:hidden;
+}
+.iol-card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;border-bottom:1px solid var(--rv-border-l);
+  gap:8px;
+}
+.iol-card-title{
+  font-size:13px;font-weight:600;color:var(--rv-navy);line-height:1.2;
+}
+.iol-card-sub{font-size:10.5px;color:var(--rv-muted);margin-top:1px}
+.iol-chart-wrap{padding:10px 12px 12px}
+
+/* Card tabs (radar header) */
+.iol-card-inner .card-tabs{display:flex;gap:3px}
+.iol-card-inner .ctab{
+  padding:3px 9px;border-radius:6px;
+  font-size:10.5px;font-weight:500;
+  border:1px solid var(--rv-border);background:var(--rv-bg);color:var(--rv-muted);
+  font-family:Inter,sans-serif;cursor:pointer;transition:.15s;
+}
+.iol-card-inner .ctab.on{
+  background:var(--rv-blue-soft);border-color:#9ec4ef;color:#1a5ca0;font-weight:600;
+}
+
+/* ── Podium (redesigned: lens name + brand prominent inside card) ── */
+.iol-podium-stage{
+  display:flex;align-items:flex-end;justify-content:center;
+  gap:12px;padding:16px 8px 8px;
+  min-height:260px;
+}
+.iol-podium-col{
+  display:flex;flex-direction:column;align-items:stretch;
+  flex-shrink:0;cursor:default;transition:.2s;
+}
+.iol-p-card{
+  width:100%;flex:1;min-height:0;
+  background:var(--rv-white);border-radius:10px;
+  border:1px solid var(--rv-border);
+  display:flex;flex-direction:column;align-items:stretch;
+  overflow:hidden;position:relative;transition:.2s;
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+.iol-p-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.12)}
+.iol-p-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;z-index:2;
+}
+.iol-p-card.r1::before{background:linear-gradient(90deg,#F5C518,#D4A017)}
+.iol-p-card.r2::before{background:linear-gradient(90deg,#B0BAC8,#8E9AAA)}
+.iol-p-card.r3::before{background:linear-gradient(90deg,#C07830,#A86020)}
+
+/* Top zone: rank chip + big score */
+.iol-p-inner{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  width:100%;padding:14px 8px 10px;gap:4px;overflow:hidden;
+  position:relative;
+}
+.iol-p-rank{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:10px;flex-shrink:0;
+}
+.iol-p-rank.gold{color:#B7860B;background:#FDF4D7}
+.iol-p-rank.silver{color:#6B7A8D;background:#EDF0F4}
+.iol-p-rank.bronze{color:#8B5E3C;background:#F4E5D6}
+
+.iol-p-score{
+  font-size:32px;font-weight:800;line-height:1;
+  font-family:Inter,sans-serif;letter-spacing:-1px;
+  color:var(--rv-blue);
+}
+.iol-p-card.r1 .iol-p-score{font-size:38px;color:#B7860B}
+.iol-p-card.r2 .iol-p-score{color:#5A6B7F}
+.iol-p-card.r3 .iol-p-score{color:#8B5E3C}
+.iol-p-score-suffix{
+  font-size:11px;color:var(--rv-muted);font-weight:500;
+  margin-top:2px;letter-spacing:.3px;
+}
+
+/* Lens name — prominent inside card */
+.iol-p-namebar{
+  padding:9px 8px 8px;
+  border-top:1px solid var(--rv-border-l);
+  background:#FAFBFC;
+  text-align:center;
+  flex-shrink:0;
+}
+.iol-p-name{
+  font-size:11.5px;font-weight:700;color:var(--rv-navy);
+  line-height:1.25;letter-spacing:-0.1px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;
+  word-break:break-word;
+}
+.iol-p-card.r1 .iol-p-name{font-size:12.5px}
+
+/* Brand footer — colored strip at the very bottom */
+.iol-p-brandbar{
+  padding:8px 6px;
+  display:flex;align-items:center;justify-content:center;
+  border-top:1px solid var(--rv-border-l);
+  flex-shrink:0;
+  min-height:32px;
+}
+.iol-p-brandbar svg,.iol-p-brandbar img{
+  max-height:18px;max-width:90%;width:auto;height:auto;object-fit:contain;
+  display:block;
+}
+.iol-p-card.r1 .iol-p-brandbar{min-height:38px}
+.iol-p-card.r1 .iol-p-brandbar svg,.iol-p-card.r1 .iol-p-brandbar img{max-height:22px}
+
+/* ── Radar ── */
+#iol-radar-wrap{width:100%;height:320px;position:relative}
+#iol-radar-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#iol-radar-legend{
+  display:flex;flex-wrap:wrap;gap:4px 12px;
+  padding:4px 14px 4px;justify-content:center;
+}
+.iol-legend-item{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;color:var(--rv-muted);font-family:Inter,sans-serif;
+}
+.iol-legend-pill{width:12px;height:5px;border-radius:3px;display:inline-block;flex-shrink:0}
+
+/* ── Detail grid ── */
+.iol-detail-card{padding:12px 14px 14px}
+.iol-detail-card .detail-lbl{
+  font-size:13px;font-weight:600;color:var(--rv-navy);
+  margin-bottom:10px;font-family:Inter,sans-serif;
+}
+.iol-detail-card .detail-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:10px;
+}
+.iol-mini-card{
+  background:var(--rv-white);border-radius:8px;border:1px solid var(--rv-border);
+  padding:10px 11px;
+  min-width:0;
+  overflow:hidden;
+}
+.iol-mini-title{
+  font-size:11px;font-weight:600;color:var(--rv-navy);
+  margin-bottom:3px;font-family:Inter,sans-serif;line-height:1.2;
+}
+.iol-mini-timeframe{
+  font-size:9.5px;color:var(--rv-muted);font-weight:500;
+  margin-bottom:7px;line-height:1.3;
+}
+.iol-mini-list{display:flex;flex-direction:column;gap:3px}
+.iol-mini-row{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 6px;border-radius:6px;
+  background:var(--rv-bg);min-height:32px;transition:.15s;
+  min-width:0;overflow:hidden;
+}
+.iol-mini-row.iol-mr1{background:#ffffff}
+.iol-mini-row.iol-mr2{background:#f6f7f9}
+.iol-mini-row.iol-mr3{background:#efefef}
+.iol-rank-n{
+  width:17px;height:17px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;flex-shrink:0;
+}
+.iol-rank-n.iol-rn1{background:#f9edd5;color:#c4923a}
+.iol-rank-n.iol-rn2{background:#e2e5ea;color:#8d949e}
+.iol-rank-n.iol-rn3{background:#e0d2c9;color:#995e40}
+.iol-m-logo{
+  width:34px;height:13px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;overflow:hidden;
+}
+.iol-m-logo svg,.iol-m-logo img{max-height:13px;max-width:34px;object-fit:contain}
+.iol-m-lens{
+  font-size:10px;font-weight:500;flex:1 1 0;
+  min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.iol-m-bar{
+  display:inline-block;width:18px;height:3px;border-radius:2px;
+  flex-shrink:0;margin:0 2px;opacity:.85;
+}
+.iol-m-score{flex-shrink:0}
+.iol-m-score{font-size:11px;font-weight:700}
+
 .dch-cta{ display:flex;flex-wrap:wrap;gap:6px;margin-top:10px; }
 .dch-cta button{ background:#fff;border:1px solid #d8cff0;color:#5C18AB;font:700 12px Inter,sans-serif;padding:6px 12px;border-radius:999px;cursor:pointer;transition:all .12s; }
 .dch-cta button:hover{ background:#5C18AB;color:#fff;border-color:#5C18AB; }
@@ -7522,7 +7729,7 @@ a { color: inherit; text-decoration: none; }
       <div class="home-content">
         <div class="home-greet">
           <span class="wave">👋</span>
-          <span>Good evening, Diego</span>
+          <span>Good evening, Roger</span>
         </div>
 
         <!-- Search + All patients -->
@@ -18422,7 +18629,7 @@ function dchMatchIntent(q){
   if (/(insatisf|descont|dissat|unhappy|worst|quej|complain)/.test(s)) return 'dissat';
   if (/(lasik|smile|refract)/.test(s) && /(outcome|result|c[oó]mo|hi[cw]ieron|est[aá]n)/.test(s)) return 'refractiveOutcomes';
   if (/(sobre|sub|over|under).{0,8}(correc|correction)/.test(s) || /(residual|residuo).{0,15}(refract)/.test(s)) return 'overUnder';
-  if (/(iol|lens|lente|model|modelo)/.test(s) && /(satisf|6\s*me|6\s*mo|mejor|best|outcome)/.test(s)) return 'bestIol';
+  if (/(iol|lens|lente|model|modelo|benchmark)/.test(s) && /(satisf|6\s*me|6\s*mo|mejor|best|outcome|compar|benchmark)/.test(s)) return 'bestIol';
   if (/(evolu|trend|mes\s+a\s+mes|month|monthly|growth|crecim)/.test(s)) return 'evolution';
   if (/(vault|accuracy|precis)/.test(s) || (/(surgeon|cirujan)/.test(s) && /(icl|vault)/.test(s))) return 'vault';
   if (/(overdue|retras|vencid|atras|late|post.?op)/.test(s)) return 'overdue';
@@ -18600,7 +18807,7 @@ function dchAnsTraits(){
     <div class="dch-cta">
       <button onclick="dashCopilotAsk('Where are my dissatisfied patients located geographically?')">🗺️ View on map →</button>
       <button onclick="dashCopilotAsk('Who are my dissatisfied patients?')">😟 View list →</button>
-      <button onclick="dashCopilotAsk('Which IOL has the best satisfaction at 6 months?')">🏆 Best IOL →</button>
+      <button onclick="dashCopilotAsk('Compare IOL outcomes across the network')">📊 IOL benchmark →</button>
     </div>
     ${dchCite()}`;
 }
@@ -18648,7 +18855,7 @@ function dchAnsMix(){
     </div>
     <div class="dch-cta">
       <button onclick="dashCopilotAsk('What are my outcomes by surgery type?')">Outcomes by type →</button>
-      <button onclick="dashCopilotAsk('Which IOL has the best satisfaction at 6 months?')">Best IOL (cataract) →</button>
+      <button onclick="dashCopilotAsk('Compare IOL outcomes across the network')">📊 IOL benchmark →</button>
     </div>
     ${dchCite()}`;
 }
@@ -18752,37 +18959,293 @@ function dchAnsPipeline(){
     ${dchCite()}`;
 }
 
+/* ── IOL Benchmark dataset (network-wide, 1-month post-op outcomes) ── */
+const IOL_LENSES = [
+  { name: 'AT LISA tri 839MP',         brand: 'ZEISS',   color: '#2784E7' },
+  { name: 'POD F',                      brand: 'PhysIOL', color: '#00AD89' },
+  { name: 'CT LUCIA 611PY',            brand: 'ZEISS',   color: '#F57C00' },
+  { name: 'RayOne Galaxy',             brand: 'Rayner',  color: '#7B1FA2' },
+  { name: 'AcrySof IQ PanOptix',       brand: 'Alcon',   color: '#C62828' },
+  { name: 'AcrySof IQ Vivity DFT015',  brand: 'Alcon',   color: '#00838F' },
+  { name: 'TECNIS Synergy',            brand: 'JnJ',     color: '#558B2F' },
+  { name: 'LS-313 MF15',               brand: 'Teleon',  color: '#4527A0' },
+  { name: 'AT TORBI 709M',             brand: 'ZEISS',   color: '#AD1457' },
+  { name: 'Clareon PanOptix',          brand: 'Alcon',   color: '#37474F' },
+];
+
+const IOL_DIMS = [
+  { key:'Surgery',  short:'Surgery',  label:'Surgery Outcome' },
+  { key:'Near',     short:'Near',     label:'Near-distance' },
+  { key:'Mid',      short:'Mid',      label:'Mid-distance' },
+  { key:'Distance', short:'Distance', label:'Distance' },
+  { key:'Medical',  short:'Medical',  label:'Medical reasons' },
+  { key:'Visual',   short:'Visual',   label:'Visual outcomes' },
+  { key:'Evening',  short:'Evening',  label:'Evening / Night' },
+  { key:'Daytime',  short:'Daytime',  label:'Daytime driving' },
+  { key:'Night',    short:'Night',    label:'Nighttime driving' },
+];
+
+// scores[lens][dim] = 0..10 at 1 month post-op
+// (lower than 6-mo; bigger Evening/Night penalty for trifocals — patients still adapting)
+const IOL_SCORES = {
+  'AT LISA tri 839MP':        { Surgery:9.1, Near:8.7, Mid:8.4, Distance:8.6, Medical:8.2, Visual:8.7, Evening:6.6, Daytime:8.2, Night:6.2 },
+  'POD F':                     { Surgery:8.9, Near:8.6, Mid:8.7, Distance:8.3, Medical:8.0, Visual:8.5, Evening:6.9, Daytime:8.0, Night:6.5 },
+  'CT LUCIA 611PY':            { Surgery:8.7, Near:6.4, Mid:7.0, Distance:8.8, Medical:7.7, Visual:8.0, Evening:8.0, Daytime:8.5, Night:7.6 },
+  'RayOne Galaxy':             { Surgery:8.6, Near:8.3, Mid:8.2, Distance:8.1, Medical:7.8, Visual:8.2, Evening:6.8, Daytime:7.9, Night:6.4 },
+  'AcrySof IQ PanOptix':       { Surgery:8.6, Near:8.5, Mid:8.6, Distance:8.4, Medical:8.1, Visual:8.3, Evening:6.3, Daytime:8.1, Night:6.0 },
+  'AcrySof IQ Vivity DFT015':  { Surgery:8.4, Near:7.0, Mid:8.2, Distance:8.7, Medical:7.9, Visual:8.1, Evening:7.7, Daytime:8.3, Night:7.4 },
+  'TECNIS Synergy':            { Surgery:8.3, Near:8.6, Mid:8.3, Distance:8.0, Medical:7.6, Visual:8.2, Evening:6.0, Daytime:7.8, Night:5.8 },
+  'LS-313 MF15':               { Surgery:8.2, Near:8.0, Mid:7.8, Distance:7.9, Medical:7.7, Visual:8.0, Evening:6.8, Daytime:7.7, Night:6.5 },
+  'AT TORBI 709M':             { Surgery:8.0, Near:6.6, Mid:7.2, Distance:8.6, Medical:7.6, Visual:7.7, Evening:7.5, Daytime:8.1, Night:7.2 },
+  'Clareon PanOptix':          { Surgery:8.1, Near:8.2, Mid:8.3, Distance:8.3, Medical:7.9, Visual:8.1, Evening:6.7, Daytime:8.0, Night:6.5 },
+};
+
+// Brand palette (matches source dashboard BRANDS object)
+const IOL_BRANDS = {
+  ZEISS:   { c:'#003087', bg:'#EBF0F9', b:'#003087' },
+  Alcon:   { c:'#0067B1', bg:'#E6F2FB', b:'#0067B1' },
+  PhysIOL: { c:'#005C2E', bg:'#E6F2EC', b:'#005C2E' },
+  Rayner:  { c:'#1B3F8B', bg:'#EBF0FA', b:'#1B3F8B' },
+  Teleon:  { c:'#004B87', bg:'#E6EEF7', b:'#004B87' },
+  JnJ:     { c:'#CC0000', bg:'#FEE2E2', b:'#CC0000' },
+  Other:   { c:'#5C6BC0', bg:'#EEF0FA', b:'#5C6BC0' },
+};
+
+const IOL_BRAND_LOGOS = {
+  ZEISS:   `<svg viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="22" rx="2" fill="#003087"/><text x="45" y="16" text-anchor="middle" font-family="Inter,sans-serif" font-weight="900" font-size="13" fill="#fff" letter-spacing="2">ZEISS</text></svg>`,
+  Alcon:   `<svg viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg"><text x="45" y="17" text-anchor="middle" font-family="Inter,sans-serif" font-weight="900" font-size="16" fill="#0067B1" font-style="italic">Alcon</text></svg>`,
+  PhysIOL: `<svg viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="22" rx="3" fill="#1B3460"/><text x="45" y="15" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="11" fill="#fff">PhysIOL</text></svg>`,
+  Rayner:  `<svg viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg"><polygon points="6,18 14,4 22,18" fill="#1c1530"/><text x="50" y="17" text-anchor="middle" font-family="Georgia,serif" font-weight="400" font-size="15" fill="#1c1530">Rayner</text></svg>`,
+  Teleon:  `<svg viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg"><ellipse cx="45" cy="11" rx="42" ry="9" fill="none" stroke="#2BA84A" stroke-width="2"/><text x="45" y="15" text-anchor="middle" font-family="Inter,sans-serif" font-weight="900" font-style="italic" font-size="12" fill="#1c1530">TELEON</text></svg>`,
+  JnJ:     `<svg viewBox="0 0 90 22" xmlns="http://www.w3.org/2000/svg"><text x="45" y="13" text-anchor="middle" font-family="Georgia,serif" font-weight="400" font-style="italic" font-size="10" fill="#CC0000">Johnson&amp;Johnson</text><text x="45" y="20" text-anchor="middle" font-family="Inter,sans-serif" font-weight="400" font-size="6" fill="#888" letter-spacing="3">VISION</text></svg>`,
+};
+function dchIolLogo(brand, w, h){
+  if (w == null) w = 70;
+  if (h == null) h = 18;
+  const svg = IOL_BRAND_LOGOS[brand] || '';
+  return `<span class="dch-iol-logo" style="display:inline-block;width:${w}px;height:${h}px;line-height:0;vertical-align:middle">${svg}</span>`;
+}
+
+// Polar → Cartesian helper (copied from source, prefixed)
+function dchIolPolarToXY(cx, cy, r, angleRad){
+  return [cx + r * Math.cos(angleRad), cy + r * Math.sin(angleRad)];
+}
+
+// Catmull-Rom spline path generator (closed loop) — copied verbatim from source
+function dchIolCatmullRomPath(pts, tension){
+  if (tension == null) tension = 0.5;
+  if (pts.length < 3) return '';
+  const n = pts.length;
+  const p = [pts[n-1], ...pts, pts[0], pts[1]];
+  let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
+  for (let i = 1; i <= n; i++){
+    const p0 = p[i-1], p1 = p[i], p2 = p[i+1] || p[1], p3 = p[i+2] || p[2];
+    const cp1x = p1[0] + (p2[0] - p0[0]) * tension / 3;
+    const cp1y = p1[1] + (p2[1] - p0[1]) * tension / 3;
+    const cp2x = p2[0] - (p3[0] - p1[0]) * tension / 3;
+    const cp2y = p2[1] - (p3[1] - p1[1]) * tension / 3;
+    const end = i === n ? pts[0] : (p[i+1] || pts[0]);
+    d += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${end[0].toFixed(2)} ${end[1].toFixed(2)}`;
+  }
+  return d + ' Z';
+}
+
+// Build the radar SVG for 3 (or N) lenses — port of source renderRadar()
+function dchIolBuildRadarSvg(lenses){
+  const W = 400, H = 320;
+  const cx = W/2, cy = H * 0.47;
+  const maxR = Math.min(W, H) * 0.37;
+  const dims = IOL_DIMS;
+  const n = dims.length;
+  const maxVal = 10;
+  const angles = dims.map((_, i) => -Math.PI/2 + i * (2 * Math.PI / n));
+
+  let svg = `<defs><clipPath id="iol-radar-clip"><circle cx="${cx}" cy="${cy}" r="${(maxR+10).toFixed(2)}"/></clipPath></defs>`;
+
+  // Background rings (4 levels, Catmull-Rom polygons, tension 0.4)
+  const levels = 4;
+  for (let l = 1; l <= levels; l++){
+    const r = maxR * (l / levels);
+    const ringPts = angles.map(a => dchIolPolarToXY(cx, cy, r, a));
+    const ringPath = dchIolCatmullRomPath(ringPts, 0.4);
+    const fill = l === levels ? 'rgba(39,132,231,0.04)' : 'none';
+    svg += `<path d="${ringPath}" fill="${fill}" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>`;
+    // Scale number on this ring
+    svg += `<text x="${(cx+2).toFixed(1)}" y="${(cy-r-3).toFixed(1)}" font-size="10" fill="#aaa" text-anchor="middle">${(maxVal * l / levels).toFixed(0)}</text>`;
+  }
+
+  // Axis lines + labels
+  angles.forEach((a, i) => {
+    const [x2, y2] = dchIolPolarToXY(cx, cy, maxR, a);
+    svg += `<line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>`;
+    const [lx, ly] = dchIolPolarToXY(cx, cy, maxR + 22, a);
+    const short = dims[i].short;
+    const anchor = lx < cx - 5 ? 'end' : lx > cx + 5 ? 'start' : 'middle';
+    svg += `<text x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" font-size="12" fill="#6C757D" font-family="Inter,sans-serif" text-anchor="${anchor}">${short}</text>`;
+  });
+
+  // Series: areas (clipped) + lines + vertex dots
+  const seriesData = lenses.map(lens => {
+    const scores = IOL_SCORES[lens.name];
+    const pts = dims.map((d, j) => {
+      const v = scores[d.key] || 0;
+      const r = maxR * (v / maxVal);
+      return dchIolPolarToXY(cx, cy, r, angles[j]);
+    });
+    return { lens, color: lens.color, pts, pathD: dchIolCatmullRomPath(pts, 0.45) };
+  });
+  // Areas first
+  seriesData.forEach(({ pathD, color }) => {
+    svg += `<path d="${pathD}" fill="${color}" fill-opacity="0.06" clip-path="url(#iol-radar-clip)"/>`;
+  });
+  // Lines
+  seriesData.forEach(({ pathD, color }) => {
+    svg += `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>`;
+  });
+  // Vertex dots
+  seriesData.forEach(({ pts, color }) => {
+    pts.forEach(([x, y]) => {
+      svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${color}" stroke="white" stroke-width="1.5"/>`;
+    });
+  });
+
+  return `<svg id="iol-radar-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">${svg}</svg>`;
+}
+
 function dchAnsBestIol(){
-  // Cataract-only · average A1 at m6 per lens
+  // ── 1. Sort lenses by Surgery Outcome for podium ──
+  const lensesBySurgery = IOL_LENSES.slice().sort((a,b) => IOL_SCORES[b.name].Surgery - IOL_SCORES[a.name].Surgery);
+  const top3 = lensesBySurgery.slice(0, 3);
+
+  // ── 2. Podium HTML — visual order: 2nd left, 1st centre, 3rd right (ord=[1,0,2]) ──
+  //    Heights/widths inline as in source; #1 tallest+widest in the middle.
+  const ord = [1, 0, 2];
+  const heights = { 1:'100%', 2:'88%', 3:'76%' };
+  const widths  = { 1:'36%', 2:'30%', 3:'26%' };
+  const rankLetters = ['gold','silver','bronze']; // 0-indexed by item rank 1/2/3
+  const podiumCards = ord.map(idx => {
+    const lens = top3[idx]; if (!lens) return '';
+    const r = idx + 1;
+    const b = IOL_BRANDS[lens.brand] || IOL_BRANDS.Other;
+    const rl = rankLetters[r-1];
+    const score = IOL_SCORES[lens.name].Surgery.toFixed(1);
+    return `<div class="iol-podium-col" style="height:${heights[r]};width:${widths[r]}">
+      <div class="iol-p-card r${r}">
+        <div class="iol-p-inner">
+          <span class="iol-p-rank ${rl}">#${r}</span>
+          <span class="iol-p-score">${score}</span>
+          <span class="iol-p-score-suffix">Surgery Outcome</span>
+        </div>
+        <div class="iol-p-namebar">
+          <div class="iol-p-name" title="${dchEsc(lens.name)}">${dchEsc(lens.name)}</div>
+        </div>
+        <div class="iol-p-brandbar" style="background:${b.bg}">${IOL_BRAND_LOGOS[lens.brand] || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── 3. Radar SVG: 9 dims, top 3 lenses, Catmull-Rom splines ──
+  const radarSvg = dchIolBuildRadarSvg(top3);
+  const radarLegend = top3.map(lens =>
+    `<span class="iol-legend-item"><span class="iol-legend-pill" style="background:${lens.color}"></span><span>${dchEsc(lens.name)}</span></span>`
+  ).join('');
+
+  // ── 4. Mini-pod grid: 8 non-Surgery dimensions ──
+  const otherDims = IOL_DIMS.filter(d => d.key !== 'Surgery');
+  const miniCards = otherDims.map(dim => {
+    const ranked = IOL_LENSES.slice()
+      .sort((a,b) => IOL_SCORES[b.name][dim.key] - IOL_SCORES[a.name][dim.key])
+      .slice(0, 3);
+    const rows = ranked.map((lens, i) => {
+      const b = IOL_BRANDS[lens.brand] || IOL_BRANDS.Other;
+      const rk = i + 1;
+      return `<div class="iol-mini-row iol-mr${rk}">
+        <div class="iol-rank-n iol-rn${rk}">${rk}</div>
+        <div class="iol-m-logo">${IOL_BRAND_LOGOS[lens.brand] || ''}</div>
+        <span class="iol-m-lens" title="${dchEsc(lens.name)}" style="color:${b.c}">${dchEsc(lens.name)}</span>
+        <span class="iol-m-bar" style="background:${lens.color}"></span>
+        <span class="iol-m-score" style="color:${b.c}">${IOL_SCORES[lens.name][dim.key].toFixed(1)}</span>
+      </div>`;
+    }).join('');
+    return `<div class="iol-mini-card">
+      <div class="iol-mini-title">${dchEsc(dim.label)}</div>
+      <div class="iol-mini-timeframe">1 month post-op</div>
+      <div class="iol-mini-list">${rows}</div>
+    </div>`;
+  }).join('');
+
+  // ── 5. Clinic-specific cohort table (collapsed) — now uses 1-month visit ──
   const byLens = {};
-  CLINIC_SURGERY_DATA.filter(p=>p.surgeryType==='cataract').forEach(p => {
-    byLens[p.lens] = byLens[p.lens] || {cases:0, sumA1:0, sumDisturb:0, n:0};
-    const v = p.postOp.m6;
+  CLINIC_SURGERY_DATA.filter(p => p.surgeryType === 'cataract').forEach(p => {
+    byLens[p.lens] = byLens[p.lens] || { cases:0, sumA1:0, sumDisturb:0, n:0 };
+    const v = p.postOp && p.postOp.m1;
     if (v && v.proms){
       const l = byLens[p.lens];
-      l.cases++; l.sumA1 += v.proms[0]; l.sumDisturb += (v.proms[6]+v.proms[7]+v.proms[8]); l.n++;
+      l.cases++; l.sumA1 += v.proms[0]; l.sumDisturb += (v.proms[6] + v.proms[7] + v.proms[8]); l.n++;
     }
   });
-  const items = Object.keys(byLens).map(name => ({
+  const clinicItems = Object.keys(byLens).map(name => ({
     name, cases: byLens[name].cases,
-    avgA1: byLens[name].n ? (byLens[name].sumA1 / byLens[name].n) : 0,
+    avgA1:      byLens[name].n ? (byLens[name].sumA1      / byLens[name].n) : 0,
     avgDisturb: byLens[name].n ? (byLens[name].sumDisturb / byLens[name].n) : 0,
-  })).filter(i=>i.cases>=2).sort((a,b)=>b.avgA1-a.avgA1).slice(0,5);
-  if (items.length === 0) return `<h4>🏆 Best IOL at 6 months</h4><p>I need at least 2 cases per lens to rank.</p>${dchCite()}`;
-  const bars = items.map(i => ({ label: i.name.length>14?i.name.slice(0,12)+'…':i.name, value: parseFloat(i.avgA1.toFixed(1)), suffix:'/10' }));
-  const rows = items.map((i,idx) => `<tr><td><b>#${idx+1}</b></td><td>${dchEsc(i.name)}</td><td>${dchScaled(i.cases)}</td><td><b style="color:${i.avgA1>=8.5?'#03A180':'#5C18AB'}">${i.avgA1.toFixed(1)}</b>/10</td><td>${i.avgDisturb.toFixed(1)}</td></tr>`).join('');
+  })).filter(i => i.cases >= 2).sort((a,b) => b.avgA1 - a.avgA1).slice(0, 5);
+  let clinicBlock = '';
+  if (clinicItems.length > 0){
+    const clinicRows = clinicItems.map((i, idx) =>
+      `<tr><td><b>#${idx+1}</b></td><td>${dchEsc(i.name)}</td><td>${dchScaled(i.cases)}</td><td><b style="color:${i.avgA1>=8.5?'#03A180':'#5C18AB'}">${i.avgA1.toFixed(1)}</b>/10</td><td>${i.avgDisturb.toFixed(1)}</td></tr>`
+    ).join('');
+    clinicBlock = `
+    <details style="margin-top:14px;background:#faf7fe;border:1px solid #e5dcf3;border-radius:10px;padding:8px 12px">
+      <summary style="cursor:pointer;font-weight:700;color:#5C18AB;font-size:12px">Your clinic's own cataract cohort · top 5 IOLs by A1 at 1 month</summary>
+      <table class="dch-tbl" style="margin-top:8px">
+        <thead><tr><th>Rank</th><th>IOL</th><th>Cases</th><th>A1 (1mo)</th><th>Disturb (A7+8+9)</th></tr></thead>
+        <tbody>${clinicRows}</tbody>
+      </table>
+    </details>`;
+  }
+
   return `
-    <h4>🏆 Best IOL · satisfaction at 6 months <span class="ptag">cataract</span></h4>
-    <p>Top 5 IOLs in your cataract cohort, ranked by average satisfaction (A1) at the 6-month visit:</p>
-    <div class="dch-chart">
-      <div class="dch-chart-title">Average A1 at 6 months (top 5 IOLs)</div>
-      ${dchBarChart(bars, {suffix:'/10'})}
-    </div>
-    <table class="dch-tbl">
-      <thead><tr><th>Rank</th><th>IOL</th><th>Cases</th><th>A1 (6mo)</th><th>Disturb (A7+8+9)</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    ${dchCite()}`;
+    <div class="dch-iol-card">
+      <h4>📊 IOL Benchmark · 1 month post-op</h4>
+      <div class="iol-sub">9 dimensions · network +25,000 cases · timeframe: 1 month</div>
+
+      <div class="iol-card-inner iol-podium-card">
+        <div class="iol-card-head">
+          <div>
+            <div class="iol-card-title">Surgery Outcome Podium</div>
+            <div class="iol-card-sub">Top 3 · 1 month post-op</div>
+          </div>
+        </div>
+        <div class="iol-chart-wrap">
+          <div class="iol-podium-stage">${podiumCards}</div>
+        </div>
+      </div>
+
+      <div class="iol-card-inner iol-radar-card">
+        <div class="iol-card-head">
+          <div>
+            <div class="iol-card-title">Patients Reported Outcomes</div>
+            <div class="iol-card-sub">Average score per dimension (1–10) · 1 month</div>
+          </div>
+          <div class="card-tabs">
+            <div class="ctab on" onclick="event.stopPropagation()">Top 3</div>
+            <div class="ctab" onclick="event.stopPropagation()">All</div>
+          </div>
+        </div>
+        <div class="iol-chart-wrap">
+          <div id="iol-radar-wrap">${radarSvg}</div>
+          <div id="iol-radar-legend">${radarLegend}</div>
+        </div>
+      </div>
+
+      <div class="iol-card-inner iol-detail-card">
+        <div class="detail-lbl">Ranking by dimension · 1 month post-op</div>
+        <div class="detail-grid">${miniCards}</div>
+      </div>
+
+      ${clinicBlock}
+      ${dchCite()}
+    </div>`;
 }
 
 function dchAnsForecast(){
@@ -18870,7 +19333,7 @@ function dchAnsOutcomesByType(){
     <p>Average outcome comparison across the 4 surgery types in your archive. Clinically relevant differences in satisfaction and visual independence:</p>
     <div class="dch-chart"><div class="dch-chart-title">Avg PROMs · by type</div>${dchGroupedBarChart(groups, series)}</div>
     <div class="dch-cta">
-      <button onclick="dashCopilotAsk('Which IOL has the best satisfaction at 6 months?')">Best IOL (cataract) →</button>
+      <button onclick="dashCopilotAsk('Compare IOL outcomes across the network')">📊 IOL benchmark →</button>
       <button onclick="dashCopilotAsk('How are my LASIK and SMILE outcomes?')">LASIK / SMILE drill →</button>
     </div>
     ${dchCite()}`;
@@ -18944,7 +19407,7 @@ function dchAnsFallback(q){
       <button onclick="dashCopilotAsk('Who are my dissatisfied patients?')">😟 Dissatisfied patients</button>
       <button onclick="dashCopilotAsk('Where are my dissatisfied patients located geographically?')">🗺️ Patient map</button>
       <button onclick="dashCopilotAsk('What is my surgery mix?')">🔬 Surgery mix</button>
-      <button onclick="dashCopilotAsk('Which IOL has the best satisfaction at 6 months?')">🏆 Best IOL</button>
+      <button onclick="dashCopilotAsk('Compare IOL outcomes across the network')">📊 IOL benchmark</button>
       <button onclick="dashCopilotAsk('What are my outcomes by surgery type?')">📊 Outcomes by type</button>
     </div>
     ${dchCite()}`;
@@ -19094,7 +19557,7 @@ function dchAnsByDoctor(){
     </ul>
     <div class="dch-cta">
       <button onclick="dashCopilotAsk('What is my vault accuracy by surgeon for ICL?')">🎯 Vault accuracy (ICL) →</button>
-      <button onclick="dashCopilotAsk('Which IOL has the best satisfaction at 6 months?')">🏆 Best IOL →</button>
+      <button onclick="dashCopilotAsk('Compare IOL outcomes across the network')">📊 IOL benchmark →</button>
       <button onclick="dashCopilotAsk('What are my outcomes by surgery type?')">📊 Outcomes by type →</button>
     </div>
     ${dchCite()}`;
@@ -19324,7 +19787,7 @@ const RCP_TAKEOVER_TEMPLATE = `
           <span class="rcp-sug" onclick="dashCopilotAsk('Where are my dissatisfied patients located geographically?')">🗺️ Patient map</span>
           <span class="rcp-sug" onclick="dashCopilotAsk('What is my surgery mix?')">🔬 Surgery mix</span>
           <span class="rcp-sug" onclick="dashCopilotAsk('What are my surgical results by doctor?')">👨‍⚕️ Results by doctor</span>
-          <span class="rcp-sug" onclick="dashCopilotAsk('Which IOL has the best satisfaction at 6 months?')">🏆 Best IOL (cataract)</span>
+          <span class="rcp-sug" onclick="dashCopilotAsk('Compare IOL outcomes across the network')">📊 IOL benchmark</span>
           <span class="rcp-sug" onclick="dashCopilotAsk('What is my month-by-month surgery evolution?')">📈 Monthly evolution</span>
           <span class="rcp-sug" onclick="dashCopilotAsk('Which patients are overdue in post-op?')">⏰ Overdue post-op</span>
           <span class="rcp-sug" onclick="dashCopilotAsk('How are my LASIK and SMILE outcomes?')">💊 LASIK / SMILE</span>

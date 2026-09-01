@@ -1,0 +1,230 @@
+/* ===== Phase Demo Panel — docked side drawer (non-blocking) =====
+   Lets the user interact with the app while the demo settings panel stays open.
+   No backdrop, no blur — the panel just docks to the right side of the screen. */
+.pd-overlay {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: auto;
+  z-index: 9500;
+  display: none;
+  pointer-events: none;  /* clicks pass through except on the panel itself */
+  padding: 0;
+}
+.pd-overlay.is-open { display: block; }
+.pd-panel {
+  position: fixed;
+  top: 16px; right: 16px; bottom: 16px;
+  width: 380px; max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: -12px 0 40px rgba(8,10,30,.18), 0 10px 28px rgba(8,10,30,.12);
+  border: 1px solid rgba(8,10,30,.08);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  animation: pdSlideInRight .28s cubic-bezier(.22,.61,.36,1);
+  pointer-events: auto;  /* re-enable interactions inside the panel */
+}
+@keyframes pdSlideInRight {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+/* Subtle drag-handle hint on the left edge */
+.pd-panel::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 40px; border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, #5C18AB, #0080C7);
+  opacity: 0.55;
+}
+.pd-panel-head {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid #e5e5ec;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.pd-panel-head-ic {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #5C18AB, #0080C7);
+  display: grid; place-items: center;
+  color: #fff; font-size: 18px;
+  flex-shrink: 0;
+}
+.pd-panel-head-ttl { flex: 1; }
+.pd-panel-head h2 {
+  margin: 0 0 2px;
+  font-size: 16px; font-weight: 800; color: #1c1530; letter-spacing: -.01em;
+}
+.pd-panel-head p {
+  margin: 0; font-size: 12px; color: #6b6680; font-weight: 500;
+}
+.pd-panel-close {
+  background: transparent; border: 0; cursor: pointer;
+  width: 28px; height: 28px; border-radius: 8px;
+  display: grid; place-items: center; color: #1c1530;
+  flex-shrink: 0;
+}
+.pd-panel-close:hover { background: #f0eef5; }
+.pd-panel-close svg { width: 16px; height: 16px; }
+.pd-panel-body {
+  padding: 18px 22px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Toggle switch */
+.pd-enable {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: #f7f5fc;
+  border: 1px solid #ece8f3;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.pd-enable-info { flex: 1; }
+.pd-enable-info-ttl { font-size: 13px; font-weight: 800; color: #1c1530; }
+.pd-enable-info-sub { font-size: 11px; color: #6b6680; font-weight: 500; margin-top: 1px; }
+.pd-switch {
+  position: relative; width: 38px; height: 22px;
+  background: #cdc8d8; border-radius: 100px; cursor: pointer;
+  transition: background .18s;
+  flex-shrink: 0;
+}
+.pd-switch::after {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.18);
+  transition: left .18s;
+}
+.pd-switch.is-on { background: #5C18AB; }
+.pd-switch.is-on::after { left: 18px; }
+
+/* Phase pills */
+.pd-phases {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 16px;
+}
+.pd-pill {
+  display: flex; align-items: stretch;
+  background: #fff;
+  border: 1.5px solid #ece8f3;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .18s, transform .15s, box-shadow .18s;
+  overflow: hidden;
+  text-align: left;
+  font-family: inherit;
+  padding: 0;
+}
+.pd-pill:hover { transform: translateX(2px); box-shadow: 0 4px 14px rgba(8,10,30,.08); }
+.pd-pill.is-active {
+  border-color: var(--pd-color, #5C18AB);
+  box-shadow: 0 4px 14px rgba(92,24,171,.18);
+}
+.pd-pill-bar {
+  width: 5px;
+  background: var(--pd-color, #5C18AB);
+  flex-shrink: 0;
+}
+.pd-pill-body {
+  flex: 1; padding: 10px 12px 11px;
+}
+.pd-pill-head {
+  display: flex; align-items: center; gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.pd-pill-name {
+  font-size: 12px; font-weight: 800; color: #1c1530;
+  letter-spacing: .04em; text-transform: uppercase;
+}
+.pd-pill-meta {
+  font-size: 10.5px; font-weight: 700; color: #6b6680;
+  letter-spacing: .02em;
+}
+.pd-pill-label {
+  font-size: 12.5px; font-weight: 600; color: #44405a;
+  line-height: 1.3;
+}
+.pd-pill.is-active .pd-pill-name { color: var(--pd-color, #5C18AB); }
+.pd-pill-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--pd-color, #5C18AB);
+  display: none; place-items: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+.pd-pill.is-active .pd-pill-check { display: grid; }
+.pd-pill-check svg { width: 11px; height: 11px; }
+
+.pd-pill.pd-pill-all .pd-pill-bar {
+  background: linear-gradient(180deg, #5C18AB 0%, #0080C7 25%, #08B1C2 50%, #03B496 75%, #F6BF2C 100%);
+}
+
+/* Feature mapping editor */
+.pd-map {
+  border: 1px solid #ece8f3;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.pd-map-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: #faf8fd;
+  cursor: pointer;
+  font-size: 12px; font-weight: 700; color: #1c1530;
+  border: 0; width: 100%;
+  font-family: inherit;
+}
+.pd-map-head:hover { background: #f4eff9; }
+.pd-map-head svg { width: 12px; height: 12px; transition: transform .18s; }
+.pd-map.is-open .pd-map-head svg { transform: rotate(90deg); }
+.pd-map-ct { font-size: 10.5px; font-weight: 600; color: #6b6680; margin-left: auto; }
+.pd-map-body {
+  display: none;
+  padding: 8px 12px 12px;
+  border-top: 1px solid #ece8f3;
+  max-height: 240px; overflow-y: auto;
+}
+.pd-map.is-open .pd-map-body { display: block; }
+.pd-map-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+  font-size: 12px;
+}
+.pd-map-row + .pd-map-row { border-top: 1px dashed #ece8f3; }
+.pd-map-row label { flex: 1; color: #44405a; font-weight: 600; }
+.pd-map-row select {
+  padding: 4px 6px; border-radius: 6px;
+  border: 1px solid #d8d4e3;
+  background: #fff; font-size: 11.5px; font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Footer */
+.pd-panel-foot {
+  padding: 14px 22px;
+  border-top: 1px solid #e5e5ec;
+  display: flex; gap: 10px; align-items: center;
+}
+.pd-btn {
+  padding: 9px 16px;
+  border-radius: 8px;
+  font: 700 12px/1 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .15s, transform .12s;
+  font-family: inherit;
+}
+.pd-btn-ghost {
+  background: transparent; color: #6b6680;
+  border-color: #d8d4e3;
+}
+.pd-btn-ghost:hover { background: #f4eff9; color: #1c1530; }
+.pd-btn-primary {
+  background: #1c1530; color: #fff;
+  margin-left: auto;
+}
+.pd-btn-primary:hover { background: #2a2247; }

@@ -1,0 +1,62 @@
+/* ================================================================
+   COMPACT DASHBOARD COPILOT CTA (replaces the big hero)
+   A small, elegant single-line pill button that opens the full
+   takeover view. Sits between greeting and action cards.
+================================================================ */
+.dash-copilot-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  margin:6px 0 14px;
+  padding:9px 16px 9px 12px;
+  border-radius:999px;
+  background:linear-gradient(135deg, #2a1361 0%, #4d18a8 55%, #0c6cb8 100%);
+  border:1px solid rgba(163,92,255,0.40);
+  box-shadow:0 6px 18px rgba(36,16,90,.20), inset 0 1px 0 rgba(255,255,255,.08);
+  color:#fff;
+  font:700 13px Inter,Poppins,sans-serif;letter-spacing:.005em;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .15s, filter .15s;
+  position:relative;isolation:isolate;
+  max-width:380px;
+}
+.dash-copilot-cta:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(36,16,90,.28), inset 0 1px 0 rgba(255,255,255,.12);
+  filter:brightness(1.05);
+}
+.dash-copilot-cta .dcc-orb{
+  width:26px;height:26px;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #d8b8ff 0%, #a35cff 32%, #5C18AB 70%, #001E60 100%);
+  display:grid;place-items:center;
+  box-shadow:0 4px 10px rgba(92,24,171,.45), inset 0 0 8px rgba(255,255,255,.20);
+  flex-shrink:0;
+}
+.dash-copilot-cta .dcc-orb svg{
+  width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2;
+}
+.dash-copilot-cta .dcc-label{
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.dash-copilot-cta .dcc-strong{
+  background:linear-gradient(90deg,#fff,#ffd9a8 70%,#ffb47a);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-weight:900;
+}
+.dash-copilot-cta .dcc-sub{
+  color:rgba(255,255,255,.78);font-weight:500;font-size:12.5px;
+}
+.dash-copilot-cta .dcc-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#34e6b7;box-shadow:0 0 0 3px rgba(52,230,183,.20);
+  margin:0 2px;
+}
+.dash-copilot-cta .dcc-arr{
+  width:14px;height:14px;color:rgba(255,255,255,.85);flex-shrink:0;
+  transition:transform .15s;
+}
+.dash-copilot-cta:hover .dcc-arr{ transform:translateX(2px); color:#fff; }
+.dash-copilot-cta.is-locked{
+  background:linear-gradient(135deg, #3a2f55 0%, #4a3f6e 100%);
+  cursor:not-allowed;opacity:.7;
+}
+.dash-copilot-cta.is-locked .dcc-orb{ filter:grayscale(.4); }
+.dash-copilot-cta .dcc-lock{ width:13px;height:13px;color:#F6BF2C;flex-shrink:0; }

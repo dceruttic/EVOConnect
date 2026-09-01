@@ -1,0 +1,45 @@
+/* ===== Phase Demo banner ===== */
+.pd-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, rgba(92,24,171,.12), rgba(92,24,171,.04));
+  border-bottom: 1px solid rgba(92,24,171,.22);
+  font: 600 12.5px/1.3 'Inter', system-ui, sans-serif;
+  color: #1c1530;
+  position: sticky; top: 0; z-index: 50;
+}
+.pd-banner-clap { font-size: 14px; cursor: pointer; }
+.pd-banner-label { font-weight: 800; letter-spacing: .04em; text-transform: uppercase; font-size: 10.5px; opacity: .85; }
+.pd-banner-name { font-weight: 800; font-size: 13px; }
+.pd-banner-meta { font-weight: 600; opacity: .75; font-size: 11.5px; }
+.pd-banner-spacer { flex: 1; }
+.pd-banner-switch {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px;
+  background: #fff; color: #1c1530;
+  border: 1px solid rgba(28,21,48,.18);
+  border-radius: 100px;
+  font: 700 11px/1 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  transition: background .15s;
+}
+.pd-banner-switch:hover { background: #f5f3fb; }
+.pd-banner-switch svg { width: 10px; height: 10px; }
+.pd-banner-quick {
+  position: absolute; top: calc(100% + 4px); right: 16px;
+  background: #fff; border: 1px solid rgba(28,21,48,.14);
+  border-radius: 10px; padding: 6px;
+  box-shadow: 0 14px 40px rgba(15,15,32,.18);
+  display: none; flex-direction: column; min-width: 220px; z-index: 60;
+}
+.pd-banner-quick.is-open { display: flex; }
+.pd-banner-quick button {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; background: transparent; border: 0;
+  border-radius: 6px; cursor: pointer; text-align: left;
+  font: 600 12px/1.2 'Inter', system-ui, sans-serif; color: #1c1530;
+}
+.pd-banner-quick button:hover { background: #f5f3fb; }
+.pd-banner-quick .pd-bq-bar { width: 4px; height: 16px; border-radius: 2px; flex-shrink: 0; }
+.pd-banner-quick .pd-bq-nm { font-weight: 800; }
+.pd-banner-quick .pd-bq-meta { font-size: 10px; opacity: .65; font-weight: 600; margin-left: auto; }

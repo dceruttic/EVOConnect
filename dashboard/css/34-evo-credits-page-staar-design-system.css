@@ -1,0 +1,159 @@
+/* ===== EVO CREDITS PAGE — STAAR design system ===== */
+.evo-credits-page { padding: 4px 6px 40px; max-width: 1280px; margin: 0 auto; font-family: 'Inter', 'Helvetica Neue', sans-serif; color: #001E60; }
+.evo-page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.evo-page-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #0080C7; margin-bottom: 6px; }
+.evo-page-title { font-size: 30px; font-weight: 700; margin: 0 0 6px; letter-spacing: -.015em; color: #001E60; }
+.evo-page-sub { font-size: 14px; color: #5A6478; margin: 0; max-width: 620px; line-height: 1.55; }
+.evo-clinic-pill { display:flex; align-items:center; gap:10px; background:#F5F8FB; border:1px solid #E1E5EE; border-radius:999px; padding:6px 14px 6px 6px; font-size:12px; font-weight:600; color:#001E60; flex-shrink:0; }
+.evo-clinic-pill-avatar { width:28px; height:28px; border-radius:50%; background:#001E60; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; letter-spacing:.02em; }
+
+.evo-hero-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:20px; margin-bottom:28px; }
+.evo-balance-card { background:linear-gradient(135deg,#001E60 0%,#0A2470 50%,#1B3792 100%); border-radius:8px; padding:32px 36px; color:#fff; position:relative; overflow:hidden; box-shadow:0 8px 24px rgba(0,30,96,.16); }
+.evo-balance-card::before { content:''; position:absolute; right:-60px; top:-60px; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(63,168,220,.30) 0%, transparent 70%); pointer-events:none; }
+.evo-balance-card::after  { content:''; position:absolute; right:40px; bottom:-80px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(0,166,220,.22) 0%, transparent 70%); pointer-events:none; }
+.evo-balance-label { font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#7FB3DC; margin-bottom:6px; position:relative; z-index:1; }
+.evo-balance-amount { font-size:64px; font-weight:700; line-height:1; letter-spacing:-.03em; position:relative; z-index:1; display:flex; align-items:baseline; gap:14px; color:#fff; }
+.evo-balance-amount sup { font-size:18px; color:#7FB3DC; font-weight:600; letter-spacing:.08em; }
+.evo-balance-meta { display:flex; gap:28px; margin-top:20px; position:relative; z-index:1; flex-wrap:wrap; }
+.evo-balance-meta-item { display:flex; flex-direction:column; gap:4px; }
+.evo-balance-meta-item .lbl { font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#7FB3DC; }
+.evo-balance-meta-item .val { font-size:15px; font-weight:600; color:#fff; }
+.evo-balance-meta-item .val.pos { color:#5BE0A0; }
+.evo-balance-meta-item .val.neg { color:#FF8A8A; }
+
+/* Top row of balance card: title+amount on left, Buy CTA on right */
+.evo-balance-top { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; position:relative; z-index:1; }
+.evo-buy-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; background:#fff; color:#001E60; font-size:12px; font-weight:700; letter-spacing:.005em; cursor:pointer; transition:transform .15s, background .15s, box-shadow .15s; box-shadow:0 2px 8px rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.14); flex-shrink:0; }
+.evo-buy-btn:hover { background:#0080C7; color:#fff; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,128,199,.45); }
+.evo-buy-btn svg { stroke:currentColor; }
+
+/* Buy Credits modal */
+.evo-buy-modal { position:fixed; inset:0; background:rgba(0,30,96,.55); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:10000; display:none; align-items:center; justify-content:center; padding:24px; animation:evoFadeIn .18s ease; }
+.evo-buy-modal.open { display:flex; }
+.evo-buy-dialog { background:#fff; border-radius:14px; width:100%; max-width:460px; max-height:92vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,30,96,.32); padding:24px 26px 22px; font-family:'Inter','Helvetica Neue',sans-serif; color:#001E60; }
+.evo-buy-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:20px; }
+.evo-buy-head h3 { font-size:18px; font-weight:700; margin:0 0 4px; letter-spacing:-.01em; color:#001E60; }
+.evo-buy-head p { font-size:12px; color:#5A6478; margin:0; line-height:1.5; }
+.evo-buy-close { width:30px; height:30px; border-radius:6px; background:#F5F8FB; border:1px solid #E1E5EE; color:#5A6478; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; transition:background .15s, color .15s; }
+.evo-buy-close:hover { background:#001E60; color:#fff; }
+
+.evo-buy-section { margin-bottom:18px; }
+.evo-buy-section-lbl { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#5A6478; margin-bottom:8px; }
+
+.evo-buy-presets { display:flex; gap:6px; flex-wrap:wrap; }
+.evo-preset { flex:1 1 auto; min-width:70px; padding:10px 6px; border-radius:8px; border:1.5px solid #E1E5EE; background:#fff; color:#001E60; font-size:14px; font-weight:700; cursor:pointer; transition:all .15s; display:flex; flex-direction:column; align-items:center; gap:1px; line-height:1.1; }
+.evo-preset span { font-size:9px; font-weight:600; color:#5A6478; letter-spacing:.12em; text-transform:uppercase; }
+.evo-preset:hover { border-color:#0080C7; }
+.evo-preset.active { background:#001E60; border-color:#001E60; color:#fff; box-shadow:0 4px 12px rgba(0,30,96,.18); }
+.evo-preset.active span { color:rgba(255,255,255,.7); }
+
+.evo-buy-input-row { display:flex; align-items:stretch; border:1.5px solid #E1E5EE; border-radius:8px; overflow:hidden; transition:border-color .15s; background:#fff; }
+.evo-buy-input-row:focus-within { border-color:#0080C7; box-shadow:0 0 0 3px rgba(0,128,199,.10); }
+.evo-buy-input-row input { flex:1; border:0; padding:10px 14px; font-size:15px; font-weight:700; color:#001E60; font-family:inherit; outline:none; background:transparent; }
+.evo-buy-input-row input::-webkit-outer-spin-button, .evo-buy-input-row input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.evo-buy-input-suffix { display:inline-flex; align-items:center; padding:0 14px; background:#F5F8FB; font-size:11px; font-weight:700; letter-spacing:.12em; color:#5A6478; border-left:1px solid #E1E5EE; }
+
+.evo-buy-summary { background:#F5F8FB; border-radius:8px; padding:12px 14px; margin-bottom:16px; }
+.evo-buy-summary .row { display:flex; justify-content:space-between; align-items:baseline; padding:4px 0; font-size:12.5px; color:#5A6478; }
+.evo-buy-summary .row .val { font-weight:600; color:#001E60; }
+.evo-buy-summary .row.total { border-top:1px dashed #D8DEE9; margin-top:4px; padding-top:8px; font-size:13px; }
+.evo-buy-summary .row.total .val { font-weight:800; }
+.evo-buy-summary .row.total .val.big { font-size:18px; letter-spacing:-.02em; color:#001E60; }
+
+.evo-buy-pay { border-top:1px solid #E1E5EE; padding-top:14px; }
+.evo-buy-pm { display:flex; align-items:center; gap:8px; padding:10px 12px; background:#F5F8FB; border-radius:7px; font-size:12.5px; color:#001E60; font-weight:600; margin-bottom:12px; }
+.evo-buy-pm-change { margin-left:auto; font-size:11px; font-weight:700; color:#0080C7; text-decoration:none; cursor:pointer; }
+.evo-buy-pm-change:hover { text-decoration:underline; }
+
+.evo-buy-actions { display:flex; gap:8px; }
+.evo-buy-cancel { flex:0 0 auto; padding:11px 18px; border-radius:8px; background:#F5F8FB; border:1px solid #E1E5EE; color:#001E60; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+.evo-buy-cancel:hover { background:#EAEEF5; }
+.evo-buy-confirm { flex:1 1 auto; padding:11px 16px; border-radius:8px; background:linear-gradient(135deg,#0080C7,#001E60); border:none; color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; transition:transform .15s, box-shadow .15s; box-shadow:0 4px 12px rgba(0,30,96,.22); }
+.evo-buy-confirm:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,30,96,.32); }
+
+/* Projection: shows the upcoming debit and resulting balance, so reading is unambiguous */
+.evo-balance-projection { margin-top:18px; padding:14px 16px; border-radius:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10); position:relative; z-index:1; display:flex; flex-direction:column; gap:6px; }
+.evo-balance-projection .proj-row { display:flex; align-items:baseline; gap:10px; }
+.evo-balance-projection .proj-op { width:14px; text-align:center; font-weight:700; font-size:14px; color:#FF8A8A; }
+.evo-balance-projection .proj-row.total .proj-op { color:#5BE0A0; }
+.evo-balance-projection .proj-val { font-size:14px; font-weight:700; color:#fff; letter-spacing:-.005em; min-width:90px; }
+.evo-balance-projection .proj-val.big { font-size:18px; font-weight:800; }
+.evo-balance-projection .proj-tag { font-size:11px; font-weight:500; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.08em; }
+
+.evo-debit-card { background:#fff; border:1px solid #E1E5EE; border-radius:8px; padding:24px 26px; box-shadow:0 1px 3px rgba(0,30,96,.05); position:relative; }
+.evo-debit-card .eyebrow { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#E78A27; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.evo-debit-card .eyebrow .dot { width:8px; height:8px; border-radius:50%; background:#E78A27; }
+.evo-debit-card h3 { font-size:18px; font-weight:700; margin:0 0 6px; color:#001E60; letter-spacing:-.01em; }
+.evo-debit-card p { font-size:13px; color:#5A6478; margin:0 0 16px; line-height:1.5; }
+.evo-debit-amount-row { display:flex; align-items:baseline; justify-content:space-between; padding:14px 16px; background:#FFF7ED; border:1px solid #FDD6A8; border-radius:6px; margin-bottom:14px; }
+.evo-debit-amount-row .num { font-size:30px; font-weight:700; color:#9A4A0E; letter-spacing:-.02em; }
+.evo-debit-amount-row .when { font-size:11px; font-weight:600; color:#9A4A0E; text-transform:uppercase; letter-spacing:.10em; }
+.evo-debit-progress-track { height:6px; background:#EAEEF5; border-radius:999px; overflow:hidden; }
+.evo-debit-progress-fill { height:100%; background:linear-gradient(90deg,#0080C7,#3FA8DC); width:71%; border-radius:999px; }
+.evo-debit-progress-meta { display:flex; justify-content:space-between; font-size:11px; color:#5A6478; margin-top:6px; font-weight:500; }
+
+.evo-credits-page .evo-section-title { font-size:13px; font-weight:700; letter-spacing:.10em; text-transform:uppercase; color:#001E60; margin:8px 0 14px; display:flex; align-items:center; gap:10px; }
+.evo-credits-page .evo-section-title::before { content:''; width:3px; height:14px; background:#0080C7; border-radius:2px; display:inline-block; }
+
+.evo-sources-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
+.evo-source-card { background:#fff; border:1px solid #E1E5EE; border-radius:8px; padding:22px 24px; transition:transform .15s, box-shadow .15s, border-color .15s; }
+.evo-source-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,30,96,.08); border-color:#BFD9EC; }
+.evo-source-icon { width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+.evo-source-icon.community { background:#E6F2FB; color:#0080C7; }
+.evo-source-icon.postop    { background:#DCFCE7; color:#15803D; }
+.evo-source-icon.orders    { background:#E1EAF8; color:#001E60; }
+.evo-source-card h4 { font-size:13px; font-weight:700; margin:0 0 4px; color:#001E60; letter-spacing:-.005em; }
+.evo-source-card .sub { font-size:11px; color:#5A6478; margin:0 0 14px; line-height:1.45; }
+.evo-source-card .credits { font-size:32px; font-weight:700; line-height:1; letter-spacing:-.025em; color:#001E60; display:flex; align-items:baseline; gap:6px; }
+.evo-source-card .credits .unit { font-size:12px; font-weight:600; color:#5A6478; letter-spacing:.10em; }
+.evo-source-card .delta { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:#15803D; background:#DCFCE7; padding:3px 8px; border-radius:4px; margin-top:8px; }
+.evo-source-detail { margin-top:14px; padding-top:14px; border-top:1px solid #EAEEF5; display:flex; flex-direction:column; gap:6px; }
+.evo-source-detail-row { display:flex; justify-content:space-between; font-size:11px; }
+.evo-source-detail-row .k { color:#5A6478; }
+.evo-source-detail-row .v { font-weight:600; color:#001E60; }
+
+.evo-bottom-grid { display:grid; grid-template-columns:1.5fr 1fr; gap:20px; }
+.evo-ledger { background:#fff; border:1px solid #E1E5EE; border-radius:8px; overflow:hidden; }
+.evo-ledger-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid #E1E5EE; }
+.evo-ledger-head h3 { font-size:14px; font-weight:700; margin:0; color:#001E60; letter-spacing:-.005em; }
+.evo-ledger-filter { display:flex; gap:6px; }
+.evo-ledger-filter button { font-size:11px; font-weight:600; padding:5px 11px; border-radius:4px; border:1px solid #E1E5EE; background:#fff; color:#5A6478; cursor:pointer; transition:all .15s; }
+.evo-ledger-filter button.active { background:#001E60; border-color:#001E60; color:#fff; }
+.evo-ledger table { width:100%; border-collapse:collapse; }
+.evo-ledger thead th { text-align:left; padding:11px 22px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:#5A6478; background:#F5F8FB; border-bottom:1px solid #E1E5EE; }
+.evo-ledger thead th:last-child, .evo-ledger tbody td:last-child { text-align:right; }
+.evo-ledger tbody tr { border-bottom:1px solid #EAEEF5; }
+.evo-ledger tbody tr:last-child { border-bottom:none; }
+.evo-ledger tbody td { padding:13px 22px; font-size:12.5px; color:#001E60; vertical-align:middle; }
+.evo-ledger tbody td .desc { font-weight:600; }
+.evo-ledger tbody td .when { font-size:11px; color:#5A6478; margin-top:2px; }
+.evo-ledger tbody td .src-tag { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:3px 9px; border-radius:4px; }
+.evo-ledger tbody td .src-tag.community { background:#E6F2FB; color:#00609B; }
+.evo-ledger tbody td .src-tag.postop    { background:#DCFCE7; color:#15803D; }
+.evo-ledger tbody td .src-tag.orders    { background:#E1EAF8; color:#001E60; }
+.evo-ledger tbody td .src-tag.platform  { background:#FFF7ED; color:#9A4A0E; }
+.evo-ledger tbody td .amt { font-weight:700; font-size:14px; letter-spacing:-.01em; }
+.evo-ledger tbody td .amt.pos { color:#15803D; }
+.evo-ledger tbody td .amt.neg { color:#B91C1C; }
+
+.evo-trend-card { background:#fff; border:1px solid #E1E5EE; border-radius:8px; padding:18px 20px; }
+.evo-trend-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px; }
+.evo-trend-card h3 { font-size:13px; font-weight:700; margin:0 0 2px; color:#001E60; letter-spacing:-.005em; }
+.evo-trend-card .sub { font-size:11px; color:#5A6478; margin:0; }
+.evo-trend-summary { text-align:right; line-height:1; }
+.evo-trend-summary .lbl { display:block; font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#5A6478; margin-bottom:3px; }
+.evo-trend-summary .val { font-size:18px; font-weight:800; color:#001E60; letter-spacing:-.02em; }
+.evo-trend-summary .val em { font-size:10px; font-weight:600; color:#5A6478; font-style:normal; letter-spacing:.08em; margin-left:2px; }
+.evo-trend-chart { width:100%; height:auto; max-height:200px; display:block; margin-top:6px; }
+.evo-trend-legend { display:flex; gap:14px; margin-top:10px; padding-top:10px; border-top:1px solid #EAEEF5; flex-wrap:wrap; justify-content:center; }
+.evo-trend-legend-item { display:flex; align-items:center; gap:5px; font-size:10.5px; color:#5A6478; font-weight:500; }
+.evo-trend-legend-item .swatch { width:8px; height:8px; border-radius:2px; display:inline-block; }
+
+/* Sidebar EVO Credits highlight (STAAR blue) */
+.us-nav-evo .mod-icon svg path:first-child { fill:#3FA8DC !important; }
+#usNav button.us-nav-evo.active { background:rgba(0,128,199,0.18) !important; }
+
+@media (max-width: 1024px) {
+  .evo-hero-grid, .evo-bottom-grid { grid-template-columns: 1fr; }
+  .evo-sources-grid { grid-template-columns: 1fr; }
+}

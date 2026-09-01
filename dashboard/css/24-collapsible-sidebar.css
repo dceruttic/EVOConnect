@@ -1,0 +1,62 @@
+/* ================================================================
+   Collapsible sidebar
+================================================================ */
+.universe-sidebar { position: relative; transition: width .22s ease; }
+/* Collapse/expand button — fixed to viewport so it escapes the sidebar's overflow clipping
+   and the right pane's stacking context. Positioned at the sidebar's right edge. */
+.us-collapse-btn {
+  position: fixed; top: 22px; left: 248px; z-index: 1000;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #ffffff; border: 1px solid #E1E5EE;
+  color: #001E60; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .18s, border-color .18s, color .18s, left .22s ease;
+  box-shadow: 0 2px 8px rgba(0,30,96,.22);
+}
+.us-collapse-btn:hover { background: #0080C7; border-color: #0080C7; color: #fff; }
+.us-collapse-btn svg { width: 12px; height: 12px; transition: transform .2s; }
+/* When sidebar is collapsed (72px wide) the button slides left to follow the right edge */
+.universe.sidebar-collapsed .us-collapse-btn,
+.universe:has(.universe-sidebar.collapsed) .us-collapse-btn { left: 60px; }
+.universe-sidebar.collapsed .us-collapse-btn svg,
+.universe.sidebar-collapsed .us-collapse-btn svg { transform: rotate(180deg); }
+
+.universe-sidebar.collapsed {
+  width: 72px !important; min-width: 72px !important;
+  padding: 16px 8px;
+  overflow-x: hidden; /* prevent any overflow leaking out */
+}
+.universe-sidebar.collapsed .us-brand-btn { padding: 4px; justify-content: center; }
+.universe-sidebar.collapsed .us-brand .brand-name { display: none; }
+.universe-sidebar.collapsed .us-title-block { display: none; }
+/* Hide all nav-group labels in collapsed mode */
+.universe-sidebar.collapsed .nav-group .nav-label { display: none; }
+.universe-sidebar.collapsed .us-footer { padding: 12px 8px; }
+.universe-sidebar.collapsed .us-footer .help { flex-direction: column; text-align: center; gap: 4px; }
+.universe-sidebar.collapsed .us-footer .help > div { display: none; }
+/* Compact icon-only nav button. Nuclear-option: hide everything except the icon. */
+.universe-sidebar.collapsed .us-nav button {
+  justify-content: center; padding: 12px 0;
+  width: 100%; min-width: 0;
+  position: relative;
+  font-size: 0; /* collapse whitespace + text nodes */
+  white-space: nowrap; overflow: hidden;
+}
+.universe-sidebar.collapsed .us-nav button > .mod-icon {
+  font-size: 14px; /* reset so icon inside isn't hidden by font-size:0 */
+  margin: 0;
+}
+.universe-sidebar.collapsed .us-nav button > .mod-num,
+.universe-sidebar.collapsed .us-nav button > .badge,
+.universe-sidebar.collapsed .us-nav button > .dot { display: none !important; }
+/* Tooltip on hover when collapsed */
+.universe-sidebar.collapsed .us-nav button::after {
+  content: attr(data-label);
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+  background: #1a1f3d; color: #fff; padding: 6px 10px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  opacity: 0; pointer-events: none; transition: opacity .14s;
+  z-index: 100;
+}
+.universe-sidebar.collapsed .us-nav button:hover::after { opacity: 1; }

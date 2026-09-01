@@ -1,0 +1,285 @@
+/* ================================================================
+   Patient File Drawer (right-side slide-in)
+================================================================ */
+.pd-backdrop {
+  position: fixed; inset: 0; background: rgba(15,10,30,.35);
+  opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 2147483646;
+}
+.pd-backdrop.open { opacity: 1; pointer-events: auto; }
+.patient-drawer {
+  position: fixed; top: 0; right: 0; width: 680px; max-width: 100vw; height: 100vh;
+  background: #fff; box-shadow: -18px 0 60px -20px rgba(31,26,46,.35);
+  transform: translateX(102%); transition: transform .28s cubic-bezier(.25,.9,.3,1);
+  z-index: 2147483647; display: flex; flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.patient-drawer.open { transform: translateX(0); }
+.pd-close {
+  position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
+  border-radius: 50%; background: rgba(31,26,46,.06); border: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; color: var(--ink);
+  transition: all .15s;
+}
+.pd-close:hover { background: rgba(31,26,46,.14); }
+.pd-close svg { width: 16px; height: 16px; }
+.pd-head {
+  padding: 22px 24px 16px; border-bottom: 1px solid var(--line);
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.pd-head .pd-av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex: 0 0 64px; }
+.pd-head .pd-av svg { width: 100%; height: 100%; display: block; }
+.pd-head h2 { font-size: 20px; margin: 0 0 2px; color: var(--ink); letter-spacing: -0.3px; }
+.pd-head .pd-sub { font-size: 12px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.pd-head .pd-chips { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+.pd-head .pd-chips .c {
+  font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+  background: var(--cream); color: var(--ink); letter-spacing: 0.2px;
+}
+.pd-head .pd-chips .c.stage { background: rgba(127,33,224,.1); color: var(--purple); }
+.pd-head .pd-chips .c.eye   { background: rgba(36,114,211,.1); color: var(--teal); }
+.pd-head .pd-chips .c.pwr   { background: rgba(0,213,225,.14); color: #0097a5; }
+.pd-head .pd-chips .c.risk-high { background: rgba(228,81,103,.14); color: #B03144; }
+.pd-head .pd-chips .c.risk-med  { background: rgba(231,138,39,.16); color: #A1641A; }
+.pd-head .pd-chips .c.risk-low  { background: rgba(0,156,118,.14); color: #00754F; }
+
+.pd-tabs {
+  display: flex; gap: 0; padding: 0 24px; border-bottom: 1px solid var(--line);
+  background: #fff; position: sticky; top: 0; z-index: 2;
+}
+.pd-tab {
+  padding: 12px 16px; font-size: 12.5px; font-weight: 600; color: var(--mute);
+  border: 0; background: transparent; cursor: pointer; position: relative;
+  transition: color .14s;
+}
+.pd-tab.active { color: var(--purple); }
+.pd-tab.active::after {
+  content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px;
+  height: 2px; background: var(--purple); border-radius: 2px 2px 0 0;
+}
+.pd-tab .num {
+  display: inline-block; margin-left: 5px; font-size: 10px; padding: 1px 6px;
+  border-radius: 999px; background: var(--cream); color: var(--mute); font-weight: 700;
+}
+.pd-tab.active .num { background: rgba(127,33,224,.12); color: var(--purple); }
+
+.pd-content { flex: 1; overflow-y: auto; padding: 20px 24px 28px; }
+/* BIS — legal disclaimer banner shown at top of Sizing tab */
+.bis-disclaimer {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  background: #FFF7ED;
+  border: 1px solid #FDD6A8;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  position: relative;
+  transition: padding .15s, background .15s, border-color .15s;
+}
+.bis-disclaimer .bis-ic {
+  width: 22px; height: 22px; border-radius: 5px;
+  background: #E78A27; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.bis-disclaimer .bis-ic svg { width: 13px; height: 13px; }
+.bis-disclaimer .bis-body { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.bis-disclaimer .bis-ttl {
+  font-size: 9.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  color: #9A4A0E; flex-shrink: 0;
+}
+.bis-disclaimer .bis-txt { font-size: 11.5px; color: #1A2547; line-height: 1.45; }
+.bis-disclaimer .bis-txt strong { color: #001E60; font-weight: 700; }
+.bis-disclaimer .bis-ack {
+  flex-shrink: 0;
+  padding: 5px 11px; border-radius: 6px;
+  background: #001E60; color: #fff;
+  font-size: 11px; font-weight: 600;
+  border: none; cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.bis-disclaimer .bis-ack:hover { background: #0080C7; }
+
+/* Collapsed (acknowledged) state — pill-sized, neutral, click to re-expand */
+.bis-disclaimer.bis-ack-done {
+  background: #F5F8FB;
+  border-color: #D8E0EE;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.bis-disclaimer.bis-ack-done .bis-ic { width: 18px; height: 18px; background: #5A6478; border-radius: 4px; }
+.bis-disclaimer.bis-ack-done .bis-ic svg { width: 11px; height: 11px; }
+.bis-disclaimer.bis-ack-done .bis-ttl { color: #5A6478; font-size: 9px; }
+.bis-disclaimer.bis-ack-done .bis-txt { display: none; }
+.bis-disclaimer.bis-ack-done .bis-ack {
+  background: transparent; color: #15803D; padding: 2px 6px; font-size: 10.5px;
+  border: 1px solid #D8E0EE;
+}
+.bis-disclaimer.bis-ack-done .bis-ack:hover { background: #15803D; color: #fff; border-color: #15803D; }
+
+.pd-section { margin-bottom: 22px; }
+.pd-section:last-child { margin-bottom: 0; }
+.pd-section h4 {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--mute); margin: 0 0 10px; display: flex; align-items: center; gap: 8px;
+}
+.pd-section h4 .tag { font-size: 9.5px; padding: 2px 7px; border-radius: 999px; background: var(--cream); color: var(--ink); letter-spacing: 0.2px; }
+
+/* === Refractive Algorithm panel (Pre-Op procedure recommendation — primary) === */
+.ra-section { padding: 0; }
+.ra-hero { background: linear-gradient(180deg, #fff 0%, #F5F8FB 100%); border: 1px solid #E1E5EE; border-radius: 12px; padding: 22px 22px 18px; margin-bottom: 22px; box-shadow: 0 1px 3px rgba(0,30,96,.06); }
+.ra-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.ra-head-l { display: flex; align-items: flex-start; gap: 14px; flex: 1; min-width: 0; }
+.ra-head-r { flex-shrink: 0; }
+.ra-title-ic { width: 38px; height: 38px; border-radius: 9px; background: linear-gradient(135deg, #0080C7 0%, #001E60 100%); color: #fff; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px -3px rgba(0,30,96,.35); }
+.ra-title-ic svg { width: 20px; height: 20px; }
+.ra-h2 { font-size: 18px; font-weight: 700; color: #001E60; margin: 0 0 4px; letter-spacing: -.015em; line-height: 1.2; }
+.ra-tag { background: rgba(0,128,199,.12) !important; color: #0080C7 !important; font-weight: 700 !important; padding: 4px 10px !important; font-size: 10.5px !important; }
+.ra-help { font-size: 12.5px; color: var(--mute); line-height: 1.55; margin: 0; max-width: 720px; }
+.ra-frame-wrap { position: relative; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #faf9f5; }
+.ra-frame { width: 100%; height: 720px; border: 0; display: block; background: #faf9f5; }
+.ra-frame-toolbar { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; z-index: 2; }
+.ra-action { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 6px 10px; border-radius: 6px; background: #fff; border: 1px solid var(--line); color: var(--ink); cursor: pointer; box-shadow: 0 1px 2px rgba(0,30,96,.08); transition: background .15s, border-color .15s, color .15s; }
+.ra-action:hover { background: #0080C7; border-color: #0080C7; color: #fff; }
+.ra-action svg { stroke-width: 2.4; }
+@media (max-width: 1100px) { .ra-frame { height: 640px; } .ra-head { flex-direction: column; align-items: flex-start; } }
+
+/* Compact mode — fits without scrolling */
+.ra-hero.compact { padding: 14px 16px 14px; margin-bottom: 16px; }
+.ra-hero.compact .ra-head { margin-bottom: 10px; gap: 12px; }
+.ra-hero.compact .ra-title-ic { width: 30px; height: 30px; border-radius: 7px; }
+.ra-hero.compact .ra-title-ic svg { width: 16px; height: 16px; }
+.ra-hero.compact .ra-h2 { font-size: 15px; margin-bottom: 1px; }
+.ra-hero.compact .ra-help { font-size: 11.5px; line-height: 1.45; }
+.ra-hero.compact .ra-frame.compact { height: 460px; }
+@media (max-width: 1100px) { .ra-hero.compact .ra-frame.compact { height: 540px; } }
+
+/* Slim mode — iframe owns the recommendation + parameters experience.
+   Our wrapper is a 1-line header that adds only the auto-fill chip + section anchor. */
+.ra-hero.slim,
+.ra-hero.embed {
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: #fff;
+}
+.ra-head-slim {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; margin-bottom: 10px;
+}
+.ra-head-slim .ra-head-l {
+  display: flex; align-items: center; gap: 10px; min-width: 0;
+}
+.ra-head-slim .ra-title-ic { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; }
+.ra-head-slim .ra-title-ic svg { width: 15px; height: 15px; }
+.ra-head-slim .ra-h2 { font-size: 14px; margin: 0; line-height: 1.2; }
+.ra-head-slim .ra-head-r { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ra-frame.slim { height: 600px; background: #fff; }
+@media (max-width: 1100px) { .ra-frame.slim { height: 640px; } }
+
+/* Embedded — iframe auto-resizes to its content; we strip the framed look */
+.ra-hero.embed { box-shadow: none; border: 0; padding: 8px 0 0; background: transparent; }
+/* Escape the .universe-main 32px horizontal padding so the iframe spans the FULL screen width */
+.ra-frame-wrap.embed {
+  border: 0; border-radius: 0; background: transparent; overflow: visible;
+  margin-left: -32px; margin-right: -32px;
+  width: calc(100% + 64px);
+}
+.ra-frame.embed {
+  width: 100%;
+  height: 880px;       /* JS overrides on load with the actual content height */
+  border: 0;
+  display: block;
+  background: transparent;
+  overflow: hidden;    /* iframe-internal scrollbar hidden — auto-resize handles fit */
+}
+@media (max-width: 900px) {
+  .ra-frame-wrap.embed { margin-left: 0; margin-right: 0; width: 100%; }
+}
+
+/* === Post-op page — modeled after ICL Guru post-op screen === */
+.po-section { padding: 0; background: transparent; border: 0; }
+
+/* Eye picker tabs */
+.po-eye-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.po-eye-tab { padding: 10px 22px; background: transparent; border: 0; font-size: 13px; font-weight: 700; color: #94A0B8; cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .14s; }
+.po-eye-tab:hover { color: #001E60; }
+.po-eye-tab.active { color: #001E60; border-bottom-color: #001E60; }
+
+/* Section title */
+.po-title { font-size: 18px; font-weight: 800; color: #001E60; letter-spacing: -.015em; margin-bottom: 12px; }
+.po-title-accent { color: #08B1C2; font-weight: 700; }
+
+/* Context strip — clinic, surgeon, surgery date, disclaimer */
+.po-context-row { display: grid; grid-template-columns: 1.4fr 1.2fr 1fr auto; gap: 10px; margin-bottom: 10px; }
+.po-ctx-card { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.po-ctx-ic { width: 30px; height: 30px; border-radius: 8px; color: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+.po-ctx-k { font-size: 9.5px; font-weight: 800; color: #94A0B8; letter-spacing: .12em; text-transform: uppercase; }
+.po-ctx-v { font-size: 12.5px; font-weight: 700; color: #001E60; margin-top: 1px; }
+.po-ctx-date { background: #F5F8FB; }
+.po-disclaimer-btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; background: #FEF3E2; border: 1px solid #F4C57A; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: #B26821; cursor: pointer; font-family: inherit; transition: all .14s; }
+.po-disclaimer-btn:hover { background: #F4C57A; color: #5A3815; }
+
+/* Bio strip — patient + medical record + IOL + biometry */
+.po-bio-row { display: grid; grid-template-columns: 1fr 1.1fr 1.4fr; gap: 10px; margin-bottom: 18px; }
+.po-bio-card { padding: 12px 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; display: flex; flex-direction: column; gap: 4px; }
+.po-bio-row-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 3px 0; border-bottom: 1px dashed rgba(0,30,96,.06); }
+.po-bio-row-row:last-child { border-bottom: 0; }
+.po-bio-k { font-size: 11px; color: #5A6478; font-weight: 600; }
+.po-bio-v { font-size: 12px; color: #001E60; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.po-bio-iol-head { font-size: 11px; font-weight: 800; color: #5A6478; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.po-bio-iol-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.po-bio-iol-grid > div { padding: 5px 8px; background: #F5F8FB; border-radius: 6px; display: flex; flex-direction: column; gap: 1px; }
+.po-bio-iol-grid span { font-size: 9.5px; color: #5A6478; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.po-bio-iol-grid b { font-size: 12px; color: #001E60; font-variant-numeric: tabular-nums; }
+
+/* Visit head */
+.po-visit-head { display: flex; align-items: center; gap: 10px; padding: 6px 0; margin-bottom: 8px; }
+.po-visit-lbl { font-size: 13px; font-weight: 800; color: #001E60; }
+.po-visit-date { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: #F5F8FB; border: 1px solid var(--line); border-radius: 999px; font-size: 11.5px; color: #001E60; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Milestone timeline (12 nodes) */
+.po-milestones { display: flex; align-items: center; gap: 0; padding: 8px 0 16px; overflow-x: auto; }
+.po-ms { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px; background: transparent; border: 0; cursor: pointer; font-family: inherit; flex-shrink: 0; min-width: 44px; }
+.po-ms-node { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid #E1E5EE; display: grid; place-items: center; color: transparent; transition: all .14s; }
+.po-ms-node svg { width: 11px; height: 11px; color: #fff; }
+.po-ms.done .po-ms-node { background: #001E60; border-color: #001E60; color: #fff; }
+.po-ms.active .po-ms-node { background: #08B1C2; border-color: #08B1C2; box-shadow: 0 0 0 4px rgba(8,177,194,.18); }
+.po-ms-lbl { font-size: 10.5px; font-weight: 800; color: #94A0B8; letter-spacing: .04em; }
+.po-ms.done .po-ms-lbl, .po-ms.active .po-ms-lbl { color: #001E60; }
+.po-ms.active .po-ms-lbl { color: #08B1C2; }
+.po-ms-link { flex: 1; height: 2px; background: #E1E5EE; min-width: 12px; }
+
+/* Main 2-col grid */
+.po-main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+@media (max-width: 1100px) { .po-main-grid { grid-template-columns: 1fr; } }
+
+/* Left column: Surgical / Post-op data + vault thermometer + residual + calc */
+.po-left { display: flex; flex-direction: column; gap: 12px; }
+.po-data-grid { display: grid; grid-template-columns: 0.9fr 1.1fr 0.7fr; gap: 10px; align-items: stretch; }
+.po-data-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.po-data-head { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 800; color: #5A6478; letter-spacing: .14em; text-transform: uppercase; padding-bottom: 4px; border-bottom: 1px solid #EAEEF5; }
+
+/* Surgical data card */
+.po-implant { display: flex; flex-direction: column; gap: 14px; align-items: center; padding: 8px 0; }
+.po-implant-size { text-align: center; padding: 12px; background: #F5F8FB; border-radius: 10px; width: 100%; }
+.pis-num { font-size: 22px; font-weight: 900; color: #001E60; letter-spacing: -.02em; }
+.pis-lbl { font-size: 9px; font-weight: 800; color: #5A6478; letter-spacing: .12em; text-transform: uppercase; margin-top: 2px; }
+.po-implant-pos { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.pip-lbl { font-size: 10px; color: #5A6478; font-weight: 700; }
+.po-lens-mini { width: 100px; height: 64px; display: block; }
+.po-lens-mini g { fill: none; stroke: #08B1C2; stroke-width: 6; stroke-linecap: round; stroke-miterlimit: 10; }
+.pip-orientation { font-size: 11px; font-weight: 700; color: #001E60; }
+
+/* Post-op data card sections (VAULT / ANGLE / PUPIL) */
+.po-pop-section { display: flex; flex-direction: column; gap: 6px; }
+.po-pop-section-lbl { font-size: 9.5px; font-weight: 800; color: #5A6478; letter-spacing: .14em; text-transform: uppercase; }
+.po-cell-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.po-cell-row:has(.po-cell-lg) { grid-template-columns: 1fr; }
+.po-cell { padding: 8px 10px; background: #F5F8FB; border-radius: 6px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.po-cell-lg { background: #fff; border: 1.5px solid #08B1C2; }
+.po-cell-k { font-size: 8.5px; font-weight: 800; color: #94A0B8; letter-spacing: .14em; text-transform: uppercase; }
+.po-cell-v { font-size: 13px; font-weight: 800; color: #001E60; font-variant-numeric: tabular-nums; }
+.po-cell-lg .po-cell-v { font-size: 16px; }
+.po-cell-v .po-unit { font-size: 10px; color: #5A6478; font-weight: 600; margin-left: 2px; }
+.po-dash { color: #CBD2DD; font-weight: 600; }

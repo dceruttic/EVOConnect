@@ -1,0 +1,140 @@
+/* ================================================================
+   SOCIAL FEED (Community)
+================================================================ */
+.stories { display: flex; gap: 12px; padding: 4px 2px 14px; border-bottom: 1px solid var(--line); margin-bottom: 14px; overflow-x: auto; }
+.story { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.story-ring {
+  width: 58px; height: 58px; border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from 0deg, var(--gold) 0%, var(--teal) 50%, var(--teal-a) 100%);
+  display: grid; place-items: center;
+}
+.story-ring.new { background: conic-gradient(from 0deg, var(--gold) 0%, var(--warn) 50%, var(--gold) 100%); }
+.story-ring.viewed { background: var(--line); }
+.story-ring .inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal-dk) 0%, var(--gold) 100%);
+  display: grid; place-items: center; color: white;
+  font-weight: 700; font-size: 13px; border: 2px solid white;
+}
+.story-ring.add .inner { background: var(--cream); color: var(--teal); border: 2px dashed var(--line); }
+.story .nm { font-size: 10.5px; color: var(--mute); max-width: 68px; text-align: center; line-height: 1.2; }
+
+.composer {
+  display: flex; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 10px;
+  margin-bottom: 16px; background: var(--cream);
+}
+.composer .av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--gold) 0%, var(--teal-dk) 100%); display: grid; place-items: center; color: white; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+.composer-main { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.composer input { border: none; background: transparent; font-family: inherit; font-size: 13.5px; outline: none; color: var(--ink); }
+.composer-bar { display: flex; gap: 6px; align-items: center; }
+.composer-bar button {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; padding: 6px 10px; border-radius: 100px;
+  color: var(--mute); transition: all .15s;
+}
+.composer-bar button:hover { background: white; color: var(--teal); }
+.composer-bar button svg { width: 13px; height: 13px; }
+.composer-bar .spacer { flex: 1; }
+.composer-bar .post {
+  background: var(--gold); color: white; padding: 7px 14px;
+}
+.composer-bar .post:hover { background: #6915c4; color: white; }
+
+.post {
+  padding: 16px 0; border-bottom: 1px solid var(--line);
+}
+.post:last-child { border-bottom: none; padding-bottom: 4px; }
+.post-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.post-head .av {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--gold) 100%);
+  color: white; display: grid; place-items: center;
+  font-weight: 700; font-size: 13px; flex-shrink: 0;
+}
+.post-head .name {
+  font-weight: 700; font-size: 13.5px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.post-head .verified { color: var(--teal); width: 14px; height: 14px; }
+.post-head .meta { font-size: 11.5px; color: var(--mute); }
+.post-head .more {
+  margin-left: auto; color: var(--mute); padding: 6px; border-radius: 50%;
+}
+.post-head .more:hover { background: var(--cream); }
+.post-body { font-size: 13.5px; line-height: 1.55; color: var(--ink); margin-bottom: 10px; }
+.post-body a, .hashtag { color: var(--teal); font-weight: 600; }
+.post-media {
+  width: 100%; aspect-ratio: 16/9; border-radius: 12px; margin: 8px 0 12px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  display: grid; place-items: center; color: var(--gold-lt);
+  position: relative; overflow: hidden; cursor: pointer;
+}
+.post-media::before {
+  content: ""; position: absolute;
+  right: -40px; top: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(157,80,236,.35) 0%, transparent 70%);
+}
+.post-media::after {
+  content: ""; position: absolute;
+  left: 20%; bottom: -40px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(36,114,211,.25) 0%, transparent 70%);
+}
+.post-media .plabel {
+  position: absolute; left: 14px; bottom: 14px; z-index: 2;
+  color: white; font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 100px;
+  background: rgba(0,0,0,.4); backdrop-filter: blur(10px);
+}
+.post-media svg { width: 48px; height: 48px; position: relative; z-index: 1; }
+.post-stats { display: flex; gap: 14px; font-size: 11.5px; color: var(--mute); padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.post-actions {
+  display: flex; gap: 2px; margin-bottom: 10px;
+}
+.post-actions button {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 10px; border-radius: 6px; color: var(--mute); font-weight: 600; font-size: 12.5px;
+  transition: all .15s;
+}
+.post-actions button:hover { background: var(--cream); color: var(--ink); }
+.post-actions button.liked { color: var(--warn); }
+.post-actions button.saved { color: var(--gold); }
+.post-actions svg { width: 16px; height: 16px; }
+
+.comment {
+  display: flex; gap: 10px; padding: 8px 0;
+}
+.comment .av {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--teal-dk) 100%);
+  color: white; display: grid; place-items: center;
+  font-weight: 700; font-size: 10px; flex-shrink: 0;
+}
+.comment .bubble {
+  background: var(--cream); padding: 8px 12px; border-radius: 14px;
+  font-size: 12.5px; line-height: 1.45;
+}
+.comment .bubble b { font-weight: 700; font-size: 12px; display: block; margin-bottom: 2px; }
+.comment-meta { font-size: 10.5px; color: var(--mute); margin: 4px 0 0 12px; display: flex; gap: 12px; }
+.comment-meta button { color: var(--mute); font-weight: 600; }
+.comment-meta button:hover { color: var(--teal); }
+
+/* Trending / who to follow sidebar */
+.trending-list, .follow-list { display: flex; flex-direction: column; gap: 10px; }
+.trend-item {
+  padding: 10px 12px; border-radius: 8px; cursor: pointer;
+  transition: background .15s;
+}
+.trend-item:hover { background: var(--cream); }
+.trend-item .cat { font-size: 10.5px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.trend-item .tag { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+.trend-item .posts { font-size: 11px; color: var(--mute); margin-top: 1px; }
+
+.follow-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.follow-item .av { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--teal) 0%, var(--gold) 100%); color: white; display: grid; place-items: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+.follow-item .name { font-weight: 700; font-size: 12.5px; }
+.follow-item .sub { font-size: 11px; color: var(--mute); }
+.follow-item .btn-follow { margin-left: auto; padding: 5px 12px; border-radius: 100px; background: var(--ink); color: white; font-size: 11px; font-weight: 700; }
+.follow-item .btn-follow:hover { background: var(--teal); }

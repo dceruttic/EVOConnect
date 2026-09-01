@@ -1,0 +1,281 @@
+/* Editable post-op cell — looks like a value but accepts manual input */
+.po-cell-edit-wrap { display: inline-flex; align-items: baseline; gap: 3px; width: 100%; position: relative; }
+.po-cell-edit {
+  background: transparent; border: 0; border-bottom: 1px dashed transparent;
+  font-family: inherit; font-size: 13px; font-weight: 800; color: #001E60;
+  font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+  padding: 1px 0; outline: none; min-width: 0; width: 100%;
+  text-align: left;
+}
+.po-cell-lg .po-cell-edit { font-size: 16px; }
+.po-cell-edit:hover { border-bottom-color: #CBD2DD; }
+.po-cell-edit:focus { border-bottom-color: #08B1C2; background: rgba(8,177,194,.04); }
+.po-cell-edit::placeholder { color: #CBD2DD; font-weight: 600; }
+.po-cell-unit { font-size: 10px; color: #5A6478; font-weight: 600; flex-shrink: 0; }
+
+/* Auto-fill flash — applied to cells when populated by OCT auto-parse */
+.po-cell-flash {
+  animation: poCellFlash 1.6s ease-out;
+  position: relative;
+}
+.po-cell-flash::after {
+  content: ''; position: absolute; inset: -4px;
+  border-radius: 6px; background: rgba(8,177,194,.18);
+  pointer-events: none;
+  animation: poCellFlashFade 1.6s ease-out forwards;
+  z-index: -1;
+}
+@keyframes poCellFlash {
+  0%   { background-color: rgba(8,177,194,.32); }
+  100% { background-color: transparent; }
+}
+@keyframes poCellFlashFade {
+  0%   { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* Vault thermometer */
+.po-vault-viz { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px; display: flex; align-items: center; justify-content: center; }
+.po-vault-svg { width: 100%; height: auto; max-height: 320px; display: block; margin: 0 auto; }
+
+/* Residual refraction */
+.po-residual .po-cell-row { grid-template-columns: repeat(4, 1fr); }
+.po-residual .po-cell-row:first-of-type { grid-template-columns: 1fr; }
+
+/* Calculations expander */
+.po-calc-expander { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 0; }
+
+/* === Post-op bottom grid — vault evolution + eye photo side-by-side === */
+.po-bottom-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  align-items: stretch; margin-top: 14px;
+}
+.po-bottom-grid > * { margin-top: 0 !important; }
+.po-bottom-grid .po-eyephoto-card,
+.po-bottom-grid .po-vault-evo-card { height: 100%; }
+@media (max-width: 1100px) {
+  .po-bottom-grid { grid-template-columns: 1fr; }
+  .po-bottom-grid > * { height: auto; }
+}
+
+/* === Post-op vault evolution chart — vault µm trajectory across all milestones === */
+.po-vault-evo-card {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px 12px;
+  display: flex; flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,30,96,.04);
+}
+.po-vault-evo-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.po-vault-evo-card h4 {
+  font-size: 13.5px; font-weight: 800; color: #001E60; margin: 0;
+  letter-spacing: -.005em;
+}
+.po-vev-legend {
+  display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 10.5px; font-weight: 700; color: #5A6478;
+}
+.po-vev-legend-item {
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.po-vev-dot {
+  width: 9px; height: 9px; border-radius: 2px;
+}
+.po-vault-evo-svg {
+  width: 100%; height: auto; display: block;
+  max-height: 320px;
+  margin-top: 4px;
+}
+.po-vault-evo-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 4px 0;
+  border-top: 1px dashed var(--line);
+  margin-top: 8px;
+  font-size: 11.5px; color: #5A6478;
+}
+.po-vault-evo-foot b { color: #001E60; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* === Post-op eye photo card — slit-lamp / retroillumination view of implanted ICL === */
+.po-eyephoto-card {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.po-eyephoto-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: #F5F8FB;
+  gap: 12px; flex-wrap: wrap;
+}
+.po-eyephoto-eyebrow {
+  font-size: 9.5px; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: #5C18AB; margin-bottom: 3px;
+}
+.po-eyephoto-card h4 { font-size: 13.5px; font-weight: 800; color: #001E60; margin: 0; letter-spacing: -.005em; }
+.po-eyephoto-actions { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.po-eyephoto-upload {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 7px;
+  background: #001E60; color: #fff; border: 0;
+  font-size: 11.5px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all .14s;
+}
+.po-eyephoto-upload:hover { background: #08B1C2; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,177,194,.32); }
+.po-eyephoto-clear {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: #fff; border: 1px solid var(--line);
+  color: #94A0B8; cursor: pointer;
+  display: grid; place-items: center;
+  transition: all .14s;
+}
+.po-eyephoto-clear:hover { background: #FFE4E6; color: #C1344D; border-color: #FCA5A5; }
+.po-eyephoto-body {
+  position: relative;
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .14s;
+  overflow: hidden;
+}
+.po-eyephoto-body.has-photo { background: #000; cursor: zoom-in; min-height: 220px; }
+.po-eyephoto-body.has-photo:hover { opacity: 0.92; }
+.po-eyephoto-img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+/* Empty drop-target — same affordance as exam upload tiles in pre-op */
+.po-eyephoto-body.empty {
+  background: linear-gradient(135deg, #F8FAFC 0%, #EEF2F8 100%);
+  border-top: 1px dashed rgba(15,29,64,.18);
+  border-bottom: 1px dashed rgba(15,29,64,.18);
+  cursor: pointer;
+  min-height: 220px;
+}
+.po-eyephoto-body.empty:hover {
+  background: linear-gradient(135deg, #EEF6FF 0%, #E1ECFA 100%);
+}
+.po-eyephoto-empty-inner {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 24px 28px; gap: 6px; max-width: 320px;
+}
+.po-eyephoto-empty-ico {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: white; border: 1px solid var(--line);
+  display: grid; place-items: center; color: #5C18AB;
+  margin-bottom: 4px;
+}
+.po-eyephoto-empty-ico svg { width: 22px; height: 22px; }
+.po-eyephoto-empty-title { font-size: 13px; font-weight: 800; color: #001E60; }
+.po-eyephoto-empty-sub { font-size: 11px; font-weight: 500; color: #5A6478; line-height: 1.4; }
+.po-eyephoto-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 16px;
+  background: #F5F8FB;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}
+.po-eyephoto-credit { color: #5A6478; font-weight: 600; }
+.po-eyephoto-tag {
+  padding: 3px 9px; border-radius: 999px;
+  font-size: 10px; font-weight: 800; letter-spacing: .04em;
+}
+.po-eyephoto-tag.default { background: #F4F0FF; color: #5C18AB; }
+.po-eyephoto-tag.uploaded { background: rgba(22,179,134,.14); color: #117A57; }
+
+/* Post-op empty-state banner — shown when the selected milestone hasn't been captured yet */
+.po-empty-banner {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(8,177,194,.10) 0%, rgba(0,128,199,.10) 100%);
+  border: 1px solid rgba(8,177,194,.28);
+  border-radius: 10px;
+}
+.po-empty-ic {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: #08B1C2; color: #fff;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.po-empty-body { flex: 1; min-width: 0; }
+.po-empty-ttl { font-size: 13px; font-weight: 800; color: #001E60; }
+.po-empty-sub { font-size: 11.5px; color: #5A6478; margin-top: 3px; line-height: 1.45; }
+.po-empty-sub b { color: #001E60; font-weight: 700; }
+
+/* Post-op "Save visit data" CTA — fires the +20 EVO gamification toast */
+.po-save-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #001E60 0%, #0080C7 100%);
+  color: #fff; border: 0; border-radius: 10px;
+  font-size: 13px; font-weight: 800; letter-spacing: -.005em;
+  cursor: pointer; font-family: inherit;
+  box-shadow: 0 4px 14px rgba(0,30,96,.22);
+  transition: background .14s, transform .14s, box-shadow .14s;
+}
+.po-save-btn:hover {
+  background: linear-gradient(135deg, #001E60 0%, #5C18AB 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(92,24,171,.32);
+}
+.po-save-evo {
+  display: inline-flex; align-items: center;
+  margin-left: 4px;
+  padding: 3px 9px;
+  background: rgba(255,196,67,.22);
+  border: 1px solid rgba(255,196,67,.45);
+  border-radius: 999px;
+  font-size: 10.5px; font-weight: 800;
+  color: #FFC443;
+  letter-spacing: .04em;
+}
+.po-calc-expander summary { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; font-size: 12.5px; font-weight: 700; color: #001E60; cursor: pointer; list-style: none; }
+.po-calc-expander summary::-webkit-details-marker { display: none; }
+.po-calc-expander[open] summary svg { transform: rotate(180deg); }
+.po-calc-expander summary svg { transition: transform .2s; color: #5A6478; }
+.po-calc-expander summary b { color: #5A6478; font-weight: 600; margin-left: 4px; }
+.po-calc-list { padding: 0 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+.po-calc-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 12px; background: #F5F8FB; border-radius: 8px; font-size: 11.5px; }
+.po-calc-item b { color: #001E60; font-weight: 800; }
+.po-calc-sub { color: #5A6478; margin-top: 2px; font-size: 10.5px; }
+.po-calc-date { color: #94A0B8; font-size: 10.5px; font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+
+/* Right column: AS-OCT image card */
+.po-image-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.po-image-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #F5F8FB; gap: 12px; }
+.po-image-head b { font-size: 12.5px; color: #001E60; }
+.po-image-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.po-img-import-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 6px;
+  background: #fff; border: 1px solid var(--line);
+  color: #001E60; font-size: 11px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: all .14s;
+}
+.po-img-import-btn:hover { background: #001E60; color: #fff; border-color: #001E60; }
+.po-image-sub { font-size: 10.5px; color: #5A6478; margin-top: 2px; font-weight: 600; }
+.po-image-meta { font-size: 10.5px; color: #5A6478; font-weight: 700; font-variant-numeric: tabular-nums; }
+.po-image-body { position: relative; background: #000; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+.po-image-body.po-image-body-light { background: #F4F6FA; }
+.po-oct-img { width: 100%; height: auto; display: block; max-height: 540px; object-fit: contain; }
+.po-img-overlay { position: absolute; inset: 0; pointer-events: none; }
+.po-img-tag { position: absolute; padding: 3px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 800; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); white-space: nowrap; }
+.po-image-foot { display: flex; justify-content: space-between; padding: 8px 14px; font-size: 10px; color: #94A0B8; font-weight: 600; background: #F5F8FB; border-top: 1px solid var(--line); }
+
+@media (max-width: 720px) {
+  .po-context-row { grid-template-columns: 1fr; }
+  .po-bio-row { grid-template-columns: 1fr; }
+  .po-data-grid { grid-template-columns: 1fr; }
+}
+
+/* === Native Procedure Recommendation component === */
+.pc-section { padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px; }

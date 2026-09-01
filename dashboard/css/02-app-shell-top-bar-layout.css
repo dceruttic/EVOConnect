@@ -1,0 +1,62 @@
+/* ================================================================
+   APP SHELL — top bar + layout
+================================================================ */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  display: flex; align-items: center; gap: 18px;
+  padding: 14px 28px;
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 50;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: 1px; }
+.brand-mark {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--teal) 100%);
+  display: grid; place-items: center;
+  box-shadow: 0 4px 12px rgba(127,33,224,.35);
+}
+.brand-mark svg { width: 16px; height: 16px; color: white; }
+.brand-name { font-size: 14px; color: var(--ink); }
+.brand-name span { color: var(--gold); }
+.crumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--mute); margin-left: 8px;
+}
+.crumb .sep { opacity: .4; }
+.crumb .active { color: var(--ink); font-weight: 600; }
+
+.topbar-spacer { flex: 1; }
+.topbar-search {
+  position: relative; width: 280px;
+}
+.topbar-search input {
+  width: 100%; padding: 9px 12px 9px 36px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--cream); color: var(--ink);
+  font-family: inherit; font-size: 13px;
+  outline: none; transition: all .15s;
+}
+.topbar-search input:focus { border-color: var(--teal); background: white; box-shadow: 0 0 0 3px rgba(36,114,211,.1); }
+.topbar-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--mute); }
+
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--mute); transition: all .15s;
+  position: relative;
+}
+.icon-btn:hover { background: var(--sand); color: var(--ink); }
+.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn .dot {
+  position: absolute; top: 8px; right: 9px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--warn); border: 2px solid white;
+}
+
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--teal-dk) 100%);
+  color: white; display: grid; place-items: center;
+  font-weight: 700; font-size: 12px;
+}

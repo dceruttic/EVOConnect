@@ -1,0 +1,269 @@
+/* ================================================================
+   RISK AGENT card
+================================================================ */
+.risk-agent {
+  background: linear-gradient(135deg, var(--navy) 0%, #2a144c 100%);
+  color: white; border-radius: var(--radius); padding: 20px 22px;
+  position: relative; overflow: hidden;
+}
+.risk-agent::before {
+  content: ""; position: absolute; right: -40px; top: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(231,138,39,.3) 0%, transparent 70%);
+}
+.risk-head { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+.risk-agent .agent-av {
+  width: 54px; height: 54px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--warn) 100%);
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 4px rgba(231,138,39,.18);
+  position: relative;
+}
+.risk-agent .agent-av svg { width: 26px; height: 26px; color: white; }
+.risk-agent .agent-av::after {
+  content: ""; position: absolute; bottom: -2px; right: -2px;
+  width: 14px; height: 14px; border-radius: 50%; background: var(--green);
+  border: 2.5px solid var(--navy);
+}
+.risk-agent h3 { font-size: 15px; font-weight: 700; color: white; }
+.risk-agent .risk-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--warn-lt);
+  text-transform: uppercase;
+}
+.risk-score {
+  display: flex; align-items: center; gap: 20px; margin-top: 18px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+  position: relative; z-index: 1;
+}
+.risk-score .val {
+  font-size: 40px; font-weight: 800; color: var(--warn-lt); letter-spacing: -.02em;
+}
+.risk-score .lbl { font-size: 10.5px; color: var(--warn-lt); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+.risk-score .msg { font-size: 12.5px; color: #C7CBFF; margin-top: 4px; line-height: 1.45; }
+
+.risk-alerts { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.risk-alert {
+  display: flex; gap: 12px; padding: 10px 12px; border-radius: 8px;
+  background: rgba(255,255,255,.04); border-left: 3px solid var(--warn);
+  font-size: 12.5px;
+}
+.risk-alert.high { border-left-color: var(--warn); }
+.risk-alert.med  { border-left-color: var(--gold-lt); }
+.risk-alert.low  { border-left-color: var(--teal-a); }
+.risk-alert .sev {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 100px; flex-shrink: 0; align-self: flex-start;
+}
+.risk-alert.high .sev { background: rgba(231,138,39,.25); color: var(--warn-lt); }
+.risk-alert.med  .sev { background: rgba(157,80,236,.25); color: var(--gold-lt); }
+.risk-alert.low  .sev { background: rgba(0,213,225,.18); color: var(--teal-a); }
+.risk-alert .body { color: white; line-height: 1.45; }
+.risk-alert .body b { color: white; }
+
+/* --- Patient-centric risk cases --- */
+.risk-cases {
+  margin-top: 14px; display: flex; flex-direction: column; gap: 10px;
+  position: relative; z-index: 1;
+}
+.risk-case {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-left: 3px solid var(--warn);
+  border-radius: 10px; padding: 12px 14px;
+  display: grid; grid-template-columns: 44px 1fr auto; gap: 12px;
+  align-items: center;
+}
+.risk-case.high { border-left-color: var(--warn); }
+.risk-case.med  { border-left-color: var(--gold-lt); }
+.risk-case.low  { border-left-color: var(--teal-a); }
+.risk-case .pt-av {
+  width: 44px; height: 44px; border-radius: 50%;
+  overflow: hidden; border: 2px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.risk-case .pt-av svg { width: 100%; height: 100%; display: block; }
+.risk-case .pt-info { min-width: 0; }
+.risk-case .pt-info .nm {
+  font-weight: 700; font-size: 13.5px; color: white;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.risk-case .pt-info .nm .meta {
+  font-size: 11px; font-weight: 600; color: #C7CBFF; letter-spacing: .04em;
+}
+.risk-case .pt-info .flag {
+  font-size: 12px; color: #E6E8F8; margin-top: 4px; line-height: 1.45;
+}
+.risk-case .pt-info .flag b { color: white; }
+.risk-case .pt-info .reco {
+  font-size: 11.5px; color: var(--gold-lt); margin-top: 3px; line-height: 1.4;
+}
+.risk-case .pt-actions {
+  display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+}
+.risk-case .sev-badge {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 100px;
+}
+.risk-case.high .sev-badge { background: rgba(231,138,39,.25); color: var(--warn-lt); }
+.risk-case.med  .sev-badge { background: rgba(157,80,236,.25); color: var(--gold-lt); }
+.risk-case.low  .sev-badge { background: rgba(0,213,225,.18); color: var(--teal-a); }
+.risk-case .share-feed {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  padding: 5px 10px; border-radius: 100px; cursor: pointer;
+  background: rgba(255,255,255,.1); color: white;
+  border: 1px solid rgba(255,255,255,.18);
+  transition: all .15s;
+}
+.risk-case .share-feed:hover {
+  background: linear-gradient(135deg, var(--purple) 0%, var(--teal) 100%);
+  border-color: transparent;
+}
+.risk-case .share-feed svg { width: 11px; height: 11px; }
+
+/* --- Patient table avatar + share button --- */
+.tbl .patient-cell {
+  display: flex; align-items: center; gap: 10px;
+}
+.tbl .patient-cell .pt-av-sm {
+  width: 32px; height: 32px; border-radius: 50%;
+  overflow: hidden; flex-shrink: 0;
+  border: 1.5px solid var(--line);
+}
+.tbl .patient-cell .pt-av-sm svg { width: 100%; height: 100%; display: block; }
+.tbl .share-cell { text-align: right; }
+.tbl .share-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 700;
+  padding: 5px 10px; border-radius: 8px;
+  background: rgba(127,33,224,.08); color: var(--purple);
+  border: 1px solid rgba(127,33,224,.18);
+  cursor: pointer; transition: all .15s;
+}
+.tbl .share-btn:hover {
+  background: var(--purple); color: white; border-color: var(--purple);
+}
+.tbl .share-btn svg { width: 12px; height: 12px; }
+
+/* --- Toast notification --- */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: white;
+  padding: 12px 20px 12px 16px; border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 10px;
+  box-shadow: 0 14px 40px rgba(15,15,32,.25);
+  opacity: 0; pointer-events: none; transition: all .25s ease;
+  z-index: 10000;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.toast .chk {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal-a) 0%, var(--teal) 100%);
+  display: grid; place-items: center; color: white; font-size: 13px; font-weight: 800;
+}
+
+/* === EVO Points celebratory toast === */
+.evo-toast {
+  position: fixed; top: 24px; right: 24px;
+  width: 360px; max-width: calc(100vw - 48px);
+  background: linear-gradient(135deg, #001E60 0%, #5C18AB 60%, #08B1C2 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 18px 48px rgba(92,24,171,.42), 0 4px 14px rgba(0,30,96,.30);
+  opacity: 0; pointer-events: none;
+  transform: translateY(-20px) scale(.96);
+  transition: opacity .28s ease, transform .28s cubic-bezier(.18,.92,.31,1.18);
+  z-index: 10100;
+  overflow: hidden;
+  font-family: 'Inter','Helvetica Neue',sans-serif;
+}
+.evo-toast.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+.evo-toast::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 90% 0%, rgba(255,255,255,.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+.evo-toast-confetti-layer {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden;
+}
+.evo-toast-confetti {
+  position: absolute; top: -10px;
+  color: #FFC443;
+  font-weight: 800;
+  text-shadow: 0 0 6px rgba(255,196,67,.6);
+  opacity: 0;
+  animation: evoConfettiFall 1.1s ease-out forwards;
+}
+.evo-toast-confetti:nth-child(2n) { color: #08B1C2; text-shadow: 0 0 6px rgba(8,177,194,.6); }
+.evo-toast-confetti:nth-child(3n) { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,.8); }
+@keyframes evoConfettiFall {
+  0%   { transform: translateY(-10px) rotate(0deg); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(120px) rotate(360deg); opacity: 0; }
+}
+.evo-toast-body {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 12px; align-items: center;
+  padding: 14px 16px;
+}
+.evo-toast-ic {
+  width: 38px; height: 38px; border-radius: 9px;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.20);
+  display: grid; place-items: center;
+  color: #FFC443;
+  flex-shrink: 0;
+}
+.evo-toast-text { min-width: 0; }
+.evo-toast-amount {
+  font-size: 24px; font-weight: 900; color: #fff;
+  letter-spacing: -.02em; line-height: 1;
+  display: inline-flex; align-items: baseline; gap: 5px;
+}
+.evo-toast-unit { font-size: 11px; font-weight: 800; color: rgba(255,255,255,.75); letter-spacing: .06em; }
+.evo-toast-action {
+  font-size: 12px; font-weight: 700; color: #fff;
+  margin-top: 3px;
+}
+.evo-toast-sub {
+  font-size: 10.5px; color: rgba(255,255,255,.72); font-weight: 500;
+  margin-top: 1px;
+}
+.evo-toast-balance {
+  text-align: right;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.evo-toast-balance .etb-lbl {
+  font-size: 9px; font-weight: 800; letter-spacing: .12em;
+  color: rgba(255,255,255,.62); text-transform: uppercase;
+}
+.evo-toast-balance .etb-val {
+  font-size: 16px; font-weight: 900; color: #FFC443;
+  font-variant-numeric: tabular-nums; line-height: 1.1; margin-top: 2px;
+}
+
+/* Upload studies + EHR cards */
+.dropzone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 2px dashed var(--line); border-radius: 10px;
+  padding: 26px 20px; text-align: center;
+  background: var(--cream); transition: all .15s; cursor: pointer;
+  width: 100%; box-sizing: border-box;
+}
+.dropzone:hover, .dropzone.over {
+  border-color: var(--teal); background: rgba(36,114,211,.04);
+}
+.dropzone svg { width: 36px; height: 36px; color: var(--teal); margin-bottom: 10px; display: block; flex: 0 0 auto; }
+.dropzone h4 { font-size: 13px; font-weight: 700; margin: 0 0 4px; }
+.dropzone p { font-size: 11.5px; color: var(--mute); margin: 0; }
+.dropzone .supp { font-size: 10.5px; color: var(--mute); margin-top: 10px; }
+.dropzone input[type="file"] { display: none !important; }

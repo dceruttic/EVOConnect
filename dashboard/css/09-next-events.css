@@ -1,0 +1,43 @@
+/* ================================================================
+   NEXT EVENTS
+================================================================ */
+.events-list { display: flex; flex-direction: column; gap: 0; }
+.event {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.event:last-child { border-bottom: none; padding-bottom: 4px; }
+.event .date-chip {
+  flex-shrink: 0; width: 44px; text-align: center;
+  border: 1px solid var(--line); border-radius: 8px;
+  overflow: hidden; background: white;
+}
+.event .date-chip .mo {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+  background: var(--gold); color: white; padding: 2px 0; text-transform: uppercase;
+}
+.event .date-chip .day {
+  font-size: 16px; font-weight: 800; padding: 4px 0;
+  font-variant-numeric: tabular-nums;
+}
+.event.surgery .date-chip .mo { background: var(--warn); }
+.event.consult .date-chip .mo { background: var(--teal); }
+.event.training .date-chip .mo { background: var(--gold); }
+.event.delivery .date-chip .mo { background: var(--green); }
+.event.community .date-chip .mo { background: var(--teal-a); color: var(--ink); }
+.event .body { flex: 1; }
+.event .tag {
+  font-size: 10px; font-weight: 700; color: var(--mute);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.event.surgery .tag { color: var(--warn); }
+.event.consult .tag { color: var(--teal); }
+.event.training .tag { color: var(--gold); }
+.event.delivery .tag { color: var(--green); }
+.event.community .tag { color: var(--teal-dk); }
+.event .title { font-size: 13px; font-weight: 700; margin-top: 2px; line-height: 1.35; }
+.event .sub { font-size: 11.5px; color: var(--mute); margin-top: 2px; }
+.event .time {
+  font-size: 11.5px; color: var(--mute); font-weight: 600;
+  flex-shrink: 0; text-align: right;
+}

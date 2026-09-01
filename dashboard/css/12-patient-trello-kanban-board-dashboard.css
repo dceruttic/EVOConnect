@@ -1,0 +1,64 @@
+/* ================================================================
+   Patient Trello (kanban) board — Dashboard
+================================================================ */
+.trello-board {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px; margin-top: 14px;
+}
+.trello-col {
+  background: var(--cream); border: 1px solid var(--line); border-radius: 12px;
+  padding: 9px; display: flex; flex-direction: column; gap: 7px; min-height: 220px;
+  min-width: 0;
+}
+.trello-col-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  padding: 2px 2px 8px; border-bottom: 1px dashed var(--line); margin-bottom: 2px;
+}
+.trello-col-head .nm { font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.trello-col-head .ct {
+  font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+  background: rgba(127,33,224,.1); color: var(--purple);
+}
+.trello-col.consult .ct { background: rgba(127,33,224,.12); color: var(--purple); }
+.trello-col.biometry .ct { background: rgba(36,114,211,.12); color: var(--teal); }
+.trello-col.sizing .ct { background: rgba(0,213,225,.15); color: #0097a5; }
+.trello-col.scheduled .ct { background: rgba(231,138,39,.15); color: #b4681e; }
+.trello-col.postop .ct { background: rgba(0,156,118,.14); color: var(--green); }
+.trello-card {
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 10px 9px 10px; display: flex; flex-direction: column; gap: 6px;
+  cursor: pointer; transition: all .14s; text-align: left;
+  position: relative; overflow: hidden; min-width: 0;
+}
+.trello-card:hover { transform: translateY(-1px); box-shadow: 0 8px 22px -10px rgba(31,26,46,.2); border-color: var(--purple); }
+.trello-card .tc-top { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.trello-card .pt-av-xs { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex: 0 0 28px; }
+.trello-card .pt-av-xs svg { width: 100%; height: 100%; display: block; }
+.trello-card .tc-nm {
+  font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: -0.1px;
+  line-height: 1.2; min-width: 0; flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.trello-card .tc-id {
+  font-size: 10px; color: var(--mute); font-variant-numeric: tabular-nums;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.trello-card .tc-meta { display: flex; gap: 4px; flex-wrap: wrap; font-size: 10px; }
+.trello-card .tc-pill {
+  padding: 2px 6px; border-radius: 4px; background: var(--cream);
+  font-weight: 700; color: var(--ink); white-space: nowrap;
+}
+.trello-card .tc-pill.eye { color: var(--teal); background: rgba(36,114,211,.08); }
+.trello-card .tc-pill.pwr { color: var(--purple); background: rgba(127,33,224,.08); font-variant-numeric: tabular-nums; }
+.trello-card .tc-pill.risk { font-size: 9.5px; padding: 2px 5px; }
+.trello-card .tc-risk {
+  position: absolute; top: 0; right: 0; width: 3px; bottom: 0;
+}
+.trello-card.high .tc-risk { background: linear-gradient(180deg, #E45167, #C1344D); }
+.trello-card.med .tc-risk { background: linear-gradient(180deg, #E78A27, #C57218); }
+.trello-card.low .tc-risk { background: linear-gradient(180deg, #009C76, #00754F); }
+.trello-col-empty { font-size: 11px; color: var(--mute); padding: 10px 6px; text-align: center; font-style: italic; }
+
+/* Clickable pre-op table rows */
+.tbl tbody tr.clickable { cursor: pointer; transition: background .12s; }
+.tbl tbody tr.clickable:hover { background: rgba(127,33,224,.06); }

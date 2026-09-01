@@ -1,0 +1,85 @@
+/* ================================================================
+   HERO CARD — ICL UNIVERSE
+================================================================ */
+.icl-universe-card {
+  grid-column: 1 / -1;
+  position: relative;
+  min-height: 260px;
+  background: radial-gradient(circle at 85% -20%, rgba(157,80,236,.55) 0%, transparent 55%),
+              radial-gradient(circle at 100% 120%, rgba(36,114,211,.45) 0%, transparent 60%),
+              linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, var(--navy3) 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  color: white;
+  padding: 32px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: var(--shadow-glow);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
+}
+.icl-universe-card:hover { transform: translateY(-2px); box-shadow: 0 28px 70px rgba(127,33,224,.45), 0 0 0 1px rgba(255,255,255,.1) inset; }
+.icl-universe-card::before {
+  content: ""; position: absolute;
+  right: -100px; top: -100px;
+  width: 360px; height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(157,80,236,.35) 0%, rgba(127,33,224,0) 70%);
+  pointer-events: none;
+}
+.icl-universe-card::after {
+  content: ""; position: absolute;
+  right: 60px; top: 40px; width: 140px; height: 140px;
+  border-radius: 50%; border: 1.5px solid rgba(255,255,255,.12);
+  pointer-events: none;
+}
+
+.iu-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--gold-lt);
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px; border-radius: 100px;
+  background: rgba(157,80,236,.12); border: 1px solid rgba(157,80,236,.25);
+}
+.iu-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -.025em;
+  line-height: 1.05; margin-top: 16px; max-width: 680px;
+}
+.iu-title span { color: var(--gold-lt); }
+.iu-subtitle {
+  color: #C7CBFF; font-size: 15px; margin-top: 12px;
+  max-width: 620px; line-height: 1.55;
+}
+.iu-footer {
+  margin-top: 28px; display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap;
+}
+.iu-modules-preview {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.iu-chip {
+  padding: 5px 10px; border-radius: 100px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  color: #C7CBFF; font-size: 11px; font-weight: 500;
+}
+.iu-cta {
+  padding: 10px 18px; border-radius: 100px;
+  background: white; color: var(--navy);
+  font-weight: 700; font-size: 13px;
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-left: auto;
+}
+.iu-cta svg { width: 14px; height: 14px; transition: transform .2s; }
+.icl-universe-card:hover .iu-cta svg { transform: translateX(3px); }
+
+.iu-orbit {
+  position: absolute; right: 40px; bottom: -60px;
+  width: 280px; height: 280px; pointer-events: none;
+  opacity: .9;
+}
+
+/* Small feature cards on main dashboard */
+.feature-card { padding: 18px 20px; }
+.feature-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.feature-card p { font-size: 12.5px; color: var(--mute); }
+.feature-card .row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; }
+.feature-card .row b { font-weight: 700; color: var(--ink); }

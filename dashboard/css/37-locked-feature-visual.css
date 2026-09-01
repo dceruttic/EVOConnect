@@ -1,0 +1,39 @@
+/* ===== Locked feature visual ===== */
+.phase-locked {
+  opacity: 0.4;
+  position: relative;
+}
+.phase-locked::after {
+  content: "\1F512";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.us-nav-btn.phase-locked,
+.us-nav button.phase-locked,
+.nav-item.phase-locked,
+.pt-step.phase-locked {
+  opacity: 0.35;
+  cursor: not-allowed !important;
+}
+.us-nav button.phase-locked .mod-num::after,
+.pt-step.phase-locked .pt-step-lbl::after {
+  content: attr(data-phase-badge);
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 100px;
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.85);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.pt-step.phase-locked .pt-step-lbl::after {
+  background: rgba(28,21,48,.10);
+  color: rgba(28,21,48,.7);
+}

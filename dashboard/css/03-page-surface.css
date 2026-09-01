@@ -1,0 +1,65 @@
+/* ================================================================
+   PAGE SURFACE
+================================================================ */
+.page { flex: 1; padding: 32px; max-width: 1440px; margin: 0 auto; width: 100%; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; gap: 24px; }
+.page-head h1 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+.page-head p { color: var(--mute); margin-top: 6px; font-size: 14px; }
+.page-head .actions { display: flex; gap: 10px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600;
+  transition: all .15s; border: 1px solid transparent;
+}
+.btn svg { width: 14px; height: 14px; }
+.btn-primary { background: var(--teal); color: white; }
+.btn-primary:hover { background: var(--teal-dk); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { background: var(--sand); }
+.btn-gold { background: var(--gold); color: white; }
+.btn-gold:hover { background: #6915c4; }
+
+/* ================================================================
+   DASHBOARD GRID
+================================================================ */
+.grid { display: grid; gap: 20px; }
+.grid-main {
+  grid-template-columns: 2fr 1fr;
+}
+.grid-kpi {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
+  overflow: hidden;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+
+.kpi {
+  padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.kpi-label {
+  font-size: 11px; font-weight: 600; color: var(--mute);
+  text-transform: uppercase; letter-spacing: 1.2px;
+}
+.kpi-value {
+  font-size: 26px; font-weight: 700; letter-spacing: -.01em;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.kpi-value .unit { font-size: 13px; font-weight: 500; color: var(--mute); }
+.kpi-delta {
+  font-size: 12px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.kpi-delta.up { color: var(--green); }
+.kpi-delta.down { color: var(--warn); }
+.kpi-delta svg { width: 11px; height: 11px; }

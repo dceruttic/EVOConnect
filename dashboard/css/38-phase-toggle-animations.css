@@ -1,0 +1,52 @@
+/* ===== Phase toggle animations =====
+   When the user switches phases, features that lock or unlock get a brief
+   visual cue so the change is unmistakable. Auto-removed after ~0.85s. */
+@keyframes phaseUnlockPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.55); background-color: rgba(124, 58, 237, 0.18); transform: scale(1); }
+  35%  { box-shadow: 0 0 0 10px rgba(124, 58, 237, 0.18); background-color: rgba(124, 58, 237, 0.10); transform: scale(1.03); }
+  70%  { box-shadow: 0 0 0 18px rgba(124, 58, 237, 0); background-color: rgba(124, 58, 237, 0.04); transform: scale(1.01); }
+  100% { box-shadow: 0 0 0 0 transparent; background-color: transparent; transform: scale(1); }
+}
+@keyframes phaseLockFade {
+  0%   { background-color: rgba(231, 138, 39, 0.28); transform: scale(1); filter: saturate(1); }
+  30%  { background-color: rgba(231, 138, 39, 0.18); transform: scale(0.97); filter: saturate(0.6); }
+  70%  { background-color: rgba(231, 138, 39, 0.06); transform: scale(0.99); filter: saturate(0.4); }
+  100% { background-color: transparent; transform: scale(1); filter: saturate(1); }
+}
+.phase-just-unlocked {
+  animation: phaseUnlockPulse 0.85s cubic-bezier(.22,.61,.36,1) both;
+  border-radius: 10px;
+  position: relative;
+  z-index: 2;
+}
+.phase-just-locked {
+  animation: phaseLockFade 0.65s cubic-bezier(.22,.61,.36,1) both;
+  border-radius: 10px;
+}
+/* Slightly more dramatic on patient stepper steps (smaller surface) */
+.pt-step.phase-just-unlocked,
+.pt-step.phase-just-locked {
+  border-radius: 999px;
+}
+
+/* "Phase skip" variant on the stage-advance CTA — when demo skips locked tabs.
+   Same dark-gradient pattern as the standard CTA so the layout/contrast stay
+   consistent, but in a purple/violet palette to signal "phase demo skip". */
+.stage-advance-card.is-phase-skip {
+  background: linear-gradient(135deg, #2D0A52 0%, #5C18AB 55%, #7F21E0 100%);
+  box-shadow: 0 8px 24px -10px rgba(92, 24, 171, .42);
+}
+.stage-advance-card.is-phase-skip::before {
+  background: radial-gradient(circle at 110% 0%, rgba(255,255,255,.18) 0%, transparent 55%);
+}
+.stage-advance-card.is-phase-skip .sa-eyebrow {
+  color: #E7D2FF;  /* light lavender — readable on dark purple */
+}
+.stage-advance-card.is-phase-skip .sa-btn {
+  background: #fff;
+  color: #5C18AB;  /* purple ink on white button */
+}
+.stage-advance-card.is-phase-skip .sa-btn:hover {
+  background: #F4F0FF;  /* lavender tint on hover */
+  box-shadow: 0 8px 22px rgba(247, 234, 255, .55);
+}

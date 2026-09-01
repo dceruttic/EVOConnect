@@ -1,0 +1,38 @@
+/* ================================================================
+   PHASE DEMO MODE — overlay showing how the app unlocks per phase
+================================================================ */
+.pd-fab {
+  position: fixed; left: 22px; bottom: 22px; z-index: 9000;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px 10px 12px;
+  background: rgba(15, 18, 40, .85);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 100px;
+  font: 700 12px/1 'Inter', system-ui, sans-serif;
+  letter-spacing: .02em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(10,16,40,.35);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.pd-fab:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(10,16,40,.45); }
+.pd-fab svg { width: 16px; height: 16px; }
+.pd-fab .pd-fab-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #5C18AB; box-shadow: 0 0 0 3px rgba(92,24,171,.25);
+  transition: background .18s, box-shadow .18s;
+}
+.pd-fab.is-on {
+  background: linear-gradient(135deg, rgba(15,18,40,.92), rgba(40,28,80,.92));
+  border-color: rgba(255,255,255,.22);
+}
+.pd-fab .pd-fab-phase {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: rgba(255,255,255,.14);
+  font-size: 10px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase;
+}

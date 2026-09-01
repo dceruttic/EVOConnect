@@ -1,0 +1,216 @@
+/* ================================================================
+   REVAI HOME — matches production dashboard aesthetic
+   Layout uses TABLE-LIKE flex: rail + main as flex row, no sticky.
+   Sticky positioning is removed because it breaks inside preview
+   panes whose scroll container is not the true viewport.
+================================================================ */
+.revai-home {
+  display: flex;
+  align-items: stretch;
+  background: var(--white);
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Left icon rail */
+.rail {
+  background: var(--white);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  padding: 16px 0;
+  width: 72px;
+  min-width: 72px;
+  flex: 0 0 72px;
+  z-index: 5;
+}
+.rail-logo {
+  width: 44px; height: 44px; margin: 0 auto 16px;
+  border-radius: 10px;
+  background: transparent;
+  display: grid; place-items: center;
+}
+.rail-logo svg { width: 36px; height: 36px; display: block; }
+.rail-expand {
+  width: 28px; height: 28px; margin: 0 auto 18px;
+  border-radius: 50%;
+  background: white; border: 1px solid var(--line);
+  display: grid; place-items: center;
+  color: var(--mute);
+  box-shadow: var(--shadow-sm);
+}
+.rail-expand:hover { color: var(--teal); border-color: var(--teal); }
+.rail-expand svg { width: 12px; height: 12px; }
+.rail-items { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.rail-items button {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: grid; place-items: center;
+  color: var(--mute);
+  transition: all .15s;
+}
+.rail-items button:hover { background: var(--sand); color: var(--ink); }
+.rail-items button.active {
+  background: var(--teal);
+  color: white;
+  box-shadow: 0 4px 12px rgba(36,114,211,.35);
+}
+.rail-items button svg { width: 20px; height: 20px; }
+.rail-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 6px; align-items: center; padding-bottom: 6px; }
+
+/* Home main — flex column: top bar, then body fills rest */
+.home-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100vh;
+}
+
+/* Top bar */
+.home-top {
+  display: flex; align-items: center; gap: 16px;
+  padding: 6px 24px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+  flex: 0 0 auto;
+  min-height: 48px;
+  z-index: 20;
+}
+.home-top .branch {
+  display: flex; flex-direction: column; gap: 0;
+  min-width: 200px;
+  padding: 5px 12px; border-radius: 7px;
+  border: 1px solid var(--line);
+  background: white;
+  cursor: pointer;
+  transition: all .15s;
+  line-height: 1.2;
+}
+.home-top .branch:hover { border-color: var(--teal); }
+.home-top .branch .lbl {
+  font-size: 10px; font-weight: 500; color: var(--mute);
+  letter-spacing: .3px;
+}
+.home-top .branch .val {
+  font-size: 14px; font-weight: 600; color: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.home-top .branch .val svg { width: 14px; height: 14px; color: var(--mute); }
+.home-top-spacer { flex: 1; }
+.home-top .tutorials {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--teal); font-weight: 600; font-size: 13px;
+  padding: 6px 10px; border-radius: 6px;
+}
+.home-top .tutorials:hover { background: rgba(36,114,211,.08); }
+.home-top .tutorials svg { width: 18px; height: 18px; }
+.home-top .flag {
+  width: 26px; height: 18px; border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06);
+}
+.home-top .flag svg { width: 100%; height: 100%; display: block; }
+.home-top .support-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--mute);
+}
+.home-top .support-btn:hover { background: var(--sand); color: var(--teal); }
+.home-top .support-btn svg { width: 18px; height: 18px; }
+.home-top .doc-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  overflow: hidden; position: relative;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, #C5D7EF 0%, #9EBDE1 100%);
+}
+.home-top .doc-avatar svg { width: 100%; height: 100%; display: block; }
+
+/* Body — flex row: content fluid, marketplace fixed 340px */
+.home-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  align-items: stretch;
+}
+.home-content {
+  flex: 1 1 auto;
+  min-width: 0; min-height: 0;
+  padding: 14px 24px 14px;
+  overflow-x: hidden;
+  display: flex; flex-direction: column;
+}
+.home-greet {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 22px; font-weight: 700; letter-spacing: -.01em;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+.home-greet .wave { font-size: 24px; }
+
+/* Search row */
+.home-search-row {
+  display: grid; grid-template-columns: 1fr 180px;
+  gap: 12px; margin-bottom: 10px;
+  flex: 0 0 auto;
+}
+.home-search {
+  position: relative;
+}
+.home-search input {
+  width: 100%; padding: 9px 16px 9px 44px;
+  border: 1px solid var(--line); border-radius: 8px;
+  background: white;
+  font-family: inherit; font-size: 13.5px; color: var(--ink);
+  outline: none;
+  transition: all .15s;
+}
+.home-search input::placeholder { color: #94A0B8; }
+.home-search input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(36,114,211,.1); }
+.home-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--mute); }
+.home-search .dropdown {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--mute);
+}
+.all-patients-btn {
+  background: var(--teal); color: white;
+  border: none; border-radius: 10px;
+  font-weight: 700; font-size: 14px;
+  padding: 0 18px;
+  box-shadow: 0 2px 4px rgba(36,114,211,.18);
+  transition: all .15s;
+}
+.all-patients-btn:hover { background: var(--teal-dk); }
+
+/* 3 action cards */
+.home-actions {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 14px;
+  flex: 0 0 auto;
+}
+.action-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px;
+  border: 1.5px solid #7DCBD4;
+  border-radius: 8px;
+  background: white;
+  font-weight: 600; font-size: 13.5px; color: var(--ink);
+  transition: all .15s;
+  cursor: pointer;
+}
+.action-card:hover {
+  border-color: var(--teal);
+  box-shadow: 0 4px 14px rgba(36,114,211,.12);
+  transform: translateY(-1px);
+}
+.action-card .left {
+  display: flex; align-items: center; gap: 12px;
+}
+.action-card .left svg { width: 20px; height: 20px; color: var(--teal); }
+.action-card .arrow svg { width: 18px; height: 18px; color: var(--mute); transition: transform .15s; }
+.action-card:hover .arrow svg { color: var(--teal); transform: translateX(3px); }

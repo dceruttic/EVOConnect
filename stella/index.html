@@ -347,6 +347,7 @@ td a{font-size:13.008px}
   flex-direction:column;gap:10px;align-items:center}
 .toast{background:var(--toast);color:#fff;border-radius:4px;padding:14px 20px;min-width:480px;
   display:flex;align-items:flex-start;gap:14px;box-shadow:var(--sh-card)}
+.rxdiff{color:var(--invalid)}
 .toast.ok{background:#2E7D32}
 .toast .tt{font-size:16px;font-weight:600}
 .toast .tm{font-size:15px}
@@ -829,6 +830,16 @@ const NOTICES = [
 const SESSION_KEY = 'stella_session';
 const hasSession = () => { try { return localStorage.getItem(SESSION_KEY) === '1'; } catch(e){ return false; } };
 const setSession = on => { try { on ? localStorage.setItem(SESSION_KEY,'1') : localStorage.removeItem(SESSION_KEY); } catch(e){} };
+/* Entering from the ecosystem page - where the tile literally reads "Sign in" - must always
+   land on the login screen, even if this browser signed in during an earlier rehearsal.
+   `/stella?signin` drops the stored session and shows the login; navigation inside the app
+   and the return from EVO Connect keep it, so the handoff journey is not interrupted.
+   The parameter is stripped from the URL so the address bar stays clean for the demo. */
+const forceLogin = (() => { try { return new URLSearchParams(location.search).has('signin'); } catch(e){ return false; } })();
+if(forceLogin){
+  setSession(false);
+  try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){}
+}
 
 const S = {
   route: hasSession() ? 'dashboard' : 'login', pid:'PSEUDO-4471', tab:'lens', pop:null, usermenu:false,
@@ -920,6 +931,27 @@ const pager = pages => `<div class="pager">
 /* ==================================================================
    DASHBOARD
    ================================================================== */
+/* Reserved-lens divergence marker.
+   STELLA paints, inside the reserved prescription, only the tokens that differ from
+   the target: sphere, cylinder and axis are compared one by one and the ones that do
+   not match come out red. There is no legend and no tooltip on the live app - the
+   colour is the whole signal - so this reproduces exactly that and nothing more.
+   Values are compared numerically, because target and reserved are not always written
+   with the same precision ('x70' vs 'x082', '+2.50' vs '2.5'). */
+function rxDiff(trx, lrx){
+  if(!lrx) return '';
+  if(!trx) return lrx;
+  const num = t => { const m = String(t).match(/-?\d+(?:\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+  const tail = lrx.match(/\s#\S+$/);                    // '#T2805516' de la vista de orden
+  const body = tail ? lrx.slice(0, -tail[0].length) : lrx;
+  const tt = trx.trim().split(/\s+/), lt = body.trim().split(/\s+/);
+  const out = lt.map((tok,i) => {
+    const a = num(tok), b = num(tt[i]);
+    const differs = a === null || b === null ? tok !== tt[i] : a !== b;
+    return differs ? `<span class="rxdiff">${tok}</span>` : tok;
+  }).join(' ');
+  return out + (tail ? tail[0] : '');
+}
 function viewDashboard(){
   const resv = RESERVATIONS.slice(0,5);
   return topbar() + `<div class="wrap">
@@ -945,7 +977,7 @@ function viewDashboard(){
             <td><a data-patient="${b.pid}">${b.pid}</a></td>
             <td><span class="eyebadge">${b.eye}</span></td>
             <td><div class="k">${b.t}</div><div>${b.trx}</div></td>
-            <td><div class="k">${b.lens}</div><div>${b.lrx}</div></td>
+            <td><div class="k">${b.lens}</div><div>${rxDiff(b.trx,b.lrx)}</div></td>
             <td><div class="k">${b.state}</div><a data-order="${b.ord}">${b.ord}</a></td>
             <td><a>${SURGEON.id} -<br>Roberto Zaldivar</a></td></tr>`).join('')
             : `<tr><td colspan="9" style="text-align:center;padding:44px">No active reservations</td></tr>`}
@@ -989,7 +1021,7 @@ function viewDashboard(){
 const calcCell = e => !e.calc ? '<td></td>'
   : `<td><div class="k">${e.calc}</div><div>${e.rx} <span class="prn" data-act="print">${icoPrint}</span></div></td>`;
 const lensCell = e => !e.lens ? '<td></td>'
-  : `<td><div><span class="pill-iod">IOD</span> <span class="k">${e.lens}</span></div><div>${e.lrx}</div></td>`;
+  : `<td><div><span class="pill-iod">IOD</span> <span class="k">${e.lens}</span></div><div>${rxDiff(e.trx||e.rx,e.lrx)}</div></td>`;
 const stateCell = e => !e.state ? '<td></td>'
   : `<td><div class="k">${e.state} - <a data-order="${e.ord}">${e.ord}</a></div><div>Serial Number ${e.sn}</div></td>`;
 
@@ -1108,7 +1140,7 @@ function viewReservations(){
           <td><a data-patient="${b.pid}">${b.pid}</a></td>
           <td><span class="eyebadge">${b.eye}</span></td>
           <td><div class="k">${b.t}</div><div>${b.trx}</div></td>
-          <td><div><span class="pill-iod">IOD</span> <span class="k">${b.lens}</span></div><div>${b.lrx}</div></td>
+          <td><div><span class="pill-iod">IOD</span> <span class="k">${b.lens}</span></div><div>${rxDiff(b.trx,b.lrx)}</div></td>
           <td><div class="k">${b.state}</div><a data-order="${b.ord}">${b.ord}</a></td>
           <td><a>${SURGEON.id} - Roberto Zaldivar</a></td></tr>`).join('')
           :`<tr><td colspan="10" style="text-align:center;padding:44px">No reservations</td></tr>`}
@@ -1160,7 +1192,7 @@ function viewSurgeons(){
       <table><thead><tr>
         <th class="sorted">Activity${sortIc}<span class="u">YYYY-MM-DD</span></th>
         <th>Surgeon Name${sortIc}<span class="u">Last, First</span></th>
-        <th>Location</th><th>Active</th><th>Certifications</th></tr></thead>
+        <th>Location</th><th>Active</th><th>Certification</th></tr></thead>
         <tbody><tr><td>2026-08-14</td>
           <td><a style="font-size:16px;text-decoration:underline">${SURGEON.name}</a><div>ID: ${SURGEON.id}</div></td>
           <td class="k">MENDOZA, 5500</td><td style="color:var(--green-ok)">YES</td>
@@ -1328,7 +1360,7 @@ function viewPatient(){
         <tbody>${p.bookings.length?p.bookings.map(b=>`<tr>
           <td class="k">2026-08-31</td><td><a>${b.n}</a></td>
           <td><span class="eyebadge">${b.eye}</span> <span class="k">${b.t}</span><div>${b.trx}</div></td>
-          <td><div class="k">${b.lens}</div><div>${b.lrx}</div></td>
+          <td><div class="k">${b.lens}</div><div>${rxDiff(b.trx,b.lrx)}</div></td>
           <td><div class="k">${b.state}</div><a data-order="${b.ord}">${b.ord}</a></td>
           <td>${SURGEON.full}</td>
           <td><button class="b b-outline" style="color:var(--teal);border-color:var(--teal)" data-act="print">IOD</button></td>

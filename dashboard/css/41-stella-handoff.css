@@ -122,10 +122,10 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;
 }
 .sh-prov.stella { background: var(--sh-teal-bg); color: var(--sh-teal-dk); border: 1px solid #A7E1E8; }
-.sh-prov.estimate { background: #F5F8FB; color: #5A6478; border: 1px solid #E1E5EE; }
-.sh-prov.derived { background: #F5F8FB; color: #5A6478; border: 1px solid #E1E5EE; }   /* T5: same palette as .estimate */
+.sh-prov.derived { background: #F5F8FB; color: #5A6478; border: 1px solid #E1E5EE; }   /* T5 */
 .sh-prov.edited { background: var(--sh-amber-bg); color: var(--sh-amber); border: 1px solid #FCD34D; }
-.sf-rx-cell .sh-prov, .sf-input .sh-prov { display: block; width: fit-content; }
+.sf-rx-cell .sh-prov, .sf-input .sh-prov { display: block; width: fit-content; max-width: 100%; white-space: normal; overflow: visible; line-height: 1.15; }
+.sf-rx-cell .sh-prov { font-size: 8.5px; padding: 2px 4px; letter-spacing: 0; white-space: nowrap; }
 .sh-handoff .sizing-eye-banner.v2 .seb-kpi-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 .sh-handoff .seb-kpi { min-width: 0; padding: 0 8px; }
 .seb-kpi .sh-prov { margin-top: 4px; font-size: 8.5px; letter-spacing: .02em; padding: 3px 5px; white-space: normal; line-height: 1.15; }

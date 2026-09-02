@@ -33,7 +33,6 @@
     P5: 'STELLA · {size} mm · V8.00 OUS',
     T1: 'from STELLA',
     T2: 'as entered in STELLA (manual)',
-    T3: 'EVO estimate · not from STELLA',
     T4: 'Edited by surgeon · STELLA: {value}',
     T4r: 'Reset to STELLA values',
     T5: 'Derived in EVO Connect from STELLA K1/K2',
@@ -245,7 +244,7 @@
     list.forEach(function (t) { t.nodeValue = t.nodeValue.replace(/\bnully\b/g, '—').replace(/\bnull\b/g, '—'); });
   }
 
-  /* ---------- prefill (ADR-0003 table; provenance as tooltip only, DR-0004) ---------- */
+  /* ---------- prefill (ADR-0003 table; visible provenance, DR-0004 Amendment A2) ---------- */
   function stripPlus(v) { return String(v).replace(/^\+/, ''); }
   function mapping(rec, E) {
     var I = rec.inputs[E];
@@ -261,15 +260,31 @@
     'sf-rx-aut-sph', 'sf-rx-aut-cyl', 'sf-rx-aut-ax', 'sf-rx-aut-k1', 'sf-rx-aut-k1ax', 'sf-rx-aut-k2'];
   var ALL_IDS = (typeof SF_RX_IDS !== 'undefined' ? SF_RX_IDS : []).concat(typeof SF_SZ_IDS !== 'undefined' ? SF_SZ_IDS : []);
 
+  /* Provenance (DR-0004 Amendment A2): visible T1 pill on every STELLA-sent
+     input/KPI, T5 pill on the derived K-mean; everything STELLA did not send
+     stays EMPTY and carries no tag — no invented values for a handoff case. */
   function provTitle(input, kind, note) {
-    var t = kind === 'stella' ? COPY.T1 + ' · ' + COPY.T2 + (note ? ' · ' + note : '') : kind === 'derived' ? COPY.T5 : COPY.T3;
+    var t = kind === 'stella' ? COPY.T1 + ' · ' + COPY.T2 + (note ? ' · ' + note : '') : COPY.T5;
     input.title = t; input.setAttribute('data-sh-prov', kind);
     var cell = input.closest('.sf-rx-cell, .sf-input'); if (cell) cell.title = t;
   }
-  /* Fill EYE_INPUTS[E] for every managed id: STELLA values where mapped, current EVO defaults elsewhere. */
+  function pill(input, cls, text, title) {
+    var cell = input.closest('.sf-rx-cell, .sf-input'); if (!cell) return null;
+    var old = cell.querySelector('.sh-prov'); if (old) old.remove();
+    var tag = el('<span class="sh-prov ' + cls + '"' + (title ? ' title="' + esc(title) + '"' : '') + '>' + esc(text) + '</span>');
+    var label = cell.querySelector('label');
+    if (label) label.insertAdjacentElement('afterend', tag); else cell.prepend(tag);
+    return tag;
+  }
+  function clearInput(input) {
+    input.value = ''; input.removeAttribute('title'); input.removeAttribute('data-sh-prov'); input.removeAttribute('data-sh-stella');
+    var cell = input.closest('.sf-rx-cell, .sf-input');
+    if (cell) { cell.removeAttribute('title'); var old = cell.querySelector('.sh-prov'); if (old) old.remove(); }
+  }
+  /* EYE_INPUTS[E] holds only STELLA-sent keys (+ derived K-mean); every other managed id is blank. */
   function storeEye(rec, E) {
     var store = EYE_INPUTS[E] = EYE_INPUTS[E] || {};
-    ALL_IDS.forEach(function (id) { var i = document.getElementById(id); if (i && store[id] === undefined) store[id] = i.value; });
+    ALL_IDS.forEach(function (id) { store[id] = ''; });
     mapping(rec, E).forEach(function (m) { store[m.id] = m.v; });
     store['sf-kmean'] = rec.derived[E].kmean.v;
   }
@@ -282,10 +297,11 @@
     mapping(rec, E).forEach(function (m) {
       var input = document.getElementById(m.id); if (!input) return;
       input.setAttribute('data-sh-stella', m.v); provTitle(input, 'stella', m.note);
+      pill(input, 'stella', COPY.T1, input.title);
       if (!input._shWired) { input.addEventListener('input', onEdit); input._shWired = true; }
     });
-    var km = document.getElementById('sf-kmean'); if (km) provTitle(km, 'derived');
-    ESTIMATE_IDS.forEach(function (id) { var i = document.getElementById(id); if (i) provTitle(i, 'estimate'); });
+    var km = document.getElementById('sf-kmean'); if (km) { provTitle(km, 'derived'); pill(km, 'derived', COPY.T5, COPY.T5); }
+    ESTIMATE_IDS.forEach(function (id) { var i = document.getElementById(id); if (i) clearInput(i); });
     patchKpis(rec, E);
     onEdit({ target: document.getElementById('sf-wtw') });
   }
@@ -305,6 +321,7 @@
       var edited = input.value.trim() !== orig;
       input.title = edited ? fmt(COPY.T4, { value: orig }) : COPY.T1 + ' · ' + COPY.T2;
       input.classList.toggle('sh-edited', edited);
+      if (edited) pill(input, 'edited', fmt(COPY.T4, { value: orig }), input.title); else pill(input, 'stella', COPY.T1, input.title);
     }
     var any = Array.prototype.some.call(document.querySelectorAll('[data-sh-stella]'), function (i) { return i.value.trim() !== i.getAttribute('data-sh-stella'); });
     var r = document.getElementById('shResetLink'); if (r) r.hidden = !any;
@@ -316,15 +333,22 @@
   }
   function patchKpis(rec, E) {
     var I = rec.inputs[E];
-    var vals = { 'K-mean': { v: rec.derived[E].kmean.v, u: 'D', t: COPY.T5 },
-                 'ACD': { v: I.acd.v, u: 'mm', t: COPY.T1 + ' · ' + COPY.T2 },
-                 'WTW': { v: I.ww.v, u: 'mm', t: COPY.T1 + ' · ' + COPY.T2 },
-                 'CCT': { v: I.cct.v, u: 'µm', t: COPY.T1 + ' · ' + COPY.T2 } };
+    var vals = { 'K-mean': { v: rec.derived[E].kmean.v, u: 'D', cls: 'derived', t: COPY.T5 },
+                 'ACD': { v: I.acd.v, u: 'mm', cls: 'stella', t: COPY.T1 },
+                 'WTW': { v: I.ww.v, u: 'mm', cls: 'stella', t: COPY.T1 },
+                 'CCT': { v: I.cct.v, u: 'µm', cls: 'stella', t: COPY.T1 } };
     document.querySelectorAll('.seb-kpi').forEach(function (k) {
       var lbl = k.querySelector('.kpi-lbl'), val = k.querySelector('.kpi-val'); if (!lbl || !val) return;
       var m = vals[lbl.textContent.trim()];
-      if (m) val.innerHTML = esc(m.v) + '<em>' + esc(m.u) + '</em>';
-      k.title = m ? m.t : COPY.T3;
+      var old = k.querySelector('.sh-prov'); if (old) old.remove();
+      if (m) {
+        val.innerHTML = esc(m.v) + '<em>' + esc(m.u) + '</em>';
+        k.title = m.cls === 'stella' ? COPY.T1 + ' · ' + COPY.T2 : COPY.T5;
+        k.appendChild(el('<span class="sh-prov ' + m.cls + '">' + esc(m.t) + '</span>'));
+      } else {
+        val.textContent = '—';                                           // not sent by STELLA: no value, no unit, no tag
+        k.removeAttribute('title');
+      }
     });
     var nick = document.querySelector('.seb-eye-nickname'); if (nick) nick.textContent = rec.caseId + ' · — · —';
     var rx = document.querySelector('.seb-eye-rx b'); if (rx) rx.textContent = parseFloat(I.sph.v).toFixed(2) + ' D';

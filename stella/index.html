@@ -379,7 +379,7 @@ img,svg{max-width:100%}
      look: REVAI design system (navy/purple/blue gradient, Inter) so the
      block reads as EVO Connect territory inside STELLA; the contrast IS
      the boundary. ---------- */
-.rv-launch,.rv-float{--rv-navy:#001E60;--rv-purple:#7F21E0;--rv-blue:#0080C7;
+.rv-launch,.rv-top{--rv-navy:#001E60;--rv-purple:#7F21E0;--rv-blue:#0080C7;
   font-family:'Inter',var(--font);color:#fff;border-radius:14px;overflow:hidden;
   background:linear-gradient(135deg,var(--rv-navy) 0%,#2A1F7A 45%,var(--rv-purple) 78%,var(--rv-blue) 100%);
   box-shadow:0 20px 50px rgba(0,30,96,.35)}
@@ -416,21 +416,40 @@ img,svg{max-width:100%}
 .rv-foot{font-size:12px;color:#B9C6F2;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
 .rv-foot .rv-demo{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#FFD9A0;border:1px solid rgba(255,217,160,.45);
   border-radius:4px;padding:2px 7px}
-/* floating panel — visible without scrolling once the calculation completes */
-.rv-float{position:fixed;right:20px;top:50%;transform:translateY(-50%);width:380px;max-width:calc(100vw - 40px);z-index:70}
-.rv-float.enter{animation:rvIn .4s cubic-bezier(.2,.8,.2,1) both}
-@keyframes rvIn{from{opacity:0;transform:translate(60px,-50%)}to{opacity:1;transform:translate(0,-50%)}}
-.rv-float .rv-boundary{padding-right:52px}
-.rv-min{position:absolute;top:4px;right:6px;width:40px;height:40px;border-radius:8px;border:0;background:transparent;color:#fff;
-  font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center}
-.rv-min:hover{background:rgba(255,255,255,.14)}
-.rv-min:focus-visible{outline:3px solid #fff;outline-offset:2px}
-.rv-pill{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:70;font-family:'Inter',var(--font);
-  background:linear-gradient(135deg,#001E60,#7F21E0);color:#fff;border:0;border-radius:12px 0 0 12px;
-  padding:14px 18px 14px 16px;min-height:48px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(0,30,96,.35)}
-.rv-pill:focus-visible{outline:3px solid #7F21E0;outline-offset:2px}
-@media (prefers-reduced-motion:reduce){ .rv-float.enter{animation:none} }
-@media (max-width:1100px){ .rv-float{display:none} .rv-pill{display:none} }
+/* ---------- top banner (DR-0004 amendment, sponsor round 3) — in-flow,
+     sticky right under the 53px STELLA topbar, pushes content down, never
+     covers the result panels. Expands from 0 once after the calculation. ---------- */
+.rv-top{position:sticky;top:53px;z-index:39;border-radius:0;overflow:hidden;box-shadow:0 12px 30px rgba(0,30,96,.28)}
+.rv-top.enter{animation:rvGrow .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rvGrow{from{max-height:0;opacity:.4}to{max-height:260px;opacity:1}}
+.rv-top-in{display:flex;align-items:center;gap:18px;padding:12px 22px 12px 24px;min-height:76px;max-width:1560px;margin:0 auto}
+.rv-top-l{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.rv-eyebrow{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.9px;text-transform:uppercase;font-weight:700;color:#DDE3F5;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-eyebrow .rv-dot{width:8px;height:8px;border-radius:50%;background:#00A6DC;box-shadow:0 0 0 3px rgba(0,166,220,.3);flex:none}
+.rv-top-title{font-size:20px;font-weight:800;line-height:1.2;letter-spacing:-.4px;color:#fff;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.rv-top-sub{font-size:13.5px;font-weight:500;letter-spacing:0;color:#DDE3F5}
+.rv-top-r{display:flex;align-items:center;gap:12px;flex:none}
+.rv-top-r .rv-btn{min-height:46px}
+.rv-top-note{font-size:11px;color:#B9C6F2;text-align:right;margin-top:4px;white-space:nowrap}
+.rv-top .rv-picker{flex-direction:row;align-items:center;gap:12px;padding:6px 10px}
+.rv-top .rv-picker .rv-plabel{white-space:nowrap}
+.rv-x{width:44px;height:44px;border-radius:10px;border:0;background:rgba(255,255,255,.10);color:#fff;font-size:22px;line-height:1;
+  cursor:pointer;display:grid;place-items:center;flex:none}
+.rv-x:hover{background:rgba(255,255,255,.2)}
+.rv-x:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.rv-top-min{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:32px;height:32px;padding:0 16px;border:0;
+  font-family:'Inter',var(--font);font-size:13px;font-weight:800;color:#fff;cursor:pointer;
+  background:linear-gradient(90deg,var(--rv-navy),var(--rv-purple) 70%,var(--rv-blue))}
+.rv-top-min:focus-visible{outline:3px solid #fff;outline-offset:-4px}
+@media (prefers-reduced-motion:reduce){ .rv-top.enter{animation:none} }
+@media (max-width:760px){
+  .rv-top-in{flex-wrap:wrap;gap:10px;padding:10px 60px 10px 14px;position:relative}
+  .rv-top-l{flex:1 1 100%}
+  .rv-top-r{flex:1 1 auto;flex-wrap:wrap}
+  .rv-x{position:absolute;top:8px;right:10px}
+  .rv-top-note{white-space:normal;text-align:left}
+}
 </style>
 </head>
 <body>
@@ -734,7 +753,7 @@ const S = {
   cylPower:{od:'+ 0.50',os:'+ 0.50'}, pick:{od:null,os:null},
   savedTarget:{od:false,os:false}, inv:null, orderN:null,
   newp:null, newpTried:false, focusNew:null, loginErr:false,
-  rv:{pick:false, eye:null, float:'open', entered:false}
+  rv:{pick:false, eye:null, banner:'open', entered:false}
 };
 const patient = () => PATIENTS.find(p => p.pid === S.pid) || PATIENTS[0];
 const app = document.getElementById('app');
@@ -744,7 +763,7 @@ function loadFields(){
   const p = patient();
   S.fields = { od:Object.assign({}, p.od), os:Object.assign({}, p.os) };
   S.calculated=false; S.calculatedAt=null; S.results=null; S.focus=null;
-  S.rv={pick:false, eye:null, float:'open', entered:false};
+  S.rv={pick:false, eye:null, banner:'open', entered:false};
   S.pick={od:null,os:null}; S.savedTarget={od:false,os:false};
   S.altLength={od:false,os:false}; S.expanded={od:false,os:false};
   S.cylPower={od:'+ 0.50',os:'+ 0.50'};
@@ -1488,7 +1507,7 @@ function viewPreop(){
       <span>Save Pre-Op Data</span><span>✓</span></button>
     <button class="bbtn" ${ready&&!S.calculated?'':'disabled'} data-act="calc">
       <span>Save and Calculate</span><span>→</span></button></div>`;
-  return topbar({print:true, printOn:S.calculated}) + banner(actions) + `<div class="wrap">
+  return topbar({print:true, printOn:S.calculated}) + revaiTopBanner() + banner(actions) + `<div class="wrap">
     <div class="grid2" style="margin-top:24px">${eyeColumn('od')}${eyeColumn('os')}</div>
     <div class="grid2" style="margin-top:24px">${eyeDiagram('od')}${eyeDiagram('os')}</div>
     ${S.calculated?`<div class="grid2" style="margin-top:24px">${resultPanel('od')}${resultPanel('os')}</div>`:''}
@@ -1515,18 +1534,23 @@ const HANDOFF_MAX_CHARS = 2048;
 const RV_HERO = { kicker:'EVO Connect by REVAI',
   title:'Compare with other sizing methodologies',
   sub:'ICL Guru, ICLFIT and CASIA2 next to the STELLA result — in EVO Connect',
+  subShort:'ICL Guru, ICLFIT and CASIA2 next to the STELLA result',
   boundary:'You are leaving STELLA · external service by REVAI',
   foot:'Nothing is written back to STELLA.', demo:'Demonstration only – synthetic data – not for clinical use' };
 const rvEyes = () => ['od','os'].filter(e => S.results && S.results[e]);
-function rvHero(compact){
+/* OD · OS · OU picker — enabled per calculated eye, OU only when both; shared by the banner and the inline card */
+function rvPicker(){
   const eyes = rvEyes(), can = { od:eyes.includes('od'), os:eyes.includes('os') }; can.ou = can.od && can.os;
   const seg = k => `<button type="button" data-act="rv-eye" data-eye="${k}" class="${S.rv.eye===k?'on':''}" ${can[k]?'':'disabled'}
       aria-pressed="${S.rv.eye===k}">${k.toUpperCase()}<small>${k==='ou'?'both eyes':(can[k]?S.targetLength[k]+' mm':'no result')}</small></button>`;
-  const picker = S.rv.pick ? `<div class="rv-picker" role="group" aria-label="Choose the eye to open in EVO Connect">
+  return `<div class="rv-picker" role="group" aria-label="Choose the eye to open in EVO Connect">
       <span class="rv-plabel">Which eye?</span>
       <div class="rv-seg">${seg('od')}${seg('os')}${seg('ou')}</div>
       <button type="button" class="rv-go" data-act="rv-go" ${S.rv.eye?'':'disabled'}>Confirm · open in a new tab →</button>
-    </div>` : '';
+    </div>`;
+}
+function rvHero(compact){
+  const picker = S.rv.pick ? rvPicker() : '';
   return `<div class="rv-boundary"><span class="rv-dot"></span>${RV_HERO.boundary}</div>
     <div class="rv-body">
       <div class="rv-kicker">${RV_HERO.kicker}</div>
@@ -1541,13 +1565,26 @@ function revaiLaunchSlot(){
   if(!rvEyes().length) return '';
   return `<section class="rv-launch" aria-label="EVO Connect">${rvHero(true)}</section>`;
 }
-function revaiFloat(){
-  if(S.route!=='preop' || !S.calculated || !rvEyes().length) return '';
-  if(S.rv.float==='min') return `<button type="button" class="rv-pill" data-act="rv-float" aria-label="Open the EVO Connect panel">Compare in EVO Connect ›</button>`;
+/* Top banner right under the STELLA topbar (sticky, in-flow). Dismiss → 32px strip that reopens it;
+   never fully gone while a calculation exists. Expands once (S.rv.entered). */
+function revaiTopBanner(){
+  if(!S.calculated || !rvEyes().length) return '';
+  if(S.rv.banner==='min') return `<button type="button" class="rv-top rv-top-min" data-act="rv-reopen"
+      aria-label="Reopen the EVO Connect banner">Compare in EVO Connect ›</button>`;
   const enter = S.rv.entered ? '' : ' enter'; S.rv.entered = true;
-  return `<aside class="rv-float${enter}" role="complementary" aria-label="EVO Connect">
-    <button type="button" class="rv-min" data-act="rv-min" aria-label="Minimise the EVO Connect panel" title="Minimise">–</button>
-    ${rvHero(false)}</aside>`;
+  const right = S.rv.pick ? rvPicker()
+    : `<div><button type="button" class="rv-btn" data-act="rv-pick" aria-expanded="false">Open in EVO Connect →</button>
+       <div class="rv-top-note">${RV_HERO.foot}</div></div>`;
+  return `<section class="rv-top${enter}" role="region" aria-label="EVO Connect">
+    <div class="rv-top-in">
+      <div class="rv-top-l">
+        <div class="rv-eyebrow"><span class="rv-dot"></span>${RV_HERO.kicker} · ${RV_HERO.boundary}</div>
+        <div class="rv-top-title">${RV_HERO.title}<span class="rv-top-sub">${RV_HERO.subShort}</span></div>
+      </div>
+      <div class="rv-top-r">${right}</div>
+      <button type="button" class="rv-x" data-act="rv-dismiss" aria-label="Dismiss the EVO Connect banner" title="Dismiss">×</button>
+    </div>
+  </section>`;
 }
 function b64url(str){
   return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
@@ -1823,7 +1860,7 @@ const VIEWS = {
   surgeons:viewSurgeons, 'patient-new':viewNewPatient, login:viewLogin
 };
 function render(){
-  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector() + revaiFloat();
+  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector();
   if(S.route==='preop' && S.calculated) centreRows();
   if(S.focus){
     const el = document.querySelector(`[data-f="${S.focus.eye}:${S.focus.key}"]`);
@@ -1935,8 +1972,8 @@ document.addEventListener('click', e => {
       case 'rv-pick':  S.rv.pick = !S.rv.pick; render(); return;
       case 'rv-eye':   S.rv.eye = d.eye; render(); return;
       case 'rv-go':    if(S.rv.eye) launchRevai(S.rv.eye); return;
-      case 'rv-min':   S.rv.float = 'min'; render(); return;
-      case 'rv-float': S.rv.float = 'open'; S.rv.entered = false; render(); return;
+      case 'rv-dismiss': S.rv.banner = 'min'; render(); return;
+      case 'rv-reopen':  S.rv.banner = 'open'; S.rv.entered = false; render(); return;
       case 'print':    toast('Printing disabled','Report generation is not part of this demonstration.'); return;
       case 'reserve':  toast('Reservation blocked','Reservations and official orders are created inside STELLA only.'); return;
       case 'make':     toast('Manufacture request disabled','Not part of this demonstration.'); return;

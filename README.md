@@ -2,8 +2,8 @@
 
 Deploy estático de las tres superficies de la demo REVAI × STAAR:
 
-- **`/stella`** — STELLA Replica (STAAR, system of record): réplica de la calculadora y entorno de
-  pedido de STAAR. Punto de entrada del recorrido STELLA-first del ESCRS
+- **`/stella`** — Stella (STAAR, system of record): réplica de la calculadora y entorno de pedido de
+  STAAR. Arranca en la pantalla de login. Punto de entrada del recorrido STELLA-first del ESCRS
 
 - **`/dashboard`** — EVO Connect (cara clínica): flujo por paciente pre-op → selección de ICL →
   planificador quirúrgico → cirugía → post-op, más Phase Demo Mode
@@ -13,7 +13,8 @@ Deploy estático de las tres superficies de la demo REVAI × STAAR:
 ## Estructura
 
 ```
-index.html                landing que enlaza las tres superficies
+index.html                landing con estética STAAR Surgical (staar.com) que enlaza las tres superficies
+assets/staar-surgical-logo-white.svg, stella-logo-white.svg, stella-hero-bg.webp — extraídos de stella/
 stella/
   index.html              archivo único, autocontenido (assets embebidos como data URIs)
 assets/                   imágenes compartidas (WebP + SVG) — única copia

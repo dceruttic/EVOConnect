@@ -3,64 +3,171 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>REVAI · STAAR — Live demo environment</title>
+<title>STAAR Surgical · Digital Ecosystem</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --navy:#001E60; --purple:#7F21E0; --blue:#0080C7; --teal:#08B1C2; --ink:#0A1028; --mute:#5A6478; --line:#E4E6EF; --bg:#F5F7FD; }
+  /* Tokens measured on staar.com: proxima-nova (Mulish fallback), teal #10A8BA,
+     ink #282829, grey #696969, thin display weights, 12px uppercase nav with 1.92px tracking,
+     pill outline buttons 2px teal / radius 25px. */
+  :root{ --teal:#10A8BA; --teal-2:#098B9A; --ink:#282829; --grey:#696969; --grey-2:#858888; --line:#E9E9E9; --dark:#0B0E14; --font:'proxima-nova','Proxima Nova','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif; }
   *{box-sizing:border-box}
-  body { margin:0; font-family:'Inter',system-ui,sans-serif; background:radial-gradient(1200px 600px at 15% -5%, rgba(127,33,224,0.08), transparent 60%), radial-gradient(1000px 500px at 90% 0%, rgba(0,128,199,0.06), transparent 55%), var(--bg); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px; }
-  .wrap { max-width:1180px; width:100%; }
-  .eyebrow { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
-  h1 { font-size:clamp(28px, 4vw, 44px); font-weight:900; letter-spacing:-.02em; margin:0 0 12px; line-height:1.1; }
-  h1 b { background:linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .sub { font-size:15px; color:var(--mute); margin:0 0 38px; max-width:640px; line-height:1.5; }
-  .grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
-  @media (max-width:980px){ .grid { grid-template-columns:1fr 1fr; } }
-  @media (max-width:680px){ .grid { grid-template-columns:1fr; } }
-  .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px 24px 22px; text-decoration:none; color:inherit; transition: transform .15s ease, box-shadow .15s ease, border-color .15s; position:relative; overflow:hidden; }
-  .card:hover { transform:translateY(-2px); box-shadow:0 12px 32px -8px rgba(0,30,96,.18); border-color:rgba(127,33,224,.30); }
-  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--purple), var(--blue)); }
-  .card.intel::before { background:linear-gradient(90deg, var(--teal), var(--blue)); }
-  .card.stella::before { background:#10A8BA; }
-  .card-tag { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--purple); margin-bottom:14px; }
-  .card.intel .card-tag { color:var(--teal); }
-  .card.stella .card-tag { color:#0C7E8B; }
-  .card h2 { font-size:21px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px; }
-  .card p { font-size:13.5px; color:var(--mute); margin:0 0 18px; line-height:1.5; }
-  .card .cta { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--navy); }
-  .card .cta svg { width:14px; height:14px; transition:transform .15s; }
-  .card:hover .cta svg { transform:translateX(3px); }
-  .foot { margin-top:34px; font-size:12px; color:var(--mute); display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
-  .foot .dot { width:6px; height:6px; border-radius:50%; background:var(--teal); }
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--font);color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+
+  /* header */
+  .hdr{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:34px 40px}
+  .hdr .logo img{display:block;height:17px;width:auto}
+  .nav{display:flex;gap:44px}
+  .nav a{font-size:12px;font-weight:700;letter-spacing:1.92px;text-transform:uppercase;color:#fff;opacity:.92;transition:opacity .15s}
+  .nav a:hover{opacity:1;color:var(--teal)}
+  .nav a.demo{color:var(--teal)}
+  @media (max-width:860px){ .nav{display:none} }
+
+  /* hero */
+  .hero{position:relative;min-height:88vh;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;background:#070B14 url('/assets/stella-hero-bg.webp') center/cover no-repeat;overflow:hidden}
+  .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,.25) 50%,rgba(7,11,20,.92) 100%)}
+  .hero-in{position:relative;z-index:1;max-width:860px;padding:120px 24px 90px}
+  .hero h1{font-size:clamp(38px,5.4vw,60px);font-weight:200;line-height:1.12;margin:0 0 26px;letter-spacing:-.005em}
+  .hero h1 sup{font-size:.35em;font-weight:300;vertical-align:top;position:relative;top:.55em}
+  .hero p{font-size:19px;font-weight:600;line-height:1.55;margin:0 auto 18px;max-width:700px}
+  .hero p.light{font-weight:300;font-size:17px;color:rgba(255,255,255,.85)}
+  .hero .down{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);width:64px;height:64px;border:1px solid rgba(255,255,255,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:1}
+  .hero .down svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+  /* surfaces */
+  .surf{padding:96px 24px 90px;background:#fff}
+  .surf-in{max-width:1180px;margin:0 auto}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:1.92px;text-transform:uppercase;color:var(--teal);text-align:center;margin:0 0 14px}
+  .surf h2{font-size:clamp(30px,3.6vw,44px);font-weight:200;text-align:center;margin:0 0 14px;color:var(--ink)}
+  .surf .lead{font-size:16px;font-weight:300;color:var(--grey);text-align:center;max-width:720px;margin:0 auto 60px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  @media (max-width:980px){ .grid{grid-template-columns:1fr 1fr} }
+  @media (max-width:640px){ .grid{grid-template-columns:1fr} }
+  .card{display:flex;flex-direction:column;border:1px solid var(--line);background:#fff;transition:box-shadow .2s,transform .2s}
+  .card:hover{box-shadow:0 18px 40px -18px rgba(0,0,0,.28);transform:translateY(-3px)}
+  .card .visual{height:150px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .card.stella .visual{background:var(--teal-2) url('/assets/stella-hero-bg.webp') center/cover no-repeat}
+  .card.stella .visual::after{content:'';position:absolute;inset:0;background:rgba(9,139,154,.55)}
+  .card.stella .visual img{position:relative;z-index:1;height:62px;width:auto}
+  .card.evo .visual{background:linear-gradient(135deg,#0B0E14,#27455C)}
+  .card.hq .visual{background:linear-gradient(135deg,#0B0E14,#098B9A)}
+  .card .visual .wm{font-size:26px;font-weight:200;color:#fff;letter-spacing:.02em}
+  .card .visual .wm b{font-weight:700}
+  .card .body{padding:26px 26px 28px;display:flex;flex-direction:column;flex:1}
+  .card p.tag{flex:0 0 auto}
+  .tag{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--teal);margin:0 0 10px}
+  .card h3{font-size:24px;font-weight:300;margin:0 0 10px;color:var(--ink)}
+  .card p{font-size:14.5px;font-weight:300;line-height:1.6;color:var(--grey);margin:0 0 24px;flex:1}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;align-self:flex-start;height:44px;padding:0 26px;border:2px solid var(--teal);border-radius:25px;color:var(--teal);font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .15s,color .15s}
+  .btn:hover{background:var(--teal);color:#fff}
+  .btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
+
+  /* divider links */
+  .links{display:flex;justify-content:center;gap:0;margin:64px auto 0;padding-top:34px;border-top:1px solid var(--line);max-width:820px}
+  .links a{font-size:17px;font-weight:300;color:var(--grey);padding:0 32px;border-left:1px solid var(--line)}
+  .links a:first-child{border-left:0}
+  .links a:hover{color:var(--teal)}
+
+  /* footer */
+  .ftr{background:var(--dark);color:#9AA0A6;padding:56px 40px 36px}
+  .ftr-in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+  .ftr .top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+  .ftr .top img{height:15px;width:auto;opacity:.9}
+  .ftr .fnav{display:flex;gap:28px;flex-wrap:wrap}
+  .ftr .fnav a{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#9AA0A6}
+  .ftr .fnav a:hover{color:#fff}
+  .ftr .bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid rgba(255,255,255,.1);padding-top:22px;font-size:12px;font-weight:300}
+  .ftr .demo-note{color:var(--teal);font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:11px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="eyebrow">REVAI × STAAR · live demo environment</div>
-  <h1>Three surfaces · one <b>connected platform</b></h1>
-  <p class="sub">Start in STELLA as the surgeon does today, walk through the clinical workflow in EVO Connect, or jump to the HQ-side Intelligence Center built for STAAR leadership.</p>
-  <div class="grid">
-    <a class="card stella" href="/stella">
-      <div class="card-tag"><span>● STAAR · SYSTEM OF RECORD</span></div>
-      <h2>STELLA Replica</h2>
-      <p>Faithful replica of STAAR's STELLA calculator and ordering environment. Entry point of the ESCRS STELLA-first journey: official recommendation, launch to REVAI, confirmed order.</p>
-      <span class="cta">Open STELLA <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-    </a>
-    <a class="card" href="/dashboard">
-      <div class="card-tag"><span>● CLINIC</span></div>
-      <h2>EVO Connect Dashboard</h2>
-      <p>Per-patient workflow: pre-op, ICL Selection, surgical planner, surgery, post-op tracking. Includes Phase Demo Mode to walk through phase-by-phase rollout.</p>
-      <span class="cta">Open dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-    </a>
-    <a class="card intel" href="/intelligence">
-      <div class="card-tag"><span>● HQ</span></div>
-      <h2>STAAR Intelligence Center</h2>
-      <p>Network-wide command center: clinical analytics, operations pulse, lens supply chain, AI agents + Copilot — for STAAR leadership.</p>
-      <span class="cta">Open intelligence <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-    </a>
+
+<header class="hdr">
+  <a class="logo" href="https://www.staar.com/" title="STAAR Surgical"><img src="/assets/staar-surgical-logo-white.svg" alt="STAAR Surgical"></a>
+  <nav class="nav">
+    <a href="https://www.staar.com/products">Products</a>
+    <a href="https://investors.staar.com/">Investors</a>
+    <a href="https://www.staar.com/company">Company</a>
+    <a href="https://www.staar.com/contact-us">Contact us</a>
+    <a class="demo" href="#surfaces">Digital ecosystem</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-in">
+    <h1>Evolution in Visual Freedom<sup>™</sup><br>now connected end-to-end.</h1>
+    <p>From the official STELLA calculation to the confirmed order, the clinical journey and the network-wide intelligence — one STAAR ecosystem for surgeons, clinics and HQ.</p>
+    <p class="light">Over 4,000,000 lenses sold worldwide. Every case leaves a complete, auditable decision record.</p>
   </div>
-  <div class="foot"><span class="dot"></span><span>Static demo · no PHI · data is mocked for illustration</span></div>
-</div>
+  <a class="down" href="#surfaces" aria-label="Scroll"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></a>
+</section>
+
+<section class="surf" id="surfaces">
+  <div class="surf-in">
+    <p class="kicker">STAAR Surgical · Digital Ecosystem</p>
+    <h2>Three surfaces. One connected platform.</h2>
+    <p class="lead">Start in Stella exactly as surgeons do today. Follow the case into EVO Connect for sizing comparison and the surgical workflow. Zoom out to the Intelligence Center built for STAAR leadership.</p>
+
+    <div class="grid">
+      <a class="card stella" href="/stella">
+        <div class="visual"><img src="/assets/stella-logo-white.svg" alt="Stella"></div>
+        <div class="body">
+          <p class="tag">STAAR · System of record</p>
+          <h3>Stella</h3>
+          <p>STAAR's official calculator and ordering environment. Sign in, generate the official recommendation, launch to REVAI and confirm the order — Stella remains the single system of record.</p>
+          <span class="btn">Sign in to Stella <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card evo" href="/dashboard">
+        <div class="visual"><span class="wm"><b>EVO</b> Connect</span></div>
+        <div class="body">
+          <p class="tag">Clinic</p>
+          <h3>EVO Connect</h3>
+          <p>Per-patient workflow: pre-op, ICL sizing comparison, surgical planner, surgery and post-op tracking. Includes Phase Demo Mode to walk through the phase-by-phase rollout.</p>
+          <span class="btn">Open EVO Connect <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+
+      <a class="card hq" href="/intelligence">
+        <div class="visual"><span class="wm"><b>STAAR</b> Intelligence</span></div>
+        <div class="body">
+          <p class="tag">HQ</p>
+          <h3>STAAR Intelligence Center</h3>
+          <p>Network-wide command center: clinical analytics, operations pulse, lens supply chain, AI agents and Copilot — for STAAR leadership.</p>
+          <span class="btn">Open Intelligence <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+    </div>
+
+    <div class="links">
+      <a href="/stella">For Surgeons</a>
+      <a href="/dashboard">For Clinics</a>
+      <a href="/intelligence">For STAAR HQ</a>
+    </div>
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="ftr-in">
+    <div class="top">
+      <img src="/assets/staar-surgical-logo-white.svg" alt="STAAR Surgical">
+      <nav class="fnav">
+        <a href="https://www.staar.com/products">Products</a>
+        <a href="https://investors.staar.com/">Investors</a>
+        <a href="https://www.staar.com/company">Company</a>
+        <a href="https://www.staar.com/careers">Careers</a>
+        <a href="https://www.staar.com/contact-us">Contact us</a>
+      </nav>
+    </div>
+    <div class="bot">
+      <span>© 2026 STAAR Surgical Company. EVO ICL™, EVO+ ICL™, Visian ICL™ and Stella™ are trademarks of STAAR Surgical.</span>
+      <span class="demo-note">Demonstration only · synthetic data · not for clinical use</span>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>

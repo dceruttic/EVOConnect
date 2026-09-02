@@ -93,7 +93,7 @@ vuelven a Stella: el retorno es `href="/stella"` sin nada adjunto.
 
 Guion del presentador (6 líneas):
 1. En STELLA abrir PSEUDO-4471, OD, **Save and Calculate** → "STELLA recomienda 13.2 mm. Es el número oficial."
-2. Tarjeta de abajo: "Otras fórmulas se comparan en EVO Connect. Salimos de STELLA; sólo viajan estos valores sintéticos." **Open in EVO Connect · OD**.
+2. Panel flotante a la derecha: "Otras metodologías de sizing se comparan en EVO Connect. Salimos de STELLA." **Open in EVO Connect** → elegir **OD** (o OS / OU) → se abre en pestaña nueva.
 3. "Mismo caso, mismo ojo, mismos inputs — nada retipeado. El 13.2 de STELLA queda a la derecha, bloqueado."
 4. **Run formulas**: "ICL Guru, ICLFIT, CASIA2 — cada uno con dispositivo y versión. Sin ranking."
 5. **Your decision** → Prefer 13.6 mm · ICL Guru · Vault prediction · **Save decision**: "Queda la razón registrada; el mismo registro se guarda si mantiene 13.2."

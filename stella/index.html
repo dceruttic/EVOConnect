@@ -374,37 +374,63 @@ img,svg{max-width:100%}
   .trow input{min-width:180px}
 }
 
-/* ---------- REVAI launch card (circuit 1, step 2) — rendered only after
-     "Save and Calculate"; STELLA look, explicit boundary strip ---------- */
-.rv-launch{margin-top:26px;background:#fff;border:1.5px solid var(--teal);border-radius:8px;
-  box-shadow:var(--sh-card);overflow:hidden}
-.rv-boundary{display:flex;align-items:center;gap:12px;background:#1C1C1C;color:#fff;
-  padding:8px 18px;font-size:12.5px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
-.rv-boundary .rv-mark{margin-left:auto;display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;letter-spacing:.6px;color:#C9CDD2;text-transform:none;font-weight:400}
-.rv-boundary .rv-dot{width:9px;height:9px;border-radius:50%;background:#0080C7;box-shadow:0 0 0 3px rgba(0,128,199,.25)}
-.rv-body{padding:18px 20px 16px}
-.rv-title{font-size:22px;font-weight:600;line-height:28px;color:#000}
-.rv-sub{font-size:15px;line-height:20px;color:var(--ink-2);margin-top:4px}
-.rv-eyes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
-.rv-eye{border:1px solid var(--line-2);border-radius:8px;padding:14px 16px;background:var(--row-alt);
-  display:flex;flex-direction:column;gap:12px;min-width:0}
-.rv-eye .rv-cap{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-.rv-chips{display:flex;flex-wrap:wrap;gap:6px}
-.rv-chip{border:1px solid var(--teal);color:var(--tab-on);background:#fff;border-radius:4px;
-  padding:3px 8px;font-size:12px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
-.rv-chip.hi{background:var(--teal);color:#fff}
+/* ---------- REVAI / EVO Connect launch (circuit 1, step 2) — DR-0004.
+     Rendered only after "Save and Calculate". Deliberately NOT the STELLA
+     look: REVAI design system (navy/purple/blue gradient, Inter) so the
+     block reads as EVO Connect territory inside STELLA; the contrast IS
+     the boundary. ---------- */
+.rv-launch,.rv-float{--rv-navy:#001E60;--rv-purple:#7F21E0;--rv-blue:#0080C7;
+  font-family:'Inter',var(--font);color:#fff;border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,var(--rv-navy) 0%,#2A1F7A 45%,var(--rv-purple) 78%,var(--rv-blue) 100%);
+  box-shadow:0 20px 50px rgba(0,30,96,.35)}
+.rv-launch{margin-top:26px}
+.rv-boundary{display:flex;align-items:center;gap:10px;padding:7px 18px;font-size:11px;letter-spacing:.6px;
+  text-transform:uppercase;font-weight:600;color:#DDE3F5;background:rgba(0,0,0,.28);border-bottom:1px solid rgba(255,255,255,.12)}
+.rv-boundary .rv-dot{width:8px;height:8px;border-radius:50%;background:#00A6DC;box-shadow:0 0 0 3px rgba(0,166,220,.3)}
+.rv-body{padding:22px 24px 18px;display:flex;flex-direction:column;gap:14px}
+.rv-kicker{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:#B9C6F2;font-weight:700}
+.rv-title{font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-.6px;color:#fff}
+.rv-launch .rv-title{font-size:24px}
+.rv-sub{font-size:14.5px;line-height:1.4;color:#DDE3F5}
 .rv-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.rv-btn{font-size:15px;font-weight:700;line-height:20px;padding:11px 20px;min-height:44px;border-radius:8px;
-  border:1px solid var(--teal);background:var(--teal);color:#fff;display:inline-flex;align-items:center;gap:10px}
-.rv-btn:hover{background:var(--banner);border-color:var(--banner)}
-.rv-btn .rv-eyeb{background:#fff;color:var(--tab-on);border-radius:3px;padding:1px 7px;font-size:12px;
-  font-weight:900;letter-spacing:.5px}
-.rv-ext{font-size:11.5px;color:var(--ink-2);line-height:1.3}
-.rv-ext b{color:#0080C7;font-weight:700}
-.rv-foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2)}
-@media (max-width:900px){ .rv-eyes{grid-template-columns:minmax(0,1fr)} }
-@media (prefers-reduced-motion:no-preference){ .rv-btn{transition:background .15s} }
+.rv-btn{font-family:inherit;font-size:15px;font-weight:800;line-height:20px;padding:12px 22px;min-height:48px;border-radius:10px;
+  border:0;background:#fff;color:var(--rv-navy);display:inline-flex;align-items:center;gap:10px;cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.rv-btn:hover{background:#EAF3FF}
+.rv-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.rv-picker{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18)}
+.rv-picker .rv-plabel{font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#DDE3F5}
+.rv-seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+.rv-seg button{font-family:inherit;min-height:44px;min-width:76px;padding:8px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,.35);
+  background:transparent;color:#fff;font-size:14px;font-weight:800;letter-spacing:.5px;cursor:pointer}
+.rv-seg button small{display:block;font-size:10px;font-weight:600;letter-spacing:.3px;color:#B9C6F2}
+.rv-seg button.on{background:#fff;color:var(--rv-navy)}
+.rv-seg button.on small{color:var(--rv-blue)}
+.rv-seg button[disabled]{opacity:.35;cursor:not-allowed}
+.rv-seg button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.rv-go{font-family:inherit;min-height:44px;padding:10px 18px;border-radius:8px;border:0;background:var(--rv-blue);color:#fff;
+  font-size:14px;font-weight:800;cursor:pointer;align-self:flex-start}
+.rv-go[disabled]{opacity:.45;cursor:not-allowed}
+.rv-go:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.rv-foot{font-size:12px;color:#B9C6F2;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.rv-foot .rv-demo{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#FFD9A0;border:1px solid rgba(255,217,160,.45);
+  border-radius:4px;padding:2px 7px}
+/* floating panel — visible without scrolling once the calculation completes */
+.rv-float{position:fixed;right:20px;top:50%;transform:translateY(-50%);width:380px;max-width:calc(100vw - 40px);z-index:70}
+.rv-float.enter{animation:rvIn .4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rvIn{from{opacity:0;transform:translate(60px,-50%)}to{opacity:1;transform:translate(0,-50%)}}
+.rv-float .rv-boundary{padding-right:52px}
+.rv-min{position:absolute;top:4px;right:6px;width:40px;height:40px;border-radius:8px;border:0;background:transparent;color:#fff;
+  font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.rv-min:hover{background:rgba(255,255,255,.14)}
+.rv-min:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.rv-pill{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:70;font-family:'Inter',var(--font);
+  background:linear-gradient(135deg,#001E60,#7F21E0);color:#fff;border:0;border-radius:12px 0 0 12px;
+  padding:14px 18px 14px 16px;min-height:48px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(0,30,96,.35)}
+.rv-pill:focus-visible{outline:3px solid #7F21E0;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){ .rv-float.enter{animation:none} }
+@media (max-width:1100px){ .rv-float{display:none} .rv-pill{display:none} }
 </style>
 </head>
 <body>
@@ -707,7 +733,8 @@ const S = {
   targetLength:{od:'13.2',os:'13.2'}, altLength:{od:false,os:false},
   cylPower:{od:'+ 0.50',os:'+ 0.50'}, pick:{od:null,os:null},
   savedTarget:{od:false,os:false}, inv:null, orderN:null,
-  newp:null, newpTried:false, focusNew:null, loginErr:false
+  newp:null, newpTried:false, focusNew:null, loginErr:false,
+  rv:{pick:false, eye:null, float:'open', entered:false}
 };
 const patient = () => PATIENTS.find(p => p.pid === S.pid) || PATIENTS[0];
 const app = document.getElementById('app');
@@ -717,6 +744,7 @@ function loadFields(){
   const p = patient();
   S.fields = { od:Object.assign({}, p.od), os:Object.assign({}, p.os) };
   S.calculated=false; S.calculatedAt=null; S.results=null; S.focus=null;
+  S.rv={pick:false, eye:null, float:'open', entered:false};
   S.pick={od:null,os:null}; S.savedTarget={od:false,os:false};
   S.altLength={od:false,os:false}; S.expanded={od:false,os:false};
   S.cylPower={od:'+ 0.50',os:'+ 0.50'};
@@ -1478,73 +1506,78 @@ function viewPreop(){
 
 /* ==================================================================
    REVAI / EVO CONNECT HANDOFF (circuit 1, step 2) — ADR-0001/0002/0003
-   Copy: artifacts/05-compliance-review.md §2 (C1–C5), verbatim.
-   STELLA reads nothing back: no location, no storage, no referrer.
+   as amended by DR-0004 (sponsor round 2): EVO-branded launch, eye
+   picker OD · OS · OU, new tab (noopener), payload v1.1.
+   Approved strings kept: C3 boundary line. STELLA reads nothing back:
+   no location, no storage reads, no referrer.
    ================================================================== */
 const HANDOFF_MAX_CHARS = 2048;
-function revaiLaunchSlot(){
-  const eyes = ['od','os'].filter(e => S.results && S.results[e]);
-  if(!eyes.length) return '';
-  const block = eye => {
-    const E = eye.toUpperCase(), len = S.targetLength[eye];
-    return `<div class="rv-eye">
-      <div class="rv-cap">What travels (synthetic):</div>
-      <div class="rv-chips">
-        <span class="rv-chip hi">Case ${S.pid}</span><span class="rv-chip hi">Eye ${E}</span>
-        <span class="rv-chip">Refraction</span><span class="rv-chip">Keratometry</span>
-        <span class="rv-chip">ACD</span><span class="rv-chip">CCT</span><span class="rv-chip">WTW</span>
-        <span class="rv-chip">BVD</span><span class="rv-chip hi">STELLA result ${len} mm</span>
-      </div>
-      <div class="rv-cta">
-        <button class="rv-btn" data-act="revai-launch" data-eye="${eye}"
-          aria-label="Open in EVO Connect, eye ${E}"><span class="rv-eyeb">${E}</span>Open in EVO Connect →</button>
-        <span class="rv-ext"><b>EVO Connect by REVAI</b> · external service</span>
-      </div>
-    </div>`;
-  };
-  return `<section class="rv-launch" aria-labelledby="rv-title">
-    <div class="rv-boundary"><span class="rv-dot"></span>You are leaving STELLA · external service by REVAI
-      <span class="rv-mark">EVO Connect by REVAI · external service</span></div>
+const RV_HERO = { kicker:'EVO Connect by REVAI',
+  title:'Compare with other sizing methodologies',
+  sub:'ICL Guru, ICLFIT and CASIA2 next to the STELLA result — in EVO Connect',
+  boundary:'You are leaving STELLA · external service by REVAI',
+  foot:'Nothing is written back to STELLA.', demo:'Demonstration only – synthetic data – not for clinical use' };
+const rvEyes = () => ['od','os'].filter(e => S.results && S.results[e]);
+function rvHero(compact){
+  const eyes = rvEyes(), can = { od:eyes.includes('od'), os:eyes.includes('os') }; can.ou = can.od && can.os;
+  const seg = k => `<button type="button" data-act="rv-eye" data-eye="${k}" class="${S.rv.eye===k?'on':''}" ${can[k]?'':'disabled'}
+      aria-pressed="${S.rv.eye===k}">${k.toUpperCase()}<small>${k==='ou'?'both eyes':(can[k]?S.targetLength[k]+' mm':'no result')}</small></button>`;
+  const picker = S.rv.pick ? `<div class="rv-picker" role="group" aria-label="Choose the eye to open in EVO Connect">
+      <span class="rv-plabel">Which eye?</span>
+      <div class="rv-seg">${seg('od')}${seg('os')}${seg('ou')}</div>
+      <button type="button" class="rv-go" data-act="rv-go" ${S.rv.eye?'':'disabled'}>Confirm · open in a new tab →</button>
+    </div>` : '';
+  return `<div class="rv-boundary"><span class="rv-dot"></span>${RV_HERO.boundary}</div>
     <div class="rv-body">
-      <div class="rv-title" id="rv-title">Compare with other sizing methods in EVO Connect</div>
-      <div class="rv-sub">Opens ICL Guru, ICLFIT and CASIA2 for this case. Nothing is written back to STELLA.</div>
-      <div class="rv-eyes">${eyes.map(block).join('')}</div>
-      <div class="rv-foot">Nothing comes back into STELLA. Any order is confirmed here, in STELLA.</div>
-    </div>
-  </section>`;
+      <div class="rv-kicker">${RV_HERO.kicker}</div>
+      <div class="rv-title">${RV_HERO.title}</div>
+      <div class="rv-sub">${RV_HERO.sub}</div>
+      <div class="rv-cta"><button type="button" class="rv-btn" data-act="rv-pick" aria-expanded="${S.rv.pick}">Open in EVO Connect →</button></div>
+      ${picker}
+      <div class="rv-foot"><span>${RV_HERO.foot}</span>${compact?'':`<span class="rv-demo">${RV_HERO.demo}</span>`}</div>
+    </div>`;
+}
+function revaiLaunchSlot(){
+  if(!rvEyes().length) return '';
+  return `<section class="rv-launch" aria-label="EVO Connect">${rvHero(true)}</section>`;
+}
+function revaiFloat(){
+  if(S.route!=='preop' || !S.calculated || !rvEyes().length) return '';
+  if(S.rv.float==='min') return `<button type="button" class="rv-pill" data-act="rv-float" aria-label="Open the EVO Connect panel">Compare in EVO Connect ›</button>`;
+  const enter = S.rv.entered ? '' : ' enter'; S.rv.entered = true;
+  return `<aside class="rv-float${enter}" role="complementary" aria-label="EVO Connect">
+    <button type="button" class="rv-min" data-act="rv-min" aria-label="Minimise the EVO Connect panel" title="Minimise">–</button>
+    ${rvHero(false)}</aside>`;
 }
 function b64url(str){
   return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
-/* v1 schema (ADR-0002): whitelisted keys only, strings as typed in STELLA. */
-function buildHandoff(eye){
-  const f = S.fields[eye], E = eye.toUpperCase();
-  const inp = (k,u,extra) => Object.assign({v:String(f[k]), u, prov:'STELLA'}, extra||{});
-  const rows = S.results[eye], pick = S.pick[eye];
-  const power = (pick!=null && rows && rows[pick])
-    ? {sph:rows[pick].sph, cyl:rows[pick].cyl, axis:rows[pick].axExp} : null;
-  const inputs = {};
-  inputs[E] = {
-    sph:inp('sph','D'), cyl:inp('cyl','D',{notation:'plus-cyl'}), axis:inp('axis','°'), bvd:inp('bvd','mm'),
-    k1:inp('k1','D'), k1a:inp('k1a','°'), k2:inp('k2','D'), k2a:inp('k2a','°'),
-    acd:inp('acd','mm'), cct:inp('cct','µm'), ww:inp('ww','mm')
-  };
-  return {
-    v:1, caseId:S.pid, laterality:E, sentAt:new Date().toISOString(),
-    source:{system:'STELLA', version:'Calculator V8.00 OUS'},
-    inputs,
-    stellaRecommendation:{
+/* v1.1 schema (DR-0004): whitelisted keys only; inputs as typed in STELLA (strings). */
+function buildHandoff(lat){
+  const eyes = lat==='ou' ? ['od','os'] : [lat];
+  const eyeBlock = eye => {
+    const f = S.fields[eye], rows = S.results[eye], pick = S.pick[eye];
+    const inputs = {}; ['sph','cyl','axis','bvd','k1','k1a','k2','k2a','acd','cct','ww'].forEach(k => { inputs[k] = String(f[k]); });
+    return { inputs, stella:{
       size:String(S.targetLength[eye]), model:S.mode[eye]==='TORIC' ? 'Toric Myopic' : 'Myopic',
-      power, cylPower:S.cylPower[eye], formula:'Calculator V8.00 OUS', calculatedAt:S.calculatedAt
-    }
+      power:(pick!=null && rows && rows[pick]) ? {sph:rows[pick].sph, cyl:rows[pick].cyl, axis:rows[pick].axExp} : null,
+      cylPower:S.cylPower[eye], formula:'Calculator V8.00 OUS', calculatedAt:S.calculatedAt } };
   };
+  const out = { v:1.1, caseId:S.pid, laterality:lat.toUpperCase(), sentAt:new Date().toISOString(),
+    source:{system:'STELLA', version:'Calculator V8.00 OUS'}, eyes:{} };
+  eyes.forEach(e => { out.eyes[e] = eyeBlock(e); });
+  return out;
 }
-function launchRevai(eye){
-  if(!S.calculated || !S.results || !S.results[eye]){ toast('Not calculated','Press Save and Calculate first.'); return; }
-  const payload = b64url(JSON.stringify(buildHandoff(eye)));
+function launchRevai(lat){
+  const eyes = lat==='ou' ? ['od','os'] : [lat];
+  if(!S.calculated || !S.results || !eyes.every(e => S.results[e])){ toast('Not calculated','Press Save and Calculate first.'); return; }
+  const payload = b64url(JSON.stringify(buildHandoff(lat)));
   if(payload.length > HANDOFF_MAX_CHARS){ toast('Handoff too large','The case could not be transferred.'); return; }
-  try { sessionStorage.setItem('stella_handoff', payload); } catch(e){}
-  window.location.assign('/dashboard?handoff=' + payload);
+  /* new tab (DR-0004): sessionStorage is per-tab, so the URL is the carrier; a short-lived
+     localStorage handshake lets the new tab recover the case if its URL is cleaned. Write-only. */
+  try { localStorage.setItem('stella_handoff_pending', JSON.stringify({p:payload, ts:Date.now()})); } catch(e){}
+  window.open('/dashboard?handoff=' + payload, '_blank', 'noopener');
+  S.rv.pick = false; S.rv.eye = null; render();
 }
 
 /* ==================================================================
@@ -1790,7 +1823,7 @@ const VIEWS = {
   surgeons:viewSurgeons, 'patient-new':viewNewPatient, login:viewLogin
 };
 function render(){
-  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector();
+  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector() + revaiFloat();
   if(S.route==='preop' && S.calculated) centreRows();
   if(S.focus){
     const el = document.querySelector(`[data-f="${S.focus.eye}:${S.focus.key}"]`);
@@ -1899,7 +1932,11 @@ document.addEventListener('click', e => {
         setTimeout(()=>{const el=document.querySelector('.reshead'); if(el) el.scrollIntoView({behavior:'smooth',block:'center'});},80);
         return;
       }
-      case 'revai-launch': launchRevai(d.eye); return;
+      case 'rv-pick':  S.rv.pick = !S.rv.pick; render(); return;
+      case 'rv-eye':   S.rv.eye = d.eye; render(); return;
+      case 'rv-go':    if(S.rv.eye) launchRevai(S.rv.eye); return;
+      case 'rv-min':   S.rv.float = 'min'; render(); return;
+      case 'rv-float': S.rv.float = 'open'; S.rv.entered = false; render(); return;
       case 'print':    toast('Printing disabled','Report generation is not part of this demonstration.'); return;
       case 'reserve':  toast('Reservation blocked','Reservations and official orders are created inside STELLA only.'); return;
       case 'make':     toast('Manufacture request disabled','Not part of this demonstration.'); return;

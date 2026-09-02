@@ -35,10 +35,12 @@
   font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase;
   color: #FFD9A0; border: 1px solid rgba(255,217,160,.45); border-radius: 4px; padding: 2px 7px; white-space: nowrap;
 }
+.sh-strip-cta { grid-column: 3; grid-row: 1; justify-self: end; }
 .sh-strip .sh-return.compact {
-  grid-column: 3; grid-row: 1; justify-self: end;
   min-height: 44px; padding: 8px 12px; font-size: 12px; white-space: nowrap;
 }
+/* the CTA can be a link or a button — keep both identical */
+button.sh-return { font: inherit; cursor: pointer; border: 0; }
 
 /* ---- arrival banner (A1 → A2), collapsible, never removed ---- */
 .sh-banner {
@@ -280,3 +282,115 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
 .sh-saved li { padding: 6px 10px; border: 1px dashed var(--line); border-radius: 8px; }
 .sh-saved li.on { border-style: solid; border-color: var(--sh-teal); }
 .sh-saved b { display: inline-block; min-width: 26px; color: var(--sh-teal-dk); }
+
+/* ============================================================
+   Decision record, hand-off to STELLA and the returning order
+   (circuit 1, steps 5 to 8)
+   ============================================================ */
+
+/* live delta against the STELLA recommendation — informative, never a nudge */
+.sh-delta-line { margin-top: 10px; font-size: 12.5px; font-weight: 700; letter-spacing: .01em; }
+.sh-delta-line.same { color: #5A6478; }
+.sh-delta-line.diff { color: var(--sh-amber); }
+
+/* where the reason came from */
+.sh-src { margin-top: 8px; font-size: 11.5px; line-height: 1.45; color: #5A6478; }
+.sh-src.inferred { color: var(--sh-teal-dk); }
+.sh-src.manual { color: var(--sh-amber); }
+.sh-src-tag { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; vertical-align: 1px; }
+.sh-src-tag.inferred { background: var(--sh-teal-bg); color: var(--sh-teal-dk); }
+.sh-src-tag.manual { background: var(--sh-amber-bg); color: var(--sh-amber); }
+
+/* the sealed record */
+.sh-record { border: 1.5px solid var(--sh-teal); border-radius: 12px; background: #fff; padding: 16px 18px; }
+.sh-record-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.sh-record-title { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--sh-teal-dk); }
+.sh-record-id { margin-left: auto; font-size: 12px; font-weight: 700; color: #5A6478; font-variant-numeric: tabular-nums; }
+.sh-record-kind { font-size: 12px; font-weight: 700; padding: 7px 11px; border-radius: 8px; margin-bottom: 10px; }
+.sh-record-kind.agree { background: var(--sh-teal-bg); color: var(--sh-teal-dk); }
+.sh-record-kind.override { background: var(--sh-amber-bg); color: var(--sh-amber); }
+.sh-record .sh-kv { font-size: 13px; padding: 7px 0; }
+.sh-rec-delta { font-style: normal; font-size: 11px; font-weight: 700; margin-left: 6px; }
+.sh-rec-delta.same { color: #5A6478; }
+.sh-rec-delta.diff { color: var(--sh-amber); }
+.sh-record-foot { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #E1E5EE;
+  font-size: 11.5px; font-weight: 700; color: var(--sh-teal-dk); }
+
+/* step 8 — the confirmed order returns from STELLA */
+.sh-return-box.ordered { border-color: #1E9E5A; }
+.sh-return-boundary.done { background: #1E9E5A; }
+.sh-order-card { padding: 14px 16px 16px; }
+.sh-order-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.sh-order-head img { height: 20px; width: auto; background: #001E60; border-radius: 5px; padding: 4px 6px; }
+.sh-order-head span { font-size: 13px; font-weight: 800; color: #14663D; }
+.sh-order-no { margin-left: auto; font-size: 19px; font-weight: 800; color: #0B1B33; font-variant-numeric: tabular-nums; }
+.sh-order-card .sh-kv { font-size: 13px; padding: 7px 0; }
+.sh-postop { margin-top: 12px; padding: 9px 11px; border: 1px dashed #B7BECC; border-radius: 8px;
+  font-size: 11.5px; color: #5A6478; background: #F7F8FA; }
+
+
+/* ============================================================
+   STELLA ordering modal hosted inside EVO Connect (step 7).
+   STELLA's own surface and palette, visibly outside EVO Connect,
+   opened with STELLA's own case data.
+   ============================================================ */
+.sh-omodal-scrim { position: fixed; inset: 0; z-index: 2000; background: rgba(11, 27, 51, .55);
+  display: grid; place-items: center; padding: 24px; }
+.sh-omodal { width: min(680px, 100%); max-height: 90vh; display: flex; flex-direction: column;
+  background: #fff; border-radius: 14px 14px 6px 6px; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(11, 27, 51, .35);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.sh-oboundary { background: #001E60; color: #C9D6F5; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; padding: 7px 20px; }
+.sh-ohead { background: var(--sh-teal); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 14px; }
+.sh-ohead img { height: 26px; width: auto; background: rgba(255,255,255,.14); border-radius: 6px; padding: 4px 7px; }
+.sh-ohead .t { font-size: 19px; font-weight: 700; line-height: 26px; }
+.sh-ohead .s { font-size: 12px; opacity: .92; letter-spacing: .02em; }
+.sh-obody { padding: 20px; overflow: auto; background: #F8F9FA; }
+.sh-oseed { font-size: 12px; line-height: 1.5; color: #5A6478; margin-bottom: 14px; }
+.sh-orec { background: #fff; border: 1px solid #DCE0E6; border-radius: 8px; padding: 13px 15px; margin-bottom: 16px; }
+.sh-ok { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #7A8496; }
+.sh-orec-v { font-size: 24px; font-weight: 700; color: #0B1B33; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.sh-orec-m { font-size: 12.5px; color: #5A6478; margin-top: 2px; }
+.sh-ogrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+.sh-ogrid label { display: block; font-size: 12px; color: #5A6478; }
+.sh-ogrid label > span { display: flex; align-items: center; gap: 6px; }
+.sh-otag { font-style: normal; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--sh-teal-bg); color: var(--sh-teal-dk); border-radius: 999px; padding: 2px 6px; }
+.sh-ogrid select, .sh-ogrid input { width: 100%; box-sizing: border-box; height: 40px; margin-top: 6px;
+  border: 1px solid #C9CFD8; border-radius: 6px; padding: 0 10px; font: inherit; font-size: 16px; color: #0B1B33; background: #fff; }
+.sh-ogrid select:focus, .sh-ogrid input:focus { outline: 2px solid var(--sh-teal); outline-offset: -1px; }
+.sh-odec { margin-top: 14px; font-size: 12.5px; line-height: 1.5; color: #5A6478;
+  border-left: 3px solid #C9CFD8; padding-left: 11px; }
+.sh-odiff { margin-top: 16px; border: 1px solid #E0A93C; background: #FEF6E7; border-radius: 8px; padding: 13px 15px; }
+.sh-odiff .t { font-size: 14.5px; font-weight: 700; color: #8A5A00; }
+.sh-odiff .x { font-size: 13px; color: #6B4A0B; margin-top: 5px; line-height: 1.45; }
+.sh-odiff label { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 13.5px; color: #4A3405; }
+.sh-oerr { color: #C0392B; font-size: 13px; margin-top: 11px; }
+.sh-ofoot { display: flex; align-items: center; gap: 11px; padding: 13px 20px; background: #fff; border-top: 1px solid #E4E7EC; }
+.sh-ogrow { flex: 1; }
+.sh-odemo, .sh-oapi { font-size: 11.5px; color: #7A8496; }
+.sh-oapi { color: #14663D; font-weight: 700; }
+.sh-obtn { font: inherit; font-size: 14px; font-weight: 700; padding: 10px 18px; border-radius: 8px;
+  border: 0; background: var(--sh-teal); color: #fff; cursor: pointer; }
+.sh-obtn.ghost { background: #fff; color: #354052; border: 1px solid #C9CFD8; }
+.sh-oreceipt { background: #fff; border: 1px solid #BFE3CD; border-left: 4px solid #1E9E5A; border-radius: 8px; padding: 17px 19px; }
+.sh-ono { font-size: 25px; font-weight: 800; color: #0B1B33; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 3px 0 12px; }
+.sh-orow { display: flex; gap: 14px; font-size: 13.5px; padding: 5px 0; }
+.sh-orow span { color: #5A6478; min-width: 168px; }
+.sh-orow b { color: #0B1B33; font-weight: 600; }
+.sh-oaudit { margin-top: 14px; padding-top: 11px; border-top: 1px solid #E4E7EC; font-size: 11.5px; color: #7A8496; line-height: 1.5; }
+
+/* closing analytical view of the case */
+.sh-caserec { margin-top: 14px; border: 1px solid var(--line); border-radius: 10px; background: #FBFCFD; }
+.sh-caserec > summary { cursor: pointer; padding: 10px 13px; font-size: 12px; font-weight: 700; color: #354052; }
+.sh-caserec-b { padding: 4px 13px 14px; }
+.sh-crk { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: #7A8496; margin: 12px 0 6px; }
+.sh-crvals { display: flex; flex-wrap: wrap; gap: 6px; }
+.sh-crvals span { background: #fff; border: 1px solid var(--line); border-radius: 7px;
+  padding: 5px 9px; font-size: 12px; color: #0B1B33; font-variant-numeric: tabular-nums; }
+.sh-crvals span em { font-style: normal; display: block; font-size: 9.5px; letter-spacing: .07em;
+  text-transform: uppercase; color: #7A8496; }
+.sh-crvals span.none { color: #7A8496; font-style: italic; }

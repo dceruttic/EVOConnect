@@ -241,6 +241,42 @@ td a{font-size:13.008px}
 .mfoot{display:flex;align-items:center;gap:16px;padding:16px 24px;background:#fff;
   border-radius:0 0 4px 4px;box-shadow:rgba(0,0,0,.16) 0 2px 3px 0}
 .mfoot .b{border-radius:10px;font-size:12.8px;font-weight:400}
+
+/* order modal — circuit 1, step 7. STELLA is the only ordering system and the
+   only system of record, so the lens is typed here by hand: nothing arrives
+   pre-filled from REVAI. */
+.omodal{width:min(720px,100%);max-height:90vh;background:#fff;border-radius:16px 16px 4px 4px;
+  display:flex;flex-direction:column;overflow:hidden}
+.ohead{background:var(--teal);color:#fff;padding:16px 22px}
+.ohead .t{font-size:21px;font-weight:700;line-height:28px}
+.ohead .s{font-size:13px;opacity:.9;margin-top:2px;letter-spacing:.3px}
+.obody{padding:22px;overflow:auto;background:#F8F9FA}
+.orec{background:#fff;border:1px solid var(--line-2);border-radius:8px;padding:14px 16px;margin-bottom:18px}
+.orec .k{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.orec .v{font-size:22px;font-weight:700;color:var(--ink);margin-top:4px}
+.orec .m{font-size:13px;color:var(--ink-2);margin-top:2px}
+.ogrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ogrid label{display:block;font-size:12px;color:var(--ink-2)}
+.ogrid select,.ogrid input{width:100%;box-sizing:border-box;height:40px;margin-top:6px;
+  border:1px solid var(--line-2);border-radius:6px;padding:0 10px;font-family:inherit;font-size:16px;color:var(--ink);background:#fff}
+.ogrid select:focus,.ogrid input:focus{outline:2px solid var(--teal);outline-offset:-1px}
+.ohint{font-size:12.5px;color:var(--ink-2);margin-top:12px;line-height:1.45}
+.odiff{margin-top:18px;border:1px solid #E0A93C;background:#FFF6E5;border-radius:8px;padding:14px 16px}
+.odiff .t{font-size:15px;font-weight:700;color:#8A5A00}
+.odiff .x{font-size:13.5px;color:#6B4A0B;margin-top:5px;line-height:1.45}
+.odiff label{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:14px;color:#4A3405}
+.odiff input{margin-top:2px}
+.oerr{color:#C0392B;font-size:13px;margin-top:10px}
+.ofoot{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#fff;
+  box-shadow:rgba(0,0,0,.16) 0 -1px 3px 0}
+.oreceipt{background:#fff;border:1px solid var(--green-edge);border-left:4px solid var(--green);
+  border-radius:8px;padding:18px 20px}
+.oreceipt .no{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.oreceipt .rows{margin-top:14px;display:grid;gap:7px}
+.oreceipt .r{display:flex;gap:14px;font-size:14px}
+.oreceipt .r span{color:var(--ink-2);min-width:150px}
+.oreceipt .r b{color:var(--ink);font-weight:600}
+.oaudit{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.5;border-top:1px solid var(--line-2);padding-top:12px}
 .empty{text-align:center;font-size:30px;padding:170px 0;color:var(--ink)}
 .qty{display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 8px 0 14px;
   border:1px solid #C3CBD3;border-radius:4px;background:#fff;font-size:14px}
@@ -761,7 +797,8 @@ const S = {
   cylPower:{od:'+ 0.50',os:'+ 0.50'}, pick:{od:null,os:null},
   savedTarget:{od:false,os:false}, inv:null, orderN:null,
   newp:null, newpTried:false, focusNew:null, loginErr:false,
-  rv:{pick:false, eye:null, banner:'open', entered:false}
+  rv:{pick:false, eye:null, banner:'open', entered:false},
+  order:null, orders:{}
 };
 const patient = () => PATIENTS.find(p => p.pid === S.pid) || PATIENTS[0];
 const app = document.getElementById('app');
@@ -1528,6 +1565,8 @@ function resultPanel(eye){
         ? `<button class="b b-primary" style="height:32px" data-inv="${eye}">Inventory Lookup</button>`
         : `<button class="b ${pick!=null?'b-primary':'b-grey'}" style="height:32px"
             ${pick!=null?`data-save="${eye}"`:'disabled'}>Save</button>`}
+      <button class="b ${S.orders[eye]?'b-outline':'b-primary'}" style="height:32px"
+        data-neworder="${eye}">${S.orders[eye]?`Order ${S.orders[eye].orderNo} ✓`:'Order lens'}</button>
     </div>
   </div>`;
 }
@@ -1690,6 +1729,114 @@ function inventory(){
       <button class="b b-primary" data-act="closeinv">Done ✓</button>
     </div>
   </div></div>`;
+}
+
+/* ==================================================================
+   ORDER MODAL — circuit 1, step 7
+   STELLA creates, validates, records and audits the official order and is
+   the only ordering system. Nothing arrives here from REVAI: the surgeon
+   types the lens by hand, and any divergence from the STELLA recommendation
+   has to be confirmed explicitly before the order can be placed.
+   ================================================================== */
+const ORDER_KEY = 'stella_order_confirmed';
+const ORDER_SIZES = ['12.1','12.6','13.2','13.7'];
+
+function stellaRec(eye){
+  const rows = S.results && S.results[eye], pick = S.pick[eye];
+  const r = (pick!=null && rows) ? rows[pick] : null;
+  return { size:S.targetLength[eye], model:S.mode[eye]==='TORIC'?'Toric Myopic':'Myopic',
+           power:r?r.sph:null, cyl:r?r.cyl:null, axis:r?r.axExp:null, formula:'Calculator V8.00 OUS' };
+}
+function orderModal(){
+  const o = S.order; if(!o) return '';
+  const eye = o.eye, R = stellaRec(eye), p = patient();
+  const done = S.orders[eye];
+  const head = `<div class="ohead">
+      <div class="t">${done?'Order confirmed':'Confirm ICL order'}</div>
+      <div class="s">${p.pid} · ${eye.toUpperCase()} · STELLA — STAAR system of record</div></div>`;
+
+  if(done){
+    return `<div class="scrim" data-oscrim="1"><div class="omodal">${head}
+      <div class="obody"><div class="oreceipt">
+        <div class="k" style="font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:700">Order number</div>
+        <div class="no">${done.orderNo}</div>
+        <div class="rows">
+          <div class="r"><span>Case · eye</span><b>${p.pid} · ${eye.toUpperCase()}</b></div>
+          <div class="r"><span>Ordered lens</span><b>${done.lens.size} mm${done.lens.power?' · '+done.lens.power+' D':''}${done.lens.axis?' · '+done.lens.axis+'°':''}</b></div>
+          <div class="r"><span>STELLA recommendation</span><b>${done.stella.size} mm · ${done.stella.model}</b></div>
+          <div class="r"><span>Divergence</span><b>${done.divergent?done.delta+' mm — confirmed by the surgeon':'none — recommendation accepted'}</b></div>
+          <div class="r"><span>Confirmed</span><b>${done.confirmedAt.replace('T',' ').slice(0,16)} UTC</b></div>
+          <div class="r"><span>Confirmed by</span><b>${SURGEON.full}</b></div>
+        </div>
+        <div class="oaudit">Created, validated, recorded and audited in STELLA. The confirmed order is
+          returned to the linked analytical record in EVO Connect — that return carries the order only,
+          never a clinical recommendation into STELLA.</div>
+      </div></div>
+      <div class="ofoot"><div class="grow"></div>
+        <button class="b b-primary b-lg" data-act="closeorder">Done ✓</button></div>
+    </div></div>`;
+  }
+
+  const size = o.size||'', power = o.power||'', axis = o.axis||'';
+  const diverges = size && size !== String(R.size);
+  const delta = diverges ? ((parseFloat(size)-parseFloat(R.size)>=0?'+':'')+(parseFloat(size)-parseFloat(R.size)).toFixed(1)) : '';
+  return `<div class="scrim" data-oscrim="1"><div class="omodal">${head}
+    <div class="obody">
+      <div class="orec">
+        <div class="k">STELLA recommendation</div>
+        <div class="v">${R.size} mm</div>
+        <div class="m">${R.model}${R.power?' · '+R.power+' D':''}${R.axis?' · axis '+R.axis+'°':''} · ${R.formula}</div>
+      </div>
+      <div class="ogrid">
+        <label>Size (mm)<select data-o="size">
+          <option value="">—</option>
+          ${ORDER_SIZES.map(v=>`<option value="${v}" ${size===v?'selected':''}>${v}</option>`).join('')}
+        </select></label>
+        <label>Power (D)<input data-o="power" value="${power}" placeholder="—"></label>
+        <label>Axis (°, optional)<input data-o="axis" value="${axis}" placeholder="—"></label>
+      </div>
+      <div class="ohint">Enter the lens you are ordering. Nothing is pre-filled from an external
+        service — STELLA does not receive lens selections from outside.</div>
+      ${diverges?`<div class="odiff">
+        <div class="t">The lens you entered differs from the STELLA recommendation</div>
+        <div class="x">STELLA recommends ${R.size} mm; you entered ${size} mm (${delta} mm).
+          You can order the lens you entered, but the difference has to be confirmed.</div>
+        <label><input type="checkbox" data-o="ack" ${o.ack?'checked':''}>
+          <span>I confirm I am ordering ${size} mm instead of the ${R.size} mm recommended by STELLA.</span></label>
+      </div>`:''}
+      ${o.err?`<div class="oerr">${o.err}</div>`:''}
+    </div>
+    <div class="ofoot">
+      <span style="font-size:12px;color:var(--muted)">Demonstration only — no lens is ordered.</span>
+      <div class="grow"></div>
+      <button class="b b-outline" data-act="closeorder">Cancel</button>
+      <button class="b b-primary" data-act="placeorder">Place order</button>
+    </div>
+  </div></div>`;
+}
+function placeOrder(){
+  const o = S.order, eye = o.eye, R = stellaRec(eye);
+  if(!o.size){ o.err = 'Select the lens size you are ordering.'; render(); return; }
+  if(!o.power){ o.err = 'Enter the lens power.'; render(); return; }
+  const diverges = o.size !== String(R.size);
+  if(diverges && !o.ack){ o.err = 'Confirm the difference with the STELLA recommendation before placing the order.'; render(); return; }
+  o.err = null;
+  const rec = {
+    caseId: patient().pid, eye: eye.toUpperCase(),
+    orderNo: String(760000 + Math.floor(Math.random()*9000)),
+    lens: { size:o.size, power:o.power, axis:o.axis||null },
+    stella: { size:String(R.size), model:R.model, formula:R.formula },
+    divergent: diverges, delta: diverges ? ((parseFloat(o.size)-parseFloat(R.size)>=0?'+':'')+(parseFloat(o.size)-parseFloat(R.size)).toFixed(1)) : '0.0',
+    confirmedBy: SURGEON.full, confirmedAt: new Date().toISOString(), system: 'STELLA'
+  };
+  S.orders[eye] = rec;
+  /* step 8 — the confirmed order travels STELLA → REVAI. One direction only. */
+  try {
+    const all = JSON.parse(localStorage.getItem(ORDER_KEY) || '{}');
+    all[rec.caseId + '|' + rec.eye] = rec;
+    localStorage.setItem(ORDER_KEY, JSON.stringify(all));
+  } catch(e){}
+  render();
 }
 
 /* ==================================================================
@@ -1891,7 +2038,7 @@ const VIEWS = {
   surgeons:viewSurgeons, 'patient-new':viewNewPatient, login:viewLogin
 };
 function render(){
-  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector();
+  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector() + orderModal();
   if(S.route==='preop' && S.calculated) centreRows();
   if(S.focus){
     const el = document.querySelector(`[data-f="${S.focus.eye}:${S.focus.key}"]`);
@@ -1940,6 +2087,20 @@ document.addEventListener('input', e => {
   document.querySelectorAll('.bbtn').forEach(b => { b.disabled = !ready || S.calculated; });
 });
 
+/* order modal: size and the divergence acknowledgement re-render (they drive the
+   confirmation panel); power and axis are kept silently so the caret stays put */
+document.addEventListener('change', e => {
+  const k = e.target.dataset && e.target.dataset.o;
+  if(!k || !S.order) return;
+  if(k === 'ack'){ S.order.ack = e.target.checked; S.order.err = null; render(); return; }
+  if(k === 'size'){ S.order.size = e.target.value; S.order.ack = false; S.order.err = null; render(); return; }
+});
+document.addEventListener('input', e => {
+  const k = e.target.dataset && e.target.dataset.o;
+  if(!k || !S.order) return;
+  if(k === 'power' || k === 'axis') S.order[k] = e.target.value;
+});
+
 /* new-patient form: update the model and the live banner, keep the caret */
 document.addEventListener('input', e => {
   const k = e.target.dataset && e.target.dataset.np;
@@ -1961,11 +2122,13 @@ document.addEventListener('click', e => {
   const sel = '[data-go],[data-patient],[data-order],[data-tab],[data-pop],[data-act],[data-editeye],'
             + '[data-exp],[data-refr],[data-mode],[data-tg],[data-flip],[data-reset],[data-pick],'
             + '[data-alt],[data-len],[data-cyl],[data-save],[data-cancel],[data-inv],[data-mtab],'
-            + '[data-scrim],[data-selscrim],[data-np-sex],[data-np-tg]';
+            + '[data-scrim],[data-selscrim],[data-np-sex],[data-np-tg],[data-neworder],[data-oscrim]';
   const t = e.target.closest(sel);
   if(!t){ if(S.pop || S.usermenu){ S.pop=null; S.usermenu=false; render(); } return; }
   const d = t.dataset;
-  if((d.scrim!==undefined || d.selscrim!==undefined) && e.target !== t) return;
+  if((d.scrim!==undefined || d.selscrim!==undefined || d.oscrim!==undefined) && e.target !== t) return;
+  if(d.oscrim!==undefined){ S.order = null; render(); return; }
+  if(d.neworder){ S.order = { eye:d.neworder, size:'', power:'', axis:'', ack:false, err:null }; render(); return; }
 
   if(d.npSex){ S.newp.sex = d.npSex; render(); return; }
   if(d.npTg){ S.newp[d.npTg] = !S.newp[d.npTg]; render(); return; }
@@ -1986,6 +2149,8 @@ document.addEventListener('click', e => {
       case 'selector': S.selector = true; render(); return;
       case 'closesel': S.selector = false; render(); return;
       case 'nologin':  toast('Sign-in disabled','This is a demonstration reproduction.'); return;
+      case 'closeorder': S.order = null; render(); return;
+      case 'placeorder': placeOrder(); return;
       case 'newpreop':
       case 'opencalc': loadFields(); go('preop'); return;
       case 'savepre':  toast('Pre-op data saved','Demonstration only — nothing was written.', true); return;

@@ -57,6 +57,37 @@
     R4: 'Return without recording your decision?',
     R4a: 'Return anyway', R4b: 'Stay',
     O1: 'Orders are created in STELLA only',
+    K1: 'Δ vs STELLA {d} mm',
+    K2: 'Same lens as the STELLA recommendation',
+    K3: 'Inferred from {m}',
+    K4: 'Entered manually',
+    K5: 'No method in the ecosystem produced this decision, so the reason is entered by hand.',
+    K6: 'Decision record',
+    K7: 'Recorded in REVAI · nothing was written to STELLA',
+    K8: 'Agreement — recorded exactly as an override would be',
+    K9: 'Override — recorded with its influencing method and reason',
+    K10: 'Type these values into STELLA',
+    K11: 'EVO Connect does not send them. You transcribe them yourself — that is the only bridge back.',
+    K12: 'Order confirmed in STELLA',
+    K13: 'Returned to the linked case record in EVO Connect · STELLA → REVAI',
+    K14: 'Post-operative vault and implanted lens — record view, not functional',
+    L1: 'Order the lens in STELLA',
+    L2: 'STELLA opens with its own case data already loaded. Change it to the lens you decided and confirm there.',
+    L3: 'STAAR · STELLA ordering surface — you have left EVO Connect',
+    L4: 'Confirm ICL order',
+    L5: 'from STELLA',
+    L6: 'Loaded from the STELLA case. EVO Connect writes nothing here — the values below are STELLA’s own.',
+    L7: 'The lens you entered differs from the STELLA recommendation',
+    L8: 'STELLA recommends {rec} mm; you entered {got} mm ({d} mm). You can order the lens you entered, but the difference has to be confirmed.',
+    L9: 'I confirm I am ordering {got} mm instead of the {rec} mm recommended by STELLA.',
+    L10: 'Place order in STELLA',
+    L11: 'Order created, validated and audited in STELLA. Returned to EVO Connect over the API — the return carries the order, never a clinical recommendation into STELLA.',
+    L12: 'Case decision record',
+    L13: 'Input data from STELLA',
+    L14: 'Method outputs compared in EVO Connect',
+    L15: 'STELLA recommendation',
+    L16: 'What the surgeon ordered, and on what argument',
+    L17: 'Returned to REVAI by API',
     F1: 'Demonstration only – synthetic data – not for clinical use',
     EYE_ONE: 'This case arrived from STELLA for {lat} only',
     EYE_OU: 'Switch OD / OS — each eye arrived from STELLA separately'
@@ -70,6 +101,11 @@
     { code: 'ANATOMY_ASOCT', label: 'AS-OCT anatomy' }, { code: 'SURGEON_EXPERIENCE', label: 'Surgeon experience' },
     { code: 'OTHER', label: 'Other' }
   ];
+  /* J6 inference: Dave wants the reason derived from the ecosystem's own logic
+     wherever that is possible. It is possible exactly when the influencing method
+     is one of the integrated ones; with an outside nomogram there is nothing to
+     infer from and the field falls back to manual. */
+  var INFERRED_REASON = { ICL_GURU: 'VAULT_BAND', ICL_FIT: 'ANATOMY_ASOCT', CASIA2: 'ANATOMY_ASOCT' };
   var SIZES = ['12.1', '12.6', '13.2', '13.7'];
   var OVERRIDES = { ICL_GURU: { recSize: 13.6, vault: 520 }, ICL_FIT: { recSize: 13.7, vault: 480 }, CASIA2: { recSize: 13.6, vault: 510 } };
   var HANDOFF_SET = ['ICL_GURU', 'ICL_FIT', 'CASIA2'];
@@ -392,7 +428,14 @@
   /* ---------- strip + panel ---------- */
   function stripFacts(rec) { var E = curEye(rec); return fmt(COPY.A2, { caseId: rec.caseId, lat: E, size: rec.stella[E].size }); }
   function returnCta(compact) {
-    var a = el('<a class="sh-return' + (compact ? ' compact' : '') + '" href="/stella">' + esc(COPY.R1) + '</a>');
+    /* once the decision is on record the CTA opens the STELLA ordering surface;
+       before that it is still the plain return link to STELLA. */
+    if (H && H.decisions[curEye(H)]) {
+      var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '">' + esc(COPY.L1) + '</button>');
+      b.addEventListener('click', function () { openOrderModal(H); });
+      return b;
+    }
+    var a = el('<a class="sh-return' + (compact ? ' compact' : '') + '" href="/stella" target="_blank" rel="noopener">' + esc(COPY.R1) + '</a>');
     a.addEventListener('click', function (e) {
       if (allowReturn || (H && H.eyes.some(function (E) { return !!H.decisions[E]; }))) return;
       e.preventDefault(); showReturnPrompt(a);
@@ -418,8 +461,8 @@
       '<img class="sh-strip-logo" src="' + STELLA_LOGO + '" alt="STELLA">' +
       '<span class="sh-strip-facts">' + esc(stripFacts(rec)) + '</span>' +
       '<span class="sh-strip-boundary">' + esc(COPY.C3) + '</span>' +
-      '<span class="sh-stamp">' + esc(COPY.F1) + '</span></div>');
-    s.appendChild(returnCta(true));
+      '<span class="sh-stamp">' + esc(COPY.F1) + '</span><span class="sh-strip-cta"></span></div>');
+    s.querySelector('.sh-strip-cta').appendChild(returnCta(true));
     return s;
   }
   function buildPanel(rec) {
@@ -483,7 +526,8 @@
         '<label><span>Size (mm)</span><select name="sh-size"><option value="">—</option>' + sizeOptions(rec).map(function (s) { return '<option value="' + s + '"' + sel(d.plannedLens && d.plannedLens.size, s) + '>' + s + '</option>'; }).join('') + '</select></label>' +
         '<label><span>Power (D)</span><input type="text" name="sh-power" inputmode="decimal" value="' + esc(pw) + '" placeholder="—"></label>' +
         '<label><span>Axis (°, optional)</span><input type="text" name="sh-axis" inputmode="numeric" value="' + esc(ax) + '" placeholder="—"></label>' +
-        '</div><div class="sh-err" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
+        '</div><div class="sh-delta-line" id="shDelta" data-stella="' + esc(R.size) + '"></div>' +
+        '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
       '<fieldset class="sh-fs"><legend class="sh-lg">Influencing method</legend><div class="sh-chips">' +
         METHODS.map(function (m) { return '<label class="sh-chip"><input type="radio" name="sh-method" value="' + m.code + '"' + chk(d.influencingMethod, m.code) + '><span>' + esc(m.label) + '</span></label>'; }).join('') +
         '</div><input class="sh-other" type="text" name="sh-method-other" maxlength="60" placeholder="name required" value="' + esc(d.otherMethodName || '') + '" aria-label="Other / custom method name" hidden>' +
@@ -492,6 +536,7 @@
       '<fieldset class="sh-fs"><legend class="sh-lg">Reason</legend><div class="sh-chips">' +
         REASONS.map(function (r) { return '<label class="sh-chip"><input type="radio" name="sh-reason" value="' + r.code + '"' + chk(d.reason && d.reason.code, r.code) + '><span>' + esc(r.label) + '</span></label>'; }).join('') +
         '</div><input class="sh-text" type="text" name="sh-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc(d.reason && d.reason.text || '') + '" aria-label="Reason, optional text">' +
+        '<div class="sh-src" id="shReasonSrc" hidden></div>' +
         '<div class="sh-err" data-err="reason" hidden>Select a reason.</div></fieldset>' +
       '<div class="sh-form-actions"><button type="submit" class="sh-btn">' + esc(COPY.J7) + '</button></div></form>';
   }
@@ -503,12 +548,22 @@
   }
   function decisionSummary(rec) {
     var d = rec.decision, R = rec.stellaRecommendation, x = describe(rec, d);
-    return '<div class="sh-summary" id="shDecisionSummary">' +
+    var same = String(d.plannedLens.size) === String(R.size);
+    var delta = same ? COPY.K2 : fmt(COPY.K1, { d: (parseFloat(d.plannedLens.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(d.plannedLens.size) - parseFloat(R.size)).toFixed(1) });
+    var src = d.reasonSource === 'inferred'
+      ? '<span class="sh-src-tag inferred">' + esc(fmt(COPY.K3, { m: (METHODS.find(function (m) { return m.code === d.influencingMethod; }) || {}).label })) + '</span>'
+      : '<span class="sh-src-tag manual">' + esc(COPY.K4) + '</span>';
+    return '<div class="sh-record" id="shDecisionSummary">' +
+      '<div class="sh-record-head"><span class="sh-record-title">' + esc(COPY.K6) + '</span>' +
+        '<span class="sh-record-id">' + esc(rec.caseId) + ' · ' + esc(d.eye) + '</span></div>' +
+      '<div class="sh-record-kind ' + (d.choice === 'accept' ? 'agree' : 'override') + '">' +
+        esc(d.choice === 'accept' ? COPY.K8 : COPY.K9) + '</div>' +
       '<div class="sh-kv"><span>Decision</span><b>' + esc(d.choice === 'accept' ? fmt(COPY.J2, { size: R.size }) : COPY.J3) + '</b></div>' +
-      '<div class="sh-kv"><span>Planned lens</span><b>' + esc(x.lens) + '</b></div>' +
+      '<div class="sh-kv"><span>Planned lens</span><b>' + esc(x.lens) + ' <em class="sh-rec-delta ' + (same ? 'same' : 'diff') + '">' + esc(delta) + '</em></b></div>' +
       '<div class="sh-kv"><span>Influencing method</span><b>' + esc(x.method) + '</b></div>' +
-      '<div class="sh-kv"><span>Reason</span><b>' + esc(x.reason) + '</b></div>' +
-      '<div class="sh-kv"><span>Time</span><b>' + esc(utc(d.recordedAt)) + '</b></div>' +
+      '<div class="sh-kv"><span>Reason</span><b>' + esc(x.reason) + ' ' + src + '</b></div>' +
+      '<div class="sh-kv"><span>Recorded</span><b>' + esc(utc(d.recordedAt)) + '</b></div>' +
+      '<div class="sh-record-foot">' + esc(COPY.K7) + '</div>' +
       '<div class="sh-form-actions"><button type="button" class="sh-btn ghost" id="shEditDecision">Edit</button></div></div>';
   }
   function savedList(rec) {
@@ -527,18 +582,21 @@
   }
   function renderDecision(body, rec) {
     body.innerHTML = (rec.decision ? decisionSummary(rec) : decisionForm(rec)) + savedList(rec);
+    renderReturn(rec);
     if (rec.decision) {
       body.querySelector('#shEditDecision').addEventListener('click', function () {
         var draft = rec.decision; rec.decision = null;
-        body.innerHTML = decisionForm(rec, draft) + savedList(rec); wireForm(body, rec);
+        body.innerHTML = decisionForm(rec, draft) + savedList(rec); wireForm(body, rec, draft);
+        renderReturn(rec);
       });
       return;
     }
     wireForm(body, rec);
   }
-  function wireForm(body, rec) {
+  function wireForm(body, rec, d0) {
     var form = body.querySelector('#shDecisionForm');
     var R = rec.stellaRecommendation;
+    var reasonTouched = false, reasonSource = 'manual';
     var lensFs = form.querySelector('#shLensFs');
     var sizeSel = form.querySelector('[name="sh-size"]'), pwIn = form.querySelector('[name="sh-power"]'), axIn = form.querySelector('[name="sh-axis"]');
     function syncChoice() {
@@ -554,13 +612,49 @@
       var m = (form.querySelector('[name="sh-method"]:checked') || {}).value;
       form.querySelector('[name="sh-method-other"]').hidden = m !== 'OTHER';
     }
+    function syncDelta() {
+      var node = form.querySelector('#shDelta'); if (!node) return;
+      var v = sizeSel.value, base = parseFloat(R.size);
+      if (!v) { node.textContent = ''; node.className = 'sh-delta-line'; return; }
+      var d = parseFloat(v) - base;
+      if (Math.abs(d) < 0.001) { node.textContent = COPY.K2; node.className = 'sh-delta-line same'; return; }
+      node.textContent = fmt(COPY.K1, { d: (d >= 0 ? '+' : '') + d.toFixed(1) });
+      node.className = 'sh-delta-line diff';
+    }
+    /* the reason is inferred from the influencing method until the surgeon edits it */
+    function applyInference() {
+      if (reasonTouched) return;
+      var m = (form.querySelector('[name="sh-method"]:checked') || {}).value;
+      var code = INFERRED_REASON[m];
+      form.querySelectorAll('[name="sh-reason"]').forEach(function (i) { i.checked = code ? i.value === code : false; });
+      reasonSource = code ? 'inferred' : 'manual';
+      syncReasonSrc(m, code);
+    }
+    function syncReasonSrc(m, code) {
+      var node = form.querySelector('#shReasonSrc'); if (!node) return;
+      if (!m) { node.hidden = true; return; }
+      node.hidden = false;
+      if (m === 'OTHER') { node.className = 'sh-src manual'; node.textContent = COPY.K5; return; }
+      if (reasonSource === 'inferred' && code) {
+        node.className = 'sh-src inferred';
+        node.textContent = fmt(COPY.K3, { m: (METHODS.find(function (x) { return x.code === m; }) || {}).label });
+      } else { node.className = 'sh-src manual'; node.textContent = COPY.K4; }
+    }
     function syncChips() { form.querySelectorAll('.sh-chip, .sh-radio').forEach(function (l) { var i = l.querySelector('input'); l.classList.toggle('on', !!(i && i.checked)); }); }
     form.addEventListener('change', function (e) {
-      if (e.target.name === 'sh-choice') syncChoice();
-      if (e.target.name === 'sh-method') syncOther();
+      if (e.target.name === 'sh-choice') { syncChoice(); syncDelta(); }
+      if (e.target.name === 'sh-size') syncDelta();
+      if (e.target.name === 'sh-method') { syncOther(); applyInference(); }
+      if (e.target.name === 'sh-reason') {
+        reasonTouched = true; reasonSource = 'manual';
+        syncReasonSrc((form.querySelector('[name="sh-method"]:checked') || {}).value, null);
+      }
       syncChips();
     });
-    syncChoice(); syncOther(); syncChips();
+    syncChoice(); syncOther(); syncDelta(); syncChips();
+    if (d0 && d0.reasonSource) { reasonSource = d0.reasonSource; reasonTouched = d0.reasonSource === 'manual'; }
+    syncReasonSrc((form.querySelector('[name="sh-method"]:checked') || {}).value,
+      INFERRED_REASON[(form.querySelector('[name="sh-method"]:checked') || {}).value]);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var err = function (k, on) { var n = form.querySelector('[data-err="' + k + '"]'); if (n) n.hidden = !on; return on; };
@@ -581,6 +675,7 @@
         plannedLens: { size: size, power: pwIn.value.trim() || null, axis: axIn.value.trim() || null },
         influencingMethod: method, otherMethodName: method === 'OTHER' ? other : null,
         reason: { code: reason, text: form.querySelector('[name="sh-reason-text"]').value.trim().slice(0, 140) },
+        reasonSource: reasonSource,
         recordedAt: new Date().toISOString()
       };
       try { sessionStorage.setItem(DECISION_KEY, JSON.stringify({ key: decisionKey(rec), decisions: rec.decisions })); } catch (x) {}
@@ -598,14 +693,240 @@
     } catch (e) {}
   }
 
-  /* ---------- return block (US-7) ---------- */
-  function buildReturn() {
-    var box = el('<section class="sh-return-box" aria-label="Return to STELLA">' +
-      '<div class="sh-return-boundary">' + esc(COPY.R3) + '</div><div class="sh-return-body">' +
-      '<img src="' + STELLA_LOGO + '" alt="STELLA"><div class="sh-return-cta"></div>' +
-      '<div class="sh-return-cap">' + esc(COPY.R2) + '</div></div></section>');
-    box.querySelector('.sh-return-cta').appendChild(returnCta(false));
+  /* ---------- return block (US-7) + steps 6-8 ---------- */
+  var ORDER_KEY = 'stella_order_confirmed';
+  function orderFor(rec, E) {
+    try {
+      var all = JSON.parse(localStorage.getItem(ORDER_KEY) || '{}');
+      return all[rec.caseId + '|' + E] || null;
+    } catch (e) { return null; }
+  }
+  function buildReturn(rec) {
+    var box = el('<section class="sh-return-box" id="shReturn" aria-label="Return to STELLA"></section>');
+    renderReturnInto(box, rec);
     return box;
+  }
+  function renderReturn(rec) {
+    var box = document.getElementById('shReturn');
+    if (box) renderReturnInto(box, rec || H);
+    var slot = document.querySelector('.sh-strip .sh-strip-cta');
+    if (slot) { slot.innerHTML = ''; slot.appendChild(returnCta(true)); }
+  }
+  function renderReturnInto(box, rec) {
+    if (!rec) return;
+    var E = curEye(rec), d = rec.decisions[E], order = orderFor(rec, E);
+
+    /* step 8 — the order comes back from STELLA over the API and closes the record.
+       This is the only direction that carries data, and it carries an order. */
+    if (order) {
+      box.className = 'sh-return-box ordered';
+      box.innerHTML =
+        '<div class="sh-return-boundary done">' + esc(COPY.K13) + '</div>' +
+        '<div class="sh-order-card"><div class="sh-order-head">' +
+          '<img src="' + STELLA_LOGO + '" alt="STELLA"><span>' + esc(COPY.K12) + '</span>' +
+          '<b class="sh-order-no">' + esc(order.orderNo) + '</b></div>' +
+        '<div class="sh-kv"><span>Ordered lens</span><b>' + esc(order.lens.size) + ' mm' +
+          (order.lens.power ? ' · ' + esc(order.lens.power) + ' D' : '') +
+          (order.lens.axis ? ' · ' + esc(order.lens.axis) + '°' : '') + '</b></div>' +
+        '<div class="sh-kv"><span>STELLA recommendation</span><b>' + esc(order.stella.size) + ' mm · ' + esc(order.stella.model) + '</b></div>' +
+        '<div class="sh-kv"><span>Divergence</span><b>' + esc(order.divergent ? order.delta + ' mm — confirmed in STELLA' : 'none') + '</b></div>' +
+        '<div class="sh-kv"><span>Confirmed</span><b>' + esc(utc(order.confirmedAt)) + '</b></div>' +
+        caseRecord(rec, E, d, order) +
+        '<div class="sh-postop">' + esc(COPY.K14) + '</div></div>';
+      return;
+    }
+
+    box.className = 'sh-return-box';
+    box.innerHTML = '<div class="sh-return-boundary">' + esc(COPY.R3) + '</div><div class="sh-return-body">' +
+      '<img src="' + STELLA_LOGO + '" alt="STELLA"><div class="sh-return-cta"></div>' +
+      '<div class="sh-return-cap">' + esc(d ? COPY.L2 : COPY.R2) + '</div></div>';
+    var cta = box.querySelector('.sh-return-cta');
+    if (d) {
+      var b = el('<button type="button" class="sh-return">' + esc(COPY.L1) + '</button>');
+      b.addEventListener('click', function () { openOrderModal(rec); });
+      cta.appendChild(b);
+    } else {
+      cta.appendChild(returnCta(false));
+    }
+  }
+
+  /* The closing analytical view the brief asks for: for one case, what went in,
+     what every method produced, what STELLA recommended, and what the surgeon
+     ordered and on what argument. */
+  function caseRecord(rec, E, d, order) {
+    var inputs = rec.inputs[E] || {};
+    var vals = INPUT_KEYS.map(function (k) {
+      return '<span><em>' + esc(k.toUpperCase()) + '</em>' + esc(inputs[k] ? inputs[k].v + ' ' + inputs[k].u : '—') + '</span>';
+    }).join('');
+    var last = (window._SF_LAST_RESULTS && window._SF_LAST_RESULTS.results) || [];
+    var methods = last.length
+      ? last.map(function (r) {
+          return '<span><em>' + esc(r.name) + '</em>' + esc(parseFloat(r.recSize).toFixed(1)) + ' mm' +
+            (r.vault ? ' · vault ' + esc(r.vault) + ' µm' : '') + '</span>';
+        }).join('')
+      : '<span class="none">no method was run</span>';
+    var x = d ? describe(rec, d) : null;
+    return '<details class="sh-caserec"><summary>' + esc(COPY.L12) + ' · ' + esc(rec.caseId) + ' · ' + esc(E) + '</summary>' +
+      '<div class="sh-caserec-b">' +
+        '<div class="sh-crk">' + esc(COPY.L13) + '</div><div class="sh-crvals">' + vals + '</div>' +
+        '<div class="sh-crk">' + esc(COPY.L14) + '</div><div class="sh-crvals">' + methods + '</div>' +
+        '<div class="sh-crk">' + esc(COPY.L15) + '</div><div class="sh-crvals"><span><em>STELLA</em>' +
+          esc(order.stella.size) + ' mm · ' + esc(order.stella.model) + '</span></div>' +
+        '<div class="sh-crk">' + esc(COPY.L16) + '</div><div class="sh-crvals">' +
+          '<span><em>Ordered</em>' + esc(order.lens.size) + ' mm' + (order.lens.power ? ' · ' + esc(order.lens.power) + ' D' : '') + '</span>' +
+          (x ? '<span><em>Method</em>' + esc(x.method) + '</span><span><em>Reason</em>' + esc(x.reason) +
+               ' (' + esc(d.reasonSource === 'inferred' ? 'inferred' : 'manual') + ')</span>' : '') +
+        '</div>' +
+      '</div></details>';
+  }
+
+  /* ---------- step 7 · the STELLA ordering modal, hosted inside EVO Connect ----------
+     The surface is STELLA's, visually separated, and it opens loaded with STELLA's
+     OWN case data — the recommendation that arrived in step 2. EVO Connect never
+     writes its decision into it: the surgeon edits the lens here himself. What the
+     modal produces is an order created in STELLA, returned to REVAI over the API. */
+  var ORDER_SIZES = ['12.1', '12.6', '13.2', '13.7'];
+  var ord = null;                                                       // modal draft
+
+  function stellaSeed(rec) {
+    var R = rec.stellaRecommendation;
+    return {
+      size: String(R.size),
+      power: R.power && R.power.sph != null ? String(R.power.sph) : '',
+      axis: R.power && R.power.axis != null ? String(R.power.axis) : '',
+      ack: false, err: null,
+      touched: { size: false, power: false, axis: false }
+    };
+  }
+  function openOrderModal(rec) {
+    ord = stellaSeed(rec);
+    var host = el('<div class="sh-omodal-scrim" id="shOrderModal" role="dialog" aria-modal="true" aria-label="' + esc(COPY.L4) + '"></div>');
+    document.body.appendChild(host);
+    host.addEventListener('click', function (e) { if (e.target === host) closeOrderModal(); });
+    host.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeOrderModal(); });
+    paintOrderModal(rec);
+  }
+  function closeOrderModal() {
+    var h = document.getElementById('shOrderModal'); if (h) h.remove();
+    ord = null;
+  }
+  function paintOrderModal(rec) {
+    var host = document.getElementById('shOrderModal'); if (!host) return;
+    var E = curEye(rec), R = rec.stellaRecommendation, d = rec.decisions[E], done = orderFor(rec, E);
+
+    if (done) {
+      host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, true) +
+        '<div class="sh-obody"><div class="sh-oreceipt">' +
+          '<div class="sh-ok">Order number</div><div class="sh-ono">' + esc(done.orderNo) + '</div>' +
+          orderRow('Case · eye', done.caseId + ' · ' + done.eye) +
+          orderRow('Ordered lens', done.lens.size + ' mm' + (done.lens.power ? ' · ' + done.lens.power + ' D' : '') + (done.lens.axis ? ' · ' + done.lens.axis + '°' : '')) +
+          orderRow('STELLA recommendation', done.stella.size + ' mm · ' + done.stella.model) +
+          orderRow('Divergence', done.divergent ? done.delta + ' mm — confirmed by the surgeon' : 'none — recommendation accepted') +
+          orderRow('Confirmed', utc(done.confirmedAt)) +
+          '<div class="sh-oaudit">' + esc(COPY.L11) + '</div>' +
+        '</div></div>' +
+        '<div class="sh-ofoot"><span class="sh-oapi">' + esc(COPY.L17) + '</span><div class="sh-ogrow"></div>' +
+        '<button type="button" class="sh-obtn" data-o="close">Done ✓</button></div></div>';
+      wireOrderModal(rec);
+      return;
+    }
+
+    var diverges = ord.size && ord.size !== String(R.size);
+    var delta = diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '';
+    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag">' + esc(COPY.L5) + '</em>'; };
+
+    host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, false) +
+      '<div class="sh-obody">' +
+        '<div class="sh-oseed">' + esc(COPY.L6) + '</div>' +
+        '<div class="sh-orec"><div class="sh-ok">' + esc(COPY.L15) + '</div>' +
+          '<div class="sh-orec-v">' + esc(R.size) + ' mm</div>' +
+          '<div class="sh-orec-m">' + esc(R.model) + (R.power && R.power.sph != null ? ' · ' + esc(R.power.sph) + ' D' : '') +
+            (R.power && R.power.axis != null ? ' · axis ' + esc(R.power.axis) + '°' : '') + ' · ' + esc(R.formula) + '</div></div>' +
+        '<div class="sh-ogrid">' +
+          '<label><span>Size (mm) ' + tag('size') + '</span><select data-of="size">' +
+            ORDER_SIZES.map(function (v) { return '<option value="' + v + '"' + (ord.size === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') +
+          '</select></label>' +
+          '<label><span>Power (D) ' + tag('power') + '</span><input data-of="power" value="' + esc(ord.power) + '" placeholder="—"></label>' +
+          '<label><span>Axis (°, optional) ' + tag('axis') + '</span><input data-of="axis" value="' + esc(ord.axis) + '" placeholder="—"></label>' +
+        '</div>' +
+        (d ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
+              (d.plannedLens.power ? ' · <b>' + esc(d.plannedLens.power) + ' D</b>' : '') +
+              '. It is not carried into STELLA — enter it here yourself.</div>' : '') +
+        (diverges ? '<div class="sh-odiff"><div class="t">' + esc(COPY.L7) + '</div>' +
+          '<div class="x">' + esc(fmt(COPY.L8, { rec: R.size, got: ord.size, d: delta })) + '</div>' +
+          '<label><input type="checkbox" data-of="ack"' + (ord.ack ? ' checked' : '') + '><span>' +
+            esc(fmt(COPY.L9, { got: ord.size, rec: R.size })) + '</span></label></div>' : '') +
+        (ord.err ? '<div class="sh-oerr">' + esc(ord.err) + '</div>' : '') +
+      '</div>' +
+      '<div class="sh-ofoot"><span class="sh-odemo">Demonstration only — no lens is ordered.</span>' +
+        '<div class="sh-ogrow"></div>' +
+        '<button type="button" class="sh-obtn ghost" data-o="close">Cancel</button>' +
+        '<button type="button" class="sh-obtn" data-o="place">' + esc(COPY.L10) + '</button></div></div>';
+    wireOrderModal(rec);
+  }
+  function orderHead(rec, E, done) {
+    return '<div class="sh-oboundary">' + esc(COPY.L3) + '</div>' +
+      '<div class="sh-ohead"><img src="' + STELLA_LOGO + '" alt="STELLA">' +
+      '<div><div class="t">' + esc(done ? 'Order confirmed' : COPY.L4) + '</div>' +
+      '<div class="s">' + esc(rec.caseId) + ' · ' + esc(E) + ' · STELLA — STAAR system of record</div></div></div>';
+  }
+  function orderRow(k, v) { return '<div class="sh-orow"><span>' + esc(k) + '</span><b>' + esc(v) + '</b></div>'; }
+  function wireOrderModal(rec) {
+    var host = document.getElementById('shOrderModal'); if (!host) return;
+    host.querySelectorAll('[data-o]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (b.getAttribute('data-o') === 'close') return closeOrderModal();
+        placeOrder(rec);
+      });
+    });
+    host.addEventListener('change', function (e) {
+      var k = e.target.getAttribute && e.target.getAttribute('data-of'); if (!k || !ord) return;
+      if (k === 'ack') { ord.ack = e.target.checked; ord.err = null; paintOrderModal(rec); return; }
+      if (k === 'size') { ord.size = e.target.value; ord.touched.size = true; ord.ack = false; ord.err = null; paintOrderModal(rec); }
+    });
+    host.addEventListener('input', function (e) {
+      var k = e.target.getAttribute && e.target.getAttribute('data-of'); if (!k || !ord) return;
+      if (k === 'power' || k === 'axis') { ord[k] = e.target.value; ord.touched[k] = true; }
+    });
+    var first = host.querySelector('select,button'); if (first) first.focus();
+  }
+  function placeOrder(rec) {
+    var E = curEye(rec), R = rec.stellaRecommendation;
+    if (!ord.size) { ord.err = 'Select the lens size you are ordering.'; return paintOrderModal(rec); }
+    if (!ord.power) { ord.err = 'Enter the lens power.'; return paintOrderModal(rec); }
+    var diverges = ord.size !== String(R.size);
+    if (diverges && !ord.ack) { ord.err = 'Confirm the difference with the STELLA recommendation before placing the order.'; return paintOrderModal(rec); }
+    var rc = {
+      caseId: rec.caseId, eye: E,
+      orderNo: String(760000 + Math.floor(Math.random() * 9000)),
+      lens: { size: ord.size, power: ord.power, axis: ord.axis || null },
+      stella: { size: String(R.size), model: R.model, formula: R.formula },
+      divergent: diverges,
+      delta: diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '0.0',
+      confirmedAt: new Date().toISOString(), system: 'STELLA', returnedTo: 'REVAI', via: 'API'
+    };
+    try {
+      var all = JSON.parse(localStorage.getItem(ORDER_KEY) || '{}');
+      all[rc.caseId + '|' + rc.eye] = rc;
+      localStorage.setItem(ORDER_KEY, JSON.stringify(all));
+    } catch (e) {}
+    ord.err = null;
+    paintOrderModal(rec);
+    renderReturn(rec);
+  }
+
+  /* the order is confirmed in the STELLA tab, so watch for it coming back */
+  function watchOrder() {
+    var seen = '';
+    var tick = function () {
+      if (!H) return;
+      var o = orderFor(H, curEye(H));
+      var k = o ? o.orderNo : '';
+      if (k !== seen) { seen = k; renderReturn(H); }
+    };
+    window.addEventListener('focus', tick);
+    window.addEventListener('storage', tick);
+    setInterval(tick, 1500);
   }
 
   /* ---------- comparator cards ---------- */
@@ -666,7 +987,7 @@
     main.appendChild(buildStrip(rec));
     main.appendChild(layout);
     var results = colMain.querySelector('#sfResults');
-    var decision = buildDecision(rec), ret = buildReturn();
+    var decision = buildDecision(rec), ret = buildReturn(rec);
     if (results) { results.insertAdjacentElement('afterend', decision); } else colMain.appendChild(decision);
     decision.insertAdjacentElement('afterend', ret);
     EYE_SCOPE = curEye(rec);
@@ -773,6 +1094,7 @@
     openUniverse();
     openPatientFile(rec.caseId);
     setPatientTab('sizing');
+    watchOrder();
     /* the home stays hidden behind the overlay until the user actually goes back to it */
     var _close = window.closeUniverse;
     if (typeof _close === 'function') {

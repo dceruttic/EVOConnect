@@ -1063,7 +1063,7 @@ function renderPtSizingFormulas(pt) {
         <div class="rx-import-head stella-order-head">
           <div class="stella-order-brand">
             <div class="stella-order-logo">
-              <img src="../assets/marketplace/stella_logo_official.svg" alt="Stella by STAAR Surgical">
+              <img src="/assets/marketplace/stella_logo_official.svg" alt="Stella by STAAR Surgical">
             </div>
             <div>
               <h3 id="stellaOrderTitle">Order via STELLA</h3>

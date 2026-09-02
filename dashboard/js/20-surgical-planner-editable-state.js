@@ -276,7 +276,7 @@ function renderPtSurgery(pt) {
   // === ICL surgical alignment compass — user-provided vectorized reference ===
   const eyeDiagramImg = `
     <div class="or-eye-img-wrap">
-      <img src="../assets/surgery_axis_compass.svg" alt="ICL toric axis alignment — ${markA}° / ${markB}°" class="or-eye-img"/>
+      <img src="/assets/surgery_axis_compass.svg" alt="ICL toric axis alignment — ${markA}° / ${markB}°" class="or-eye-img"/>
     </div>
   `;
   const eyeDiagram = (() => {

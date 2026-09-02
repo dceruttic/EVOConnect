@@ -236,12 +236,12 @@ const DATA = {
     votes: 412,
   },
   courses: [
-    { title: "Vault prediction masterclass · Dr. M. Shimizu", tag: "Advanced", len: "1h 24m", progress: 72, cme: "1.5 CME", img: "../assets/iclguru_size_card_a.svg",  imgPos: "center", category: "Vault sizing" },
-    { title: "Intra-op capture: lot, power, vault workflow",   tag: "Core",     len: "48 min",  progress: 100, cme: "1.0 CME", img: "../assets/icl_implanted_v1.webp", imgPos: "center 40%", category: "OR workflow" },
-    { title: "Managing toric rotation post-implant",           tag: "Clinical", len: "1h 02m",  progress: 34, cme: "1.0 CME", img: "../assets/surgery_axis_compass.svg", imgPos: "center", category: "Toric ICL" },
-    { title: "Handling high-myopia over -14 D",                tag: "Advanced", len: "1h 16m",  progress: 0,  cme: "1.5 CME", img: "../assets/icl_implanted_v3.webp", imgPos: "center 35%", category: "High myopia" },
-    { title: "Patient counseling: setting vault expectations", tag: "Soft",     len: "32 min",  progress: 0,  cme: "0.5 CME", img: "../assets/icl_implanted_v4.webp", imgPos: "center 30%", category: "Counseling" },
-    { title: "AS-OCT interpretation for ICL candidates",       tag: "Core",     len: "54 min",  progress: 100, cme: "1.0 CME", img: "../assets/oct_real_v2.png",      imgPos: "center", category: "Imaging" },
+    { title: "Vault prediction masterclass · Dr. M. Shimizu", tag: "Advanced", len: "1h 24m", progress: 72, cme: "1.5 CME", img: "/assets/iclguru_size_card_a.svg",  imgPos: "center", category: "Vault sizing" },
+    { title: "Intra-op capture: lot, power, vault workflow",   tag: "Core",     len: "48 min",  progress: 100, cme: "1.0 CME", img: "/assets/icl_implanted_v1.webp", imgPos: "center 40%", category: "OR workflow" },
+    { title: "Managing toric rotation post-implant",           tag: "Clinical", len: "1h 02m",  progress: 34, cme: "1.0 CME", img: "/assets/surgery_axis_compass.svg", imgPos: "center", category: "Toric ICL" },
+    { title: "Handling high-myopia over -14 D",                tag: "Advanced", len: "1h 16m",  progress: 0,  cme: "1.5 CME", img: "/assets/icl_implanted_v3.webp", imgPos: "center 35%", category: "High myopia" },
+    { title: "Patient counseling: setting vault expectations", tag: "Soft",     len: "32 min",  progress: 0,  cme: "0.5 CME", img: "/assets/icl_implanted_v4.webp", imgPos: "center 30%", category: "Counseling" },
+    { title: "AS-OCT interpretation for ICL candidates",       tag: "Core",     len: "54 min",  progress: 100, cme: "1.0 CME", img: "/assets/oct_real_v2.png",      imgPos: "center", category: "Imaging" },
   ],
   chat: [
     { from: "revai", av: "AI", name: "REVAI Copilot", body: "Hi Roger. I noticed the scheduled 10:15 case (M. Herrera) has ACD of 3.24 mm and K2 of 43.64. ICL Guru recommends 12.6 EVO+ with 89% confidence.", time: "09:42" },

@@ -7,7 +7,7 @@
 const REAL_STUDY_IMAGES = {
   // Mariela Guzman (2126-0420) — real ICL Guru case, uses open-licensed clinical imagery
   "2126-0420": {
-    topo:   { url: "../assets/pentacam_mariela_OD.svg", credit: "Oculus Pentacam · Cataract Pre-OP · OD (reproduction from clinical report)" },
+    topo:   { url: "/assets/pentacam_mariela_OD.svg", credit: "Oculus Pentacam · Cataract Pre-OP · OD (reproduction from clinical report)" },
     oct:    { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Spectral_Domain_OCT_-_Corneal_Cross-Section_(and_Pachymetry_Map).png", credit: "Wikimedia Commons · CC BY-SA" },
     biom:   { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Schematic_diagram_of_the_human_eye_multilingual.svg", credit: "Wikimedia Commons · CC BY-SA · schematic biometry reference" },
     spec:   { url: "https://commons.wikimedia.org/wiki/Special:FilePath/Corneal_endothelium.jpg", credit: "Wikimedia Commons · CC BY-SA" },
@@ -20,8 +20,8 @@ const REAL_STUDY_IMAGES = {
 // User-provided OCULUS Pentacam Cataract Pre-OP reports — Saracco, Agustina (OD + OS).
 // Save the screenshot files to these paths in the workspace folder for the wiring to render.
 const DEFAULT_PENTACAM = {
-  OD: { url: "../assets/pentacam_saracco_OD.webp", credit: "OCULUS Pentacam · Cataract Pre-OP · OD · Saracco, Agustina · 15/05/2024" },
-  OS: { url: "../assets/pentacam_saracco_OS.webp", credit: "OCULUS Pentacam · Cataract Pre-OP · OS · Saracco, Agustina · 15/05/2024" },
+  OD: { url: "/assets/pentacam_saracco_OD.webp", credit: "OCULUS Pentacam · Cataract Pre-OP · OD · Saracco, Agustina · 15/05/2024" },
+  OS: { url: "/assets/pentacam_saracco_OS.webp", credit: "OCULUS Pentacam · Cataract Pre-OP · OS · Saracco, Agustina · 15/05/2024" },
 };
 function resolvePentacamImage(eye){
   var key = (eye === 'OS' ? 'OS' : 'OD');
@@ -35,20 +35,20 @@ function resolvePentacamImage(eye){
 // be clinically wrong for that context. (oct_real_OD.png was a retinal cross-section
 // from the Marano case; removed to avoid mismatched study types.)
 const OCT_GALLERY = [
-  { url: "../assets/oct_real_v2.png",  credit: "AS-OCT · Anterior chamber 2.686 mm · ATA 32.6°/27.9°" },
-  { url: "../assets/oct_real_v3.webp",  credit: "AS-OCT · Optovue R · Vault 0.765 mm · 31/Aug/2022" },
+  { url: "/assets/oct_real_v2.png",  credit: "AS-OCT · Anterior chamber 2.686 mm · ATA 32.6°/27.9°" },
+  { url: "/assets/oct_real_v3.webp",  credit: "AS-OCT · Optovue R · Vault 0.765 mm · 31/Aug/2022" },
 ];
 // === UBM image gallery — same rotation pattern ===
 // Add new entries by saving the file in /assets/ and pushing to UBM_GALLERY.
 const UBM_GALLERY = [
-  { url: "../assets/ubm_real_v1.webp",        credit: "UBM · high-frequency ultrasound · STS / ACD / lens rise" },
+  { url: "/assets/ubm_real_v1.webp",        credit: "UBM · high-frequency ultrasound · STS / ACD / lens rise" },
 ];
 // === ICL-implanted eye photos — slit-lamp / retroillumination views, used in post-op ===
 const ICL_IMPLANTED_GALLERY = [
-  { url: "../assets/icl_implanted_v1.webp", credit: "EVO ICL in situ · slit-lamp" },
-  { url: "../assets/icl_implanted_v2.webp", credit: "EVO ICL · retroillumination view" },
-  { url: "../assets/icl_implanted_v3.webp", credit: "EVO ICL · centration check" },
-  { url: "../assets/icl_implanted_v4.webp", credit: "EVO ICL · post-op follow-up" },
+  { url: "/assets/icl_implanted_v1.webp", credit: "EVO ICL in situ · slit-lamp" },
+  { url: "/assets/icl_implanted_v2.webp", credit: "EVO ICL · retroillumination view" },
+  { url: "/assets/icl_implanted_v3.webp", credit: "EVO ICL · centration check" },
+  { url: "/assets/icl_implanted_v4.webp", credit: "EVO ICL · post-op follow-up" },
 ];
 function _galleryEyePhotoForPatient(ptId, eye){
   if (!ptId) return ICL_IMPLANTED_GALLERY[0];

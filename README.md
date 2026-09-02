@@ -31,6 +31,17 @@ nada anterior dependa de sus `const`/`let` de nivel superior.
 Lo mismo con el CSS: `css/01-*` define los tokens del design system que consumen las demás
 hojas.
 
+### Rutas absolutas, no relativas
+
+Todas las referencias a `css/`, `js/` y `assets/` son **absolutas desde la raíz**
+(`/dashboard/css/…`, `/assets/…`). No es cosmético: con `cleanUrls: true` Vercel sirve
+`/dashboard` **sin** barra final, y ahí una ruta relativa como `css/x.css` resuelve contra la
+raíz del sitio (`/css/x.css`) y da 404. Con barra final funcionaría; sin ella, no. Las rutas
+absolutas funcionan en los dos casos.
+
+Por eso hay que abrir el proyecto con un servidor (`python3 -m http.server`), no con
+`file://`.
+
 ## Assets
 
 Una sola copia en `/assets`, referenciada desde `dashboard/` como `../assets/…`. Los PNG
@@ -61,4 +72,4 @@ Sin build step: HTML/CSS/JS estático.
 ## Notas
 
 - Toda la data clínica es **mockeada**. No hay PHI real.
-- Backup del estado previo al refactor: `EVOConnect-backup-2026-09-01/` junto a este repo.
+- Backup del estado previo al refactor: `EVOConnect-StaarIntelCenter-backup-2026-09-01/` junto a este repo.

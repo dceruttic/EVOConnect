@@ -1,6 +1,9 @@
 # REVAI × STAAR — Demo environment
 
-Deploy estático de dos superficies de la plataforma EVO Connect:
+Deploy estático de las tres superficies de la demo REVAI × STAAR:
+
+- **`/stella`** — STELLA Replica (STAAR, system of record): réplica de la calculadora y entorno de
+  pedido de STAAR. Punto de entrada del recorrido STELLA-first del ESCRS
 
 - **`/dashboard`** — EVO Connect (cara clínica): flujo por paciente pre-op → selección de ICL →
   planificador quirúrgico → cirugía → post-op, más Phase Demo Mode
@@ -10,7 +13,9 @@ Deploy estático de dos superficies de la plataforma EVO Connect:
 ## Estructura
 
 ```
-index.html                landing que enlaza ambas superficies
+index.html                landing que enlaza las tres superficies
+stella/
+  index.html              archivo único, autocontenido (assets embebidos como data URIs)
 assets/                   imágenes compartidas (WebP + SVG) — única copia
 dashboard/
   index.html              shell + <link>/<script> (~660 líneas)

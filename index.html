@@ -10,19 +10,22 @@
   :root { --navy:#001E60; --purple:#7F21E0; --blue:#0080C7; --teal:#08B1C2; --ink:#0A1028; --mute:#5A6478; --line:#E4E6EF; --bg:#F5F7FD; }
   *{box-sizing:border-box}
   body { margin:0; font-family:'Inter',system-ui,sans-serif; background:radial-gradient(1200px 600px at 15% -5%, rgba(127,33,224,0.08), transparent 60%), radial-gradient(1000px 500px at 90% 0%, rgba(0,128,199,0.06), transparent 55%), var(--bg); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 24px; }
-  .wrap { max-width:920px; width:100%; }
+  .wrap { max-width:1180px; width:100%; }
   .eyebrow { font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--purple); margin-bottom:10px; }
   h1 { font-size:clamp(28px, 4vw, 44px); font-weight:900; letter-spacing:-.02em; margin:0 0 12px; line-height:1.1; }
   h1 b { background:linear-gradient(135deg, var(--purple), var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .sub { font-size:15px; color:var(--mute); margin:0 0 38px; max-width:640px; line-height:1.5; }
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; }
+  @media (max-width:980px){ .grid { grid-template-columns:1fr 1fr; } }
   @media (max-width:680px){ .grid { grid-template-columns:1fr; } }
   .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:26px 24px 22px; text-decoration:none; color:inherit; transition: transform .15s ease, box-shadow .15s ease, border-color .15s; position:relative; overflow:hidden; }
   .card:hover { transform:translateY(-2px); box-shadow:0 12px 32px -8px rgba(0,30,96,.18); border-color:rgba(127,33,224,.30); }
   .card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--purple), var(--blue)); }
   .card.intel::before { background:linear-gradient(90deg, var(--teal), var(--blue)); }
+  .card.stella::before { background:#10A8BA; }
   .card-tag { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--purple); margin-bottom:14px; }
   .card.intel .card-tag { color:var(--teal); }
+  .card.stella .card-tag { color:#0C7E8B; }
   .card h2 { font-size:21px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px; }
   .card p { font-size:13.5px; color:var(--mute); margin:0 0 18px; line-height:1.5; }
   .card .cta { display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--navy); }
@@ -35,9 +38,15 @@
 <body>
 <div class="wrap">
   <div class="eyebrow">REVAI × STAAR · live demo environment</div>
-  <h1>Two surfaces · one <b>connected platform</b></h1>
-  <p class="sub">Walk through the clinical workflow surgeons see day-to-day, or jump to the HQ-side Intelligence Center built for STAAR leadership.</p>
+  <h1>Three surfaces · one <b>connected platform</b></h1>
+  <p class="sub">Start in STELLA as the surgeon does today, walk through the clinical workflow in EVO Connect, or jump to the HQ-side Intelligence Center built for STAAR leadership.</p>
   <div class="grid">
+    <a class="card stella" href="/stella">
+      <div class="card-tag"><span>● STAAR · SYSTEM OF RECORD</span></div>
+      <h2>STELLA Replica</h2>
+      <p>Faithful replica of STAAR's STELLA calculator and ordering environment. Entry point of the ESCRS STELLA-first journey: official recommendation, launch to REVAI, confirmed order.</p>
+      <span class="cta">Open STELLA <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+    </a>
     <a class="card" href="/dashboard">
       <div class="card-tag"><span>● CLINIC</span></div>
       <h2>EVO Connect Dashboard</h2>

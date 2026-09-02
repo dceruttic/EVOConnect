@@ -14,7 +14,7 @@ Deploy estático de las tres superficies de la demo REVAI × STAAR:
 
 ```
 index.html                landing con estética STAAR Surgical (staar.com) que enlaza las tres superficies
-assets/staar-surgical-logo-white.svg, stella-logo-white.svg, stella-hero-bg.webp — extraídos de stella/
+assets/staar-surgical-logo-white.svg, stella-hero-bg.webp — extraídos de stella/; logo Stella: assets/marketplace/stella_logo_official.svg
 stella/
   index.html              archivo único, autocontenido (assets embebidos como data URIs)
 assets/                   imágenes compartidas (WebP + SVG) — única copia

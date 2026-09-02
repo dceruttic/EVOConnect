@@ -1,0 +1,263 @@
+/* ================================================================
+   STELLA → EVO CONNECT HANDOFF — sizing tab of the handoff case only
+   (scoped under .sh-handoff / .sh-*). REVAI tokens from css/01 for
+   everything EVO; STELLA teal (#10A8BA) is reserved for what STELLA
+   produced, so origin is readable at a glance. 44px targets,
+   focus-visible, reduced-motion respected.
+================================================================ */
+:root {
+  --sh-teal: #10A8BA;
+  --sh-teal-dk: #08545D;
+  --sh-teal-bg: #E9F8FA;
+  --sh-amber: #B45309;
+  --sh-amber-bg: #FEF3C7;
+  --sh-strip-h: 70px;
+}
+
+/* ---- sticky strip (US-2 S2): outside the card rhythm on purpose.
+   Two rows: facts + return CTA / boundary line + demo stamp.
+   Sticky offset -28px = .universe-main padding-top (css/05:125), so the
+   strip sits flush with the scrollport instead of 28px below it. ---- */
+.sh-strip {
+  position: sticky; top: -28px; z-index: 40;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: auto auto;
+  column-gap: 14px; row-gap: 4px; align-items: center; min-height: var(--sh-strip-h);
+  padding: 8px 14px; margin: -4px 0 12px;
+  background: var(--navy); color: #fff; border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,30,96,.22);
+  font-size: 12.5px; line-height: 1.2;
+}
+.sh-strip-logo { height: 18px; width: auto; grid-row: 1 / span 2; }
+.sh-strip-facts { font-weight: 700; letter-spacing: .01em; white-space: normal; overflow-wrap: anywhere; min-width: 0; line-height: 1.25; }
+.sh-strip-boundary { color: #C9D6F0; font-size: 11px; grid-column: 2; grid-row: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sh-stamp {
+  grid-column: 3; grid-row: 2; justify-self: end;
+  font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: #FFD9A0; border: 1px solid rgba(255,217,160,.45); border-radius: 4px; padding: 2px 7px; white-space: nowrap;
+}
+.sh-strip .sh-return.compact {
+  grid-column: 3; grid-row: 1; justify-self: end;
+  min-height: 44px; padding: 8px 12px; font-size: 12px; white-space: nowrap;
+}
+
+/* ---- arrival banner (A1 → A2), collapsible, never removed ---- */
+.sh-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; margin-bottom: 14px;
+  background: #EEF0FB; border: 1px solid #C9D0F2; border-radius: 10px;
+  color: var(--navy); font-size: 13px; font-weight: 600;
+}
+.sh-banner .sh-banner-short { display: none; }
+.sh-banner.collapsed { padding: 6px 14px; font-size: 12px; }
+.sh-banner.collapsed .sh-banner-full { display: none; }
+.sh-banner.collapsed .sh-banner-short { display: inline; }
+.sh-banner-toggle {
+  margin-left: auto; width: 44px; height: 44px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center; color: var(--navy);
+  border: 1px solid transparent;
+}
+.sh-banner-toggle:hover { background: #fff; border-color: #C9D0F2; }
+.sh-banner-toggle svg { width: 16px; height: 16px; transition: transform .18s var(--ease); }
+.sh-banner.collapsed .sh-banner-toggle svg { transform: rotate(180deg); }
+
+/* ---- two-column layout: content | sticky STELLA panel ---- */
+.sh-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.sh-col-main { min-width: 0; grid-column: 1; grid-row: 1; }
+/* Side column is FIRST in the DOM (so the narrow single-column layout pins it on top, D1)
+   but placed in column 2 on desktop. Strip sticks at -28px, so its visible height is
+   (strip-h - 28px); the column scrolls internally and stops 96px above the viewport
+   bottom so it never sits under the fixed copilot button (css/10, bottom 22px + 60px). */
+.sh-col-side { position: sticky; top: calc(var(--sh-strip-h) - 28px + 10px); align-self: start; grid-column: 2; grid-row: 1;
+  max-height: calc(100vh - var(--sh-strip-h) - 96px); overflow-y: auto; scrollbar-width: thin; }
+
+/* ---- persistent STELLA panel (US-3) — the only teal on the REVAI side ---- */
+.sh-panel {
+  background: #fff; border: 1.5px solid var(--sh-teal); border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16,168,186,.14);
+  overflow: hidden; color: #1C1C1C;
+}
+.sh-panel-mini { display: none; }
+.sh-panel-body { padding: 10px 14px 8px; display: flex; flex-direction: column; gap: 6px; }
+.sh-panel-head { display: flex; align-items: center; gap: 10px; }
+.sh-panel-head img { height: 22px; width: auto; background: var(--sh-teal); border-radius: 6px; padding: 4px 6px; }
+.sh-panel-title { font-size: 14px; font-weight: 800; color: var(--sh-teal-dk); letter-spacing: -.01em; }
+.sh-panel-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sh-teal); }
+.sh-lockrow { display: flex; align-items: center; gap: 10px; padding: 5px 10px; background: var(--sh-teal-bg); border-radius: 8px; cursor: not-allowed; }
+.sh-switch {
+  position: relative; width: 36px; height: 20px; border-radius: 999px; background: var(--sh-teal); flex: 0 0 36px;
+  opacity: .9;
+}
+.sh-switch .sh-knob { position: absolute; top: 2px; left: 18px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.sh-lock-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: var(--sh-teal-dk); line-height: 1.2; }
+.sh-lock-lbl svg, .sh-lock svg, .sh-locked-lbl svg { width: 13px; height: 13px; flex: 0 0 13px; }
+.sh-size { font-size: 34px; font-weight: 800; letter-spacing: -.03em; line-height: 1; color: var(--sh-teal-dk); font-variant-numeric: tabular-nums; }
+.sh-size em { font-size: 14px; font-style: normal; font-weight: 700; margin-left: 4px; color: var(--sh-teal); }
+.sh-line { font-size: 12px; color: #354052; line-height: 1.45; }
+.sh-kv { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; padding: 4px 0; border-top: 1px dashed #E1E5EE; }
+.sh-kv span { color: #5A6478; }
+.sh-kv b { color: #1C1C1C; text-align: right; font-variant-numeric: tabular-nums; }
+.sh-case { display: flex; gap: 8px; align-items: center; }
+.sh-case-id { font-size: 15px; font-weight: 800; letter-spacing: .04em; color: #1C1C1C; }
+.sh-case-eye { font-size: 12px; font-weight: 900; letter-spacing: .08em; background: var(--sh-teal-dk); color: #fff; border-radius: 4px; padding: 2px 8px; }
+.sh-panel-inputs summary { cursor: pointer; font-size: 11.5px; font-weight: 700; color: var(--sh-teal-dk); min-height: 40px; margin: -4px 0; display: flex; align-items: center; gap: 6px; list-style: none; }
+.sh-panel-inputs summary::-webkit-details-marker { display: none; }
+.sh-panel-inputs summary::before { content: '▸'; font-size: 11px; }
+.sh-panel-inputs[open] summary::before { content: '▾'; }
+.sh-panel-inputs summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 6px; }
+.sh-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+.sh-in { display: flex; justify-content: space-between; gap: 6px; font-size: 11.5px; padding: 2px 0; border-bottom: 1px solid #F0F2F4; }
+.sh-in span { color: #5A6478; }
+.sh-in b { font-variant-numeric: tabular-nums; color: #1C1C1C; }
+.sh-in em { font-style: normal; font-size: 10px; color: #91979D; }
+.sh-panel-foot { font-size: 10px; color: #5A6478; line-height: 1.3; }
+
+/* D6: while the handoff sizing tab is open, keep the fixed copilot FAB (css/10) clear of the sticky panel column */
+body.sh-handoff-active .copilot-fab { right: 344px; }
+@media (max-width: 1100px) { body.sh-handoff-active .copilot-fab { right: 22px; } }
+
+/* ---- provenance tags (T1–T5) ---- */
+.sh-prov {
+  display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em; line-height: 1;
+  padding: 3px 6px; border-radius: 999px; margin: 0 0 4px; max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; vertical-align: middle;
+}
+.sh-prov.stella { background: var(--sh-teal-bg); color: var(--sh-teal-dk); border: 1px solid #A7E1E8; }
+.sh-prov.estimate { background: #F5F8FB; color: #5A6478; border: 1px solid #E1E5EE; }
+.sh-prov.derived { background: #F5F8FB; color: #5A6478; border: 1px solid #E1E5EE; }   /* T5: same palette as .estimate */
+.sh-prov.edited { background: var(--sh-amber-bg); color: var(--sh-amber); border: 1px solid #FCD34D; }
+.sf-rx-cell .sh-prov, .sf-input .sh-prov { display: block; width: fit-content; }
+.sh-handoff .sizing-eye-banner.v2 .seb-kpi-strip { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.sh-handoff .seb-kpi { min-width: 0; padding: 0 8px; }
+.seb-kpi .sh-prov { margin-top: 4px; font-size: 8.5px; letter-spacing: .02em; padding: 3px 5px; white-space: normal; line-height: 1.15; }
+.sh-reset {
+  margin-left: 8px; min-height: 36px; padding: 6px 12px; border-radius: 8px;
+  border: 1px solid var(--sh-teal); color: var(--sh-teal-dk); background: #fff; font-size: 12px; font-weight: 700;
+}
+.sh-reset:hover { background: var(--sh-teal-bg); }
+
+/* ---- chips (K1/K2) ---- */
+.sh-chip-caption { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #5A6478; margin: 0 0 8px; }
+.sf-formula-chip.sh-stella-chip { border-color: var(--sh-teal); background: var(--sh-teal-bg); cursor: not-allowed; }
+.sf-formula-chip.sh-stella-chip .sfc-check { background: var(--sh-teal); border-color: var(--sh-teal); color: #fff; }
+.sf-formula-chip.sh-stella-chip .sfc-name { color: var(--sh-teal-dk); }
+.sf-formula-chip.sh-stella-chip .sh-lock { color: var(--sh-teal-dk); display: inline-flex; }
+
+/* ---- D5: eye tabs other than the STELLA laterality are disabled ---- */
+.sh-handoff .seb-eye-tab.sh-eye-locked { opacity: .45; cursor: not-allowed; }
+
+/* ---- comparator (US-5): equal cards, STELLA first + locked, no ranking ---- */
+.sh-handoff .sf-comp-grid.sh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 1700px) { .sh-handoff .sf-comp-grid.sh-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.sh-handoff #sfResults, .sh-handoff #shDecision, .sh-handoff .sh-return-box, .sh-handoff .pd-section { scroll-margin-top: calc(var(--sh-strip-h) + 12px); }
+.sh-handoff .sf-comp-card { min-height: 100%; }
+.sh-handoff .sf-comp-card:hover { transform: none; }
+.sh-stella-card { border-color: var(--sh-teal); border-left-width: 5px; background: #FBFEFE; }
+.sh-stella-card .nm { color: var(--sh-teal-dk); }
+.sh-stella-card .ds { color: var(--sh-teal); font-weight: 700; }
+.sh-badge-stella { background: var(--sh-teal-dk) !important; }
+.sh-badge-stella svg { width: 18px; height: 18px; }
+.sh-badge-ext { background: var(--navy3) !important; }
+.sh-stella-card .sf-comp-stats .val { color: var(--sh-teal-dk); }
+.sh-handoff .sf-comp-stats .val.sh-small { font-size: 13px; font-weight: 700; line-height: 1.3; letter-spacing: 0; }
+.sh-meta { display: grid; gap: 2px; font-size: 11px; color: #354052; }
+.sh-delta { font-size: 12px; font-weight: 700; color: #354052; font-variant-numeric: tabular-nums; }
+.sh-locked-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--sh-teal-dk); }
+.sh-conf { color: #5A6478 !important; font-weight: 600; }
+.sh-goto { font-size: 11px; font-weight: 700; color: var(--navy); }
+.sh-ext-card { cursor: pointer; }
+.sh-ext-card:focus-visible, .sh-stella-chip:focus-visible, .sh-switch:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.sh-none { margin-top: 10px; font-size: 12.5px; color: #5A6478; }
+.sh-handoff .sf-order-btn, .sh-handoff .sf-guru-stella-btn, .sh-handoff #sfChosenBanner { display: none !important; }
+/* Journey 1 ends in STELLA: no stage advance to Surgical Planner from the handoff case,
+   so "Return to STELLA" stays the only primary action once the decision is saved (US-7). */
+.sh-handoff .stage-advance-card { display: none !important; }
+
+/* ---- decision block (US-6) ---- */
+.sh-decision .sh-num { background: var(--navy); }
+.sh-form { display: grid; gap: 14px; }
+.sh-fs { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+.sh-lg { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5A6478; padding: 0 6px; }
+.sh-radio, .sh-chip {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px;
+  border: 1.5px solid var(--line); border-radius: 10px; background: #fff; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+}
+.sh-radio input, .sh-chip input { width: 16px; height: 16px; margin: 0; accent-color: var(--navy); }
+.sh-radio.on, .sh-chip.on { border-color: var(--navy); background: #EEF0FB; }
+.sh-radio:focus-within, .sh-chip:focus-within { outline: 3px solid var(--teal); outline-offset: 2px; }
+.sh-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.sh-lens-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.sh-lens-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #5A6478; }
+.sh-lens-grid select, .sh-lens-grid input, .sh-other, .sh-text {
+  min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  font-family: inherit; font-size: 14px; font-weight: 700; color: #0F1D40; font-variant-numeric: tabular-nums;
+}
+.sh-lens-grid select:disabled, .sh-lens-grid input:read-only { background: #F5F8FB; color: #354052; }
+.sh-lens-grid select:focus-visible, .sh-lens-grid input:focus-visible, .sh-other:focus-visible, .sh-text:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; }
+.sh-lens.accept .sh-lg::after { content: ' · STELLA recommendation'; text-transform: none; letter-spacing: 0; color: var(--sh-teal-dk); }
+.sh-err { font-size: 12px; font-weight: 700; color: #B03144; }
+.sh-form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.sh-btn {
+  min-height: 44px; padding: 10px 18px; border-radius: 10px; background: var(--navy); color: #fff;
+  font-size: 13.5px; font-weight: 800; border: 1.5px solid var(--navy); display: inline-flex; align-items: center; gap: 8px;
+}
+.sh-btn:hover { background: var(--navy2); }
+.sh-btn.ghost { background: #fff; color: var(--navy); }
+.sh-btn:focus-visible, .sh-return:focus-visible, .sh-banner-toggle:focus-visible, .sh-reset:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.sh-summary { display: grid; gap: 2px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: #fff; }
+.sh-summary .sh-kv { font-size: 13px; padding: 8px 0; }
+.sh-summary .sh-kv:first-child { border-top: 0; }
+
+/* ---- return to STELLA (US-7): mirror of the launch card ---- */
+.sh-return-box {
+  margin-top: 18px; background: #fff; border: 1.5px solid var(--sh-teal); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 8px 24px rgba(16,168,186,.14);
+}
+.sh-return-boundary { background: #1C1C1C; color: #fff; padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sh-return-body { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; align-items: center; padding: 16px 18px; }
+.sh-return-body img { height: 34px; width: auto; background: var(--sh-teal); border-radius: 8px; padding: 6px 10px; grid-row: 1 / span 2; }
+.sh-return {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 22px;
+  border-radius: 10px; background: var(--sh-teal); color: #fff; font-size: 15px; font-weight: 800;
+  border: 1.5px solid var(--sh-teal); text-decoration: none; letter-spacing: -.005em;
+}
+.sh-return:hover { background: #0C7E8B; border-color: #0C7E8B; }
+.sh-return-cap { font-size: 12.5px; color: #354052; }
+.sh-footer-stamp {
+  margin: 16px 0 6px; text-align: center; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: #7A4B00; background: #FFF4E0; border: 1px solid #F3D9A6; border-radius: 6px; padding: 6px 10px;
+}
+
+/* ---- return prompt (R4) ---- */
+.sh-prompt { position: fixed; inset: 0; z-index: 2000; background: rgba(0,30,96,.45); display: grid; place-items: center; padding: 20px; }
+.sh-prompt-card { background: #fff; border-radius: 14px; padding: 22px 24px; max-width: 440px; width: 100%; box-shadow: var(--shadow-lg); display: grid; gap: 16px; }
+.sh-prompt-title { font-size: 16px; font-weight: 800; color: var(--navy); }
+.sh-prompt-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ---- bad payload (A3) ---- */
+.sh-badpayload { position: fixed; left: 0; right: 0; top: 0; z-index: 3000; background: #B03144; color: #fff; padding: 10px 16px; font-size: 13px; font-weight: 700; text-align: center; }
+
+/* ---- narrow viewport (US-3 S5): panel collapses to one sticky line ---- */
+@media (max-width: 1100px) {
+  :root { --sh-strip-h: 84px; }   /* facts wrap to two lines: keep the bar below the strip */
+  .sh-layout { grid-template-columns: minmax(0, 1fr); }
+  .sh-col-main { grid-column: 1; grid-row: 2; }
+  .sh-col-side { grid-column: 1; grid-row: 1; top: calc(var(--sh-strip-h) - 28px + 6px); z-index: 30; max-height: none; overflow: visible; margin-bottom: 12px; }
+  .sh-panel-body { display: none; }
+  .sh-panel-mini {
+    display: flex; align-items: center; min-height: 40px; padding: 8px 14px;
+    background: var(--sh-teal-dk); color: #fff; font-size: 13px; font-weight: 800; letter-spacing: .02em;
+  }
+  .sh-strip-boundary { display: none; }
+  .sh-lens-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .sh-stamp { display: none; }
+  .sh-return-body { grid-template-columns: 1fr; }
+  .sh-return-body img { grid-row: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-banner-toggle svg, .sh-handoff .sf-comp-card { transition: none; }
+  .sh-handoff * { scroll-behavior: auto; }
+}

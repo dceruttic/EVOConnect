@@ -82,3 +82,19 @@ Sin build step: HTML/CSS/JS estático.
 
 - Toda la data clínica es **mockeada**. No hay PHI real.
 - Backup del estado previo al refactor: `EVOConnect-StaarIntelCenter-backup-2026-09-01/` junto a este repo.
+
+## Recorrido 1 (ESCRS) — Stella → EVO Connect handoff
+
+Implementado en `stella/index.html` (tarjeta de lanzamiento en `#revai-launch-slot`, sólo tras
+"Save and Calculate"), `dashboard/js/35-stella-handoff.js` (carga último: envuelve globals) y
+`dashboard/css/41-stella-handoff.css`. El caso viaja Stella → EVO Connect por
+`/dashboard?handoff=<base64url JSON>` (< 2 KB, sin PHI, espejo en sessionStorage). Cero bytes
+vuelven a Stella: el retorno es `href="/stella"` sin nada adjunto.
+
+Guion del presentador (6 líneas):
+1. En STELLA abrir PSEUDO-4471, OD, **Save and Calculate** → "STELLA recomienda 13.2 mm. Es el número oficial."
+2. Tarjeta de abajo: "Otras fórmulas se comparan en EVO Connect. Salimos de STELLA; sólo viajan estos valores sintéticos." **Open in EVO Connect · OD**.
+3. "Mismo caso, mismo ojo, mismos inputs — nada retipeado. El 13.2 de STELLA queda a la derecha, bloqueado."
+4. **Run formulas**: "ICL Guru, ICLFIT, CASIA2 — cada uno con dispositivo y versión. Sin ranking."
+5. **Your decision** → Prefer 13.6 mm · ICL Guru · Vault prediction · **Save decision**: "Queda la razón registrada; el mismo registro se guarda si mantiene 13.2."
+6. **Return to STELLA to confirm the order**: "No se envió nada. El cirujano carga 13.6 en STELLA y STELLA crea la orden."

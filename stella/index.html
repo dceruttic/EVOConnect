@@ -373,6 +373,38 @@ img,svg{max-width:100%}
   .trow{flex-wrap:wrap}
   .trow input{min-width:180px}
 }
+
+/* ---------- REVAI launch card (circuit 1, step 2) — rendered only after
+     "Save and Calculate"; STELLA look, explicit boundary strip ---------- */
+.rv-launch{margin-top:26px;background:#fff;border:1.5px solid var(--teal);border-radius:8px;
+  box-shadow:var(--sh-card);overflow:hidden}
+.rv-boundary{display:flex;align-items:center;gap:12px;background:#1C1C1C;color:#fff;
+  padding:8px 18px;font-size:12.5px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+.rv-boundary .rv-mark{margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;letter-spacing:.6px;color:#C9CDD2;text-transform:none;font-weight:400}
+.rv-boundary .rv-dot{width:9px;height:9px;border-radius:50%;background:#0080C7;box-shadow:0 0 0 3px rgba(0,128,199,.25)}
+.rv-body{padding:18px 20px 16px}
+.rv-title{font-size:22px;font-weight:600;line-height:28px;color:#000}
+.rv-sub{font-size:15px;line-height:20px;color:var(--ink-2);margin-top:4px}
+.rv-eyes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.rv-eye{border:1px solid var(--line-2);border-radius:8px;padding:14px 16px;background:var(--row-alt);
+  display:flex;flex-direction:column;gap:12px;min-width:0}
+.rv-eye .rv-cap{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.rv-chips{display:flex;flex-wrap:wrap;gap:6px}
+.rv-chip{border:1px solid var(--teal);color:var(--tab-on);background:#fff;border-radius:4px;
+  padding:3px 8px;font-size:12px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+.rv-chip.hi{background:var(--teal);color:#fff}
+.rv-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.rv-btn{font-size:15px;font-weight:700;line-height:20px;padding:11px 20px;min-height:44px;border-radius:8px;
+  border:1px solid var(--teal);background:var(--teal);color:#fff;display:inline-flex;align-items:center;gap:10px}
+.rv-btn:hover{background:var(--banner);border-color:var(--banner)}
+.rv-btn .rv-eyeb{background:#fff;color:var(--tab-on);border-radius:3px;padding:1px 7px;font-size:12px;
+  font-weight:900;letter-spacing:.5px}
+.rv-ext{font-size:11.5px;color:var(--ink-2);line-height:1.3}
+.rv-ext b{color:#0080C7;font-weight:700}
+.rv-foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2)}
+@media (max-width:900px){ .rv-eyes{grid-template-columns:minmax(0,1fr)} }
+@media (prefers-reduced-motion:no-preference){ .rv-btn{transition:background .15s} }
 </style>
 </head>
 <body>
@@ -671,7 +703,7 @@ const S = {
   selector:false, timer:59*60+52,
   eye:'od', expanded:{od:false,os:false}, refrMode:{od:'manifest',os:'manifest'},
   mode:{od:'TORIC',os:'TORIC'}, edof:{od:false,os:false}, mono:{od:false,os:false},
-  fields:null, focus:null, calculated:false, results:null,
+  fields:null, focus:null, calculated:false, calculatedAt:null, results:null,
   targetLength:{od:'13.2',os:'13.2'}, altLength:{od:false,os:false},
   cylPower:{od:'+ 0.50',os:'+ 0.50'}, pick:{od:null,os:null},
   savedTarget:{od:false,os:false}, inv:null, orderN:null,
@@ -684,7 +716,7 @@ const go = (r, o) => { Object.assign(S, {route:r, pop:null, usermenu:false}, o||
 function loadFields(){
   const p = patient();
   S.fields = { od:Object.assign({}, p.od), os:Object.assign({}, p.os) };
-  S.calculated=false; S.results=null; S.focus=null;
+  S.calculated=false; S.calculatedAt=null; S.results=null; S.focus=null;
   S.pick={od:null,os:null}; S.savedTarget={od:false,os:false};
   S.altLength={od:false,os:false}; S.expanded={od:false,os:false};
   S.cylPower={od:'+ 0.50',os:'+ 0.50'};
@@ -1435,14 +1467,84 @@ function viewPreop(){
 
     <!-- ==============================================================
          REVAI launch slot — circuit 1, step 2.
-         This is where the controlled toggle/link hands the pseudonymous
-         case reference, the agreed minimum data set and the STELLA
-         recommendation over to REVAI, and where the confirmed order
-         returns. Intentionally empty: this build reproduces STELLA only,
-         so the system boundary stays visible.
+         Filled only after "Save and Calculate" (S.calculated): one CTA
+         per calculated eye hands the pseudonymous case reference, the
+         agreed minimum data set and the STELLA recommendation over to
+         REVAI / EVO Connect. One-way: nothing returns into STELLA.
          ============================================================== -->
-    <div id="revai-launch-slot"></div>
+    <div id="revai-launch-slot">${S.calculated ? revaiLaunchSlot() : ''}</div>
   </div>` + siteFooter('CALCULATOR V8.00 OUS');
+}
+
+/* ==================================================================
+   REVAI / EVO CONNECT HANDOFF (circuit 1, step 2) — ADR-0001/0002/0003
+   Copy: artifacts/05-compliance-review.md §2 (C1–C5), verbatim.
+   STELLA reads nothing back: no location, no storage, no referrer.
+   ================================================================== */
+const HANDOFF_MAX_CHARS = 2048;
+function revaiLaunchSlot(){
+  const eyes = ['od','os'].filter(e => S.results && S.results[e]);
+  if(!eyes.length) return '';
+  const block = eye => {
+    const E = eye.toUpperCase(), len = S.targetLength[eye];
+    return `<div class="rv-eye">
+      <div class="rv-cap">What travels (synthetic):</div>
+      <div class="rv-chips">
+        <span class="rv-chip hi">Case ${S.pid}</span><span class="rv-chip hi">Eye ${E}</span>
+        <span class="rv-chip">Refraction</span><span class="rv-chip">Keratometry</span>
+        <span class="rv-chip">ACD</span><span class="rv-chip">CCT</span><span class="rv-chip">WTW</span>
+        <span class="rv-chip">BVD</span><span class="rv-chip hi">STELLA result ${len} mm</span>
+      </div>
+      <div class="rv-cta">
+        <button class="rv-btn" data-act="revai-launch" data-eye="${eye}"
+          aria-label="Open in EVO Connect, eye ${E}"><span class="rv-eyeb">${E}</span>Open in EVO Connect →</button>
+        <span class="rv-ext"><b>EVO Connect by REVAI</b> · external service</span>
+      </div>
+    </div>`;
+  };
+  return `<section class="rv-launch" aria-labelledby="rv-title">
+    <div class="rv-boundary"><span class="rv-dot"></span>You are leaving STELLA · external service by REVAI
+      <span class="rv-mark">EVO Connect by REVAI · external service</span></div>
+    <div class="rv-body">
+      <div class="rv-title" id="rv-title">Compare with other sizing methods in EVO Connect</div>
+      <div class="rv-sub">Opens ICL Guru, ICLFIT and CASIA2 for this case. Nothing is written back to STELLA.</div>
+      <div class="rv-eyes">${eyes.map(block).join('')}</div>
+      <div class="rv-foot">Nothing comes back into STELLA. Any order is confirmed here, in STELLA.</div>
+    </div>
+  </section>`;
+}
+function b64url(str){
+  return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+/* v1 schema (ADR-0002): whitelisted keys only, strings as typed in STELLA. */
+function buildHandoff(eye){
+  const f = S.fields[eye], E = eye.toUpperCase();
+  const inp = (k,u,extra) => Object.assign({v:String(f[k]), u, prov:'STELLA'}, extra||{});
+  const rows = S.results[eye], pick = S.pick[eye];
+  const power = (pick!=null && rows && rows[pick])
+    ? {sph:rows[pick].sph, cyl:rows[pick].cyl, axis:rows[pick].axExp} : null;
+  const inputs = {};
+  inputs[E] = {
+    sph:inp('sph','D'), cyl:inp('cyl','D',{notation:'plus-cyl'}), axis:inp('axis','°'), bvd:inp('bvd','mm'),
+    k1:inp('k1','D'), k1a:inp('k1a','°'), k2:inp('k2','D'), k2a:inp('k2a','°'),
+    acd:inp('acd','mm'), cct:inp('cct','µm'), ww:inp('ww','mm')
+  };
+  return {
+    v:1, caseId:S.pid, laterality:E, sentAt:new Date().toISOString(),
+    source:{system:'STELLA', version:'Calculator V8.00 OUS'},
+    inputs,
+    stellaRecommendation:{
+      size:String(S.targetLength[eye]), model:S.mode[eye]==='TORIC' ? 'Toric Myopic' : 'Myopic',
+      power, cylPower:S.cylPower[eye], formula:'Calculator V8.00 OUS', calculatedAt:S.calculatedAt
+    }
+  };
+}
+function launchRevai(eye){
+  if(!S.calculated || !S.results || !S.results[eye]){ toast('Not calculated','Press Save and Calculate first.'); return; }
+  const payload = b64url(JSON.stringify(buildHandoff(eye)));
+  if(payload.length > HANDOFF_MAX_CHARS){ toast('Handoff too large','The case could not be transferred.'); return; }
+  try { sessionStorage.setItem('stella_handoff', payload); } catch(e){}
+  window.location.assign('/dashboard?handoff=' + payload);
 }
 
 /* ==================================================================
@@ -1791,12 +1893,13 @@ document.addEventListener('click', e => {
         if(!od && !os){ toast('Calculation failed','Check the refraction and biometry values.'); return; }
         S.results = { od, os };
         S.targetLength = { od:recommendLength(S.fields.od.ww), os:recommendLength(S.fields.os.ww) };
-        S.calculated = true; S.focus = null;
+        S.calculated = true; S.calculatedAt = new Date().toISOString(); S.focus = null;
         S.pick = {od:null,os:null}; S.savedTarget = {od:false,os:false};
         render();
         setTimeout(()=>{const el=document.querySelector('.reshead'); if(el) el.scrollIntoView({behavior:'smooth',block:'center'});},80);
         return;
       }
+      case 'revai-launch': launchRevai(d.eye); return;
       case 'print':    toast('Printing disabled','Report generation is not part of this demonstration.'); return;
       case 'reserve':  toast('Reservation blocked','Reservations and official orders are created inside STELLA only.'); return;
       case 'make':     toast('Manufacture request disabled','Not part of this demonstration.'); return;

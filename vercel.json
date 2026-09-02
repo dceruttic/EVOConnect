@@ -3,5 +3,13 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/products", "destination": "/products.html" }
+  ],
+  "headers": [
+    {
+      "source": "/((?!assets|css|js|media|use.typekit.net|cdn-cgi).*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
   ]
 }

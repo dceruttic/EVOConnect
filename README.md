@@ -13,7 +13,9 @@ Deploy estático de las tres superficies de la demo REVAI × STAAR:
 ## Estructura
 
 ```
-index.html                landing con estética STAAR Surgical (staar.com) que enlaza las tres superficies
+index.html                landing estilo Apple con DS de STAAR Surgical: hero, tres tiles, un capítulo por
+                          superficie, bento del decision record, CTA. Logos inline. Reveal con IntersectionObserver
+assets/showcase/*.webp    capturas reales de /stella, /dashboard e /intelligence (1800px, para la landing)
 assets/staar-surgical-logo-white.svg, stella-hero-bg.webp — extraídos de stella/; logo Stella: assets/marketplace/stella_logo_official.svg
 stella/
   index.html              archivo único, autocontenido (assets embebidos como data URIs)

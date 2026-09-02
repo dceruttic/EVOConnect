@@ -4,191 +4,351 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>STAAR Surgical · Digital Ecosystem</title>
+<meta name="description" content="Stella, EVO Connect and the STAAR Intelligence Center — one connected STAAR Surgical ecosystem for surgeons, clinics and HQ.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Tokens measured on staar.com: proxima-nova (Mulish fallback), teal #10A8BA,
-     ink #282829, grey #696969, thin display weights, 12px uppercase nav with 1.92px tracking,
-     pill outline buttons 2px teal / radius 25px. */
-  :root{ --teal:#10A8BA; --teal-2:#098B9A; --ink:#282829; --grey:#696969; --line:#E9E9E9; --dark:#0B0E14; --font:'proxima-nova','Proxima Nova','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif; }
+  /* ------------------------------------------------------------------
+     STAAR Surgical design system (measured on staar.com)
+     font: proxima-nova → Mulish fallback · teal #10A8BA · ink #282829
+     nav: 12px / 700 / 1.92px tracking / uppercase · buttons: pill, 2px teal
+     Page architecture: Apple-style product page — full-viewport chapters,
+     oversized thin headlines, massive whitespace, product as the hero.
+     ------------------------------------------------------------------ */
+  :root{
+    --teal:#10A8BA; --teal-2:#098B9A; --teal-3:#5CD3E0;
+    --ink:#282829; --grey:#696969; --grey-2:#86868B; --line:#E4E6EA;
+    --black:#000; --dark:#0B0E14; --paper:#F5F5F7; --white:#fff;
+    --font:'proxima-nova','Proxima Nova','Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --nav-h:48px; --ease:cubic-bezier(.2,.7,.2,1);
+    --space-1:8px; --space-2:16px; --space-3:24px; --space-4:40px; --space-5:64px; --space-6:96px; --space-7:140px;
+  }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;font-family:var(--font);color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
-  a{text-decoration:none;color:inherit}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--font);font-size:17px;line-height:1.5;color:var(--ink);background:var(--black);-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit;cursor:pointer}
+  img{display:block;max-width:100%;height:auto}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
 
-  /* header */
-  .hdr{position:absolute;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:34px 40px}
-  .hdr .logo svg{display:block;height:17px;width:auto}
-  .nav{display:flex;gap:44px}
-  .nav a{font-size:12px;font-weight:700;letter-spacing:1.92px;text-transform:uppercase;color:#fff;opacity:.92;transition:opacity .15s,color .15s}
-  .nav a:hover{opacity:1;color:var(--teal)}
-  .nav a.demo{color:var(--teal)}
-  @media (max-width:860px){ .nav{display:none} }
+  /* ---------- nav (sticky, frosted, apple-like) ---------- */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:50;height:var(--nav-h);background:rgba(0,0,0,.72);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav-in{max-width:1180px;margin:0 auto;height:100%;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+  .nav .logo svg{display:block;height:15px;width:auto}
+  .nav ul{list-style:none;margin:0;padding:0;display:flex;gap:36px}
+  .nav li a{font-size:12px;font-weight:700;letter-spacing:1.92px;text-transform:uppercase;color:rgba(255,255,255,.86);transition:color .2s}
+  .nav li a:hover{color:#fff}
+  .nav li a.demo{color:var(--teal)}
+  .nav li a.demo:hover{color:var(--teal-3)}
+  @media (max-width:860px){ .nav ul li:not(.keep){display:none} }
 
-  /* hero */
-  .hero{position:relative;min-height:66vh;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;background:#070B14 url('/assets/stella-hero-bg.webp') center 35%/cover no-repeat;overflow:hidden}
-  .hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.28) 55%,rgba(7,11,20,.96) 100%)}
-  .hero-in{position:relative;z-index:1;max-width:900px;padding:130px 24px 70px}
-  .hero .kicker{color:var(--teal);margin-bottom:22px}
-  .hero h1{font-size:clamp(40px,5.8vw,66px);font-weight:200;line-height:1.08;margin:0 0 22px;letter-spacing:-.005em}
-  .hero h1 sup{font-size:.34em;font-weight:300;vertical-align:top;position:relative;top:.55em}
-  .hero p{font-size:18px;font-weight:300;line-height:1.55;margin:0 auto;max-width:680px;color:rgba(255,255,255,.88)}
-  .kicker{font-size:12px;font-weight:700;letter-spacing:1.92px;text-transform:uppercase;margin:0}
+  /* ---------- shared ---------- */
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:1.92px;text-transform:uppercase;color:var(--teal);margin:0 0 18px}
+  .display{font-weight:200;letter-spacing:-.015em;line-height:1.04;margin:0}
+  .display b{font-weight:700;letter-spacing:-.02em}
+  .lead{font-weight:300;line-height:1.45;margin:0}
+  .links{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+  .link{display:inline-flex;align-items:center;gap:6px;font-size:19px;font-weight:400;color:var(--teal);transition:color .2s}
+  .link:hover{color:var(--teal-3);text-decoration:underline;text-underline-offset:4px}
+  .link svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--ease)}
+  .link:hover svg{transform:translateX(2px)}
+  .pill{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 30px;border:2px solid var(--teal);border-radius:25px;color:var(--teal);font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .2s,color .2s}
+  .pill:hover{background:var(--teal);color:#fff}
+  .pill.solid{background:var(--teal);color:#fff}
+  .pill.solid:hover{background:var(--teal-2);border-color:var(--teal-2)}
+  .pill svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
 
-  /* three solutions — full-bleed panels */
-  .sol{display:grid;grid-template-columns:repeat(3,1fr);background:var(--dark)}
-  @media (max-width:900px){ .sol{grid-template-columns:1fr} }
-  .panel{position:relative;min-height:600px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;overflow:hidden;isolation:isolate}
-  .panel .bg{position:absolute;inset:0;z-index:-2;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
-  .panel:hover .bg{transform:scale(1.05)}
-  .panel .shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,11,20,.05) 0%,rgba(7,11,20,.35) 45%,rgba(7,11,20,.92) 100%)}
-  .panel .mark{position:absolute;top:0;left:0;right:0;height:52%;display:flex;align-items:center;justify-content:center;padding:32px}
-  .panel .mark svg.stella-logo{height:88px;width:auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.45))}
-  .panel .mark svg{width:72%;max-width:340px;height:auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.45))}
-  .panel .txt{position:relative;padding:0 40px 44px}
-  .panel .tag{font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--teal);margin:0 0 12px}
-  .panel h2{font-size:clamp(28px,2.4vw,36px);font-weight:200;line-height:1.1;margin:0 0 14px}
-  .panel h2 b{font-weight:700}
-  .panel p{font-size:15px;font-weight:300;line-height:1.6;color:rgba(255,255,255,.82);margin:0 0 26px;max-width:380px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;padding:0 28px;border:2px solid var(--teal);border-radius:25px;color:#fff;font-size:13px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;transition:background .15s,color .15s;background:rgba(16,168,186,.12)}
-  .panel:hover .btn{background:var(--teal)}
-  .btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round}
-  .panel + .panel::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(255,255,255,.08);z-index:1}
+  /* device / browser frame */
+  .frame{position:relative;border-radius:18px;overflow:hidden;background:#101317;box-shadow:0 40px 90px -30px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.08) inset}
+  .frame .bar{height:34px;display:flex;align-items:center;gap:7px;padding:0 14px;background:#1A1D22;border-bottom:1px solid rgba(255,255,255,.06)}
+  .frame .bar i{width:10px;height:10px;border-radius:50%;background:#3A3F47;display:block}
+  .frame .bar i:first-child{background:#FF5F57}.frame .bar i:nth-child(2){background:#FEBC2E}.frame .bar i:nth-child(3){background:#28C840}
+  .frame .bar span{margin-left:12px;flex:1;height:18px;border-radius:6px;background:rgba(255,255,255,.06);font-size:11px;color:rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-weight:400;letter-spacing:.3px}
+  .frame img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
+  .on-paper .frame{box-shadow:0 40px 90px -30px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.06)}
 
-  /* Stella */
-  .p-stella .bg{background:#070B14 url('/assets/stella-hero-bg.webp') center 60%/cover no-repeat}
-  /* EVO Connect */
-  .p-evo .bg{background:radial-gradient(900px 500px at 50% 0%,rgba(16,168,186,.28),transparent 60%),linear-gradient(180deg,#0E1622 0%,#0B0E14 100%)}
-  /* Intelligence */
-  .p-hq .bg{background:radial-gradient(900px 520px at 50% 0%,rgba(9,139,154,.45),transparent 62%),linear-gradient(180deg,#07272C 0%,#0B0E14 100%)}
+  /* reveal */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+  @media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} .frame,.chapter .frame{transition:none!important} }
 
-  /* why section (staar.com "Who is STAAR" style) */
-  .why{padding:100px 24px 90px;text-align:center;background:#fff}
-  .why-in{max-width:860px;margin:0 auto}
-  .why .kicker{color:var(--teal);margin-bottom:16px}
-  .why h2{font-size:clamp(30px,3.6vw,48px);font-weight:200;margin:0 0 20px}
-  .why p{font-size:17px;font-weight:300;color:var(--grey);line-height:1.65;margin:0 auto 34px;max-width:720px}
-  .stats{display:flex;justify-content:center;gap:0;margin:0 auto 46px;flex-wrap:wrap}
-  .stat{padding:0 44px;border-left:1px solid var(--line)}
-  .stat:first-child{border-left:0}
-  .stat b{display:block;font-size:40px;font-weight:200;color:var(--ink);line-height:1.1}
-  .stat span{display:block;font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--grey);margin-top:8px}
-  .links{display:flex;justify-content:center;margin:0 auto;padding-top:34px;border-top:1px solid var(--line);max-width:820px}
-  .links a{font-size:17px;font-weight:300;color:var(--grey);padding:0 32px;border-left:1px solid var(--line)}
-  .links a:first-child{border-left:0}
-  .links a:hover{color:var(--teal)}
-  .btn.light{color:var(--teal);background:transparent}
-  .btn.light:hover{background:var(--teal);color:#fff}
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100vh;padding:calc(var(--nav-h) + 96px) 24px 0;color:#fff;text-align:center;overflow:hidden;background:var(--black)}
+  .hero .sky{position:absolute;inset:0;background:url('/assets/stella-hero-bg.webp') center 30%/cover no-repeat;opacity:.55}
+  .hero .sky::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.15) 40%,#000 92%)}
+  .hero-in{position:relative;max-width:980px;margin:0 auto}
+  .hero .display{font-size:clamp(52px,8.6vw,112px)}
+  .hero .display b{background:linear-gradient(90deg,#fff 0%,var(--teal-3) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .lead{font-size:clamp(19px,2.2vw,27px);color:rgba(255,255,255,.82);max-width:720px;margin:22px auto 0}
+  .hero .stage{position:relative;max-width:1080px;margin:74px auto 0;perspective:1400px}
+  .hero .stage .frame{transform:rotateX(8deg) translateY(0);transform-origin:50% 100%;transition:transform 1.2s var(--ease)}
+  .hero .stage.in .frame{transform:rotateX(0deg)}
+  .hero .stage::after{content:'';position:absolute;left:-2px;right:-2px;bottom:-2px;height:46%;background:linear-gradient(180deg,rgba(0,0,0,0),#000 85%);pointer-events:none;z-index:2}
+  .hero .badge{display:inline-flex;margin-bottom:26px;align-items:center;gap:10px;padding:10px 18px 10px 12px;border-radius:999px;background:rgba(16,168,186,.16);border:1px solid rgba(16,168,186,.45);color:#fff;font-size:13px;font-weight:600;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .hero .badge i{width:8px;height:8px;border-radius:50%;background:var(--teal-3);box-shadow:0 0 0 4px rgba(92,211,224,.25)}
 
-  /* footer */
-  .ftr{background:var(--dark);color:#9AA0A6;padding:56px 40px 36px}
-  .ftr-in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+  /* ---------- strip of three (apple "chapter index") ---------- */
+  .trio{background:var(--black);color:#fff;padding:var(--space-6) 24px var(--space-7)}
+  .trio-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media (max-width:900px){ .trio-in{grid-template-columns:1fr} }
+  .tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:420px;padding:32px;border-radius:24px;overflow:hidden;background:#111418;isolation:isolate;transition:transform .5s var(--ease)}
+  .tile:hover{transform:translateY(-4px)}
+  .tile .art{position:absolute;inset:0;z-index:-1;transition:transform 1s var(--ease)}
+  .tile .art.shot{inset:30px -70px auto 34px;height:56%;border-radius:12px 0 0 0;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.1)}
+  .tile .shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(17,20,24,0) 22%,rgba(17,20,24,.75) 52%,#111418 66%)}
+  .tile:hover .art{transform:scale(1.04)}
+  .tile .art img{width:100%;height:100%;object-fit:cover;object-position:top left}
+  .tile.stella .art::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.88) 100%)}
+  .tile.stella .art{background:#070B14 url('/assets/stella-hero-bg.webp') center 65%/cover no-repeat}
+  .tile.stella .art svg{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);height:64px;width:auto;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5))}
+  .tile .eyebrow{margin-bottom:8px}
+  .tile h3{font-size:30px;font-weight:200;letter-spacing:-.01em;margin:0 0 6px;line-height:1.1}
+  .tile h3 b{font-weight:700}
+  .tile p{font-size:15px;font-weight:300;color:rgba(255,255,255,.75);margin:0 0 16px;max-width:320px}
+  .tile .link{font-size:16px}
+
+  /* ---------- chapters ---------- */
+  .chapter{padding:var(--space-7) 24px;text-align:center}
+  .chapter.dark{background:var(--black);color:#fff}
+  .chapter.paper{background:var(--paper);color:var(--ink)}
+  .chapter-in{max-width:1180px;margin:0 auto}
+  .chapter .brand{display:flex;justify-content:center;margin-bottom:26px}
+  .chapter .brand svg{height:44px;width:auto}
+  .chapter .display{font-size:clamp(40px,6.4vw,84px)}
+  .chapter .lead{font-size:clamp(19px,2.2vw,27px);max-width:760px;margin:22px auto 0}
+  .chapter.dark .lead{color:rgba(255,255,255,.8)}
+  .chapter.paper .lead{color:var(--grey)}
+  .chapter .frame{max-width:1080px;margin:64px auto 0;transform:scale(.96);transition:transform 1s var(--ease),opacity .7s var(--ease)}
+  .chapter .frame.in{transform:scale(1)}
+  .chapter .feats{max-width:1080px;margin:56px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;text-align:left}
+  @media (max-width:760px){ .chapter .feats{grid-template-columns:1fr} }
+  .feat{padding:0}
+  .feat .ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(16,168,186,.14);color:var(--teal);margin-bottom:14px}
+  .feat .ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .feat h4{font-size:19px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  .feat p{font-size:15px;font-weight:300;line-height:1.55;margin:0}
+  .chapter.dark .feat p{color:rgba(255,255,255,.72)}
+  .chapter.paper .feat p{color:var(--grey)}
+  .chapter.paper .feat .ico{background:rgba(16,168,186,.12)}
+
+  /* ---------- bento ---------- */
+  .bento{background:var(--paper);padding:var(--space-7) 24px}
+  .bento-head{max-width:820px;margin:0 auto 56px;text-align:center}
+  .bento-head .display{font-size:clamp(36px,5.2vw,68px);color:var(--ink)}
+  .bento-head .lead{font-size:20px;color:var(--grey);margin-top:18px}
+  .grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+  .cell{background:#fff;border-radius:24px;padding:30px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 1px 0 rgba(0,0,0,.03),0 12px 30px -20px rgba(0,0,0,.18);transition:transform .4s var(--ease),box-shadow .4s}
+  .cell:hover{transform:translateY(-3px);box-shadow:0 1px 0 rgba(0,0,0,.03),0 24px 48px -24px rgba(0,0,0,.28)}
+  .cell.w2{grid-column:span 2}.cell.w3{grid-column:span 3}.cell.w4{grid-column:span 4}.cell.w6{grid-column:span 6}
+  @media (max-width:980px){ .cell.w2,.cell.w3,.cell.w4{grid-column:span 3} }
+  @media (max-width:640px){ .cell.w2,.cell.w3,.cell.w4,.cell.w6{grid-column:span 6} }
+  .cell .k{font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--teal);margin:0 0 10px}
+  .cell h4{font-size:24px;font-weight:300;letter-spacing:-.01em;margin:0 0 8px;line-height:1.15}
+  .cell h4 b{font-weight:700}
+  .cell p{font-size:15px;font-weight:300;color:var(--grey);line-height:1.55;margin:0}
+  .cell .big{font-size:clamp(34px,3.4vw,52px);white-space:nowrap;font-weight:200;letter-spacing:-.03em;line-height:1;color:var(--ink);margin:14px 0 6px}
+  .cell.dark{background:var(--dark);color:#fff}
+  .cell.dark p{color:rgba(255,255,255,.72)}.cell.dark .big{color:#fff}
+  .cell.teal{background:linear-gradient(135deg,var(--teal-2),var(--teal));color:#fff}
+  .cell.teal .k{color:rgba(255,255,255,.85)}.cell.teal p{color:rgba(255,255,255,.88)}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .flow span{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;background:var(--paper);color:var(--ink)}
+  .flow em{font-style:normal;color:var(--grey-2)}
+  .cell.dark .flow span{background:rgba(255,255,255,.08);color:#fff}
+
+  /* ---------- cta ---------- */
+  .cta{background:var(--black);color:#fff;text-align:center;padding:var(--space-7) 24px}
+  .cta .display{font-size:clamp(36px,5.6vw,72px)}
+  .cta .lead{font-size:20px;color:rgba(255,255,255,.75);max-width:640px;margin:18px auto 34px}
+  .cta .row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+  /* ---------- footer ---------- */
+  .ftr{background:var(--black);color:#86868B;padding:48px 24px 40px;border-top:1px solid rgba(255,255,255,.08)}
+  .ftr-in{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
   .ftr .top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
-  .ftr .top svg{height:15px;width:auto;opacity:.9}
-  .ftr .fnav{display:flex;gap:28px;flex-wrap:wrap}
-  .ftr .fnav a{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#9AA0A6}
-  .ftr .fnav a:hover{color:#fff}
-  .ftr .bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid rgba(255,255,255,.1);padding-top:22px;font-size:12px;font-weight:300}
+  .ftr .top svg{height:14px;width:auto;opacity:.9}
+  .ftr nav{display:flex;gap:26px;flex-wrap:wrap}
+  .ftr nav a{font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#86868B;transition:color .2s}
+  .ftr nav a:hover{color:#fff}
+  .ftr .bot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:20px;font-size:12px;font-weight:300}
   .ftr .demo-note{color:var(--teal);font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:11px}
 </style>
 </head>
 <body>
 
-<header class="hdr">
-  <a class="logo" href="https://www.staar.com/" title="STAAR Surgical"><svg class="staar-logo" role="img" aria-label="STAAR Surgical" xmlns="http://www.w3.org/2000/svg" width="186" height="17" viewBox="0 0 186 17" fill="none"><path d="M34.567 7.45062C33.5699 6.11157 32.2404 4.90005 30.5121 3.87982C27.0554 1.83936 22.4686 0.755371 17.6159 0.755371C12.7632 0.755371 8.17643 1.90313 4.71973 3.87982C2.99138 4.90005 1.66188 6.11157 0.664751 7.45062C0.39885 7.76944 0.199425 8.15202 0 8.53461H2.59253C2.9249 8.53461 3.1908 8.40708 3.39023 8.21579C4.12145 7.45062 4.98563 6.74921 6.11571 6.0478C9.17356 4.2624 13.2285 3.24218 17.6159 3.24218C22.0032 3.24218 26.0582 4.19864 29.1161 6.0478C30.3126 6.74921 31.2433 7.51438 31.9745 8.34332C32.1075 8.47084 32.1075 8.66214 31.9745 8.78967C31.2433 9.55484 30.2462 10.32 29.1161 10.9577C27.986 11.6591 26.7895 12.1692 25.5264 12.6155C26.3906 11.404 26.9224 10.0012 27.0554 8.47084H24.3963C24.064 11.404 21.405 13.7633 18.2142 13.7633C15.0234 13.7633 12.4308 11.4678 12.032 8.47084H9.37298C9.70536 12.8068 13.5609 16.2501 18.1477 16.2501C22.7345 16.2501 26.9224 15.1023 30.3791 13.1256C32.1075 12.1054 33.5034 10.8939 34.4341 9.55484C34.567 9.36354 34.7 9.17225 34.7665 9.04472C34.9659 8.7259 34.9659 8.34332 34.7665 8.02449C34.8329 7.76944 34.7 7.64191 34.567 7.45062" fill="#F9FAFA"></path><path d="M69.0951 4.07764H67.3927C67.1731 4.07764 66.9534 4.23566 66.8436 4.44636L63.3291 12.769H65.5257L66.0199 11.6101H70.413L70.9073 12.769H73.1038L69.5893 4.44636C69.5344 4.23566 69.3697 4.07764 69.0951 4.07764ZM66.7338 9.92454L68.2714 6.07928L69.809 9.92454H66.7338Z" fill="#F9FAFA"></path><path d="M84.1973 12.769H86.3939L82.8794 4.44636C82.7695 4.23566 82.6048 4.07764 82.3302 4.07764H80.6279C80.4082 4.07764 80.1886 4.23566 80.0787 4.44636L76.6191 12.769H78.8157L79.3099 11.6101H83.7031L84.1973 12.769ZM79.9689 9.92454L81.5065 6.07928L83.0441 9.92454H79.9689V9.92454Z" fill="#F9FAFA"></path><path d="M45.4275 7.39652C44.3842 7.18582 43.5055 6.97512 43.5055 6.50105C43.5055 6.02697 44.0547 5.65825 44.8784 5.65825C46.0316 5.65825 46.8004 6.07965 47.2397 6.3957C47.4594 6.55372 47.7889 6.55372 48.0085 6.29035L48.8871 5.28953L48.7224 5.18418C47.7889 4.39405 46.5258 3.97266 45.0431 3.97266C42.8466 3.97266 41.3639 5.07883 41.3639 6.6064C41.3639 8.50269 43.2859 8.92409 44.8784 9.29281C46.1414 9.55619 46.9102 9.76689 46.9102 10.3463C46.9102 10.8204 46.4709 11.2945 45.2079 11.2945C43.6703 11.2945 42.6818 10.557 42.3523 10.1883L42.1876 9.97758L40.9795 11.4525L41.1442 11.5578C42.1327 12.4533 43.5605 12.9274 45.153 12.9274C48.0085 12.9274 49.0519 11.5052 49.0519 10.1356C49.0519 8.18664 47.0201 7.76524 45.4275 7.39652V7.39652Z" fill="#F9FAFA"></path><path d="M52.5664 5.86907H55.5867V12.7695H57.6185V5.86907H60.5839V4.60487C60.5839 4.28882 60.3093 4.07812 60.0347 4.07812H52.5664V5.86907V5.86907Z" fill="#F9FAFA"></path><path d="M92.7633 12.769V9.97728H93.4222L96.0581 12.769H98.5842L95.8385 9.9246C97.431 9.7139 98.5842 8.29168 98.4194 6.71144C98.2547 5.18387 96.8269 4.13037 95.2344 4.13037H90.7314V12.295C90.7314 12.611 91.006 12.8217 91.2806 12.8217H92.7633V12.769V12.769ZM92.7633 5.86864H95.1795C95.8385 5.86864 96.3876 6.39539 96.3876 7.02749C96.3876 7.65958 95.8385 8.18633 95.1795 8.18633H92.7633V5.86864V5.86864Z" fill="#F9FAFA"></path><path d="M104.782 6.34302C104.782 5.50023 105.606 4.97348 106.704 4.97348C107.583 4.97348 108.407 5.18418 109.066 5.65825C109.285 5.81627 109.615 5.81627 109.835 5.5529L110.164 5.18418C109.395 4.39405 108.242 3.97266 106.814 3.97266C104.947 3.97266 103.574 4.97348 103.574 6.3957C103.574 9.50351 109.176 8.23932 109.176 10.5043C109.176 11.1891 108.626 12.0319 106.979 12.0319C105.661 12.0319 104.618 11.4525 104.014 10.7677L103.3 11.6105C104.069 12.4006 105.277 12.98 106.924 12.98C109.45 12.98 110.384 11.6632 110.384 10.4517C110.384 7.18582 104.782 8.29199 104.782 6.34302Z" fill="#F9FAFA"></path><path d="M121.146 9.45102C121.146 11.0313 120.048 12.0321 118.401 12.0321C116.753 12.0321 115.655 11.0313 115.655 9.45102V4.18353H115.106C114.776 4.18353 114.557 4.44691 114.557 4.71028V9.50369C114.557 11.6634 115.984 13.0329 118.401 13.0329C120.872 13.0329 122.3 11.6634 122.3 9.50369V4.13086H121.146V9.45102V9.45102Z" fill="#F9FAFA"></path><path d="M181.387 11.9268V4.71034C181.387 4.39429 181.113 4.18359 180.838 4.18359H180.289V12.8749H186V11.9268H181.387V11.9268Z" fill="#F9FAFA"></path><path d="M133.942 6.92268C134.051 5.39511 132.788 4.18359 131.251 4.18359H126.803V12.3482C126.803 12.6642 127.077 12.8749 127.352 12.8749H127.901V9.45107H129.494L132.514 12.8749H134.051L131.031 9.45107H131.086C132.569 9.3984 133.887 8.3449 133.942 6.92268V6.92268ZM127.956 8.45025V5.13174H131.086C132.02 5.13174 132.843 5.86919 132.843 6.76466C132.843 7.66013 132.074 8.45025 131.086 8.45025H127.956Z" fill="#F9FAFA"></path><path d="M159.587 5.18398C160.795 4.92061 161.893 5.28933 162.717 5.9741C162.882 6.13213 163.156 6.13213 163.376 6.02678L163.925 5.65806C162.991 4.60456 161.564 3.97246 160.026 4.07781C157.829 4.23584 155.962 5.92143 155.743 8.02842C155.413 10.7148 157.61 13.0325 160.41 13.0325C161.838 13.0325 163.101 12.4004 163.98 11.4523L163.046 10.8729C162.387 11.5576 161.454 11.979 160.41 11.979C158.159 11.979 156.402 10.0301 156.896 7.76505C157.116 6.50085 158.269 5.44736 159.587 5.18398V5.18398Z" fill="#F9FAFA"></path><path d="M150.526 4.71034V12.8749H151.625V4.18359H151.076C150.746 4.18359 150.526 4.44697 150.526 4.71034Z" fill="#F9FAFA"></path><path d="M145.089 8.39746H142.398V8.81886C142.398 9.13491 142.673 9.34561 142.948 9.34561H145.034V10.8205C144.375 11.5053 143.442 11.9793 142.343 11.9793C140.367 11.9793 138.774 10.4518 138.774 8.55548C138.774 6.65919 140.367 5.13162 142.343 5.13162C143.387 5.13162 144.32 5.55302 144.979 6.23779L145.913 5.65837C145.034 4.71022 143.771 4.07812 142.343 4.07812C139.763 4.07812 137.676 6.07977 137.676 8.55548C137.676 11.0312 139.763 13.0328 142.343 13.0328C143.881 13.0328 145.254 12.2954 146.078 11.1892V8.39746H145.089V8.39746Z" fill="#F9FAFA"></path><path d="M176.39 12.8745L172.876 4.55189C172.766 4.34119 172.601 4.23584 172.381 4.23584H171.503C171.283 4.23584 171.064 4.39386 171.009 4.55189L167.494 12.8745H168.812L171.942 5.13131L175.072 12.8745H176.39Z" fill="#F9FAFA"></path><path d="M168.537 10.4517H175.292V11.3998H168.537V10.4517Z" fill="#F9FAFA"></path></svg></a>
-  <nav class="nav">
-    <a href="https://www.staar.com/products">Products</a>
-    <a href="https://investors.staar.com/">Investors</a>
-    <a href="https://www.staar.com/company">Company</a>
-    <a href="https://www.staar.com/contact-us">Contact us</a>
-    <a class="demo" href="#solutions">Digital ecosystem</a>
-  </nav>
+<header class="nav">
+  <div class="nav-in">
+    <a class="logo" href="https://www.staar.com/" title="STAAR Surgical"><svg class="staar-logo" role="img" aria-label="STAAR Surgical" xmlns="http://www.w3.org/2000/svg" width="186" height="17" viewBox="0 0 186 17" fill="none"><path d="M34.567 7.45062C33.5699 6.11157 32.2404 4.90005 30.5121 3.87982C27.0554 1.83936 22.4686 0.755371 17.6159 0.755371C12.7632 0.755371 8.17643 1.90313 4.71973 3.87982C2.99138 4.90005 1.66188 6.11157 0.664751 7.45062C0.39885 7.76944 0.199425 8.15202 0 8.53461H2.59253C2.9249 8.53461 3.1908 8.40708 3.39023 8.21579C4.12145 7.45062 4.98563 6.74921 6.11571 6.0478C9.17356 4.2624 13.2285 3.24218 17.6159 3.24218C22.0032 3.24218 26.0582 4.19864 29.1161 6.0478C30.3126 6.74921 31.2433 7.51438 31.9745 8.34332C32.1075 8.47084 32.1075 8.66214 31.9745 8.78967C31.2433 9.55484 30.2462 10.32 29.1161 10.9577C27.986 11.6591 26.7895 12.1692 25.5264 12.6155C26.3906 11.404 26.9224 10.0012 27.0554 8.47084H24.3963C24.064 11.404 21.405 13.7633 18.2142 13.7633C15.0234 13.7633 12.4308 11.4678 12.032 8.47084H9.37298C9.70536 12.8068 13.5609 16.2501 18.1477 16.2501C22.7345 16.2501 26.9224 15.1023 30.3791 13.1256C32.1075 12.1054 33.5034 10.8939 34.4341 9.55484C34.567 9.36354 34.7 9.17225 34.7665 9.04472C34.9659 8.7259 34.9659 8.34332 34.7665 8.02449C34.8329 7.76944 34.7 7.64191 34.567 7.45062" fill="#F9FAFA"></path><path d="M69.0951 4.07764H67.3927C67.1731 4.07764 66.9534 4.23566 66.8436 4.44636L63.3291 12.769H65.5257L66.0199 11.6101H70.413L70.9073 12.769H73.1038L69.5893 4.44636C69.5344 4.23566 69.3697 4.07764 69.0951 4.07764ZM66.7338 9.92454L68.2714 6.07928L69.809 9.92454H66.7338Z" fill="#F9FAFA"></path><path d="M84.1973 12.769H86.3939L82.8794 4.44636C82.7695 4.23566 82.6048 4.07764 82.3302 4.07764H80.6279C80.4082 4.07764 80.1886 4.23566 80.0787 4.44636L76.6191 12.769H78.8157L79.3099 11.6101H83.7031L84.1973 12.769ZM79.9689 9.92454L81.5065 6.07928L83.0441 9.92454H79.9689V9.92454Z" fill="#F9FAFA"></path><path d="M45.4275 7.39652C44.3842 7.18582 43.5055 6.97512 43.5055 6.50105C43.5055 6.02697 44.0547 5.65825 44.8784 5.65825C46.0316 5.65825 46.8004 6.07965 47.2397 6.3957C47.4594 6.55372 47.7889 6.55372 48.0085 6.29035L48.8871 5.28953L48.7224 5.18418C47.7889 4.39405 46.5258 3.97266 45.0431 3.97266C42.8466 3.97266 41.3639 5.07883 41.3639 6.6064C41.3639 8.50269 43.2859 8.92409 44.8784 9.29281C46.1414 9.55619 46.9102 9.76689 46.9102 10.3463C46.9102 10.8204 46.4709 11.2945 45.2079 11.2945C43.6703 11.2945 42.6818 10.557 42.3523 10.1883L42.1876 9.97758L40.9795 11.4525L41.1442 11.5578C42.1327 12.4533 43.5605 12.9274 45.153 12.9274C48.0085 12.9274 49.0519 11.5052 49.0519 10.1356C49.0519 8.18664 47.0201 7.76524 45.4275 7.39652V7.39652Z" fill="#F9FAFA"></path><path d="M52.5664 5.86907H55.5867V12.7695H57.6185V5.86907H60.5839V4.60487C60.5839 4.28882 60.3093 4.07812 60.0347 4.07812H52.5664V5.86907V5.86907Z" fill="#F9FAFA"></path><path d="M92.7633 12.769V9.97728H93.4222L96.0581 12.769H98.5842L95.8385 9.9246C97.431 9.7139 98.5842 8.29168 98.4194 6.71144C98.2547 5.18387 96.8269 4.13037 95.2344 4.13037H90.7314V12.295C90.7314 12.611 91.006 12.8217 91.2806 12.8217H92.7633V12.769V12.769ZM92.7633 5.86864H95.1795C95.8385 5.86864 96.3876 6.39539 96.3876 7.02749C96.3876 7.65958 95.8385 8.18633 95.1795 8.18633H92.7633V5.86864V5.86864Z" fill="#F9FAFA"></path><path d="M104.782 6.34302C104.782 5.50023 105.606 4.97348 106.704 4.97348C107.583 4.97348 108.407 5.18418 109.066 5.65825C109.285 5.81627 109.615 5.81627 109.835 5.5529L110.164 5.18418C109.395 4.39405 108.242 3.97266 106.814 3.97266C104.947 3.97266 103.574 4.97348 103.574 6.3957C103.574 9.50351 109.176 8.23932 109.176 10.5043C109.176 11.1891 108.626 12.0319 106.979 12.0319C105.661 12.0319 104.618 11.4525 104.014 10.7677L103.3 11.6105C104.069 12.4006 105.277 12.98 106.924 12.98C109.45 12.98 110.384 11.6632 110.384 10.4517C110.384 7.18582 104.782 8.29199 104.782 6.34302Z" fill="#F9FAFA"></path><path d="M121.146 9.45102C121.146 11.0313 120.048 12.0321 118.401 12.0321C116.753 12.0321 115.655 11.0313 115.655 9.45102V4.18353H115.106C114.776 4.18353 114.557 4.44691 114.557 4.71028V9.50369C114.557 11.6634 115.984 13.0329 118.401 13.0329C120.872 13.0329 122.3 11.6634 122.3 9.50369V4.13086H121.146V9.45102V9.45102Z" fill="#F9FAFA"></path><path d="M181.387 11.9268V4.71034C181.387 4.39429 181.113 4.18359 180.838 4.18359H180.289V12.8749H186V11.9268H181.387V11.9268Z" fill="#F9FAFA"></path><path d="M133.942 6.92268C134.051 5.39511 132.788 4.18359 131.251 4.18359H126.803V12.3482C126.803 12.6642 127.077 12.8749 127.352 12.8749H127.901V9.45107H129.494L132.514 12.8749H134.051L131.031 9.45107H131.086C132.569 9.3984 133.887 8.3449 133.942 6.92268V6.92268ZM127.956 8.45025V5.13174H131.086C132.02 5.13174 132.843 5.86919 132.843 6.76466C132.843 7.66013 132.074 8.45025 131.086 8.45025H127.956Z" fill="#F9FAFA"></path><path d="M159.587 5.18398C160.795 4.92061 161.893 5.28933 162.717 5.9741C162.882 6.13213 163.156 6.13213 163.376 6.02678L163.925 5.65806C162.991 4.60456 161.564 3.97246 160.026 4.07781C157.829 4.23584 155.962 5.92143 155.743 8.02842C155.413 10.7148 157.61 13.0325 160.41 13.0325C161.838 13.0325 163.101 12.4004 163.98 11.4523L163.046 10.8729C162.387 11.5576 161.454 11.979 160.41 11.979C158.159 11.979 156.402 10.0301 156.896 7.76505C157.116 6.50085 158.269 5.44736 159.587 5.18398V5.18398Z" fill="#F9FAFA"></path><path d="M150.526 4.71034V12.8749H151.625V4.18359H151.076C150.746 4.18359 150.526 4.44697 150.526 4.71034Z" fill="#F9FAFA"></path><path d="M145.089 8.39746H142.398V8.81886C142.398 9.13491 142.673 9.34561 142.948 9.34561H145.034V10.8205C144.375 11.5053 143.442 11.9793 142.343 11.9793C140.367 11.9793 138.774 10.4518 138.774 8.55548C138.774 6.65919 140.367 5.13162 142.343 5.13162C143.387 5.13162 144.32 5.55302 144.979 6.23779L145.913 5.65837C145.034 4.71022 143.771 4.07812 142.343 4.07812C139.763 4.07812 137.676 6.07977 137.676 8.55548C137.676 11.0312 139.763 13.0328 142.343 13.0328C143.881 13.0328 145.254 12.2954 146.078 11.1892V8.39746H145.089V8.39746Z" fill="#F9FAFA"></path><path d="M176.39 12.8745L172.876 4.55189C172.766 4.34119 172.601 4.23584 172.381 4.23584H171.503C171.283 4.23584 171.064 4.39386 171.009 4.55189L167.494 12.8745H168.812L171.942 5.13131L175.072 12.8745H176.39Z" fill="#F9FAFA"></path><path d="M168.537 10.4517H175.292V11.3998H168.537V10.4517Z" fill="#F9FAFA"></path></svg></a>
+    <ul>
+      <li><a href="https://www.staar.com/products">Products</a></li>
+      <li><a href="https://investors.staar.com/">Investors</a></li>
+      <li><a href="https://www.staar.com/company">Company</a></li>
+      <li><a href="https://www.staar.com/contact-us">Contact us</a></li>
+      <li class="keep"><a class="demo" href="#ecosystem">Digital ecosystem</a></li>
+    </ul>
+  </div>
 </header>
 
-<section class="hero">
+<!-- HERO -->
+<section class="hero" id="ecosystem">
+  <div class="sky"></div>
   <div class="hero-in">
-    <p class="kicker">STAAR Surgical · Digital Ecosystem</p>
-    <h1>Evolution in Visual Freedom<sup>™</sup></h1>
-    <p>From the official Stella calculation to the confirmed order, the clinical journey and the network-wide intelligence — one connected STAAR ecosystem for surgeons, clinics and HQ.</p>
+    <div class="badge rv"><i></i>Live demo environment · synthetic data</div>
+    <p class="eyebrow rv">STAAR Surgical</p>
+    <h1 class="display rv d1">Digital <b>Ecosystem.</b></h1>
+    <p class="lead rv d2">Stella, EVO Connect and the Intelligence Center. From the official calculation to the confirmed order — and everything the network learns from it.</p>
+    <div class="links rv d3">
+      <a class="link" href="/stella">Sign in to Stella <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+      <a class="link" href="#stella">Explore the three surfaces <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="stage rv" data-stage>
+      <div class="frame">
+        <div class="bar"><i></i><i></i><i></i><span>stella.staar.com</span></div>
+        <img src="/assets/showcase/stella-login.webp" alt="Stella sign-in screen" loading="eager" fetchpriority="high">
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="sol" id="solutions">
-
-  <a class="panel p-stella" href="/stella">
-    <div class="bg"></div><div class="shade"></div>
-    <div class="mark"><svg class="stella-logo" role="img" aria-label="Stella" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278 122" fill="none"><g clip-path="url(#a)"><path fill="#fff" d="m29.013 37.743 27.37 25.885-25.392 27.04-27.369-26.71z"/><path fill="#00ABBD" d="M54.632 39.294c10.025 10.025 7.467 28.847-5.726 42.04C35.72 94.52 16.9 97.086 6.866 87.061-3.152 77.026-.595 58.205 12.6 45.02c13.193-13.186 32.005-15.753 42.031-5.727M53.178 62.27h-.018c-11.946.215-21.828-9.38-22.025-21.335a1.1 1.1 0 0 0-1.14-1.104 1.124 1.124 0 0 0-1.104 1.122v.018c.188 11.955-9.38 21.837-21.335 22.026a1.124 1.124 0 0 0-1.104 1.122v.017c.01.62.539 1.087 1.14 1.105a21.53 21.53 0 0 1 15.429 6.103c4.156 4.03 6.498 9.433 6.597 15.23a1.125 1.125 0 0 0 1.122 1.105h.018a1.125 1.125 0 0 0 1.104-1.122v-.018c-.189-11.955 9.379-21.837 21.334-22.026a1.125 1.125 0 0 0 1.104-1.121v-.018a1.124 1.124 0 0 0-1.122-1.104"/><path fill="#fff" d="M94.06 87.527c-7.35 0-13.75-2.513-18.049-7.09l3.294-4.057c1.939 2.1 6.956 6.49 14.971 6.49 8.473 0 11.479-4.426 11.479-8.213 0-5.619-6.12-7.198-12.61-8.877-7.719-2.001-15.707-4.066-15.707-12.754 0-7.288 6.84-12.583 16.264-12.583 6.74 0 12.484 2.163 16.613 6.265l-1.571 1.84a2.6 2.6 0 0 1-1.983.915c-.566 0-1.095-.18-1.535-.52-3.195-2.469-7.35-3.78-12.027-3.78-5.906 0-10.034 3.097-10.034 7.522 0 4.685 5.403 6.103 11.658 7.737 7.8 2.037 16.65 4.344 16.65 13.83 0 6.418-4.569 13.275-17.403 13.275zm82.753-16.747v-.665c0-9.846-5.996-17.798-16.416-17.798-9.747 0-16.9 7.818-16.9 17.538v.135c0 10.438 7.898 17.537 17.573 17.537 6.669 0 10.95-2.54 14.495-6.31v-.035l-1.741-1.5c-.835-.717-2.064-.708-2.917 0-2.576 2.137-5.627 3.474-9.702 3.474-6.265 0-11.65-4.11-12.395-11.407-.036-.377-.063-.53-.072-.97h28.075m-16.551-14.227c6.463 0 10.08 4.533 11.04 10.026h-22.259c1.167-5.843 5.547-10.025 11.219-10.025m73.472-4.236c-4.909 0-9.352 1.768-12.583 4.99v.027l1.714 1.768c.745.763 1.939.925 2.828.324 2.414-1.643 4.9-2.442 7.53-2.442h.251c3.025.045 5.61 1.041 7.261 2.819 1.391 1.49 2.065 3.572 1.939 5.807l-.036.646-9.819-.072c-9.281 0-14.271 3.608-14.271 10.376s6.48 10.967 12.413 10.967c5.08 0 8.868-2.37 10.717-4.586l1.148-1.382s.162 5.43.171 5.43h4.802s.018-.01.018-.018V65.798c0-8.437-5.269-13.472-14.083-13.472zm8.94 19.037c-.126 8.24-6.965 11.3-11.246 11.3h-.144c-4.882-.081-7.324-3.097-7.324-6.032 0-1.795.638-5.843 7.602-5.843h11.121v.575zm-56.078-25.607v41s.009.017.018.017h5.394s.018-.008.018-.017V43.082s-.009-.018-.018-.018h-2.728a2.69 2.69 0 0 0-2.693 2.692zm17.385 0v41s.009.017.018.017h5.394s.018-.008.018-.017V43.082s-.009-.018-.018-.018h-2.728a2.69 2.69 0 0 0-2.693 2.692zm-80.589 33.945v-22.08h-5.574v-3.984h5.574v-6.93h5.295v6.93h7.773v1.74a2.245 2.245 0 0 1-2.244 2.245h-5.529v20.912c0 2.513 1.113 4.326 3.348 4.326.781 0 1.436-.072 2.055-.197a2.23 2.23 0 0 1 2.523 1.391l.807 2.1c-1.902 1.023-3.706 1.365-6.22 1.365-4.317 0-7.817-3.51-7.817-7.827m135.348-3.097h-3.689v-1.292h8.85v1.292h-3.707v10.376h-1.454zm17.062.664-3.967 9.712h-.593l-3.949-9.711v9.71h-1.454V75.295h2.083l3.617 8.886 3.635-8.886h2.082v11.668h-1.454z"/></g><defs><clipPath id="a"><path fill="#fff" d="M.753 33.173h276.494v60H.753z"/></clipPath></defs></svg></div>
-    <div class="txt">
-      <p class="tag">STAAR · System of record</p>
-      <h2><b>Stella</b></h2>
-      <p>STAAR's official calculator and ordering environment. Generate the official recommendation, launch to REVAI and confirm the order — Stella remains the single system of record.</p>
-      <span class="btn">Sign in to Stella <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-    </div>
-  </a>
-
-  <a class="panel p-evo" href="/dashboard">
-    <div class="bg"></div><div class="shade"></div>
-    <div class="mark">
-      <!-- ICL in the eye: concentric rings + haptics -->
-      <svg viewBox="0 0 340 200" fill="none" stroke="#fff" stroke-linecap="round" aria-hidden="true">
-        <ellipse cx="170" cy="100" rx="160" ry="78" stroke-opacity=".18" stroke-width="1"/>
-        <ellipse cx="170" cy="100" rx="120" ry="60" stroke-opacity=".28" stroke-width="1"/>
-        <circle cx="170" cy="100" r="46" stroke="#10A8BA" stroke-width="2"/>
-        <circle cx="170" cy="100" r="30" stroke="#10A8BA" stroke-opacity=".6" stroke-width="1.5"/>
-        <circle cx="170" cy="100" r="6" fill="#10A8BA" stroke="none"/>
-        <path d="M124 100c-18-30-50-36-70-28M216 100c18-30 50-36 70-28M124 100c-18 30-50 36-70 28M216 100c18 30 50 36 70 28" stroke="#10A8BA" stroke-width="2"/>
-        <path d="M60 60 60 140M280 60 280 140" stroke="#fff" stroke-opacity=".25" stroke-width="1" stroke-dasharray="2 4"/>
-        <text x="170" y="184" fill="#fff" fill-opacity=".8" font-family="Mulish,sans-serif" font-size="11" font-weight="700" letter-spacing="2.4" text-anchor="middle" stroke="none">ICL SIZING · 13.2 → 13.6 mm</text>
-      </svg>
-    </div>
-    <div class="txt">
-      <p class="tag">Clinic</p>
-      <h2><b>EVO</b> Connect</h2>
-      <p>Per-patient workflow: pre-op, ICL sizing comparison, surgical planner, surgery and post-op tracking. Includes Phase Demo Mode for the phase-by-phase rollout.</p>
-      <span class="btn">Open EVO Connect <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-    </div>
-  </a>
-
-  <a class="panel p-hq" href="/intelligence">
-    <div class="bg"></div><div class="shade"></div>
-    <div class="mark">
-      <!-- network pulse: bars + line -->
-      <svg viewBox="0 0 340 200" fill="none" aria-hidden="true">
-        <g stroke="#fff" stroke-opacity=".12" stroke-width="1"><path d="M20 150h300M20 110h300M20 70h300M20 30h300"/></g>
-        <g fill="#10A8BA" fill-opacity=".55">
-          <rect x="34" y="118" width="18" height="32" rx="2"/><rect x="66" y="104" width="18" height="46" rx="2"/><rect x="98" y="96" width="18" height="54" rx="2"/><rect x="130" y="82" width="18" height="68" rx="2"/><rect x="162" y="90" width="18" height="60" rx="2"/><rect x="194" y="66" width="18" height="84" rx="2"/><rect x="226" y="58" width="18" height="92" rx="2"/><rect x="258" y="40" width="18" height="110" rx="2"/><rect x="290" y="30" width="18" height="120" rx="2"/>
-        </g>
-        <path d="M43 112C70 100 95 96 139 74s60-10 96-30 40-22 64-28" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-        <circle cx="299" cy="16" r="5" fill="#fff"/><circle cx="299" cy="16" r="11" stroke="#fff" stroke-opacity=".4"/>
-        <text x="170" y="184" fill="#fff" fill-opacity=".8" font-family="Mulish,sans-serif" font-size="11" font-weight="700" letter-spacing="2.4" text-anchor="middle">300+ CLINICS · 40+ COUNTRIES · LIVE</text>
-      </svg>
-    </div>
-    <div class="txt">
-      <p class="tag">HQ</p>
-      <h2><b>STAAR</b> Intelligence Center</h2>
-      <p>Network-wide command center: clinical analytics, operations pulse, lens supply chain, AI agents and Copilot — built for STAAR leadership.</p>
-      <span class="btn">Open Intelligence <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-    </div>
-  </a>
-
+<!-- THREE TILES -->
+<section class="trio">
+  <div class="trio-in">
+    <a class="tile stella rv" href="/stella">
+      <div class="art"><svg class="stella-logo" role="img" aria-label="Stella" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278 122" fill="none"><g clip-path="url(#a)"><path fill="#fff" d="m29.013 37.743 27.37 25.885-25.392 27.04-27.369-26.71z"/><path fill="#00ABBD" d="M54.632 39.294c10.025 10.025 7.467 28.847-5.726 42.04C35.72 94.52 16.9 97.086 6.866 87.061-3.152 77.026-.595 58.205 12.6 45.02c13.193-13.186 32.005-15.753 42.031-5.727M53.178 62.27h-.018c-11.946.215-21.828-9.38-22.025-21.335a1.1 1.1 0 0 0-1.14-1.104 1.124 1.124 0 0 0-1.104 1.122v.018c.188 11.955-9.38 21.837-21.335 22.026a1.124 1.124 0 0 0-1.104 1.122v.017c.01.62.539 1.087 1.14 1.105a21.53 21.53 0 0 1 15.429 6.103c4.156 4.03 6.498 9.433 6.597 15.23a1.125 1.125 0 0 0 1.122 1.105h.018a1.125 1.125 0 0 0 1.104-1.122v-.018c-.189-11.955 9.379-21.837 21.334-22.026a1.125 1.125 0 0 0 1.104-1.121v-.018a1.124 1.124 0 0 0-1.122-1.104"/><path fill="#fff" d="M94.06 87.527c-7.35 0-13.75-2.513-18.049-7.09l3.294-4.057c1.939 2.1 6.956 6.49 14.971 6.49 8.473 0 11.479-4.426 11.479-8.213 0-5.619-6.12-7.198-12.61-8.877-7.719-2.001-15.707-4.066-15.707-12.754 0-7.288 6.84-12.583 16.264-12.583 6.74 0 12.484 2.163 16.613 6.265l-1.571 1.84a2.6 2.6 0 0 1-1.983.915c-.566 0-1.095-.18-1.535-.52-3.195-2.469-7.35-3.78-12.027-3.78-5.906 0-10.034 3.097-10.034 7.522 0 4.685 5.403 6.103 11.658 7.737 7.8 2.037 16.65 4.344 16.65 13.83 0 6.418-4.569 13.275-17.403 13.275zm82.753-16.747v-.665c0-9.846-5.996-17.798-16.416-17.798-9.747 0-16.9 7.818-16.9 17.538v.135c0 10.438 7.898 17.537 17.573 17.537 6.669 0 10.95-2.54 14.495-6.31v-.035l-1.741-1.5c-.835-.717-2.064-.708-2.917 0-2.576 2.137-5.627 3.474-9.702 3.474-6.265 0-11.65-4.11-12.395-11.407-.036-.377-.063-.53-.072-.97h28.075m-16.551-14.227c6.463 0 10.08 4.533 11.04 10.026h-22.259c1.167-5.843 5.547-10.025 11.219-10.025m73.472-4.236c-4.909 0-9.352 1.768-12.583 4.99v.027l1.714 1.768c.745.763 1.939.925 2.828.324 2.414-1.643 4.9-2.442 7.53-2.442h.251c3.025.045 5.61 1.041 7.261 2.819 1.391 1.49 2.065 3.572 1.939 5.807l-.036.646-9.819-.072c-9.281 0-14.271 3.608-14.271 10.376s6.48 10.967 12.413 10.967c5.08 0 8.868-2.37 10.717-4.586l1.148-1.382s.162 5.43.171 5.43h4.802s.018-.01.018-.018V65.798c0-8.437-5.269-13.472-14.083-13.472zm8.94 19.037c-.126 8.24-6.965 11.3-11.246 11.3h-.144c-4.882-.081-7.324-3.097-7.324-6.032 0-1.795.638-5.843 7.602-5.843h11.121v.575zm-56.078-25.607v41s.009.017.018.017h5.394s.018-.008.018-.017V43.082s-.009-.018-.018-.018h-2.728a2.69 2.69 0 0 0-2.693 2.692zm17.385 0v41s.009.017.018.017h5.394s.018-.008.018-.017V43.082s-.009-.018-.018-.018h-2.728a2.69 2.69 0 0 0-2.693 2.692zm-80.589 33.945v-22.08h-5.574v-3.984h5.574v-6.93h5.295v6.93h7.773v1.74a2.245 2.245 0 0 1-2.244 2.245h-5.529v20.912c0 2.513 1.113 4.326 3.348 4.326.781 0 1.436-.072 2.055-.197a2.23 2.23 0 0 1 2.523 1.391l.807 2.1c-1.902 1.023-3.706 1.365-6.22 1.365-4.317 0-7.817-3.51-7.817-7.827m135.348-3.097h-3.689v-1.292h8.85v1.292h-3.707v10.376h-1.454zm17.062.664-3.967 9.712h-.593l-3.949-9.711v9.71h-1.454V75.295h2.083l3.617 8.886 3.635-8.886h2.082v11.668h-1.454z"/></g><defs><clipPath id="a"><path fill="#fff" d="M.753 33.173h276.494v60H.753z"/></clipPath></defs></svg></div>
+      <p class="eyebrow">System of record</p>
+      <h3><b>Stella</b></h3>
+      <p>STAAR's official calculator and ordering environment. Where every case starts and where every order is confirmed.</p>
+      <span class="link">Sign in <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="tile rv d1" href="/dashboard">
+      <div class="art shot"><img src="/assets/showcase/evo-connect.webp" alt="" loading="lazy"></div><div class="shade"></div>
+      <p class="eyebrow">Clinic</p>
+      <h3><b>EVO</b> Connect</h3>
+      <p>The clinical journey: sizing comparison, surgical planner, surgery and post-op — one case, one record.</p>
+      <span class="link">Open EVO Connect <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="tile rv d2" href="/intelligence">
+      <div class="art shot"><img src="/assets/showcase/intelligence-center.webp" alt="" loading="lazy"></div><div class="shade"></div>
+      <p class="eyebrow">HQ</p>
+      <h3><b>STAAR</b> Intelligence Center</h3>
+      <p>Everything the network learns, live: clinical analytics, operations pulse, supply chain and AI agents.</p>
+      <span class="link">Open Intelligence <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
 </section>
 
-<section class="why">
-  <div class="why-in">
-    <p class="kicker">One connected platform</p>
-    <h2>Three surfaces. One decision record.</h2>
-    <p>Start in Stella exactly as surgeons do today. Follow the case into EVO Connect for sizing comparison and the surgical workflow. Zoom out to the Intelligence Center built for STAAR leadership. Every case leaves a complete, auditable decision record — official recommendation, external methods, the surgeon's choice and the confirmed order.</p>
-    <div class="stats">
-      <div class="stat"><b>4M+</b><span>Lenses sold worldwide</span></div>
-      <div class="stat"><b>99.4%</b><span>Would have ICL again</span></div>
-      <div class="stat"><b>75+</b><span>Countries</span></div>
+<!-- CHAPTER: STELLA -->
+<section class="chapter dark" id="stella">
+  <div class="chapter-in">
+    <div class="brand rv"><svg class="stella-logo" role="img" aria-label="Stella" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 278 122" fill="none"><g clip-path="url(#a)"><path fill="#fff" d="m29.013 37.743 27.37 25.885-25.392 27.04-27.369-26.71z"/><path fill="#00ABBD" d="M54.632 39.294c10.025 10.025 7.467 28.847-5.726 42.04C35.72 94.52 16.9 97.086 6.866 87.061-3.152 77.026-.595 58.205 12.6 45.02c13.193-13.186 32.005-15.753 42.031-5.727M53.178 62.27h-.018c-11.946.215-21.828-9.38-22.025-21.335a1.1 1.1 0 0 0-1.14-1.104 1.124 1.124 0 0 0-1.104 1.122v.018c.188 11.955-9.38 21.837-21.335 22.026a1.124 1.124 0 0 0-1.104 1.122v.017c.01.62.539 1.087 1.14 1.105a21.53 21.53 0 0 1 15.429 6.103c4.156 4.03 6.498 9.433 6.597 15.23a1.125 1.125 0 0 0 1.122 1.105h.018a1.125 1.125 0 0 0 1.104-1.122v-.018c-.189-11.955 9.379-21.837 21.334-22.026a1.125 1.125 0 0 0 1.104-1.121v-.018a1.124 1.124 0 0 0-1.122-1.104"/><path fill="#fff" d="M94.06 87.527c-7.35 0-13.75-2.513-18.049-7.09l3.294-4.057c1.939 2.1 6.956 6.49 14.971 6.49 8.473 0 11.479-4.426 11.479-8.213 0-5.619-6.12-7.198-12.61-8.877-7.719-2.001-15.707-4.066-15.707-12.754 0-7.288 6.84-12.583 16.264-12.583 6.74 0 12.484 2.163 16.613 6.265l-1.571 1.84a2.6 2.6 0 0 1-1.983.915c-.566 0-1.095-.18-1.535-.52-3.195-2.469-7.35-3.78-12.027-3.78-5.906 0-10.034 3.097-10.034 7.522 0 4.685 5.403 6.103 11.658 7.737 7.8 2.037 16.65 4.344 16.65 13.83 0 6.418-4.569 13.275-17.403 13.275zm82.753-16.747v-.665c0-9.846-5.996-17.798-16.416-17.798-9.747 0-16.9 7.818-16.9 17.538v.135c0 10.438 7.898 17.537 17.573 17.537 6.669 0 10.95-2.54 14.495-6.31v-.035l-1.741-1.5c-.835-.717-2.064-.708-2.917 0-2.576 2.137-5.627 3.474-9.702 3.474-6.265 0-11.65-4.11-12.395-11.407-.036-.377-.063-.53-.072-.97h28.075m-16.551-14.227c6.463 0 10.08 4.533 11.04 10.026h-22.259c1.167-5.843 5.547-10.025 11.219-10.025m73.472-4.236c-4.909 0-9.352 1.768-12.583 4.99v.027l1.714 1.768c.745.763 1.939.925 2.828.324 2.414-1.643 4.9-2.442 7.53-2.442h.251c3.025.045 5.61 1.041 7.261 2.819 1.391 1.49 2.065 3.572 1.939 5.807l-.036.646-9.819-.072c-9.281 0-14.271 3.608-14.271 10.376s6.48 10.967 12.413 10.967c5.08 0 8.868-2.37 10.717-4.586l1.148-1.382s.162 5.43.171 5.43h4.802s.018-.01.018-.018V65.798c0-8.437-5.269-13.472-14.083-13.472zm8.94 19.037c-.126 8.24-6.965 11.3-11.246 11.3h-.144c-4.882-.081-7.324-3.097-7.324-6.032 0-1.795.638-5.843 7.602-5.843h11.121v.575zm-56.078-25.607v41s.009.017.018.017h5.394s.018-.008.018-.017V43.082s-.009-.018-.018-.018h-2.728a2.69 2.69 0 0 0-2.693 2.692zm17.385 0v41s.009.017.018.017h5.394s.018-.008.018-.017V43.082s-.009-.018-.018-.018h-2.728a2.69 2.69 0 0 0-2.693 2.692zm-80.589 33.945v-22.08h-5.574v-3.984h5.574v-6.93h5.295v6.93h7.773v1.74a2.245 2.245 0 0 1-2.244 2.245h-5.529v20.912c0 2.513 1.113 4.326 3.348 4.326.781 0 1.436-.072 2.055-.197a2.23 2.23 0 0 1 2.523 1.391l.807 2.1c-1.902 1.023-3.706 1.365-6.22 1.365-4.317 0-7.817-3.51-7.817-7.827m135.348-3.097h-3.689v-1.292h8.85v1.292h-3.707v10.376h-1.454zm17.062.664-3.967 9.712h-.593l-3.949-9.711v9.71h-1.454V75.295h2.083l3.617 8.886 3.635-8.886h2.082v11.668h-1.454z"/></g><defs><clipPath id="a"><path fill="#fff" d="M.753 33.173h276.494v60H.753z"/></clipPath></defs></svg></div>
+    <h2 class="display rv d1">Start where surgeons <b>already are.</b></h2>
+    <p class="lead rv d2">Stella stays the official calculator, the ordering environment and the single system of record. Nothing external is written into it — ever.</p>
+    <div class="links rv d3">
+      <a class="link" href="/stella">Sign in to Stella <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
     </div>
-    <a class="btn light" href="/stella">Start the journey in Stella <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
-    <div class="links" style="margin-top:56px">
-      <a href="/stella">For Surgeons</a>
-      <a href="/dashboard">For Clinics</a>
-      <a href="/intelligence">For STAAR HQ</a>
+    <div class="frame rv" data-frame>
+      <div class="bar"><i></i><i></i><i></i><span>stella.staar.com · Dashboard</span></div>
+      <img src="/assets/showcase/stella-home.webp" alt="Stella dashboard with reservations and announcements" loading="lazy">
     </div>
+    <div class="feats">
+      <div class="feat rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-2.7L7 19l1-6-4-4 5.5-.5z"/></svg></div><h4>Official recommendation</h4><p>Generated in Stella, before anything external participates — so it can never be confused with an outside calculation.</p></div>
+      <div class="feat rv d1"><div class="ico"><svg viewBox="0 0 24 24"><path d="M7 17l5-5 5 5M7 7h10"/></svg></div><h4>Controlled launch to REVAI</h4><p>A toggle inside Stella carries a pseudonymous case ID, the minimum data set and the recommendation. One direction only.</p></div>
+      <div class="feat rv d2"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"/></svg></div><h4>Confirmed order</h4><p>The surgeon confirms in Stella. If the chosen lens differs, Stella challenges — and the final order flows back to the record.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER: EVO CONNECT -->
+<section class="chapter paper on-paper" id="evo">
+  <div class="chapter-in">
+    <p class="eyebrow rv">EVO Connect · Clinic</p>
+    <h2 class="display rv d1">The whole case. <b>One record.</b></h2>
+    <p class="lead rv d2">Compare ICL Guru, ICLFIT and CASIA2 next to Stella's recommendation. Capture the surgeon's choice and the reason. Plan, operate, follow up.</p>
+    <div class="links rv d3">
+      <a class="link" href="/dashboard">Open EVO Connect <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="frame rv" data-frame>
+      <div class="bar"><i></i><i></i><i></i><span>evo-connect · Dashboard</span></div>
+      <img src="/assets/showcase/evo-connect.webp" alt="EVO Connect clinic dashboard" loading="lazy">
+    </div>
+    <div class="feats">
+      <div class="feat rv"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg></div><h4>Sizing comparison</h4><p>Every method labelled with modality, device and formula version. Inspect one or all — no method is endorsed.</p></div>
+      <div class="feat rv d1"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20h16M6 16l4-8 4 5 4-9"/></svg></div><h4>Surgical planner &amp; surgery</h4><p>Axis, vault and lens plan in one place, then the OR view and post-op tracking with the implanted lens.</p></div>
+      <div class="feat rv d2"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h4>Phase Demo Mode</h4><p>Walk the rollout phase by phase — what ships in Phase 1 and what comes after.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER: INTELLIGENCE -->
+<section class="chapter dark" id="hq">
+  <div class="chapter-in">
+    <p class="eyebrow rv">STAAR Intelligence Center · HQ</p>
+    <h2 class="display rv d1">What the whole network <b>knows.</b></h2>
+    <p class="lead rv d2">A command center for STAAR leadership: surgeries, run-rate, active clinics, lens orders and size mix — live, worldwide, down to the country.</p>
+    <div class="links rv d3">
+      <a class="link" href="/intelligence">Open Intelligence Center <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="frame rv" data-frame>
+      <div class="bar"><i></i><i></i><i></i><span>intelligence.staar.com · Command Center</span></div>
+      <img src="/assets/showcase/intelligence-center.webp" alt="STAAR Intelligence Center command center with global map" loading="lazy">
+    </div>
+    <div class="feats">
+      <div class="feat rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h4>ICL Universe</h4><p>Global footprint by equipment, volume and growth — clinics, countries and certified surgeons on one map.</p></div>
+      <div class="feat rv d1"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg></div><h4>Operations pulse</h4><p>Lens orders against projection, supply chain, size mix and surgeon rankings — refreshed continuously.</p></div>
+      <div class="feat rv d2"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></svg></div><h4>AI agents &amp; Copilot</h4><p>Ask in natural language across millions of surgeries. Agents watch social listening, market and regulatory signals.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BENTO: THE DECISION RECORD -->
+<section class="bento" id="record">
+  <div class="bento-head">
+    <p class="eyebrow rv">One connected platform</p>
+    <h2 class="display rv d1">Three surfaces. <b>One decision record.</b></h2>
+    <p class="lead rv d2">Every case leaves a complete, auditable trail under the same pseudonymous ID.</p>
+  </div>
+  <div class="grid">
+    <div class="cell w4 rv">
+      <div><p class="k">The journey</p><h4>From official recommendation to <b>confirmed order</b></h4><p>The surgeon is the only bridge between the two systems. Nothing is written into Stella automatically.</p></div>
+      <div class="flow"><span>Stella 13.2 mm</span><em>→</em><span>ICL Guru · ICLFIT · CASIA2</span><em>→</em><span>Surgeon's choice + reason</span><em>→</em><span>Order confirmed in Stella</span></div>
+    </div>
+    <div class="cell w2 dark rv d1">
+      <div><p class="k">Data direction</p><h4><b>One</b> way</h4></div>
+      <div><div class="big">0 bytes</div><p>from REVAI into Stella. Case context and confirmed order flow Stella → REVAI only.</p></div>
+    </div>
+    <div class="cell w2 rv">
+      <div><p class="k">Case identity</p><h4>Pseudonymous <b>always</b></h4></div>
+      <div><div class="big">PSEUDO-4471</div><p>No name, no date of birth, no clinical history leaves STAAR's system.</p></div>
+    </div>
+    <div class="cell w2 teal rv d1">
+      <div><p class="k">Boundary</p><h4>Visible at <b>every step</b></h4></div>
+      <p>The interface always shows whether you are in Stella, in REVAI or in STAAR's integration layer.</p>
+    </div>
+    <div class="cell w2 rv d2">
+      <div><p class="k">Optionality</p><h4>No method <b>endorsed</b></h4></div>
+      <p>External nomograms are shown side by side with device, modality and version — never as "better".</p>
+    </div>
+    <div class="cell w3 rv">
+      <div><p class="k">STAAR worldwide</p><h4>Evolution in <b>Visual Freedom™</b></h4></div>
+      <div class="flow"><span>4M+ lenses sold</span><span>99.4% would choose ICL again</span><span>75+ countries</span></div>
+    </div>
+    <div class="cell w3 dark rv d1">
+      <div><p class="k">Future state · concept</p><h4>Closed-loop <b>outcome</b></h4></div>
+      <p>Later, the implanted lens and post-op vault join the same record — through a STAAR-owned, QMS-validated transfer layer. Shown for evaluation only.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <p class="eyebrow rv">Live demo environment</p>
+  <h2 class="display rv d1">Begin in <b>Stella.</b></h2>
+  <p class="lead rv d2">Sign in, generate the official recommendation for case PSEUDO-4471, and follow it through the ecosystem.</p>
+  <div class="row rv d3">
+    <a class="pill solid" href="/stella">Sign in to Stella <svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+    <a class="pill" href="/dashboard">EVO Connect</a>
+    <a class="pill" href="/intelligence">Intelligence Center</a>
   </div>
 </section>
 
@@ -196,7 +356,7 @@
   <div class="ftr-in">
     <div class="top">
       <svg class="staar-logo" role="img" aria-label="STAAR Surgical" xmlns="http://www.w3.org/2000/svg" width="186" height="17" viewBox="0 0 186 17" fill="none"><path d="M34.567 7.45062C33.5699 6.11157 32.2404 4.90005 30.5121 3.87982C27.0554 1.83936 22.4686 0.755371 17.6159 0.755371C12.7632 0.755371 8.17643 1.90313 4.71973 3.87982C2.99138 4.90005 1.66188 6.11157 0.664751 7.45062C0.39885 7.76944 0.199425 8.15202 0 8.53461H2.59253C2.9249 8.53461 3.1908 8.40708 3.39023 8.21579C4.12145 7.45062 4.98563 6.74921 6.11571 6.0478C9.17356 4.2624 13.2285 3.24218 17.6159 3.24218C22.0032 3.24218 26.0582 4.19864 29.1161 6.0478C30.3126 6.74921 31.2433 7.51438 31.9745 8.34332C32.1075 8.47084 32.1075 8.66214 31.9745 8.78967C31.2433 9.55484 30.2462 10.32 29.1161 10.9577C27.986 11.6591 26.7895 12.1692 25.5264 12.6155C26.3906 11.404 26.9224 10.0012 27.0554 8.47084H24.3963C24.064 11.404 21.405 13.7633 18.2142 13.7633C15.0234 13.7633 12.4308 11.4678 12.032 8.47084H9.37298C9.70536 12.8068 13.5609 16.2501 18.1477 16.2501C22.7345 16.2501 26.9224 15.1023 30.3791 13.1256C32.1075 12.1054 33.5034 10.8939 34.4341 9.55484C34.567 9.36354 34.7 9.17225 34.7665 9.04472C34.9659 8.7259 34.9659 8.34332 34.7665 8.02449C34.8329 7.76944 34.7 7.64191 34.567 7.45062" fill="#F9FAFA"></path><path d="M69.0951 4.07764H67.3927C67.1731 4.07764 66.9534 4.23566 66.8436 4.44636L63.3291 12.769H65.5257L66.0199 11.6101H70.413L70.9073 12.769H73.1038L69.5893 4.44636C69.5344 4.23566 69.3697 4.07764 69.0951 4.07764ZM66.7338 9.92454L68.2714 6.07928L69.809 9.92454H66.7338Z" fill="#F9FAFA"></path><path d="M84.1973 12.769H86.3939L82.8794 4.44636C82.7695 4.23566 82.6048 4.07764 82.3302 4.07764H80.6279C80.4082 4.07764 80.1886 4.23566 80.0787 4.44636L76.6191 12.769H78.8157L79.3099 11.6101H83.7031L84.1973 12.769ZM79.9689 9.92454L81.5065 6.07928L83.0441 9.92454H79.9689V9.92454Z" fill="#F9FAFA"></path><path d="M45.4275 7.39652C44.3842 7.18582 43.5055 6.97512 43.5055 6.50105C43.5055 6.02697 44.0547 5.65825 44.8784 5.65825C46.0316 5.65825 46.8004 6.07965 47.2397 6.3957C47.4594 6.55372 47.7889 6.55372 48.0085 6.29035L48.8871 5.28953L48.7224 5.18418C47.7889 4.39405 46.5258 3.97266 45.0431 3.97266C42.8466 3.97266 41.3639 5.07883 41.3639 6.6064C41.3639 8.50269 43.2859 8.92409 44.8784 9.29281C46.1414 9.55619 46.9102 9.76689 46.9102 10.3463C46.9102 10.8204 46.4709 11.2945 45.2079 11.2945C43.6703 11.2945 42.6818 10.557 42.3523 10.1883L42.1876 9.97758L40.9795 11.4525L41.1442 11.5578C42.1327 12.4533 43.5605 12.9274 45.153 12.9274C48.0085 12.9274 49.0519 11.5052 49.0519 10.1356C49.0519 8.18664 47.0201 7.76524 45.4275 7.39652V7.39652Z" fill="#F9FAFA"></path><path d="M52.5664 5.86907H55.5867V12.7695H57.6185V5.86907H60.5839V4.60487C60.5839 4.28882 60.3093 4.07812 60.0347 4.07812H52.5664V5.86907V5.86907Z" fill="#F9FAFA"></path><path d="M92.7633 12.769V9.97728H93.4222L96.0581 12.769H98.5842L95.8385 9.9246C97.431 9.7139 98.5842 8.29168 98.4194 6.71144C98.2547 5.18387 96.8269 4.13037 95.2344 4.13037H90.7314V12.295C90.7314 12.611 91.006 12.8217 91.2806 12.8217H92.7633V12.769V12.769ZM92.7633 5.86864H95.1795C95.8385 5.86864 96.3876 6.39539 96.3876 7.02749C96.3876 7.65958 95.8385 8.18633 95.1795 8.18633H92.7633V5.86864V5.86864Z" fill="#F9FAFA"></path><path d="M104.782 6.34302C104.782 5.50023 105.606 4.97348 106.704 4.97348C107.583 4.97348 108.407 5.18418 109.066 5.65825C109.285 5.81627 109.615 5.81627 109.835 5.5529L110.164 5.18418C109.395 4.39405 108.242 3.97266 106.814 3.97266C104.947 3.97266 103.574 4.97348 103.574 6.3957C103.574 9.50351 109.176 8.23932 109.176 10.5043C109.176 11.1891 108.626 12.0319 106.979 12.0319C105.661 12.0319 104.618 11.4525 104.014 10.7677L103.3 11.6105C104.069 12.4006 105.277 12.98 106.924 12.98C109.45 12.98 110.384 11.6632 110.384 10.4517C110.384 7.18582 104.782 8.29199 104.782 6.34302Z" fill="#F9FAFA"></path><path d="M121.146 9.45102C121.146 11.0313 120.048 12.0321 118.401 12.0321C116.753 12.0321 115.655 11.0313 115.655 9.45102V4.18353H115.106C114.776 4.18353 114.557 4.44691 114.557 4.71028V9.50369C114.557 11.6634 115.984 13.0329 118.401 13.0329C120.872 13.0329 122.3 11.6634 122.3 9.50369V4.13086H121.146V9.45102V9.45102Z" fill="#F9FAFA"></path><path d="M181.387 11.9268V4.71034C181.387 4.39429 181.113 4.18359 180.838 4.18359H180.289V12.8749H186V11.9268H181.387V11.9268Z" fill="#F9FAFA"></path><path d="M133.942 6.92268C134.051 5.39511 132.788 4.18359 131.251 4.18359H126.803V12.3482C126.803 12.6642 127.077 12.8749 127.352 12.8749H127.901V9.45107H129.494L132.514 12.8749H134.051L131.031 9.45107H131.086C132.569 9.3984 133.887 8.3449 133.942 6.92268V6.92268ZM127.956 8.45025V5.13174H131.086C132.02 5.13174 132.843 5.86919 132.843 6.76466C132.843 7.66013 132.074 8.45025 131.086 8.45025H127.956Z" fill="#F9FAFA"></path><path d="M159.587 5.18398C160.795 4.92061 161.893 5.28933 162.717 5.9741C162.882 6.13213 163.156 6.13213 163.376 6.02678L163.925 5.65806C162.991 4.60456 161.564 3.97246 160.026 4.07781C157.829 4.23584 155.962 5.92143 155.743 8.02842C155.413 10.7148 157.61 13.0325 160.41 13.0325C161.838 13.0325 163.101 12.4004 163.98 11.4523L163.046 10.8729C162.387 11.5576 161.454 11.979 160.41 11.979C158.159 11.979 156.402 10.0301 156.896 7.76505C157.116 6.50085 158.269 5.44736 159.587 5.18398V5.18398Z" fill="#F9FAFA"></path><path d="M150.526 4.71034V12.8749H151.625V4.18359H151.076C150.746 4.18359 150.526 4.44697 150.526 4.71034Z" fill="#F9FAFA"></path><path d="M145.089 8.39746H142.398V8.81886C142.398 9.13491 142.673 9.34561 142.948 9.34561H145.034V10.8205C144.375 11.5053 143.442 11.9793 142.343 11.9793C140.367 11.9793 138.774 10.4518 138.774 8.55548C138.774 6.65919 140.367 5.13162 142.343 5.13162C143.387 5.13162 144.32 5.55302 144.979 6.23779L145.913 5.65837C145.034 4.71022 143.771 4.07812 142.343 4.07812C139.763 4.07812 137.676 6.07977 137.676 8.55548C137.676 11.0312 139.763 13.0328 142.343 13.0328C143.881 13.0328 145.254 12.2954 146.078 11.1892V8.39746H145.089V8.39746Z" fill="#F9FAFA"></path><path d="M176.39 12.8745L172.876 4.55189C172.766 4.34119 172.601 4.23584 172.381 4.23584H171.503C171.283 4.23584 171.064 4.39386 171.009 4.55189L167.494 12.8745H168.812L171.942 5.13131L175.072 12.8745H176.39Z" fill="#F9FAFA"></path><path d="M168.537 10.4517H175.292V11.3998H168.537V10.4517Z" fill="#F9FAFA"></path></svg>
-      <nav class="fnav">
+      <nav>
         <a href="https://www.staar.com/products">Products</a>
         <a href="https://investors.staar.com/">Investors</a>
         <a href="https://www.staar.com/company">Company</a>
@@ -211,5 +371,19 @@
   </div>
 </footer>
 
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.rv');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { rootMargin:'0px 0px -6% 0px', threshold:0.05 });
+  els.forEach(function(e){ io.observe(e); });
+  // hero stage: reveal immediately after load
+  var st = document.querySelector('[data-stage]');
+  if (st) setTimeout(function(){ st.classList.add('in'); }, 250);
+})();
+</script>
 </body>
 </html>

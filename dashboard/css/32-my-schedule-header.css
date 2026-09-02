@@ -359,3 +359,5 @@
   box-shadow: 0 12px 28px rgba(127,33,224,.25);
   transform: translateY(-2px);
 }
+
+.mp-card.mp-launch:focus-visible { outline: 3px solid var(--blue-primary, #1D4ED8); outline-offset: 2px; }

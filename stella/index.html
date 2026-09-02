@@ -177,7 +177,7 @@ td a{font-size:13.008px}
 .radio.on::after{content:'';width:7px;height:7px;border-radius:50%;background:#3B6BE8}
 
 /* corneal diagram + prompts */
-.diagram{background:#161719;border-radius:8px;position:relative;overflow:hidden}
+.diagram{background:#2A292B;border-radius:8px;position:relative;overflow:hidden}
 .diagram.dim{filter:grayscale(1) brightness(.5)}
 .diagram .tag{position:absolute;top:16px;left:20px;font-size:34px;font-weight:900;color:#8A8D91}
 .dbox{position:absolute;background:#212326;border:1px solid #55585C;padding:6px 9px;font-size:10.5px;
@@ -320,7 +320,10 @@ footer.site{display:flex;justify-content:space-between;gap:20px;padding:18px 24p
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}
 .od-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:34px;align-items:start}
 .addr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;margin-top:34px;font-size:15px}
-.personal{display:grid;grid-template-columns:repeat(4,max-content);gap:16px 26px;font-size:13px;color:var(--ink-2)}
+.personal{display:grid;grid-template-columns:repeat(3,max-content) minmax(0,1fr);gap:16px 26px;font-size:13px;color:var(--ink-2)}
+.personal>*{min-width:0}
+.personal input,.personal textarea{box-sizing:border-box;max-width:100%}
+.personal textarea{width:100%!important;resize:vertical}
 .dash-grid>*,.pt-grid>*,.grid2>*,.od-grid>*{min-width:0}
 .card{min-width:0}
 img,svg{max-width:100%}
@@ -332,7 +335,7 @@ img,svg{max-width:100%}
 }
 @media (max-width:1200px){
   .dash-grid,.pt-grid,.od-grid{grid-template-columns:minmax(0,1fr)}
-  .personal{grid-template-columns:repeat(2,max-content)}
+  .personal{grid-template-columns:max-content minmax(0,1fr)}
   .od-item{grid-template-columns:110px minmax(0,1fr) auto;gap:16px}
 }
 @media (max-width:900px){
@@ -344,7 +347,7 @@ img,svg{max-width:100%}
   .pbanner .pname{font-size:18px;line-height:24px}
   .bactions{margin-left:0;width:100%;min-width:0}
   .personal{grid-template-columns:minmax(0,1fr)}
-  .personal input,.personal textarea{width:100%!important;max-width:320px}
+  .personal input{width:100%!important;max-width:320px}
   .addr-grid{grid-template-columns:minmax(0,1fr)}
   .od-h{font-size:32px}
   .modal{border-radius:10px 10px 4px 4px}
@@ -419,20 +422,20 @@ img,svg{max-width:100%}
 /* ---------- top banner (DR-0004 amendment, sponsor round 3) — in-flow,
      sticky right under the 53px STELLA topbar, pushes content down, never
      covers the result panels. Expands from 0 once after the calculation. ---------- */
-.rv-top{position:sticky;top:53px;z-index:39;border-radius:0;overflow:hidden;box-shadow:0 12px 30px rgba(0,30,96,.28)}
+.rv-top{position:sticky;top:53px;z-index:39;border-radius:0;overflow:hidden;box-shadow:0 6px 18px rgba(0,30,96,.20)}
 .rv-top.enter{animation:rvGrow .35s cubic-bezier(.2,.8,.2,1) both}
 @keyframes rvGrow{from{max-height:0;opacity:.4}to{max-height:260px;opacity:1}}
-.rv-top-in{display:flex;align-items:center;gap:18px;padding:12px 22px 12px 24px;min-height:76px;max-width:1560px;margin:0 auto}
-.rv-top-l{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.rv-top-in{display:flex;align-items:center;gap:16px;padding:7px 20px 7px 22px;min-height:52px;max-width:1560px;margin:0 auto}
+.rv-top-l{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:1px}
 .rv-eyebrow{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.9px;text-transform:uppercase;font-weight:700;color:#DDE3F5;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rv-eyebrow .rv-dot{width:8px;height:8px;border-radius:50%;background:#00A6DC;box-shadow:0 0 0 3px rgba(0,166,220,.3);flex:none}
-.rv-top-title{font-size:20px;font-weight:800;line-height:1.2;letter-spacing:-.4px;color:#fff;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
-.rv-top-sub{font-size:13.5px;font-weight:500;letter-spacing:0;color:#DDE3F5}
+.rv-top-title{font-size:15.5px;font-weight:700;line-height:1.25;letter-spacing:-.2px;color:#fff;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.rv-top-sub{font-size:12.5px;font-weight:500;letter-spacing:0;color:#DDE3F5}
 .rv-top-r{display:flex;align-items:center;gap:12px;flex:none}
-.rv-top-r .rv-btn{min-height:46px}
-.rv-top-note{font-size:11px;color:#B9C6F2;text-align:right;margin-top:4px;white-space:nowrap}
-.rv-top .rv-picker{flex-direction:row;align-items:center;gap:12px;padding:6px 10px}
+.rv-top-r .rv-btn{min-height:34px;padding:7px 16px;font-size:13.5px;line-height:18px;border-radius:8px}
+.rv-top-note{font-size:10.5px;color:#B9C6F2;text-align:right;margin-top:2px;white-space:nowrap}
+.rv-top .rv-picker{flex-direction:row;align-items:center;gap:10px;padding:4px 8px}
 .rv-top .rv-picker .rv-plabel{white-space:nowrap}
 .rv-x{width:44px;height:44px;border-radius:10px;border:0;background:rgba(255,255,255,.10);color:#fff;font-size:22px;line-height:1;
   cursor:pointer;display:grid;place-items:center;flex:none}
@@ -743,8 +746,13 @@ const NOTICES = [
 /* ==================================================================
    STATE
    ================================================================== */
+/* Demo session: once you sign in, Stella reopens on the dashboard until you log out. */
+const SESSION_KEY = 'stella_session';
+const hasSession = () => { try { return localStorage.getItem(SESSION_KEY) === '1'; } catch(e){ return false; } };
+const setSession = on => { try { on ? localStorage.setItem(SESSION_KEY,'1') : localStorage.removeItem(SESSION_KEY); } catch(e){} };
+
 const S = {
-  route:'login', pid:'PSEUDO-4471', tab:'lens', pop:null, usermenu:false,
+  route: hasSession() ? 'dashboard' : 'login', pid:'PSEUDO-4471', tab:'lens', pop:null, usermenu:false,
   selector:false, timer:59*60+52,
   eye:'od', expanded:{od:false,os:false}, refrMode:{od:'manifest',os:'manifest'},
   mode:{od:'TORIC',os:'TORIC'}, edof:{od:false,os:false}, mono:{od:false,os:false},
@@ -1308,66 +1316,89 @@ function viewPatient(){
 /* ==================================================================
    PRE-OP
    ================================================================== */
+/* Eye artwork: the iris dial and the anterior-segment cross-section are a static
+   image layer. Everything drawn on top of them — degree lines, axis pills, the
+   measurement boxes — is an overlay computed from the pre-op inputs. */
+const EYE_ART = { dial:'/assets/eye/iris_dial.webp', cross:'/assets/eye/anterior_segment.webp' };
+
 function cornea(eye){
   const f = S.fields[eye];
   const k1 = parseFloat(f.k1a), k2 = parseFloat(f.k2a), cyl = parseFloat(f.axis);
-  const CX=190, CY=175, R=136;
+  /* Geometry locked to the artwork: R is the limbus radius inside the dial image. */
+  const CX = 195, CY = 175, HALF = 125, R = 104, SQ = 138;
+  const C = { k1:'#19A519', k2:'#2A2AEE', cyl:'#F2F4F6', pk1:'#0F8A0F', pk2:'#1717C8',
+              teal:'#2AA3B5', grey:'#9AA0A6', line:'#6E7378', boxln:'#5B6065' };
+
   const axis = (deg,color,dash,w) => {
     if(isNaN(deg)) return '';
-    const r = deg*Math.PI/180;
-    return `<line x1="${(CX+R*Math.cos(r)).toFixed(1)}" y1="${(CY-R*Math.sin(r)).toFixed(1)}"
-      x2="${(CX-R*Math.cos(r)).toFixed(1)}" y2="${(CY+R*Math.sin(r)).toFixed(1)}"
-      stroke="${color}" stroke-width="${w||3}" ${dash?'stroke-dasharray="10 7"':''}/>`;
+    const r = deg*Math.PI/180, dx = R*Math.cos(r), dy = R*Math.sin(r);
+    return `<line x1="${(CX+dx).toFixed(1)}" y1="${(CY-dy).toFixed(1)}"
+      x2="${(CX-dx).toFixed(1)}" y2="${(CY+dy).toFixed(1)}"
+      stroke="${color}" stroke-width="${w||3.4}" stroke-linecap="round"
+      ${dash?'stroke-dasharray="11 8"':''}/>`;
   };
   const tag = (deg,color) => {
     if(isNaN(deg)) return '';
     const r = deg*Math.PI/180;
     return `<g transform="translate(${(CX+R*Math.cos(r)).toFixed(1)},${(CY-R*Math.sin(r)).toFixed(1)}) rotate(${(-deg).toFixed(0)})">
-      <rect x="-20" y="-11" width="40" height="22" rx="3" fill="${color}"/>
-      <text x="0" y="5" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${deg}°</text></g>`;
+      <rect x="-19" y="-10.5" width="38" height="21" rx="2.5" fill="${color}"/>
+      <text x="0" y="4.5" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fff">${deg}°</text></g>`;
   };
-  const ticks = Array.from({length:72},(_,i)=>{
-    const a=i*5*Math.PI/180, maj=i%18===0, mid=i%3===0, o=124, l=maj?15:(mid?9:5);
-    return `<line x1="${(CX+o*Math.cos(a)).toFixed(1)}" y1="${(CY+o*Math.sin(a)).toFixed(1)}"
-      x2="${(CX+(o-l)*Math.cos(a)).toFixed(1)}" y2="${(CY+(o-l)*Math.sin(a)).toFixed(1)}"
-      stroke="#A2A7AC" stroke-width="${maj?3:1.4}"/>`;}).join('');
-  return `<svg viewBox="0 0 380 350" style="width:100%;height:auto;display:block">
-    <defs><radialGradient id="ir${eye}" cx="50%" cy="50%">
-      <stop offset="17%" stop-color="#0A0A0B"/><stop offset="21%" stop-color="#26282C"/>
-      <stop offset="62%" stop-color="#494D53"/><stop offset="100%" stop-color="#212327"/>
-    </radialGradient></defs>
-    <text x="${CX}" y="24" text-anchor="middle" fill="#3FA9BC" font-size="18" font-weight="700">S</text>
-    <text x="${CX}" y="342" text-anchor="middle" fill="#3FA9BC" font-size="18" font-weight="700">I</text>
-    <text x="18" y="181" fill="#3FA9BC" font-size="18" font-weight="700">${eye==='od'?'T':'N'}</text>
-    <text x="352" y="181" fill="#3FA9BC" font-size="18" font-weight="700">${eye==='od'?'N':'T'}</text>
-    <text x="${CX}" y="44" text-anchor="middle" fill="#8A8D91" font-size="10">90°</text>
-    <text x="40" y="179" fill="#8A8D91" font-size="10">180°</text>
-    <text x="328" y="179" fill="#8A8D91" font-size="10">0°</text>
-    <text x="${CX}" y="322" text-anchor="middle" fill="#8A8D91" font-size="10">270°</text>
-    <circle cx="${CX}" cy="${CY}" r="130" fill="#3A3D42"/>${ticks}
-    <circle cx="${CX}" cy="${CY}" r="107" fill="#E4E7EA"/>
-    <circle cx="${CX}" cy="${CY}" r="98" fill="url(#ir${eye})"/>
-    <circle cx="${CX}" cy="${CY}" r="31" fill="#08090A"/>
-    <rect x="${CX-118}" y="${CY-118}" width="236" height="236" fill="none" stroke="#6E7378"
-      stroke-width="1" stroke-dasharray="4 4"/>
-    ${axis(cyl,'#E8EAEC',false,2)}${axis(k1,'#4FD07A',true)}${axis(k2,'#3B6BE8',false)}
-    ${tag(k1,'#2FA35C')}${tag(k2,'#2C4FC0')}
+  const box = (x,y,w,h,lines,val,unit) => `<g>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#1E1F22" fill-opacity=".62"
+      stroke="${C.boxln}" stroke-width="1"/>
+    ${lines.map((t,i)=>`<text x="${x+9}" y="${y+15+i*12.5}" font-size="10.5" fill="#C6CACE">${t}</text>`).join('')}
+    ${val?`<text x="${x+9}" y="${y+h-9}" font-size="11.5" font-weight="700" fill="#fff">${val} ${unit}</text>`:''}
+  </g>`;
+  const legendRow = (y,color,dash,label) => `
+    <line x1="18" y1="${y}" x2="44" y2="${y}" stroke="${color}" stroke-width="2.4"
+      ${dash?'stroke-dasharray="6 4"':''}/>
+    <text x="51" y="${y+3.5}" font-size="10.5" fill="#C6CACE">${label}</text>`;
+
+  return `<svg viewBox="0 0 570 350" style="width:100%;height:auto;display:block">
+    <!-- base artwork -->
+    <image href="${EYE_ART.dial}" x="${CX-HALF}" y="${CY-HALF}" width="${HALF*2}" height="${HALF*2}"
+      ${eye==='os'?`transform="translate(${CX*2},0) scale(-1,1)"`:''}/>
+    <image href="${EYE_ART.cross}" x="470" y="26" width="122" height="298" preserveAspectRatio="xMinYMid slice"/>
+
+    <!-- overlay: orientation frame -->
+    <rect x="${CX-SQ}" y="${CY-SQ}" width="${SQ*2}" height="${SQ*2}" fill="none"
+      stroke="${C.line}" stroke-width="1" stroke-dasharray="4 5"/>
+    <text x="${CX}" y="26" text-anchor="middle" fill="${C.teal}" font-size="17" font-weight="700">S</text>
+    <text x="${CX}" y="340" text-anchor="middle" fill="${C.teal}" font-size="17" font-weight="700">I</text>
+    <text x="24" y="181" fill="${C.teal}" font-size="17" font-weight="700">${eye==='od'?'T':'N'}</text>
+    <text x="360" y="181" text-anchor="end" fill="${C.teal}" font-size="17" font-weight="700">${eye==='od'?'N':'T'}</text>
+    <text x="${CX}" y="50" text-anchor="middle" fill="${C.grey}" font-size="10">90°</text>
+    <text x="62" y="179" text-anchor="end" fill="${C.grey}" font-size="10">180°</text>
+    <text x="326" y="179" fill="${C.grey}" font-size="10">0°</text>
+    <text x="${CX}" y="313" text-anchor="middle" fill="${C.grey}" font-size="10">270°</text>
+
+    <!-- overlay: axes driven by the inputs -->
+    ${axis(cyl,C.cyl,false,2.2)}${axis(k1,C.k1,true)}${axis(k2,C.k2,true)}
+    ${tag(k1,C.pk1)}${tag(k2,C.pk2)}
+
+    <!-- overlay: measurements -->
+    ${box(360,26,94,66,['Central','Corneal','Thickness'],f.cct,'µm')}
+    ${box(360,258,94,66,['Anterior','Chamber','Depth'],f.acd,'mm')}
+    ${box(14,190,84,66,['White','to','White'],f.ww,'mm')}
+    <line x1="454" y1="59" x2="466" y2="59" stroke="${C.boxln}" stroke-width="1"/>
+    <line x1="454" y1="291" x2="466" y2="291" stroke="${C.boxln}" stroke-width="1"/>
+    <line x1="98" y1="223" x2="${CX-R-6}" y2="223" stroke="${C.boxln}" stroke-width="1"/>
+
+    <!-- overlay: legend -->
+    <rect x="8" y="272" width="170" height="64" fill="#1E1F22" fill-opacity=".62"
+      stroke="${C.boxln}" stroke-width="1"/>
+    ${legendRow(290,C.k1,true,'K1 Axis')}
+    ${legendRow(306,C.k2,true,'K2 Axis')}
+    ${legendRow(322,C.cyl,false,'CYL Axis (Refr.)')}
   </svg>`;
 }
 function eyeDiagram(eye){
-  const f = S.fields[eye], live = S.eye===eye;
+  const live = S.eye===eye;
   const showPrompt = live && !S.calculated && S.focus && S.focus.eye===eye;
   return `<div class="diagram ${live?'':'dim'}" data-diag="${eye}">
     <div class="tag">${eye.toUpperCase()}</div>
-    <div class="dbox" style="top:16px;right:20px">Central<br>Corneal<br>Thickness${f.cct?`<br><b>${f.cct} µm</b>`:''}</div>
     ${cornea(eye)}
-    <div class="dbox" style="left:20px;bottom:96px">White<br>to<br>White${f.ww?`<br><b>${f.ww} mm</b>`:''}</div>
-    <div class="dbox" style="right:20px;bottom:96px">Anterior<br>Chamber<br>Depth${f.acd?`<br><b>${f.acd} mm</b>`:''}</div>
-    <div class="dbox" style="left:20px;bottom:16px;line-height:1.7">
-      <div><span style="display:inline-block;width:26px;border-top:2px dashed #4FD07A;vertical-align:middle"></span> K1 Axis</div>
-      <div><span style="display:inline-block;width:26px;border-top:2px solid #3B6BE8;vertical-align:middle"></span> K2 Axis</div>
-      <div><span style="display:inline-block;width:26px;border-top:2px solid #E8EAEC;vertical-align:middle"></span> CYL Axis (Refractive)</div>
-    </div>
     ${showPrompt?`<div class="prompts"><div class="t">PROMPTS</div>
       <div class="x">${FIELDS[S.focus.key].prompt}</div></div>`:''}
     ${live?'':`<div class="editmask" data-editeye="${eye}"><span>EDIT ${eye.toUpperCase()}</span></div>`}
@@ -1939,7 +1970,8 @@ document.addEventListener('click', e => {
   if(d.npSex){ S.newp.sex = d.npSex; render(); return; }
   if(d.npTg){ S.newp[d.npTg] = !S.newp[d.npTg]; render(); return; }
   if(d.flip){ t.classList.toggle('on'); return; }
-  if(d.go){ if(d.go==='preop') loadFields();
+  if(d.go){ if(S.route==='login' && d.go==='dashboard') setSession(true);
+            if(d.go==='preop') loadFields();
             if(d.go==='patient-new'){ S.newp = NEW_BLANK(); S.newpTried = false; }
             go(d.go); return; }
   if(d.patient){ S.pid=d.patient; S.tab='lens'; loadFields(); go('patient'); return; }
@@ -1950,7 +1982,7 @@ document.addEventListener('click', e => {
   if(d.act){
     switch(d.act){
       case 'usermenu': S.usermenu = !S.usermenu; render(); return;
-      case 'logout':   go('login'); return;
+      case 'logout':   setSession(false); go('login'); return;
       case 'selector': S.selector = true; render(); return;
       case 'closesel': S.selector = false; render(); return;
       case 'nologin':  toast('Sign-in disabled','This is a demonstration reproduction.'); return;

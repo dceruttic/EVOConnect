@@ -50,6 +50,20 @@
   <link rel="stylesheet" href="/dashboard/css/39-phase-demo-panel-docked-side-drawer-non-bl.css">
   <link rel="stylesheet" href="/dashboard/css/40-revai-copilot-clinic-level-ai-chat-phase-5.css">
   <link rel="stylesheet" href="/dashboard/css/41-stella-handoff.css">
+
+  <!-- STELLA handoff: land straight on the patient case, never flash the REVAI home -->
+  <style>html.sh-direct #dashboardView{visibility:hidden}html.sh-direct body{background:var(--cream,#fff)}html.sh-direct .universe{animation:none!important}</style>
+  <script>
+  (function(){
+    try{
+      var q=null; try{q=new URLSearchParams(location.search).get('handoff');}catch(e){}
+      var sess=null; try{sess=sessionStorage.getItem('stella_handoff');}catch(e){}
+      var pend=null; try{pend=JSON.parse(localStorage.getItem('stella_handoff_pending')||'null');}catch(e){}
+      var fresh = pend && pend.p && (Date.now()-pend.ts) < 10*60*1000;
+      if(q||sess||fresh) document.documentElement.classList.add('sh-direct');
+    }catch(e){}
+  })();
+  </script>
 </head>
 <body>
 
@@ -359,7 +373,9 @@
         </div>
 
         <!-- Stella by STAAR -->
-        <div class="mp-card">
+        <div class="mp-card mp-launch" role="link" tabindex="0" onclick="openStellaApp()"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openStellaApp();}"
+             title="Open Stella by STAAR">
           <div class="icon-slot stella">
             <div class="mk-icon">
               <img class="mp-asset mp-asset-contain" src="/assets/marketplace/stella_logo_official.svg" alt="Stella by STAAR Surgical">
@@ -659,6 +675,12 @@
 <script src="/dashboard/js/32-geographic-intelligence.js"></script>
 <script src="/dashboard/js/33-full-takeover-view-staar-copilot-style-lig.js"></script>
 <script src="/dashboard/js/34-phase-demo-lock-hook.js"></script>
+<script>
+  /* Marketplace → Stella. Stella keeps its own demo session, so it lands on the
+     login page the first time and on its dashboard once you have signed in. */
+  function openStellaApp(){ window.open('/stella', '_blank', 'noopener'); }
+</script>
+
 <!-- STELLA → EVO Connect handoff (Journey 1). Must stay LAST: wraps globals defined above. -->
 <script src="/dashboard/js/35-stella-handoff.js"></script>
 </body>

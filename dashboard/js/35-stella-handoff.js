@@ -755,14 +755,16 @@
 
   /* ---------- boot ---------- */
   function boot() {
+    var unveil = function () { try { document.documentElement.classList.remove('sh-direct'); } catch (e) {} };
     var rec = readPayload();
     if (rec && rec.error) {
+      unveil();
       console.warn('[stella-handoff] invalid payload — no case opened');
       document.body.appendChild(el('<div class="sh-badpayload" role="alert">' + esc(COPY.A3) + '</div>'));
       toast(COPY.A3);
       return;
     }
-    if (!rec) return;                                                    // regular EVO Connect
+    if (!rec) { unveil(); return; }                                      // regular EVO Connect
     H = window.STELLA_HANDOFF = rec;
     restoreDecision(rec);
     DEFAULT_SET = Array.from(SELECTED_SIZING_FORMULAS);
@@ -771,6 +773,11 @@
     openUniverse();
     openPatientFile(rec.caseId);
     setPatientTab('sizing');
+    /* the home stays hidden behind the overlay until the user actually goes back to it */
+    var _close = window.closeUniverse;
+    if (typeof _close === 'function') {
+      window.closeUniverse = function () { unveil(); return _close.apply(this, arguments); };
+    }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

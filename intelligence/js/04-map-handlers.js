@@ -255,7 +255,7 @@ VIEWS.command = () => `
     <div class="card">
       <div class="card-head"><h3>Global Rankings — top clinics</h3><span class="sub">Rolling 90 days</span><div class="spacer"></div><div class="tabs"><div class="tab active">Growth</div><div class="tab">Volume</div><div class="tab">PROMs</div></div></div>
       <div class="rank-list">
-        <div class="rank-row"><div class="rank-num">01</div><div class="rank-name">REVAI Flagship — Buenos Aires<small>Dr. Diego Cerutti · 1,980 surgeries · ARCSCAN</small></div><div class="rank-val">+63%</div><div class="rank-delta up">▲ 22</div></div>
+        <div class="rank-row"><div class="rank-num">01</div><div class="rank-name">EVO Flagship — Buenos Aires<small>Dr. Diego Cerutti · 1,980 surgeries · ARCSCAN</small></div><div class="rank-val">+63%</div><div class="rank-delta up">▲ 22</div></div>
         <div class="rank-row"><div class="rank-num">02</div><div class="rank-name">BGI Vision Center — Seoul<small>Dr. Jin-woo Park · 3,284 surgeries · ARCSCAN</small></div><div class="rank-val">+41%</div><div class="rank-delta up">▲ 12</div></div>
         <div class="rank-row"><div class="rank-num">03</div><div class="rank-name">Beijing Tongren Hospital<small>Dr. Li Ming · 2,910 surgeries · QUANTEL</small></div><div class="rank-val">+38%</div><div class="rank-delta up">▲ 8</div></div>
         <div class="rank-row"><div class="rank-num">04</div><div class="rank-name">Shinagawa Keio — Tokyo<small>Dr. Kenji Okada · 2,641 surgeries · QUANTEL</small></div><div class="rank-val">+34%</div><div class="rank-delta up">▲ 5</div></div>
@@ -289,7 +289,7 @@ VIEWS.command = () => `
 
   <div class="foot-note" style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-top:16px">
     <span class="staar-chip" title="Powered by STAAR Surgical"><img src="${STAAR_LOGO}" alt="STAAR Surgical"/><span>Intelligence Partner</span></span>
-    <span style="flex:1;min-width:300px"><b>Intelligence Layer methodology.</b> All numbers synthesized from: ICL Universe clinic registry · surgeon anonymized surgical telemetry · PROMs capture via REVAI Vault · STAAR manufacturing MES · customs/air-freight feeds · social listening (Meta, TikTok, Xiaohongshu, Weibo, Naver, Reddit, X) · regulatory gazettes (FDA, EMA, PMDA, NMPA, ANMAT, ANVISA). Demo values rounded. No PHI leaves the clinic.</span>
+    <span style="flex:1;min-width:300px"><b>Intelligence Layer methodology.</b> All numbers synthesized from: ICL Universe clinic registry · surgeon anonymized surgical telemetry · PROMs capture via EVO Vault · STAAR manufacturing MES · customs/air-freight feeds · social listening (Meta, TikTok, Xiaohongshu, Weibo, Naver, Reddit, X) · regulatory gazettes (FDA, EMA, PMDA, NMPA, ANMAT, ANVISA). Demo values rounded. No PHI leaves the clinic.</span>
   </div>
 `;
 
@@ -321,7 +321,7 @@ VIEWS.pulse = () => `
         <div class="rank-row" data-country="KR" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">BGI Vision Center — Seoul<small>Dr. Jin-woo Park · OR-3 · EVO TICL -13.50 D</small></div><div class="rank-val mono">08:42</div><div class="rank-delta up">LIVE</div></div>
         <div class="rank-row" data-country="JP" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">Shinagawa Keio — Tokyo<small>Dr. Kenji Okada · OR-1 · EVO -8.00 D</small></div><div class="rank-val mono">12:18</div><div class="rank-delta up">LIVE</div></div>
         <div class="rank-row" data-country="CN" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">Aier Eye Hospital — Shanghai<small>Dr. Wang Wei · OR-5 · EVO -10.00 D</small></div><div class="rank-val mono">03:51</div><div class="rank-delta up">LIVE</div></div>
-        <div class="rank-row" data-country="AR" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">REVAI Flagship — Buenos Aires<small>Dr. Diego Cerutti · OR-2 · EVO TICL -11.25 D</small></div><div class="rank-val mono">00:28</div><div class="rank-delta up">LIVE</div></div>
+        <div class="rank-row" data-country="AR" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">EVO Flagship — Buenos Aires<small>Dr. Diego Cerutti · OR-2 · EVO TICL -11.25 D</small></div><div class="rank-val mono">00:28</div><div class="rank-delta up">LIVE</div></div>
         <div class="rank-row" data-country="ES" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">Clínica Baviera — Madrid<small>Dra. María Trancón · OR-1 · EVO -6.00 D</small></div><div class="rank-val mono">11:04</div><div class="rank-delta up">LIVE</div></div>
         <div class="rank-row" data-country="AE" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">Moorfields Dubai<small>Dr. Amr Hassouna · OR-2 · EVO -9.50 D</small></div><div class="rank-val mono">06:22</div><div class="rank-delta up">LIVE</div></div>
         <div class="rank-row" data-country="US" style="cursor:pointer"><div class="rank-num">●</div><div class="rank-name">Maloney Shamie — Los Angeles<small>Dr. Neda Shamie · OR-1 · EVO -7.00 D</small></div><div class="rank-val mono">02:41</div><div class="rank-delta up">LIVE</div></div>
@@ -364,7 +364,7 @@ VIEWS.supply = () => `
         <div class="kcol-head"><span class="t">At clinic</span><span class="n">14,920</span></div>
         <div class="kcard"><span class="k1">Emory Vision</span><span class="k2">Atlanta · 114 lenses</span><span class="k3">Median wait 3.1d</span></div>
         <div class="kcard"><span class="k1">Moorfields Private</span><span class="k2">London · 82 lenses</span><span class="k3">Median wait 4.8d</span></div>
-        <div class="kcard"><span class="k1">REVAI Buenos Aires</span><span class="k2">76 lenses</span><span class="k3">Median wait 2.4d</span></div>
+        <div class="kcard"><span class="k1">EVO Flagship Buenos Aires</span><span class="k2">76 lenses</span><span class="k3">Median wait 2.4d</span></div>
       </div>
       <div class="kcol implanted">
         <div class="kcol-head"><span class="t">Implanted 24h</span><span class="n">3,418</span></div>
@@ -428,7 +428,7 @@ VIEWS.social = () => `
       <div class="feed" style="max-height:none">
         <div class="insight opp"><div class="topline"><span class="tag">Opportunity</span><span class="time">APAC</span></div><div class="t">Song Hye-kyo mentioned EVO on variety show</div><div class="d">+640K mentions APAC · sentiment +0.84 · peaked on Apr 17. Seoul clinics reporting 3x inbound leads.</div></div>
         <div class="insight alert"><div class="topline"><span class="tag">Alert</span><span class="time">CN</span></div><div class="t">"Night halos" mentions +21% Shanghai/Guangzhou</div><div class="d">Concentrated on clinics using batch #A-7698. No PROMs deterioration yet. Surgeon note drafted.</div></div>
-        <div class="insight opp"><div class="topline"><span class="tag">Opportunity</span><span class="time">US</span></div><div class="t">Reddit r/lasik thread — 4.2K upvotes comparing EVO to SMILE</div><div class="d">Overwhelmingly positive. Suggests social-proof content push on YouTube via REVAI surgeon network.</div></div>
+        <div class="insight opp"><div class="topline"><span class="tag">Opportunity</span><span class="time">US</span></div><div class="t">Reddit r/lasik thread — 4.2K upvotes comparing EVO to SMILE</div><div class="d">Overwhelmingly positive. Suggests social-proof content push on YouTube via the EVO Connect surgeon network.</div></div>
         <div class="insight opp"><div class="topline"><span class="tag">Opportunity</span><span class="time">BR</span></div><div class="t">ANVISA expansion — local surgeons posting</div><div class="d">Portuguese TikTok content by Dr. Wallace Chamon +2.1M views in 3 days. Amplify with co-branded STAAR kit.</div></div>
         <div class="insight alert"><div class="topline"><span class="tag">Alert</span><span class="time">FR</span></div><div class="t">Negative sentiment on pricing (Paris clinics)</div><div class="d">Spike in "trop cher" queries +18%. Benchmark shows FR prices 22% above EU median.</div></div>
       </div>
@@ -560,7 +560,7 @@ VIEWS.rankings = () => {
     <div class="card-head"><h3>Methodology</h3></div>
     <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin:6px 0 0">
       <b>Volume</b> is total ICL/TICL implantations over the rolling 90-day window, per credentialed surgeon, from clinic surgical telemetry. 
-      <b>PROMs score</b> is a blended 0–100 composite of patient-reported uncorrected visual acuity, quality-of-life (NEI VFQ-25), night-vision, and 30-day satisfaction — captured via the REVAI Vault. 
+      <b>PROMs score</b> is a blended 0–100 composite of patient-reported uncorrected visual acuity, quality-of-life (NEI VFQ-25), night-vision, and 30-day satisfaction — captured via the EVO Vault. 
       <b>Growth</b> is QoQ change in implant volume vs the prior 90-day window. All data anonymized · no PHI leaves the clinic · real surgeon names sourced from each clinic's public roster.
     </p>
   </div>`;
@@ -584,7 +584,7 @@ VIEWS.regulatory = () => `
   </div>
 `;
 
-/* --- COMMUNITY (mirrored from REVAI clinic dashboard, read-only) --- */
+/* --- COMMUNITY (mirrored from the clinic dashboard, read-only) --- */
 const VERIFIED_SVG = `<svg class="verified" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 2.3 3.3-.3.3 3.3L20.3 10l-2.3 2.4.3 3.3-3.3.3L12 18l-2.4-2-3.3-.3-.3-3.3L3.7 10l2.3-2.4-.3-3.3 3.3-.3zm-1 11.4l5-5-1.4-1.4-3.6 3.6-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg>`;
 function cmtyPostHtml(f){
   const commentsHtml = (f.topComments||[]).map(c=>`
@@ -642,12 +642,12 @@ VIEWS.community = () => {
   const totalComments = COMMUNITY_FEED.reduce((a,f)=>a+f.comments,0);
   return `
   <div class="topbar">
-    <div class="top-title"><h1>Community</h1><p>The clinic-facing REVAI network — mirrored here, read-only. 412 surgeons online · ${totalPosts} new posts · ${totalLikes} reactions · ${totalComments} comments this hour.</p></div>
+    <div class="top-title"><h1>Community</h1><p>The clinic-facing EVO Connect network — mirrored here, read-only. 412 surgeons online · ${totalPosts} new posts · ${totalLikes} reactions · ${totalComments} comments this hour.</p></div>
     <div class="top-actions"><div class="chip on">Global feed</div><div class="chip">My regions</div><div class="chip">#ICL500Club</div></div>
   </div>
   <div class="cmty-banner">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 8v4M12 16h.01"/></svg>
-    <div>STAAR view · this is the same <b>Community</b> clinics see inside their REVAI dashboard. All content is <b>anonymized</b> (no PHI). Posting, commenting and DMs are disabled from STAAR Intelligence Center — this is a read-only peer-signal window.</div>
+    <div>STAAR view · this is the same <b>Community</b> clinics see inside their EVO Connect dashboard. All content is <b>anonymized</b> (no PHI). Posting, commenting and DMs are disabled from STAAR Intelligence Center — this is a read-only peer-signal window.</div>
   </div>
   <div class="cmty-wrap">
     <div>

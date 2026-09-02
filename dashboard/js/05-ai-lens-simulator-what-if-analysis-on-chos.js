@@ -278,7 +278,7 @@ function renderTraining() {
   }).join("");
 
   return `
-    ${moduleHead("07 · TRAINING · AI COACH", "On-demand curriculum, AI-coached case reviews.", "Earn CME while mastering ICL. Every course mapped to real-case challenges; every answer reviewed by REVAI + STAAR experts.")}
+    ${moduleHead("07 · TRAINING · AI COACH", "On-demand curriculum, AI-coached case reviews.", "Earn CME while mastering ICL. Every course mapped to real-case challenges; every answer reviewed by STAAR experts.")}
     <div class="mod-grid cols-3">${courseHtml}</div>
 
     <div class="mod-grid cols-2 mt-18">
@@ -324,7 +324,7 @@ function renderSupport() {
   `).join("");
 
   return `
-    ${moduleHead("08 · LIVE SUPPORT", "REVAI + STAAR experts, inside the platform.", "Real-time chat with the people who built the lens, the algorithm and your workflow. No tickets, no phone trees — you and the experts, in-context.")}
+    ${moduleHead("08 · LIVE SUPPORT", "STAAR experts, inside the platform.", "Real-time chat with the people who built the lens, the algorithm and your workflow. No tickets, no phone trees — you and the experts, in-context.")}
     <div class="mod-grid split-hero">
       <div class="panel">
         <div class="panel-head">
@@ -333,7 +333,7 @@ function renderSupport() {
         </div>
         <div class="presence">
           <span class="dot-live"></span>
-          <span>Dr. K. Okada (STAAR Clinical) · REVAI Copilot · online</span>
+          <span>Dr. K. Okada (STAAR Clinical) · EVO Copilot · online</span>
         </div>
         <div class="chat">
           <div class="chat-messages">${chatHtml}</div>
@@ -353,7 +353,7 @@ function renderSupport() {
           <div style="display:flex; flex-direction:column; gap:10px;">
             <div style="display:flex; align-items:center; gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--navy);color:white;display:grid;place-items:center;font-weight:700;font-size:11px;">KO</div><div style="flex:1"><div style="font-weight:700; font-size:12.5px">Dr. K. Okada</div><div class="muted small">STAAR Clinical · JP</div></div><span class="dot-live" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span></div>
             <div style="display:flex; align-items:center; gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:var(--navy);color:white;display:grid;place-items:center;font-weight:700;font-size:11px;">MR</div><div style="flex:1"><div style="font-weight:700; font-size:12.5px">M. Rodríguez</div><div class="muted small">STAAR Logistics · MX</div></div><span class="dot-live" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span></div>
-            <div style="display:flex; align-items:center; gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold) 0%, var(--teal) 100%);color:white;display:grid;place-items:center;font-weight:700;font-size:11px;">AI</div><div style="flex:1"><div style="font-weight:700; font-size:12.5px">REVAI Copilot</div><div class="muted small">AI · 24/7</div></div><span class="dot-live" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span></div>
+            <div style="display:flex; align-items:center; gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold) 0%, var(--teal) 100%);color:white;display:grid;place-items:center;font-weight:700;font-size:11px;">AI</div><div style="flex:1"><div style="font-weight:700; font-size:12.5px">EVO Copilot</div><div class="muted small">AI · 24/7</div></div><span class="dot-live" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span></div>
             <div style="display:flex; align-items:center; gap:10px;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold) 0%, var(--teal) 100%);color:white;display:grid;place-items:center;font-weight:700;font-size:11px;">DC</div><div style="flex:1"><div style="font-weight:700; font-size:12.5px">Dr. P. Chen</div><div class="muted small">Peer surgeon · ES</div></div><span class="dot-live" style="width:8px;height:8px;border-radius:50%;background:var(--green);"></span></div>
           </div>
         </div>

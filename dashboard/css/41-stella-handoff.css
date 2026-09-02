@@ -394,3 +394,12 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
 .sh-crvals span em { font-style: normal; display: block; font-size: 9.5px; letter-spacing: .07em;
   text-transform: uppercase; color: #7A8496; }
 .sh-crvals span.none { color: #7A8496; font-style: italic; }
+
+/* STELLA as a selectable method in the comparison */
+.sh-stella-chip .sfc-name { color: var(--sh-teal-dk); }
+.sh-stella-chip.selected { border-color: var(--sh-teal); }
+.sh-lockrow.off { background: #F3F4F6; }
+.sh-lockrow.off .sh-switch { background: #B7BECC; }
+.sh-lockrow.off .sh-knob { transform: none; }
+.sh-lockrow.off .sh-lock-lbl { color: #5A6478; }
+.sh-lockrow { cursor: default; }

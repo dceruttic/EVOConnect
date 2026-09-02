@@ -175,7 +175,7 @@ function renderPreop() {
           <h3>Import from EHR</h3>
           <span class="chip ai">FHIR + HL7 certified</span>
         </div>
-        <div class="muted small" style="margin-bottom:6px">One-click import of existing clinical data. REVAI maps directly into your ICL record.</div>
+        <div class="muted small" style="margin-bottom:6px">One-click import of existing clinical data. EVO Connect maps directly into your ICL record.</div>
         <div class="ehr-list">
           <div class="ehr-item salud">
             <div class="logo">Med+</div>
@@ -293,7 +293,7 @@ function renderSizing() {
           <span class="chip">5 models</span>
         </div>
         <div class="formula-row winner">
-          <span class="name">ICL Guru AI (REVAI)</span>
+          <span class="name">ICL Guru AI</span>
           <span class="val">12.6 mm<span class="tag">Winner</span></span>
         </div>
         <div class="formula-row"><span class="name">NK formula</span><span class="val">12.6 mm</span></div>

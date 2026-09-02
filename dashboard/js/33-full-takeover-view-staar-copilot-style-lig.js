@@ -10,7 +10,7 @@ const RCP_TAKEOVER_TEMPLATE = `
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M12 2l1.7 4.3L18 8l-4.3 1.7L12 14l-1.7-4.3L6 8l4.3-1.7L12 2z"/><path d="M19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14z"/></svg>
         </div>
         <div class="rcp-hero-text">
-          <h1>Ask <span class="rcp-grad">REVAI Copilot</span></h1>
+          <h1>Ask <span class="rcp-grad">EVO Copilot</span></h1>
           <p>Natural-language access to your clinical cohort — ${dchDisplayTotal()} surgeries (cataract, ICL, LASIK, SMILE), biometry, post-op PROMs and geographic distribution. Every answer is cited and stays inside your clinic.</p>
           <div class="rcp-hero-pill" style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:6px 12px;background:rgba(92,24,171,.08);border:1px solid rgba(92,24,171,.2);border-radius:999px;font-size:12px;font-weight:700;color:#5C18AB"><span style="width:6px;height:6px;border-radius:50%;background:#03A180"></span>${dchDisplayTotal()} cases · cataract · ICL · LASIK · SMILE</div>
         </div>
@@ -102,7 +102,7 @@ function dashCopilotEnsureTakeover(){
 function dashCopilotOpenTakeover(){
   const hero = document.getElementById('dashCopilotHero');
   if (hero && hero.classList.contains('is-locked')){
-    if (typeof showToast === 'function') showToast('REVAI Copilot unlocks in Phase 5 & 6');
+    if (typeof showToast === 'function') showToast('EVO Copilot unlocks in Phase 5 & 6');
     return;
   }
   const t = dashCopilotEnsureTakeover();
@@ -126,7 +126,7 @@ function dashCopilotAsk(qText){
   // Phase Demo guard
   const hero = document.getElementById('dashCopilotHero');
   if (hero && hero.classList.contains('is-locked')){
-    if (typeof showToast === 'function') showToast('REVAI Copilot unlocks in Phase 5 & 6');
+    if (typeof showToast === 'function') showToast('EVO Copilot unlocks in Phase 5 & 6');
     return;
   }
   dashCopilotOpenTakeover();

@@ -233,7 +233,7 @@ function revCopilotAnsDissat(){
   </tr>`).join('');
   const pct = ((d.length / REV_CLINIC.totalCases) * 100).toFixed(1);
   return `
-    <h4>😟 Dissatisfied patients · last 6 months <span class="ptag live">Live · REVAI Vault</span></h4>
+    <h4>😟 Dissatisfied patients · last 6 months <span class="ptag live">Live · EVO Vault</span></h4>
     <p>I detected <b>${d.length} patients</b> with <b>PROMs &lt; 55</b> on the visual satisfaction scale (NEI-VFQ-25 + dysphotopsia panel). They represent <b>${pct}%</b> of the <b>${REV_CLINIC.totalCases} cases</b> in your clinic's archive.</p>
     <div class="rcp-kpis">
       <div class="rcp-kpi accent-red"><div class="l">% Dissatisfied</div><div class="v">${pct}%</div><div class="d"><span class="dn">↑ 0.4%</span> vs previous quarter</div></div>
@@ -251,7 +251,7 @@ function revCopilotAnsDissat(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · PROMs</span>
+      <span class="srcpill">EVO Vault · PROMs</span>
       <span class="srcpill">NEI-VFQ-25 · ${d.length} cases</span>
       <span class="srcpill">6-month window · through ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}</span>
     </div>`;
@@ -287,7 +287,7 @@ function revCopilotAnsTraits(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · biometry</span>
+      <span class="srcpill">EVO Vault · biometry</span>
       <span class="srcpill">Pentacam · 248 scans</span>
       <span class="srcpill">PROMs · 6-month cohort</span>
     </div>`;
@@ -317,7 +317,7 @@ function revCopilotAnsEvolution(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · ${total} surgeries</span>
+      <span class="srcpill">EVO Vault · ${total} surgeries</span>
       <span class="srcpill">EVO Connect · order history</span>
       <span class="srcpill">Updated 8 min ago</span>
     </div>`;
@@ -355,7 +355,7 @@ function revCopilotAnsVault(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · 248 cases</span>
+      <span class="srcpill">EVO Vault · 248 cases</span>
       <span class="srcpill">AS-OCT W1 + M1</span>
       <span class="srcpill">Latam benchmark: 38 clinics</span>
     </div>`;
@@ -397,7 +397,7 @@ function revCopilotAnsOverdue(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · follow-up tracker</span>
+      <span class="srcpill">EVO Vault · follow-up tracker</span>
       <span class="srcpill">AI Sentinel · 4 actions this week</span>
       <span class="srcpill">Today ${new Date().toLocaleDateString('en-US')}</span>
     </div>`;
@@ -436,7 +436,7 @@ function revCopilotAnsPipeline(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · pipeline tracker</span>
+      <span class="srcpill">EVO Vault · pipeline tracker</span>
       <span class="srcpill">Clinic calendar</span>
       <span class="srcpill">Updated 3 min ago</span>
     </div>`;
@@ -474,7 +474,7 @@ function revCopilotAnsLens(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · PROMs by SKU</span>
+      <span class="srcpill">EVO Vault · PROMs by SKU</span>
       <span class="srcpill">STAAR MES · order history</span>
       <span class="srcpill">12-month window</span>
     </div>`;
@@ -557,7 +557,7 @@ function revCopilotAnsComplications(){
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Vault · adverse events log</span>
+      <span class="srcpill">EVO Vault · adverse events log</span>
       <span class="srcpill">AS-OCT vault monitoring</span>
       <span class="srcpill">7-day window</span>
     </div>`;
@@ -573,8 +573,8 @@ function revCopilotAnsNps(){
     { label:'Bottom quartile',       value: 41, suffix:'' },
   ];
   return `
-    <h4>⭐ NPS · your clinic vs benchmarks <span class="ptag live">REVAI Network · 38 peer clinics</span></h4>
-    <p>Your NPS of <b>${me}</b> puts you in the <b>84th percentile</b> of the REVAI Latam network (38 clinics with a similar ICL profile: 200–400 cases/year, toric mix ≥ 25%). You are <b>+14 points</b> above the median.</p>
+    <h4>⭐ NPS · your clinic vs benchmarks <span class="ptag live">EVO Connect Network · 38 peer clinics</span></h4>
+    <p>Your NPS of <b>${me}</b> puts you in the <b>84th percentile</b> of the EVO Connect Latam network (38 clinics with a similar ICL profile: 200–400 cases/year, toric mix ≥ 25%). You are <b>+14 points</b> above the median.</p>
     <div class="rcp-kpis">
       <div class="rcp-kpi accent-green"><div class="l">Your NPS</div><div class="v">${me}</div><div class="d"><span class="up">+${me-peer}</span> vs peer median</div></div>
       <div class="rcp-kpi accent-teal"><div class="l">Percentile</div><div class="v">P84</div><div class="d">Latam ICL network</div></div>
@@ -582,7 +582,7 @@ function revCopilotAnsNps(){
       <div class="rcp-kpi"><div class="l">Promoters</div><div class="v">81%</div><div class="d">vs 11% detractors</div></div>
     </div>
     <div class="rcp-chart">
-      <div class="rcp-chart-title">NPS comparison · REVAI network benchmarks</div>
+      <div class="rcp-chart-title">NPS comparison · EVO Connect network benchmarks</div>
       ${revCopilotHBarChart(benchmarks)}
     </div>
     <ul class="rcp-insights">
@@ -592,11 +592,11 @@ function revCopilotAnsNps(){
     </ul>
     <div class="rcp-cta">
       <button onclick="revCopilotAsk('What common characteristics do my dissatisfied patients share?')">Where can I improve? →</button>
-      <button onclick="renderModule('community')">View REVAI network →</button>
+      <button onclick="renderModule('community')">View EVO Connect network →</button>
     </div>
     <div class="rcp-cite">
       Sources:
-      <span class="srcpill">REVAI Network · 38 peer clinics</span>
+      <span class="srcpill">EVO Connect Network · 38 peer clinics</span>
       <span class="srcpill">NEI-VFQ-25 · normalized</span>
       <span class="srcpill">Trailing 6-month NPS</span>
     </div>`;
@@ -713,7 +713,7 @@ function renderCopilot(){
         </div>
         <div class="rcp-bubble">
           <h4>👋 Hi Roger — ready when you are <span class="ptag live">Copilot v1.0 · online</span></h4>
-          <p>I'm connected to your clinic's private graph: <b>${REV_CLINIC.totalCases} surgeries</b> in the archive, <b>12 months</b> of history, post-op tracker, <b>PROMs via REVAI Vault</b>, calendars and operational metrics in real time. Tap a suggestion above or write to me in natural language — English or Spanish, whichever you prefer.</p>
+          <p>I'm connected to your clinic's private graph: <b>${REV_CLINIC.totalCases} surgeries</b> in the archive, <b>12 months</b> of history, post-op tracker, <b>PROMs via EVO Vault</b>, calendars and operational metrics in real time. Tap a suggestion above or write to me in natural language — English or Spanish, whichever you prefer.</p>
           <p class="rcp-dim">All responses are private to your clinic. I cite sources. Final clinical decisions are always yours.</p>
         </div>
       </div>

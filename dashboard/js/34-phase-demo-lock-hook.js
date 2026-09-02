@@ -7,7 +7,7 @@ window.applyDashCopilotHeroLock = function(){
   if (!st || !st.enabled){
     hero.classList.remove('is-locked');
     const lk = document.getElementById('dccLockIcon'); if (lk) lk.style.display = 'none';
-    hero.title = 'Ask REVAI · your clinical AI copilot';
+    hero.title = 'Ask EVO · your clinical AI copilot';
     return;
   }
   const phase = st.map ? st.map['copilot'] : 5;
@@ -23,7 +23,7 @@ window.applyDashCopilotHeroLock = function(){
   }
   hero.classList.toggle('is-locked', locked);
   const lk = document.getElementById('dccLockIcon'); if (lk) lk.style.display = locked ? '' : 'none';
-  hero.title = locked ? lockMsg : 'Ask REVAI · your clinical AI copilot';
+  hero.title = locked ? lockMsg : 'Ask EVO · your clinical AI copilot';
 };
 // Initial apply + observer
 document.addEventListener('DOMContentLoaded', () => {

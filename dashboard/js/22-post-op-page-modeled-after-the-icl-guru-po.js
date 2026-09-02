@@ -478,7 +478,7 @@ function renderPtPostop(pt) {
         '</div>',
       '</div>',
       '<div class="po-image-foot">',
-        '<span>Clinic Info: REVAI · ' + patientSurgeon(pt).clinic + '</span>',
+        '<span>Clinic Info: EVO Connect · ' + patientSurgeon(pt).clinic + '</span>',
         '<span>' + v.visitDate.toLocaleDateString('en-GB') + ' ' + v.visitTime + ' (Page 1/1)</span>',
       '</div>',
     '</div>'

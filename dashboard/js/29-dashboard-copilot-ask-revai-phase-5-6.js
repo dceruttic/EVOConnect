@@ -1,5 +1,5 @@
 /* ================================================================
-   DASHBOARD COPILOT (Ask REVAI) — Phase 5 & 6
+   DASHBOARD COPILOT (Ask EVO) — Phase 5 & 6
    Lives on the clinic dashboard hero. Replaces the old EVO Connect
    Copilot module. Uses CLINIC_SURGERY_DATA (100 patients across
    cataract / ICL / LASIK / SMILE) for rich answers.
@@ -320,4 +320,4 @@ function dchAnswer(intent, q){
 }
 
 function dchEsc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function dchCite(){ return `<div class="dch-cite">Source: <span class="dch-srcpill">REVAI Vault</span><span class="dch-srcpill">${dchDisplayTotal()} cases</span><span class="dch-srcpill">last 12 months</span></div>`; }
+function dchCite(){ return `<div class="dch-cite">Source: <span class="dch-srcpill">EVO Vault</span><span class="dch-srcpill">${dchDisplayTotal()} cases</span><span class="dch-srcpill">last 12 months</span></div>`; }

@@ -153,7 +153,7 @@ const DATA = {
     },
     { av: "MS", name: "Dr. M. Shimizu", role: "Japan · 267 cases", time: "2d",
       verified: true, hasMedia: true, mediaLabel: "Before / After · UCVA 20/15",
-      body: "A milestone for our clinic: <b>500 ICL cases</b> done through REVAI in 18 months. Zero wrong-lot incidents, 96% vault accuracy, 4.9★ patient NPS. Numbers only tell half the story though — the workflow change is what saves us. <span class='hashtag'>#ICL500</span> <span class='hashtag'>#DigitalClinic</span>",
+      body: "A milestone for our clinic: <b>500 ICL cases</b> done through EVO Connect in 18 months. Zero wrong-lot incidents, 96% vault accuracy, 4.9★ patient NPS. Numbers only tell half the story though — the workflow change is what saves us. <span class='hashtag'>#ICL500</span> <span class='hashtag'>#DigitalClinic</span>",
       likes: 892, comments: 76, shares: 124, views: "14k",
       topComments: []
     },
@@ -181,14 +181,14 @@ const DATA = {
   ],
   events: [
     { type: "launch",    mo: "May", day: "08", time: "—",      title: "STAAR launches EVO Viva · extended depth of focus",  sub: "New presbyopic ICL · global rollout phase 1 · Tokyo HQ" },
-    { type: "congress",  mo: "May", day: "15", time: "09:00",  title: "ESCRS 2026 · Vienna",                  sub: "European Society of Cataract & Refractive Surgeons · 4 days · REVAI booth #E42" },
-    { type: "launch",    mo: "May", day: "22", time: "18:00",  title: "ICL Guru v4 release webinar",          sub: "REVAI · new AI-vault prediction model · 2.1k registered" },
+    { type: "congress",  mo: "May", day: "15", time: "09:00",  title: "ESCRS 2026 · Vienna",                  sub: "European Society of Cataract & Refractive Surgeons · 4 days · STAAR booth #E42" },
+    { type: "launch",    mo: "May", day: "22", time: "18:00",  title: "ICL Guru v4 release webinar",          sub: "STAAR · new AI-vault prediction model · 2.1k registered" },
     { type: "congress",  mo: "Jun", day: "05", time: "08:30",  title: "ASCRS Annual Meeting · Los Angeles",   sub: "American Society of Cataract & Refractive Surgery · 3 days · STAAR symposium Sat" },
     { type: "training",  mo: "Jun", day: "12", time: "17:00",  title: "High-myopia masterclass · Dr. M. Shimizu",  sub: "Live · 1.0 CME credit · 8 seats left" },
-    { type: "launch",    mo: "Jun", day: "20", time: "—",      title: "REVAI Copilot v2 preview",             sub: "Multimodal pre-op analysis · risk agent upgrade · early access program" },
+    { type: "launch",    mo: "Jun", day: "20", time: "—",      title: "EVO Copilot v2 preview",             sub: "Multimodal pre-op analysis · risk agent upgrade · early access program" },
     { type: "congress",  mo: "Jul", day: "10", time: "09:00",  title: "APACRS 2026 · Singapore",              sub: "Asia-Pacific Association of Cataract & Refractive Surgeons · 3 days" },
     { type: "community", mo: "Jul", day: "18", time: "20:00",  title: "ICL 500 Club AMA · real cases",        sub: "Community live · Dr. K. Okada + Dr. R. Gómez · 1.4k RSVPs" },
-    { type: "congress",  mo: "Oct", day: "17", time: "08:30",  title: "AAO 2026 · Chicago",                   sub: "American Academy of Ophthalmology · 5 days · REVAI + STAAR pavilion" },
+    { type: "congress",  mo: "Oct", day: "17", time: "08:30",  title: "AAO 2026 · Chicago",                   sub: "American Academy of Ophthalmology · 5 days · STAAR pavilion" },
     { type: "training",  mo: "Oct", day: "31", time: "23:59",  title: "CME cycle deadline · 7.5 credits left", sub: "Vault prediction masterclass pending" },
   ],
   analytics: {
@@ -244,9 +244,9 @@ const DATA = {
     { title: "AS-OCT interpretation for ICL candidates",       tag: "Core",     len: "54 min",  progress: 100, cme: "1.0 CME", img: "/assets/oct_real_v2.png",      imgPos: "center", category: "Imaging" },
   ],
   chat: [
-    { from: "revai", av: "AI", name: "REVAI Copilot", body: "Hi Roger. I noticed the scheduled 10:15 case (M. Herrera) has ACD of 3.24 mm and K2 of 43.64. ICL Guru recommends 12.6 EVO+ with 89% confidence.", time: "09:42" },
+    { from: "revai", av: "AI", name: "EVO Copilot", body: "Hi Roger. I noticed the scheduled 10:15 case (M. Herrera) has ACD of 3.24 mm and K2 of 43.64. ICL Guru recommends 12.6 EVO+ with 89% confidence.", time: "09:42" },
     { from: "me",    av: "DC", name: "You", body: "Thanks. Can a STAAR clinical advisor confirm the 12.6 vs 13.2 choice given the AS-OCT shows a slightly narrow sulcus?", time: "09:43" },
     { from: "staar", av: "S",  name: "Dr. K. Okada · STAAR", body: "On it — reviewing the AS-OCT now. Sulcus-to-sulcus 11.9 mm, ATA 12.1 mm. 12.6 is the correct call; 13.2 would over-vault with this STS. Confirming.", time: "09:46" },
-    { from: "revai", av: "AI", name: "REVAI Copilot", body: "Recommendation locked: 12.6 EVO+. Order auto-pre-filled in your Order module. Approve to send to STAAR.", time: "09:47" },
+    { from: "revai", av: "AI", name: "EVO Copilot", body: "Recommendation locked: 12.6 EVO+. Order auto-pre-filled in your Order module. Approve to send to STAAR.", time: "09:47" },
   ],
 };

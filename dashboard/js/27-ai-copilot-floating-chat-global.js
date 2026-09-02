@@ -2,7 +2,7 @@
    AI COPILOT (floating chat, global)
 ================================================================ */
 const COPILOT_HISTORY = [
-  { from: "ai", body: "Hi Roger. I'm REVAI Copilot. I have access to today's OR schedule, your patient pipeline, and STAAR lot status. What can I help with?", time: "now" },
+  { from: "ai", body: "Hi Roger. I'm EVO Copilot. I have access to today's OR schedule, your patient pipeline, and STAAR lot status. What can I help with?", time: "now" },
   { from: "me", body: "Summarize the 10:15 case for me in 3 lines.", time: "now" },
   { from: "ai", body: "<b>M. Herrera · OD · -8.00 D · EVO+ 12.6</b><br>• AS-OCT: ATA 12.1, STS 11.9, ACD 3.24 → ICL Guru recommends 12.6 at 89% confidence.<br>• STAAR lot LOT-241018-A arrived yesterday, serial verified.<br>• Surgeon: Dr. Roberto Zaldivar · anesthesia ready at 09:50. No flags.", time: "now" },
 ];
@@ -52,7 +52,7 @@ function aiReply(q) {
   if (ql.includes("or") || ql.includes("schedule") || ql.includes("block"))
     return "<b>Today's block · OR 2 · Dr. Roberto Zaldivar</b> — 3 ICL cases, all EVO+. Martínez (-6.5) done at 08:58 (clean, vault 490). Herrera (-8.0) currently in the injection stage at 10:15. Castro (-4.25) prep at 11:45, expect knife-to-skin 12:10. Total OR time ≈ 3h 45m. No incidents. Lot verification complete for all three.";
   if (ql.includes("vault") || ql.includes("benchmark"))
-    return "<b>Your clinic</b> · vault-in-target 96% (250–750 µm) · <b>Global benchmark 2025</b> · 81.4%. You're in the top 5% of ICL surgeons in the REVAI network. Biggest driver: adoption of ICL Guru AI sizing (+12 pts accuracy since Sept 2025).";
+    return "<b>Your clinic</b> · vault-in-target 96% (250–750 µm) · <b>Global benchmark 2025</b> · 81.4%. You're in the top 5% of ICL surgeons in the EVO Connect network. Biggest driver: adoption of ICL Guru AI sizing (+12 pts accuracy since Sept 2025).";
   return "Got it — let me check the patient record and cross-reference with today's schedule. One moment.<br><br><span class='muted small'>This is a demo response. In production I'd use the clinic's live patient + STAAR + ICL Guru data.</span>";
 }
 

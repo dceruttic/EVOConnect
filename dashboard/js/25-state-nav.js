@@ -8,12 +8,12 @@ const STAAR_LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My
 
 // Real REVAI short logo (two interlinked loops) — uses authentic brand colors
 // from the official asset: indigo #384898 + grey #9E9DAF. No gradient/background.
-const REVAI_LOGO_SVG = `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" aria-label="REVAI">
+const REVAI_LOGO_SVG = `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" aria-label="EVO Connect">
   <g transform="translate(0, 6) scale(0.32)">
     <path d="m115.83 21.1321c1.081-14.85305-12.32-24.2165-26.5103-20.10392-7.0766 2.093-12.43 7.34388-19.5433 9.40012-5.3552 1.658-11 2.1634-16.5639 1.4831-5.564-.6803-10.9215-2.53088-15.7211-5.43039-9.57-6.719654-22.495-9.9326-31.73501-.97307-20.66169 24.74886 22.77001 35.67296-1.13666 75.42166-12.50334 19.6264 1.99833 40.4284 24.71337 32.0374 6.6916-3.066 11.8433-7.509 19.305-9.18 7.8841-1.982 16.1938-1.396 23.7233 1.671 4.95 1.965 9.0567 5.233 13.915 7.344 14.3916 6.867 31.2946-3.213 29.2236-19.8835-1.064-15.5323-18.5719-21.7379-31.0203-14.4307-12.4483 7.3071-25.0983 12.3193-39.16 7.0685-14.7766-4.3146-19.14-20.8934-16.8116-34.8835 2.2916-20.1222 23.0633-26.8052 40.315-21.6644 8.03 2.1664 14.2083 8.3904 22.3666 10.0794 11.1283 2.7173 24.1633-5.6364 24.6213-17.6253" fill="#384898"/>
     <path d="m149.581 118.383c-9.405-15.183-10.248-30.3853-1.081-45.7707 2.346-4.5348 4.565-8.4271 5.298-12.8518 2.42-17.203-13.713-27.1907-29.132-20.7832-8.965 4.5532-16.61 10.41-27.4995 10.3182-11.5317.8262-20.1667-5.2325-29.535-10.208-8.8-4.2044-21.01-2.093-26.3634 6.5728-8.855 15.3854 2.75 34.0388 20.7167 30.4954 8.3417-1.6707 14.96-8.0415 23.265-10.3548 13.2-3.8372 30.4512-.8813 37.1252 12.0072 4.968 9.4002 4.876 26.0529-1.192 35.3239-7.517 11.402-24.0165 13.55-36.4649 9.694-13.475-4.663-22.7883-16.34-38.0416-6.995-16.72 11.585-7.7734 38.555 13.3833 35.893 10.12-.716 16.61-8.904 26.4917-10.887 8.1424-1.975 16.6995-1.333 24.4565 1.836 6.6 2.717 12.082 7.876 19.342 8.959 19.745 3.067 29.425-17.203 19.396-33.047z" fill="#9E9DAF"/>
   </g>
-  <text x="62" y="38" fill="#0F1D40" font-family="Inter, sans-serif" font-weight="800" font-size="26" letter-spacing="1.5">REVAI</text>
+  <text x="62" y="38" fill="#0F1D40" font-family="Inter, sans-serif" font-weight="800" font-size="26" letter-spacing="1.5">EVO</text>
 </svg>`;
 
 /* ================================================================
@@ -99,7 +99,7 @@ function renderPatients() {
       <div class="pt-list-hero-brand">
         <div class="pt-list-logo">${REVAI_LOGO_SVG}</div>
         <div>
-          <div class="pt-list-eyebrow">REVAI PLATFORM · Patient Registry</div>
+          <div class="pt-list-eyebrow">EVO CONNECT · Patient Registry</div>
           <h1 class="pt-list-title">Patients</h1>
           <p class="pt-list-sub">Every active patient in your clinic — stage, risk, next action and one-click access to the full record.</p>
         </div>

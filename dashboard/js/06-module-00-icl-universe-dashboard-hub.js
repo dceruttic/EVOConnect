@@ -149,7 +149,7 @@ function renderDashboard() {
           </span>
           <div>
             <div class="eb-t">What's happening in the ICL community?</div>
-            <div class="eb-s">Across the REVAI network — cases, discussions, trending hashtags.</div>
+            <div class="eb-s">Across the EVO Connect network — cases, discussions, trending hashtags.</div>
           </div>
         </div>
 

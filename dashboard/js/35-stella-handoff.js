@@ -25,10 +25,12 @@
   var COPY = {
     A2: 'From STELLA · {caseId} · {lat} · STELLA {size} mm',
     A3: 'Incomplete case from STELLA — return to STELLA and relaunch. No eye was assumed.',
-    C3: 'You are leaving STELLA · external service by REVAI',
+    C3: 'You are leaving STELLA · external service',
     P1: 'STELLA recommendation',
     P2: 'Calculated by STAAR',
-    P3: 'Always on · STELLA reference cannot be turned off',
+    P3: 'STELLA reference · included in the comparison',
+    P3off: 'STELLA reference · not selected, it will not be calculated',
+    P3hint: 'Deselect it and the STELLA recommendation is not run and not shown.',
     P4: '{size} mm · {model} · {formula} · {calculatedAt}',
     P5: 'STELLA · {size} mm · V8.00 OUS',
     T1: 'from STELLA',
@@ -42,8 +44,8 @@
     M7: 'Model confidence {NN}%',
     M8: 'Predicted vault {N} µm · in range',
     D1: 'Δ vs STELLA: {d} mm',
-    S1: 'Calculated by STAAR · always shown first',
-    S2: "This row is STELLA's recommendation. It cannot be hidden or reordered.",
+    S1: 'Calculated by STAAR · shown first',
+    S2: "This row is STELLA's recommendation. It is never reordered below an external method.",
     N1: '{N} methods run',
     N2: 'Select a method to compare',
     J1: 'Your decision',
@@ -57,19 +59,19 @@
     R4: 'Return without recording your decision?',
     R4a: 'Return anyway', R4b: 'Stay',
     O1: 'Orders are created in STELLA only',
-    K1: 'Δ vs STELLA {d} mm',
+    G1: 'Δ vs STELLA {d} mm',
     K2: 'Same lens as the STELLA recommendation',
     K3: 'Inferred from {m}',
     K4: 'Entered manually',
     K5: 'No method in the ecosystem produced this decision, so the reason is entered by hand.',
     K6: 'Decision record',
-    K7: 'Recorded in REVAI · nothing was written to STELLA',
+    K7: 'Recorded in EVO Connect · nothing was written to STELLA',
     K8: 'Agreement — recorded exactly as an override would be',
     K9: 'Override — recorded with its influencing method and reason',
     K10: 'Type these values into STELLA',
     K11: 'EVO Connect does not send them. You transcribe them yourself — that is the only bridge back.',
     K12: 'Order confirmed in STELLA',
-    K13: 'Returned to the linked case record in EVO Connect · STELLA → REVAI',
+    K13: 'Returned to the linked case record in EVO Connect · STELLA → EVO Connect',
     K14: 'Post-operative vault and implanted lens — record view, not functional',
     L1: 'Order the lens in STELLA',
     L2: 'STELLA opens with its own case data already loaded. Change it to the lens you decided and confirm there.',
@@ -87,7 +89,7 @@
     L14: 'Method outputs compared in EVO Connect',
     L15: 'STELLA recommendation',
     L16: 'What the surgeon ordered, and on what argument',
-    L17: 'Returned to REVAI by API',
+    L17: 'Returned to EVO Connect by API',
     F1: 'Demonstration only – synthetic data – not for clinical use',
     EYE_ONE: 'This case arrived from STELLA for {lat} only',
     EYE_OU: 'Switch OD / OS — each eye arrived from STELLA separately'
@@ -108,7 +110,8 @@
   var INFERRED_REASON = { ICL_GURU: 'VAULT_BAND', ICL_FIT: 'ANATOMY_ASOCT', CASIA2: 'ANATOMY_ASOCT' };
   var SIZES = ['12.1', '12.6', '13.2', '13.7'];
   var OVERRIDES = { ICL_GURU: { recSize: 13.6, vault: 520 }, ICL_FIT: { recSize: 13.7, vault: 480 }, CASIA2: { recSize: 13.6, vault: 510 } };
-  var HANDOFF_SET = ['ICL_GURU', 'ICL_FIT', 'CASIA2'];
+  var STELLA_CODE = 'STELLA';
+  var HANDOFF_SET = [STELLA_CODE, 'ICL_GURU', 'ICL_FIT', 'CASIA2'];
   var HIDDEN_CHIPS = ['STAAR_NOM'];                                     // DR-0004 §6
   var STORE_KEY = 'stella_handoff', DECISION_KEY = 'stella_handoff_decision', PENDING_KEY = 'stella_handoff_pending';
   var PENDING_TTL = 10 * 60 * 1000;
@@ -391,10 +394,34 @@
   }
 
   /* ---------- chips (K1; no STELLA / STAAR_NOM chips, DR-0004) ---------- */
+  function stellaSelected() { return SELECTED_SIZING_FORMULAS.has(STELLA_CODE); }
   function decorateChips() {
     var grid = document.querySelector('.sf-formulas-grid'); if (!grid || grid.previousElementSibling && grid.previousElementSibling.classList.contains('sh-chip-caption')) return;
     grid.insertAdjacentElement('beforebegin', el('<div class="sh-chip-caption">' + esc(COPY.K1) + '</div>'));
     HIDDEN_CHIPS.forEach(function (c) { var chip = grid.querySelector('.sf-formula-chip[data-formula="' + c + '"]'); if (chip) chip.remove(); });
+    /* STELLA is a method like any other in the comparison: if it is not selected,
+       it is not calculated and its card does not appear in the results. */
+    if (!grid.querySelector('[data-formula="' + STELLA_CODE + '"]')) {
+      var chip = el('<button class="sf-formula-chip sh-stella-chip' + (stellaSelected() ? ' selected' : '') + '" data-formula="' + STELLA_CODE + '" type="button" title="' + esc(COPY.P3hint) + '">' +
+        '<span class="sfc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
+        '<span class="sfc-body"><span class="sfc-name">STELLA recommendation</span><span class="sfc-author">Calculated by STAAR</span></span></button>');
+      chip.addEventListener('click', function () { toggleSizingFormula(STELLA_CODE); syncStellaChip(); });
+      grid.prepend(chip);
+    }
+    syncStellaChip();
+  }
+  function syncStellaChip() {
+    var on = stellaSelected();
+    var chip = document.querySelector('.sh-stella-chip');
+    if (chip) chip.classList.toggle('selected', on);
+    var row = document.querySelector('.sh-lockrow');
+    if (row) {
+      row.classList.toggle('off', !on);
+      var sw = row.querySelector('.sh-switch'), lbl = row.querySelector('.sh-lock-lbl');
+      if (sw) sw.setAttribute('aria-checked', String(on));
+      if (lbl) lbl.innerHTML = lockSvg() + esc(on ? COPY.P3 : COPY.P3off);
+      row.title = COPY.P3hint;
+    }
   }
 
   /* ---------- eye scope (D5 + OU, DR-0004 §5) ---------- */
@@ -549,7 +576,7 @@
   function decisionSummary(rec) {
     var d = rec.decision, R = rec.stellaRecommendation, x = describe(rec, d);
     var same = String(d.plannedLens.size) === String(R.size);
-    var delta = same ? COPY.K2 : fmt(COPY.K1, { d: (parseFloat(d.plannedLens.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(d.plannedLens.size) - parseFloat(R.size)).toFixed(1) });
+    var delta = same ? COPY.K2 : fmt(COPY.G1, { d: (parseFloat(d.plannedLens.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(d.plannedLens.size) - parseFloat(R.size)).toFixed(1) });
     var src = d.reasonSource === 'inferred'
       ? '<span class="sh-src-tag inferred">' + esc(fmt(COPY.K3, { m: (METHODS.find(function (m) { return m.code === d.influencingMethod; }) || {}).label })) + '</span>'
       : '<span class="sh-src-tag manual">' + esc(COPY.K4) + '</span>';
@@ -618,7 +645,7 @@
       if (!v) { node.textContent = ''; node.className = 'sh-delta-line'; return; }
       var d = parseFloat(v) - base;
       if (Math.abs(d) < 0.001) { node.textContent = COPY.K2; node.className = 'sh-delta-line same'; return; }
-      node.textContent = fmt(COPY.K1, { d: (d >= 0 ? '+' : '') + d.toFixed(1) });
+      node.textContent = fmt(COPY.G1, { d: (d >= 0 ? '+' : '') + d.toFixed(1) });
       node.className = 'sh-delta-line diff';
     }
     /* the reason is inferred from the influencing method until the surgeon edits it */
@@ -903,7 +930,7 @@
       stella: { size: String(R.size), model: R.model, formula: R.formula },
       divergent: diverges,
       delta: diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '0.0',
-      confirmedAt: new Date().toISOString(), system: 'STELLA', returnedTo: 'REVAI', via: 'API'
+      confirmedAt: new Date().toISOString(), system: 'STELLA', returnedTo: 'EVO_CONNECT', via: 'API'
     };
     try {
       var all = JSON.parse(localStorage.getItem(ORDER_KEY) || '{}');
@@ -956,6 +983,11 @@
       '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' ↓</span></div></div>';
   }
   function scrollToDecision() { var d = document.getElementById('shDecision'); if (d) d.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  function wrapToggle() {
+    var _t = window.toggleSizingFormula;
+    if (typeof _t !== 'function') return;
+    window.toggleSizingFormula = function () { var r = _t.apply(this, arguments); if (currentIsHandoff()) syncStellaChip(); return r; };
+  }
 
   /* ---------- header chip (signal a) ---------- */
   function decorateHeader(rec) {
@@ -1013,7 +1045,11 @@
     var _run = window.runSizingFormulas;
     window.runSizingFormulas = function (patientId) {
       if (!isHandoff(patientId)) return _run.apply(this, arguments);
-      var rec = H, codes = Array.from(SELECTED_SIZING_FORMULAS);
+      var rec = H;
+      /* STELLA is one of the selectable methods: if it is not ticked it is not run
+         and its card is not rendered. Everything else runs as before. */
+      var withStella = stellaSelected();
+      var codes = Array.from(SELECTED_SIZING_FORMULAS).filter(function (c) { return c !== STELLA_CODE; });
       if (EYE_SCOPE !== curEye(rec)) { EYE_SCOPE = curEye(rec); lockEyeScope(rec); }
       var results = [];
       if (codes.length) {
@@ -1026,9 +1062,11 @@
       var box = document.getElementById('sfResults'), list = document.getElementById('sfResultsList'), tag = document.getElementById('sfResultTag');
       if (!box || !list) return;
       box.style.display = ''; box.classList.remove('sf-guru-mode'); list.classList.remove('sf-guru-mounted');
-      if (tag) tag.textContent = fmt(COPY.N1, { N: results.length });
-      list.innerHTML = '<div class="sf-comp-grid sh-grid">' + stellaCard(rec) + results.map(function (r) { return extCard(r, rec); }).join('') + '</div>' +
-        (results.length ? '' : '<div class="sh-none">' + esc(COPY.N2) + '</div>');
+      var ran = results.length + (withStella ? 1 : 0);
+      if (tag) tag.textContent = fmt(COPY.N1, { N: ran });
+      list.innerHTML = '<div class="sf-comp-grid sh-grid">' + (withStella ? stellaCard(rec) : '') +
+        results.map(function (r) { return extCard(r, rec); }).join('') + '</div>' +
+        (ran ? '' : '<div class="sh-none">' + esc(COPY.N2) + '</div>');
       rec.ui.methodsRun = codes.slice();
       refreshSizeOptions(rec);
       try { box.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
@@ -1090,6 +1128,7 @@
     restoreDecision(rec);
     DEFAULT_SET = Array.from(SELECTED_SIZING_FORMULAS);
     installWrappers();
+    wrapToggle();
     upsertPatient(rec);
     openUniverse();
     openPatientFile(rec.caseId);

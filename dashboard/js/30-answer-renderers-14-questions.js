@@ -629,11 +629,11 @@ function dchAnsNps(){
   const peerNps = 58;
   const items = [
     { label:'Your clinic', value: myNps, color:'#5C18AB' },
-    { label:'Peer median (REVAI net)', value: peerNps, color:'#0080C7' },
+    { label:'Peer median (EVO net)', value: peerNps, color:'#0080C7' },
     { label:'Top decile', value: 81, color:'#03A180' },
   ];
   return `
-    <h4>📊 NPS vs peer clinics <span class="ptag">REVAI network · 38 peers</span></h4>
+    <h4>📊 NPS vs peer clinics <span class="ptag">EVO Connect network · 38 peers</span></h4>
     <p>Your estimated NPS (derived from weighted A1) is at <b>${myNps}</b>, vs a peer median of <b>${peerNps}</b>. You are <b style="color:#03A180">+${myNps-peerNps} points</b> above the median.</p>
     <div class="dch-chart"><div class="dch-chart-title">Comparative NPS</div>${dchBarChart(items)}</div>
     ${dchCite()}`;

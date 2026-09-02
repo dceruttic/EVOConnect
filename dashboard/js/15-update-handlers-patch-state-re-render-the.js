@@ -683,7 +683,7 @@ function renderPtSizingGuru(pt) {
 
 /* Formula comparator — for patients without an ICL Guru report */
 const SIZING_FORMULAS = [
-  { code: "ICL_GURU",    name: "ICL Guru",          desc: "REVAI AI model · validated on 47k ICL outcomes · real-time cohort match",     recSize: 12.1, vault: 240, conf: 96, author: "REVAI",                  predictsVault: true },
+  { code: "ICL_GURU",    name: "ICL Guru",          desc: "AI model · validated on 47k ICL outcomes · real-time cohort match",     recSize: 12.1, vault: 240, conf: 96, author: "EVO Connect",                  predictsVault: true },
   { code: "REINSTEIN",   name: "Reinstein",         desc: "High-resolution UBM-driven nomogram · sulcus-to-sulcus + crystalline lens rise", recSize: 12.6, vault: 380, conf: 92, author: "Reinstein et al., 2013", predictsVault: true },
   { code: "LASSO",       name: "Lasso",             desc: "Regression-based machine-learning sizing · multi-center cohort calibrated",     recSize: 12.6, vault: 410, conf: 91, author: "Russo et al., 2022",     predictsVault: true },
   { code: "KS",          name: "KS",                desc: "Kane-Saxena hybrid · combines aRISE + lens rise + ATA",                          recSize: 12.6, vault: 415, conf: 89, author: "Kane & Saxena, 2022",  predictsVault: true },

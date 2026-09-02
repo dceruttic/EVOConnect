@@ -126,7 +126,7 @@ function cpAnswerForecast(){
   </svg>`;
   return `
     <h4>🇦🇷 Argentina — 3-month lens order forecast <span class="ptag">${f.horizon}</span></h4>
-    <p>Model: <b>Demand Forecaster</b> agent (STAAR×REVAI) · trained on 4.7M surgeries across 7 regions · <b>MAPE ${f.mape}%</b> on AR rolling 90-day hold-out. Bootstrap intervals at 95% confidence.</p>
+    <p>Model: <b>Demand Forecaster</b> agent (STAAR) · trained on 4.7M surgeries across 7 regions · <b>MAPE ${f.mape}%</b> on AR rolling 90-day hold-out. Bootstrap intervals at 95% confidence.</p>
     <div class="cp-chart">${svg}</div>
     <div class="cp-pill-row">
       <span class="cp-pill"><span class="dotx" style="background:#22d3ee"></span> Actual (last 6 mo)</span>
@@ -191,7 +191,7 @@ function cpAnswerDissat(){
       <button onclick="showView('pulse')">Open Operations Pulse →</button>
     </div>
     <div class="cp-cite">
-      Sources: <span class="srcpill">REVAI Vault · PROMs</span>
+      Sources: <span class="srcpill">EVO Vault · PROMs</span>
       <span class="srcpill">NEI-VFQ-25 · 142 cases</span>
       <span class="srcpill">Surgeon telemetry</span>
       <span class="srcpill">6-month window · through April 2026</span>
@@ -241,7 +241,7 @@ function cpAnswerWhereDissat(){
       <button>Generate targeted outreach plan</button>
     </div>
     <div class="cp-cite">
-      Sources: <span class="srcpill">REVAI Vault PROMs</span>
+      Sources: <span class="srcpill">EVO Vault PROMs</span>
       <span class="srcpill">Surgeon telemetry</span>
       <span class="srcpill">ICL Universe clinic registry</span>
       <span class="srcpill">Privacy: anonymized · no PHI leaves clinic</span>
@@ -292,7 +292,7 @@ function cpAnswerTraits(){
       <button onclick="showView('agents')">Activate Case-Selection agent</button>
     </div>
     <div class="cp-cite">
-      Sources: <span class="srcpill">REVAI Vault · PROMs + EMR join</span>
+      Sources: <span class="srcpill">EVO Vault · PROMs + EMR join</span>
       <span class="srcpill">Chi² / Fisher's exact</span>
       <span class="srcpill">142 cohort · 177,838 baseline</span>
       <span class="srcpill">Period: Nov 2025 – Apr 2026</span>
@@ -384,7 +384,7 @@ VIEWS.copilot = () => `
         <div class="cp-av"><svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 015 5v2h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2h1V7a5 5 0 015-5z"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/><path d="M9 18h6"/></svg></div>
         <div class="cp-bubble">
           <h4>👋 Hi Diego — ready when you are <span class="ptag">Copilot v1.2 · online</span></h4>
-          <p>I'm connected to the STAAR Intelligence graph: <b>177,980 surgeries</b>, <b>203 clinics</b> in <b>35 countries</b>, <b>12,000+ surgeons</b>, <b>PROMs via REVAI Vault</b>, <b>STAAR MES &amp; MDR</b>, and real-time signals from customs, social, and regulatory gazettes. Tap a suggestion above or ask anything in natural language — Spanish or English.</p>
+          <p>I'm connected to the STAAR Intelligence graph: <b>177,980 surgeries</b>, <b>203 clinics</b> in <b>35 countries</b>, <b>12,000+ surgeons</b>, <b>PROMs via EVO Vault</b>, <b>STAAR MES &amp; MDR</b>, and real-time signals from customs, social, and regulatory gazettes. Tap a suggestion above or ask anything in natural language — Spanish or English.</p>
           <p class="cp-dim">I always cite sources. I never expose PHI. All clinical reasoning is advisory — final clinical decisions stay with the surgeon.</p>
         </div>
       </div>

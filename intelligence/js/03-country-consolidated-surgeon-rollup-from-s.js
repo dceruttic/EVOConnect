@@ -5,7 +5,7 @@ function countrySurgeonSection(iso){
     return `<div class="dr-section">
       <h4>Surgeon network</h4>
       <div style="font-size:11.5px;color:var(--text-3);line-height:1.5">
-        No tracked surgeons in Surgeon Rankings for this country yet. Network is still being onboarded into REVAI's KOL roster.
+        No tracked surgeons in Surgeon Rankings for this country yet. Network is still being onboarded into the STAAR KOL roster.
       </div>
     </div>`;
   }

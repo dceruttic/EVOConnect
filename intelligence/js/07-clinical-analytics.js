@@ -573,7 +573,7 @@ VIEWS.clinical = () => {
 
   <div class="foot-note" style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-top:16px">
     <span class="staar-chip" title="Powered by STAAR Surgical"><img src="${STAAR_LOGO}" alt="STAAR Surgical"/><span>Intelligence Partner</span></span>
-    <span style="flex:1;min-width:300px"><b>Clinical Analytics methodology.</b> Aggregate M12 cohort across all participating clinics, surgeons and countries. Vault deltas captured via REVAI Vault biometry sync (Sonomed / ArcScan / Quantel UBM at 1D, 1M, 3M, 6M, 12M, Y3). Toric rotation measured at slit-lamp axis check vs. planned. PROMs collected via REVAI Vault patient app. No PHI leaves the clinic — only anonymized aggregates are surfaced here.</span>
+    <span style="flex:1;min-width:300px"><b>Clinical Analytics methodology.</b> Aggregate M12 cohort across all participating clinics, surgeons and countries. Vault deltas captured via EVO Vault biometry sync (Sonomed / ArcScan / Quantel UBM at 1D, 1M, 3M, 6M, 12M, Y3). Toric rotation measured at slit-lamp axis check vs. planned. PROMs collected via EVO Vault patient app. No PHI leaves the clinic — only anonymized aggregates are surfaced here.</span>
   </div>
   `;
 };
@@ -771,7 +771,7 @@ function openSurgeon(idx){
       ${surgPromsChart(p.promsSeries)}
       <div style="font-size:11px;color:var(--text-3);margin-top:8px;line-height:1.5">
         Composite of uncorrected visual acuity · NEI VFQ-25 quality-of-life · night-vision subscale · 30-day satisfaction.
-        <b style="color:var(--text-2)">Captured via REVAI Vault</b> at 1 week / 1 month / 3 month / 1 year post-op.
+        <b style="color:var(--text-2)">Captured via EVO Vault</b> at 1 week / 1 month / 3 month / 1 year post-op.
       </div>
     </div>
 

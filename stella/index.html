@@ -142,7 +142,17 @@ td a{font-size:13.008px}
   color:rgba(255,255,255,.42);cursor:default}
 
 /* preop */
-.eyerow{display:flex;gap:18px;align-items:flex-start}
+.eyerow{display:flex;gap:18px;align-items:stretch;min-width:0}
+.eyeid{flex:none;width:112px}
+.eyeboxes{display:flex;gap:14px;flex:1;min-width:0;align-items:stretch}
+.refbox{flex:1 1 auto;min-width:0}
+.calcbox{flex:0 0 190px;min-width:0}
+.refhead{display:flex;align-items:flex-start;gap:10px;min-height:34px}
+.refrow{display:flex;align-items:center;gap:12px;min-width:0}
+.refrow>.fields{flex:1 1 auto;min-width:0}
+.refhead>div{min-width:0}
+.expghost{margin-left:auto;flex:none;width:96px;height:34px}
+.grid2>.eyerow,.grid2>.fbox{min-width:0}
 .bigeye{font-size:63.52px;font-weight:900;line-height:54.88px;letter-spacing:-2px;color:var(--ink-2)}
 .bigeye.off{color:#B8BCC1}
 .eyeicons{margin-top:12px;display:flex;gap:6px}
@@ -152,16 +162,17 @@ td a{font-size:13.008px}
 .slabel.grey{color:var(--muted-2)}
 .rlabel{font-size:12.855px;font-weight:600;color:var(--teal);letter-spacing:.2px}
 .rlabel u{color:var(--ink);font-weight:400;font-size:15px}
-.fields{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.fld{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:10px;margin-top:12px;min-width:0}
+.fld{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;min-width:0}
 .fld .pill{position:relative;display:flex;align-items:center}
-.fld input{height:31px;width:82px;border:1px solid var(--invalid);border-radius:8px;background:#fff;
+.fld input{height:31px;width:100%;box-sizing:border-box;border:1px solid var(--invalid);border-radius:8px;background:#fff;
   font-family:inherit;font-size:12.8px;text-align:right;padding:8px 26px 8px 8px;color:var(--ink)}
 .fld input.ok{border-color:var(--green-ok)}
 .fld .u{position:absolute;right:9px;font-size:11px;color:var(--muted);pointer-events:none}
-.fld .ro{height:31px;width:82px;display:flex;align-items:center;justify-content:flex-end;gap:3px;
+.fld .ro{height:31px;width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:3px;
   font-size:12.8px;font-weight:600;padding-right:9px}
-.fld .cap{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.fld .cap{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.fld .pill{width:100%}
 .range{position:absolute;top:39px;left:50%;transform:translateX(-50%);background:#2B2E31;color:#fff;
   font-size:12px;padding:5px 10px;border-radius:3px;white-space:nowrap;z-index:20;
   display:flex;align-items:center;gap:8px}
@@ -354,6 +365,8 @@ footer.site{display:flex;justify-content:space-between;gap:20px;padding:18px 24p
 .dash-grid{display:grid;grid-template-columns:minmax(0,1fr) 356px;gap:26px;align-items:start}
 .pt-grid{display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:26px;align-items:start;margin-top:24px}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}
+.eyegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:26px;row-gap:16px}
+.eyegrid>*{min-width:0}
 .od-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:34px;align-items:start}
 .addr-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;margin-top:34px;font-size:15px}
 .personal{display:grid;grid-template-columns:repeat(3,max-content) minmax(0,1fr);gap:16px 26px;font-size:13px;color:var(--ink-2)}
@@ -393,15 +406,45 @@ img,svg{max-width:100%}
   .login-foot .fr1{gap:28px}
   .login-foot .fr2{gap:28px}
 }
+/* tablets: the top bar wraps instead of forcing the page wider, and the two eyes
+   stack once a single column can no longer hold refraction + calculate-for */
+@media (max-width:1100px){
+  .topbar{gap:14px;padding:6px 14px}
+  .topbar .acct{min-width:0;flex:0 1 210px;overflow:hidden}
+  .navlink{font-size:15px}
+}
+@media (max-width:1024px){
+  .grid2{grid-template-columns:minmax(0,1fr)}
+  /* one column: each eye keeps its refraction and its biometry together */
+  .eyegrid{grid-template-columns:minmax(0,1fr)}
+  .eyegrid>[data-eyeblock="od"]{order:1}
+  .eyegrid>[data-biometry="od"]{order:2}
+  .eyegrid>[data-eyeblock="os"]{order:3;margin-top:10px}
+  .eyegrid>[data-biometry="os"]{order:4}
+  .eyeboxes{flex-wrap:wrap}
+  .refbox{flex:1 1 320px}
+  .calcbox{flex:1 1 190px}
+}
+@media (max-width:920px){
+  .topbar{gap:11px}
+  .topbar .timer{display:none}
+  .topbar .acct{flex:0 1 160px;white-space:nowrap;text-overflow:ellipsis}
+  .topbar .b{white-space:nowrap;padding:0 12px}
+  .navlink{font-size:14px}
+}
+@media (max-width:760px){
+  .eyerow{flex-wrap:wrap}
+  .eyeid{width:100%;display:flex;align-items:center;gap:16px}
+  .eyeid .bigeye{font-size:44px;line-height:44px}
+  .expghost{display:none}
+}
 @media (max-width:700px){
   .topbar{gap:14px;overflow-x:auto;padding:6px 14px}
   .topbar .acct{min-width:0;max-width:180px;overflow:hidden}
   .topbar .timer,.topbar .helpdot{flex:none}
   .navlink{font-size:15px}
-  .eyerow{flex-wrap:wrap}
   .fbox{min-width:0!important}
   .fields{gap:8px}
-  .fld input,.fld .ro{width:72px}
   .toolbar{flex-direction:column;align-items:stretch}
   .toolbar .grow{display:none}
   .search input{min-width:0;width:100%}
@@ -680,7 +723,7 @@ const withCL = o => Object.assign(BLANK_EYE(), o);
 
 const PATIENTS = [
   { pid:'PSEUDO-4471', last:'SYNTHETIC CASE', first:'a', dob:'1990-01-01', age:36, sex:'M',
-    act:'2026-09-01', note:'REVAI ESCRS demo — synthetic record — not a real patient',
+    act:'2026-09-01', note:'ESCRS demo — synthetic record — not a real patient',
     od:withCL({sph:'-16.50',cyl:'+1.00',axis:'40',bvd:'12.00',k1:'+43.00',k1a:'40',k2:'+44.50',k2a:'130',acd:'3.40',cct:'540',ww:'12.20'}),
     os:withCL({sph:'-16.00',cyl:'+1.00',axis:'140',bvd:'12.00',k1:'+43.00',k1a:'140',k2:'+44.50',k2a:'50',acd:'3.38',cct:'542',ww:'12.10'}),
     runs:[{date:'2026-09-01',time:'13:24:44',od:'Toric Myopic 13.2 mm',os:''}],
@@ -1451,7 +1494,7 @@ function fld(eye,key,w){
     : `<span style="font-size:11px;color:var(--muted)">${meta.unit}</span>`}</div>${cap}</div>`;
   const focused = S.focus && S.focus.eye===eye && S.focus.key===key;
   return `<div class="fld"><span class="pill">
-    <input data-f="${eye}:${key}" value="${v}" class="${v?'ok':''}" style="width:${w||82}px">
+    <input data-f="${eye}:${key}" value="${v}" class="${v?'ok':''}">
     <span class="u">${meta.unit}</span></span>${cap}
     ${focused?`<span class="range">${meta.range}${v?' <span style="color:#6BE39A">✔</span>':''}</span>`:''}
   </div>`;
@@ -1459,20 +1502,21 @@ function fld(eye,key,w){
 function refractionBox(eye){
   const live = S.eye===eye && !S.calculated;
   const exp = S.expanded[eye], sel = S.refrMode[eye];
-  const manifest = `<div style="display:flex;align-items:center;gap:12px">
+  const manifest = `<div class="refrow">
     ${exp?`<span class="radio ${sel==='manifest'?'on':''}" data-refr="${eye}:manifest"></span>`:''}
     <div class="fields" style="margin-top:0">
       ${fld(eye,'sph')}${fld(eye,'cyl')}${fld(eye,'axis')}${fld(eye,'bvd')}</div></div>`;
-  const cl = `<div style="display:flex;align-items:center;gap:12px">
+  const cl = `<div class="refrow">
     <span class="radio ${sel==='cl'?'on':''}" data-refr="${eye}:cl"></span>
     <div class="fields" style="margin-top:0">
       ${fld(eye,'sphCL')}${fld(eye,'cylCL')}${fld(eye,'axisCL')}${fld(eye,'bvdCL')}${fld(eye,'sphCLx')}</div></div>`;
-  return `<div class="fbox" style="flex:1;min-width:352px">
-    <div style="display:flex;align-items:flex-start">
+  return `<div class="fbox refbox">
+    <div class="refhead">
       <div><span class="rlabel">REFRACTION: <u>MANIFEST</u></span>
         <span style="color:var(--muted-2)"> | </span>
         <span class="slabel grey" style="display:${exp?'none':'inline'}">CL OVER-REFRACTION</span></div>
-      ${live?`<button class="b b-primary" style="margin-left:auto" data-exp="${eye}">${exp?'CONTRACT':'EXPAND'}</button>`:''}
+      ${live?`<button class="b b-primary" style="margin-left:auto;flex:none" data-exp="${eye}">${exp?'CONTRACT':'EXPAND'}</button>`
+            :`<span class="expghost" aria-hidden="true"></span>`}
     </div>
     <div style="margin-top:12px">${manifest}</div>
     ${exp?`<div style="margin-top:18px">
@@ -1482,10 +1526,10 @@ function refractionBox(eye){
 }
 function calcForBox(eye){
   const live = S.eye===eye && !S.calculated, toric = S.mode[eye]==='TORIC';
-  if(!live) return `<div class="fbox" style="min-width:190px">
+  if(!live) return `<div class="fbox calcbox">
     <div class="slabel">CALCULATE FOR</div>
     <div style="font-size:16px;margin-top:10px">${toric?'TICL':'ICL'}</div></div>`;
-  return `<div class="fbox" style="min-width:190px">
+  return `<div class="fbox calcbox">
     <div class="slabel">CALCULATE FOR</div>
     <div class="seg">
       <button class="${!toric?'on':''}" data-mode="${eye}:ICL">ICL</button>
@@ -1494,26 +1538,29 @@ function calcForBox(eye){
     <div class="tgrow"><span class="tg ${S.mono[eye]?'on':''}" data-tg="mono:${eye}"></span> MONOCULAR</div>
   </div>`;
 }
-function eyeColumn(eye){
+/* The two eyes are laid out as two rows of a shared grid — refraction on one row,
+   biometry on the next — so OD and OS stay aligned even though the live eye carries
+   editable controls and the other one does not. */
+function eyeHeaderRow(eye){
   const live = S.eye===eye && !S.calculated;
-  return `<div>
-    <div class="eyerow">
-      <div>
+  return `<div class="eyerow" data-eyeblock="${eye}">
+      <div class="eyeid">
         <div class="bigeye ${live?'':'off'}">${eye.toUpperCase()}</div>
         <div class="eyeicons" style="color:${live?'var(--teal)':'#B8BCC1'}">
           <span style="opacity:${eye==='od'?1:.4}">${icoEye}</span>
           <span style="opacity:${eye==='os'?1:.4}">${icoEye}</span></div>
         ${live?`<button class="b b-outline" style="margin-top:12px;height:34px" data-reset="${eye}">Reset ${eye.toUpperCase()}</button>`:''}
       </div>
-      <div style="display:flex;gap:14px;flex:1;flex-wrap:wrap">${refractionBox(eye)}${calcForBox(eye)}</div>
-    </div>
-    <div class="fbox" style="margin-top:16px">
+      <div class="eyeboxes">${refractionBox(eye)}${calcForBox(eye)}</div>
+    </div>`;
+}
+function biometryBox(eye){
+  return `<div class="fbox" data-biometry="${eye}">
       <div class="slabel">BIOMETRY</div>
       <div class="fields">
-        ${fld(eye,'k1')}${fld(eye,'k1a',69)}${fld(eye,'k2')}${fld(eye,'k2a',69)}
+        ${fld(eye,'k1')}${fld(eye,'k1a')}${fld(eye,'k2')}${fld(eye,'k2a')}
         ${fld(eye,'acd')}${fld(eye,'cct')}${fld(eye,'ww')}</div>
-    </div>
-  </div>`;
+    </div>`;
 }
 function resultPanel(eye){
   const rows = S.results[eye], pick = S.pick[eye];
@@ -1578,7 +1625,8 @@ function viewPreop(){
     <button class="bbtn" ${ready&&!S.calculated?'':'disabled'} data-act="calc">
       <span>Save and Calculate</span><span>→</span></button></div>`;
   return topbar({print:true, printOn:S.calculated}) + revaiTopBanner() + banner(actions) + `<div class="wrap">
-    <div class="grid2" style="margin-top:24px">${eyeColumn('od')}${eyeColumn('os')}</div>
+    <div class="eyegrid" style="margin-top:24px">
+      ${eyeHeaderRow('od')}${eyeHeaderRow('os')}${biometryBox('od')}${biometryBox('os')}</div>
     <div class="grid2" style="margin-top:24px">${eyeDiagram('od')}${eyeDiagram('os')}</div>
     ${S.calculated?`<div class="grid2" style="margin-top:24px">${resultPanel('od')}${resultPanel('os')}</div>`:''}
 
@@ -1601,11 +1649,11 @@ function viewPreop(){
    no location, no storage reads, no referrer.
    ================================================================== */
 const HANDOFF_MAX_CHARS = 2048;
-const RV_HERO = { kicker:'EVO Connect by REVAI',
+const RV_HERO = { kicker:'EVO Connect by STAAR',
   title:'Compare with other sizing methodologies',
   sub:'ICL Guru, ICLFIT and CASIA2 next to the STELLA result — in EVO Connect',
   subShort:'ICL Guru, ICLFIT and CASIA2 next to the STELLA result',
-  boundary:'You are leaving STELLA · external service by REVAI',
+  boundary:'You are leaving STELLA · external service',
   foot:'Nothing is written back to STELLA.', demo:'Demonstration only – synthetic data – not for clinical use' };
 const rvEyes = () => ['od','os'].filter(e => S.results && S.results[e]);
 /* OD · OS · OU picker — enabled per calculated eye, OU only when both; shared by the banner and the inline card */

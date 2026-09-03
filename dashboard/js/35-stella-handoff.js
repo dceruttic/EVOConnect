@@ -640,16 +640,13 @@
   }
 
   /* ---------- decision block (US-6 / J1–J9; per eye, DR-0004) ---------- */
-  function sizeOptions(rec) {
-    var set = SIZES.slice();
-    var last = (window._SF_LAST_RESULTS && window._SF_LAST_RESULTS.patientId === rec.caseId) ? window._SF_LAST_RESULTS.results : [];
-    (last || []).forEach(function (r) { var v = parseFloat(r.recSize).toFixed(1); if (set.indexOf(v) < 0) set.push(v); });
-    return set.sort(function (x, y) { return parseFloat(x) - parseFloat(y); });
-  }
+  /* Only lengths STAAR actually manufactures are orderable — a method result
+     can never introduce a size that does not exist. */
+  function sizeOptions() { return SIZES.slice(); }
   function refreshSizeOptions(rec) {
     var sel = document.querySelector('#shDecisionForm [name="sh-size"]'); if (!sel) return;
     var cur = sel.value;
-    sel.innerHTML = '<option value="">—</option>' + sizeOptions(rec).map(function (s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
+    sel.innerHTML = '<option value="">—</option>' + sizeOptions().map(function (s) { return '<option value="' + s + '">' + s + '</option>'; }).join('');
     sel.value = cur;
   }
   function decisionForm(rec, d) {
@@ -664,7 +661,7 @@
         '<label class="sh-radio"><input type="radio" name="sh-choice" value="prefer"' + chk(d.choice, 'prefer') + '><span>' + esc(COPY.J3) + '</span></label>' +
         '<div class="sh-err" data-err="choice" hidden>Choose Accept or Prefer.</div></fieldset>' +
       '<fieldset class="sh-fs sh-lens" id="shLensFs"><legend class="sh-lg">Planned lens</legend><div class="sh-lens-grid">' +
-        '<label><span>Size (mm)</span><select name="sh-size"><option value="">—</option>' + sizeOptions(rec).map(function (s) { return '<option value="' + s + '"' + sel(d.plannedLens && d.plannedLens.size, s) + '>' + s + '</option>'; }).join('') + '</select></label>' +
+        '<label><span>Size (mm)</span><select name="sh-size"><option value="">—</option>' + sizeOptions().map(function (s) { return '<option value="' + s + '"' + sel(d.plannedLens && d.plannedLens.size, s) + '>' + s + '</option>'; }).join('') + '</select></label>' +
         '<label><span>Power (D)</span><input type="text" name="sh-power" inputmode="decimal" value="' + esc(pw) + '" placeholder="—"></label>' +
         '<label><span>Axis (°, optional)</span><input type="text" name="sh-axis" inputmode="numeric" value="' + esc(ax) + '" placeholder="—"></label>' +
         '</div><div class="sh-delta-line" id="shDelta" data-stella="' + esc(R.size) + '"></div>' +
@@ -1102,8 +1099,7 @@
       '<div class="sf-comp-stats"><div class="stat"><div class="lbl">Size</div><div class="val">' + size.toFixed(1) + '<em>mm</em></div></div>' +
       '<div class="stat"><div class="lbl">Vault</div><div class="val sh-small">' + esc(vault) + '</div></div></div>' +
       '<div class="sh-meta"><div>Method: ' + esc(r.name) + '</div><div>Modality: ' + esc(r.modality || '—') + '</div><div>Device: ' + esc(r.device || '—') + '</div><div>' + esc(version) + '</div></div>' +
-      (r.basis ? '<div class="sh-basis" title="' + esc(COPY.E3s) + '">' + esc(r.basis) +
-        (r.approx ? '<span class="sh-approx" title="' + esc(COPY.E3s) + '">approx.</span>' : '') + '</div>' : '') +
+      (r.basis ? '<div class="sh-basis" title="' + esc(COPY.E3s) + '">' + esc(r.basis) + '</div>' : '') +
       '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' +
       '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' ↓</span></div></div>';
   }

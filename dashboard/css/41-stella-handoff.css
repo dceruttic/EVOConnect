@@ -439,8 +439,6 @@ body{padding-bottom:26px}
 /* === engine transparency on the comparator cards === */
 .sh-basis{margin-top:6px;font-size:10.5px;line-height:1.45;color:#5A6478;
   display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.sh-approx{flex:none;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
-  color:#8A6A00;background:#FFF3D6;border:1px solid #F0C36B;border-radius:4px;padding:1px 5px}
 .sh-rerun{margin-top:6px;font-size:10.5px;line-height:1.45;color:#15803D}
 .sh-rerun.drift{color:#8A6A00}
 .sh-rerun em{display:block;font-style:normal;margin-top:3px;color:#7A1F1F}

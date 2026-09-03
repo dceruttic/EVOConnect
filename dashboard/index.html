@@ -50,11 +50,12 @@
   <link rel="stylesheet" href="/dashboard/css/39-phase-demo-panel-docked-side-drawer-non-bl.css">
   <link rel="stylesheet" href="/dashboard/css/40-revai-copilot-clinic-level-ai-chat-phase-5.css">
   <link rel="stylesheet" href="/dashboard/css/41-stella-handoff.css">
-  <link rel="stylesheet" href="/dashboard/css/42-staar-layer.css">
 
   <!-- STELLA handoff: land straight on the patient case, never flash the REVAI home -->
   <style>html.sh-direct #dashboardView{visibility:hidden}html.sh-direct body{background:var(--cream,#fff)}html.sh-direct .universe{animation:none!important}
   html.evo-direct #dashboardView{visibility:hidden}
+  /* Clinic home disabled: it never paints, whatever route opened the app. */
+  html.no-clinic-home #dashboardView{visibility:hidden}
   html.evo-direct .universe,html.evo-direct .universe.open{animation:none!important;opacity:1}</style>
   <script>
   (function(){
@@ -79,6 +80,7 @@
         } else if(sessionStorage.getItem('revai_clinic_home')==='1'){ homeOn = true; }
       }catch(e){}
       window.CLINIC_HOME_ENABLED = homeOn;
+      if(!homeOn) document.documentElement.classList.add('no-clinic-home');
 
       /* Arriving from the website goes straight into EVO Connect, never through
          the clinic home: hide it before first paint, then open the app.
@@ -411,7 +413,7 @@
               <span class="tag-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Activated</span>
             </div>
             <div class="ttl">Stella by STAAR</div>
-            <div class="desc">EVO ICL planning &amp; ordering — STAAR’s system of record.</div>
+            <div class="desc">EVO ICL planning &amp; ordering — replaces OCOS.</div>
           </div>
         </div>
 
@@ -716,15 +718,10 @@
      Phase 1) and cleans the parameter out of the address bar. */
   (function(){
     function boot(){
-      if(!document.documentElement.classList.contains('evo-direct')) return;
-      try{
-        if(typeof openUniverse==='function') openUniverse();
-        history.replaceState(null,'',location.pathname+location.hash);
-      }catch(e){}
-      /* The clinic home stays hidden BEHIND the app: dropping the class here
-         would un-hide it while the universe is still fading in, which is the
-         flash. It is released only if the user actually goes back to it —
-         and while the clinic home is disabled, there is no way back to it. */
+      /* Sealing the clinic home is NOT tied to how the session was entered:
+         a STELLA handoff opens the app without the evo-direct class, and the
+         brand button would still have walked back to the hidden screen. So
+         the guard is installed first, for every entry. */
       try{
         var _close = window.closeUniverse;
         if (typeof _close === 'function') {
@@ -739,10 +736,21 @@
       if (window.CLINIC_HOME_ENABLED === false) {
         try{
           document.querySelectorAll('.us-brand-btn').forEach(function(b){
-            b.removeAttribute('title'); b.style.cursor = 'default';
+            b.removeAttribute('title');
+            b.style.cursor = 'default';
+            b.setAttribute('aria-disabled','true');
           });
         }catch(e){}
       }
+
+      if(!document.documentElement.classList.contains('evo-direct')) return;
+      /* The clinic home stays hidden BEHIND the app: dropping the class here
+         would un-hide it while the universe is still fading in, which is the
+         flash. */
+      try{
+        if(typeof openUniverse==='function') openUniverse();
+        history.replaceState(null,'',location.pathname+location.hash);
+      }catch(e){}
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
     else boot();
@@ -764,7 +772,5 @@
 
 <!-- STELLA → EVO Connect handoff (Journey 1). Must stay LAST: wraps globals defined above. -->
 <script src="/dashboard/js/35-stella-handoff.js"></script>
-<!-- Journey 2 concept: the STAAR-owned transfer layer. After js/35 - it reads window.SH. -->
-<script src="/dashboard/js/36-staar-layer.js"></script>
 </body>
 </html>

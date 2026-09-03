@@ -104,6 +104,20 @@
     };
   }
 
+  /* Vault this method predicts for EVERY manufactured size, not just the
+     recommended one — the ICL Guru report shows all four side by side. */
+  function vaultBySize(code, raw) {
+    var fn = METHODS[code];
+    if (!fn) return null;
+    var i = normalise(raw || {});
+    var out = fn(i);
+    if (out.target == null) return null;
+    return SIZES.map(function (s) {
+      var v = vaultFor(s, out.target, i);
+      return { size: s, vault: v, band: bandFor(v) };
+    });
+  }
+
   /* Read the sizing inputs straight off the pre-op form. */
   function readInputs() {
     function g(id) { var e = document.getElementById(id); return e ? e.value : ''; }
@@ -111,5 +125,6 @@
              clr: g('sf-clr'), arise: g('sf-arise'), al: g('sf-al'), kmean: g('sf-kmean') };
   }
 
-  window.SIZING_ENGINE = { run: run, readInputs: readInputs, snap: snap, SIZES: SIZES, stellaSize: stellaSize };
+  window.SIZING_ENGINE = { run: run, vaultBySize: vaultBySize, readInputs: readInputs,
+                           snap: snap, SIZES: SIZES, stellaSize: stellaSize };
 })();

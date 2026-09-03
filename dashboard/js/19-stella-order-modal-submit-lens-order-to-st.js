@@ -403,63 +403,249 @@ function _synthesizeIclGuruFromForm(pt, vault, size){
 ================================================================ */
 var ICLGURU_REPORT = {
   pages: [{ src: '/assets/iclguru/report-p1.webp' }, { src: '/assets/iclguru/report-p2.webp' }],
-  pt: { w: 594.96, h: 841.92 },                    // page box, in PDF points
-  name: { x: 78.4, baseline: 89.4, size: 12 },     // "Patient:" value
+  pt: { w: 594.96, h: 841.92 },              // page box, in PDF points
+  font: "Inter, 'Helvetica Neue', system-ui, sans-serif",
+  /* Header values. x is the label's right edge, y the text baseline —
+     both read off the source PDF, so the values land in the original slots. */
+  head: {
+    size: 12,
+    name:     { x: 78.4,  y: 89.4 },
+    gender:   { x: 79.9,  y: 107.4 },
+    dob:      { x: 62.7,  y: 125.4 },
+    surgery:  { x: 335.4, y: 125.4 },
+    mrn:      { x: 123.4, y: 160.4 },
+    calcdate: { x: 131.7, y: 178.4 },
+    method:   { x: 150.4, y: 196.4 },
+    sph:      { x: 287.4, y: 178.4 },
+    cyl:      { x: 380.6, y: 178.4 },
+    axis:     { x: 503.4, y: 178.4 },
+    ata:      { x: 270.9, y: 196.4 },
+    arise:    { x: 394.1, y: 196.4 },
+    acd:      { x: 503.4, y: 196.4 }
+  },
   badge: { cx: 252.6, cy: 87.5, r: 12.5, fill: '#3689E7', size: 9.5 },
-  /* Page 2 · "Results": four size cards, measured from the source PDF.
-     The sample report has 12.1 ringed; the ring is repainted onto whichever
-     size ICL Guru actually recommends for this case. */
+  /* Page 1 · the vault dial. Centre, per-size ring radii and the angle of the
+     0 / 1000 / 1500 µm ticks, all fitted to the source drawing. */
+  dial: { page: 1, cx: 288.21, cy: 407.33, rings: [57.87, 75.54, 92.45, 108.97],
+          a0: 177.12, a1000: 30.44, a1500: 1.69, dot: 4.95 },
+  /* Page 2 · the four size cards. */
   cards: {
-    page: 2, sizes: [12.1, 12.6, 13.2, 13.7],
-    x0: 31.2, w: 119.9, step: 138.0, y0: 247.0, h: 273.9, r: 7.9,
-    grow: 0.8,                       // the selected card's ring sits 0.8 pt outside
-    on: '#4966FF', off: '#EEECF4'    // ring colours, sampled from the render
-  }
+    page: 2, sizes: [12.1, 12.6, 13.2, 13.7], step: 137.98,
+    x0: 31.2, w: 119.9, y0: 247.0, h: 273.9, r: 7.9, grow: 0.8,
+    on: '#4966FF', off: '#EEECF4', ink: '#001DB4',
+    vault:  { x: 53.2,  y: 323.4, size: 11 },
+    periph: { x: 53.2,  y: 348.6, size: 7 },
+    angle:  { x: 114.1, y: 348.6, size: 7 },
+    pill:   { x: 55.42, y: 367.2, w: 34.49, h: 13.5, gap: 1.5, size: 10.7, y1: 377.9 },
+    blob:   { path: 'M86.89 385.99C88.37 385.87 95.7 386.03 97.22 386.23C98.11 386.33 99.92 386.63 101.24 386.91C107.1 388.08 113.38 388.54 123.95 388.57L129.39 388.58L130.09 388.92C131.71 389.72 132.66 391.08 132.77 392.77C132.85 393.94 132.59 394.81 131.87 395.87C130.9 397.28 130.38 398.49 129.99 400.21C129.74 401.32 129.61 409.79 129.72 417.95C129.79 423.52 129.8 423.61 130.12 424.82C130.51 426.28 130.94 427.26 131.8 428.56C132.6 429.76 132.85 430.59 132.77 431.75C132.66 433.42 131.77 434.75 130.24 435.5L129.28 435.97L125.37 435.93C116.5 435.83 106.01 436.53 101.99 437.47L101.32 437.62C98.07 438.34 95.53 438.56 90.73 438.56C85.59 438.56 83.05 438.31 79.42 437.46C75.44 436.53 64.99 435.83 56.14 435.93L52.18 435.97L51.35 435.57C49.76 434.82 48.79 433.45 48.68 431.78C48.61 430.66 48.82 429.87 49.51 428.77L49.66 428.55C50.89 426.67 51.44 425.09 51.62 422.73C51.77 420.99 51.78 405.76 51.65 402.29L51.62 401.76C51.46 399.61 50.91 397.92 49.81 396.21L49.58 395.87C48.91 394.88 48.64 394.05 48.67 392.99L48.68 392.77C48.79 391.09 49.79 389.64 51.35 388.91L52.06 388.58L57.5 388.57C67.45 388.54 74.66 388.05 79.28 387.08C81.83 386.55 83.37 386.3 85.79 386.08L86.89 385.99Z', x: 49.17, y: 386.45, w: 83.49, h: 51.49 }
+  },
+  /* Vault safety bands, in µm, measured off the dial's own colour arc. */
+  bands: [
+    { to: 36,   key: 'critical', color: '#CF2B49' },
+    { to: 139,  key: 'low',      color: '#F6BF2C' },
+    { to: 644,  key: 'ideal',    color: '#03B496' },
+    { to: 1002, key: 'high',     color: '#3371C3' },
+    { to: 1e9,  key: 'hyper',    color: '#C144D4' }
+  ],
+  /* Spread of the vault estimate, as a fraction of the prediction. Drives the
+     band-probability chips and the split of the vault shape. Fitted to the
+     sample report; an approximation, like every formula in this demo. */
+  sd: 0.35
 };
 
-/* Repaint the "selected size" ring of page 2 onto the recommended size:
-   white over the ring that is there, then the ring where it belongs. */
-function _guruSizeRings(pageNo, size) {
-  var C = ICLGURU_REPORT.cards;
-  if (pageNo !== C.page || size == null) return '';
-  var want = -1, best = 0.051;
-  for (var i = 0; i < C.sizes.length; i++) {
-    var d = Math.abs(C.sizes[i] - Number(size));
-    if (d < best) { best = d; want = i; }
+function _esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+/* ---- small maths shared by the chips, the shape and the dial ---- */
+function _guruErf(x) {                              // Abramowitz & Stegun 7.1.26
+  var s = x < 0 ? -1 : 1; x = Math.abs(x);
+  var t = 1 / (1 + 0.3275911 * x);
+  var y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t
+    - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return s * y;
+}
+function _guruCdf(x, mu, sd) { return 0.5 * (1 + _guruErf((x - mu) / (sd * Math.SQRT2))); }
+
+/* Probability mass per safety band for a vault prediction. */
+function _guruBands(vault) {
+  var R = ICLGURU_REPORT, sd = Math.max(25, R.sd * vault), lo = 0, out = [];
+  for (var i = 0; i < R.bands.length; i++) {
+    var hi = R.bands[i].to;
+    var p = _guruCdf(hi, vault, sd) - _guruCdf(lo, vault, sd);
+    out.push({ key: R.bands[i].key, color: R.bands[i].color, p: p });
+    lo = hi;
   }
-  if (want < 0 || want === 0) return '';   // 0 is already the ringed card
-  function box(i, grow) {
-    return { x: C.x0 + C.step * i - grow, y: C.y0 - grow,
-             w: C.w + grow * 2, h: C.h + grow * 2, r: C.r + grow };
-  }
-  function rect(b, stroke, w) {
-    return '<rect x="' + b.x.toFixed(2) + '" y="' + b.y.toFixed(2) + '" width="' + b.w.toFixed(2) +
-      '" height="' + b.h.toFixed(2) + '" rx="' + b.r.toFixed(2) + '" fill="none" stroke="' + stroke +
-      '" stroke-width="' + w + '"/>';
-  }
-  return rect(box(0, C.grow), '#fff', 4) + rect(box(0, 0), C.off, 1) +
-         rect(box(want, 0), '#fff', 3)   + rect(box(want, C.grow), C.on, 1.5);
+  return out;
+}
+/* The one or two bands the report shows, most likely first in card order. */
+function _guruTopBands(vault) {
+  var all = _guruBands(vault);
+  var idx = all.map(function (b, i) { return i; })
+               .sort(function (a, b) { return all[b].p - all[a].p; });
+  var keep = [idx[0]];
+  if (all[idx[1]] && all[idx[1]].p >= 0.015) keep.push(idx[1]);
+  keep.sort(function (a, b) { return a - b; });        // low band on the left
+  return keep.map(function (i) {
+    return { key: all[i].key, color: all[i].color, pct: Math.round(all[i].p * 100) };
+  });
+}
+function _guruBandColor(vault) {
+  var R = ICLGURU_REPORT;
+  for (var i = 0; i < R.bands.length; i++) if (vault <= R.bands[i].to) return R.bands[i].color;
+  return R.bands[R.bands.length - 1].color;
+}
+/* Vault → angle on the dial. The scale is linear to 1000 µm, then compressed. */
+function _guruDialAngle(v) {
+  var D = ICLGURU_REPORT.dial;
+  v = Math.max(0, Math.min(1500, v));
+  return v <= 1000 ? D.a0 - (D.a0 - D.a1000) * (v / 1000)
+                   : D.a1000 - (D.a1000 - D.a1500) * ((v - 1000) / 500);
 }
 
-function _guruPage(src, name, eye, pageNo, size) {
+/* ---- SVG helpers ---- */
+function _gText(x, y, size, txt, opt) {
+  opt = opt || {};
+  return '<text x="' + x + '" y="' + y + '" font-family="' + ICLGURU_REPORT.font + '"' +
+    ' font-size="' + size + '" font-weight="' + (opt.weight || 400) + '"' +
+    (opt.anchor ? ' text-anchor="' + opt.anchor + '"' : '') +
+    ' fill="' + (opt.fill || '#000') + '">' + _esc(txt) + '</text>';
+}
+function _gRect(x, y, w, h, r, fill, stroke, sw) {
+  return '<rect x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '" width="' + w.toFixed(2) +
+    '" height="' + h.toFixed(2) + '" rx="' + r.toFixed(2) + '" fill="' + (fill || 'none') + '"' +
+    (stroke ? ' stroke="' + stroke + '" stroke-width="' + sw + '"' : '') + '/>';
+}
+
+/* ================= the report model, built from the live case ============= */
+function _guruModel(pt, eye, size) {
+  var SE = window.SIZING_ENGINE;
+  var raw = (SE && SE.readInputs) ? SE.readInputs() : {};
+  var run = (SE && SE.run) ? SE.run('ICL_GURU', raw) : null;
+  var i = (run && run.inputs) || {};
+  var curve = (SE && SE.vaultBySize) ? SE.vaultBySize('ICL_GURU', raw) : null;
+
+  function fld(id) { var e = document.getElementById(id); return e ? String(e.value).trim() : ''; }
+  function n(v) { var x = parseFloat(v); return isFinite(x) ? x : null; }
+  var sph = n(fld('sf-rx-man-sph')), cyl = n(fld('sf-rx-man-cyl')), ax = n(fld('sf-rx-man-ax'));
+  if (sph == null) sph = n(String(pt.power || '').split('/')[eye === 'OS' ? 1 : 0]);
+
+  return {
+    name: pt.name,
+    eye: eye,
+    gender: pt.sex === 'F' ? 'Female' : pt.sex === 'M' ? 'Male' : 'Other',
+    dob: '-',                       // the demo records age, never a date of birth
+    surgery: pt.surgeryDate || 'None',
+    mrn: 'REV-' + pt.id,
+    calcdate: new Date().toLocaleDateString('en-GB'),
+    method: 'T2',
+    sph: sph == null ? '-' : sph.toFixed(1) + ' D',
+    cyl: cyl == null ? '-' : Math.abs(cyl).toFixed(1) + ' D',
+    axis: ax == null ? '-' : Math.round(ax) + '\u00B0',
+    ata: isFinite(i.ata) ? i.ata.toFixed(3) + ' mm' : '-',
+    /* aRISE is captured in mm on the pre-op form — printed as entered, so the
+       report and the form always agree. (The sizing engine reads the same
+       field as µm; that unit mismatch lives in the engine, not here.) */
+    arise: n(fld('sf-arise')) != null ? n(fld('sf-arise')).toFixed(3) + ' mm' : '-',
+    acd: isFinite(i.acd) ? i.acd.toFixed(3) + ' mm' : '-',
+    size: size,
+    curve: curve || []
+  };
+}
+
+/* ================= drawing ================= */
+function _guruHead(m) {
+  var H = ICLGURU_REPORT.head, R = ICLGURU_REPORT, o = '';
+  var fs = H.size;
+  if (String(m.name).length > 20) fs = Math.max(8, fs * 20 / String(m.name).length);
+  o += _gText(H.name.x, H.name.y, fs.toFixed(2), m.name);
+  o += '<circle cx="' + R.badge.cx + '" cy="' + R.badge.cy + '" r="' + R.badge.r + '" fill="' + R.badge.fill + '"/>';
+  o += _gText(R.badge.cx, R.badge.cy + R.badge.size * 0.35, R.badge.size, m.eye,
+              { anchor: 'middle', weight: 700, fill: '#fff' });
+  ['gender', 'dob', 'surgery', 'mrn', 'calcdate', 'method',
+   'sph', 'cyl', 'axis', 'ata', 'arise', 'acd'].forEach(function (k) {
+    o += _gText(H[k].x, H[k].y, H.size, m[k]);
+  });
+  return o;
+}
+
+function _guruDial(m) {
+  var D = ICLGURU_REPORT.dial, o = '';
+  m.curve.forEach(function (c, idx) {
+    if (idx >= D.rings.length) return;
+    var a = _guruDialAngle(c.vault) * Math.PI / 180, r = D.rings[idx];
+    o += '<circle cx="' + (D.cx + r * Math.cos(a)).toFixed(2) + '" cy="' +
+         (D.cy - r * Math.sin(a)).toFixed(2) + '" r="' + D.dot.toFixed(2) +
+         '" fill="' + _guruBandColor(c.vault) + '"/>';
+  });
+  return o;
+}
+
+function _guruCards(m) {
+  var C = ICLGURU_REPORT.cards, o = '';
+  var want = -1;
+  for (var k = 0; k < C.sizes.length; k++) if (Math.abs(C.sizes[k] - Number(m.size)) < 0.051) want = k;
+
+  m.curve.forEach(function (c, idx) {
+    if (idx >= C.sizes.length) return;
+    var dx = C.step * idx;
+    var hyper = c.vault > 1002;
+    var mm = (c.vault / 1000).toFixed(3) + ' mm';
+    o += _gText(C.vault.x + dx, C.vault.y, C.vault.size, hyper ? 'HYPERVAULT' : mm, { weight: 600 });
+    o += _gText(C.periph.x + dx, C.periph.y, C.periph.size, hyper ? 'HYPERVAULT' : mm, { weight: 500 });
+    /* Angle closes as the lens vaults higher — fitted to the source report. */
+    var ang = Math.max(4, 29.03 - 13.22 * (c.vault / 1000));
+    o += _gText(C.angle.x + dx, C.angle.y, C.angle.size,
+                (Math.round(ang * 1000) / 1000) + '\u00B0', { weight: 500 });
+
+    var tops = _guruTopBands(c.vault);
+    var P = C.pill, cx = C.x0 + dx + C.w / 2;
+    var total = tops.length * P.w + (tops.length - 1) * P.gap;
+    tops.forEach(function (t, j) {
+      var px = cx - total / 2 + j * (P.w + P.gap);
+      o += _gRect(px, P.y, P.w, P.h, P.h / 2, t.color, C.ink, 0.5);
+      o += _gText(px + P.w / 2, P.y1, P.size, t.pct + '%',
+                  { anchor: 'middle', weight: 600, fill: '#fff' });
+    });
+
+    var B = C.blob, cid = 'guruBlob' + idx;
+    var sum = tops.reduce(function (a, t) { return a + t.pct; }, 0) || 1;
+    var seg = '', run = 0;
+    tops.forEach(function (t) {
+      var w = B.w * (t.pct / sum);
+      seg += '<rect x="' + (B.x + run).toFixed(2) + '" y="' + B.y + '" width="' + (w + 0.4).toFixed(2) +
+             '" height="' + B.h + '" fill="' + t.color + '"/>';
+      run += w;
+    });
+    o += '<g transform="translate(' + dx.toFixed(2) + ',0)">' +
+           '<clipPath id="' + cid + '"><path d="' + B.path + '"/></clipPath>' +
+           '<g clip-path="url(#' + cid + ')">' + seg + '</g>' +
+           '<path d="' + B.path + '" fill="none" stroke="' + C.ink + '" stroke-width="1.3"/>' +
+         '</g>';
+  });
+
+  /* Move the "selected size" ring onto the size this case recommends. */
+  if (want > 0) {
+    function box(i, g) { return { x: C.x0 + C.step * i - g, y: C.y0 - g,
+                                  w: C.w + g * 2, h: C.h + g * 2, r: C.r + g }; }
+    var a = box(0, C.grow), b = box(0, 0), c2 = box(want, 0), d2 = box(want, C.grow);
+    o += _gRect(a.x, a.y, a.w, a.h, a.r, null, '#fff', 4) +
+         _gRect(b.x, b.y, b.w, b.h, b.r, null, C.off, 1) +
+         _gRect(c2.x, c2.y, c2.w, c2.h, c2.r, null, '#fff', 3) +
+         _gRect(d2.x, d2.y, d2.w, d2.h, d2.r, null, C.on, 1.5);
+  }
+  return o;
+}
+
+function _guruPage(src, m, pageNo) {
   var R = ICLGURU_REPORT;
-  // keep a long name inside the gap between "Patient:" and the OD/OS badge
-  var fsize = R.name.size;
-  if (String(name).length > 20) fsize = Math.max(8, fsize * 20 / String(name).length);
   return '<div class="guru-page">' +
     '<img src="' + src + '" alt="ICL Guru PRO report page" loading="lazy">' +
     '<svg class="guru-page-ovl" viewBox="0 0 ' + R.pt.w + ' ' + R.pt.h + '" aria-hidden="true">' +
-      '<text x="' + R.name.x + '" y="' + R.name.baseline + '" font-family="Inter, system-ui, sans-serif"' +
-        ' font-size="' + fsize.toFixed(2) + '" fill="#000">' + _esc(name) + '</text>' +
-      '<circle cx="' + R.badge.cx + '" cy="' + R.badge.cy + '" r="' + R.badge.r + '" fill="' + R.badge.fill + '"/>' +
-      '<text x="' + R.badge.cx + '" y="' + (R.badge.cy + R.badge.size * 0.35) + '" text-anchor="middle"' +
-        ' font-family="Inter, system-ui, sans-serif" font-size="' + R.badge.size + '" font-weight="700"' +
-        ' fill="#fff">' + _esc(eye) + '</text>' +
-      _guruSizeRings(pageNo, size) +
+      _guruHead(m) +
+      (pageNo === R.dial.page ? _guruDial(m) : '') +
+      (pageNo === R.cards.page ? _guruCards(m) : '') +
     '</svg></div>';
 }
-function _esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
-  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
 function openIclGuruPdf(patientId, size){
   const pt = (DATA.patients || []).find(p => p.id === patientId);
@@ -471,6 +657,8 @@ function openIclGuruPdf(patientId, size){
     ? EYE_SCOPE
     : String(pt.eye || 'OD').split('/')[0].trim().toUpperCase();
   if (eye !== 'OD' && eye !== 'OS') eye = 'OD';
+
+  var _m = _guruModel(pt, eye, size);
 
   const wrap = document.createElement('div');
   wrap.className = 'guru-scrim';
@@ -495,7 +683,7 @@ function openIclGuruPdf(patientId, size){
         '</div>' +
       '</header>' +
       '<div class="guru-doc-body">' +
-        ICLGURU_REPORT.pages.map(function (p, i) { return _guruPage(p.src, pt.name, eye, i + 1, size); }).join('') +
+        ICLGURU_REPORT.pages.map(function (p, i) { return _guruPage(p.src, _m, i + 1); }).join('') +
       '</div>' +
     '</div>';
   document.body.appendChild(wrap);

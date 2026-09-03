@@ -475,20 +475,24 @@
 (function(){
   var hero=document.getElementById('ecosystem'), v=document.getElementById('heroFilm');
   var content=hero&&hero.querySelector('.hero-in'); if(!hero||!v||!content) return;
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches, revealed=false;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches, revealed=false, started=false;
   function reveal(){ if(revealed) return; revealed=true; content.classList.remove('pre'); hero.classList.add('film-behind'); }
   if(reduce){ reveal(); return; }
-  var c=navigator.connection; var slow=!!(c&&(c.saveData||(c.downlink&&c.downlink<3)));
+  /* pick the encode for the connection: light 720p30 on slow links and phones, 1080p60 otherwise */
+  var c=navigator.connection; var slow=!!(c&&(c.saveData||(c.downlink&&c.downlink<5)));
   if(slow||window.matchMedia('(max-width:720px)').matches){
     var mp4=v.querySelector('source[type="video/mp4"]'); var webm=v.querySelector('source[type="video/webm"]');
-    if(webm) webm.remove(); if(mp4){ mp4.src='/assets/film/film_1080p30.mp4'; v.load(); }
+    if(webm) webm.remove(); if(mp4){ mp4.src='/assets/film/film_720p30.mp4'; v.load(); }
   }
-  /* first pass complete and clean; afterwards only the ambient part (0 -> 4.4 s: the world lighting up and the dive) loops behind the headline,
-     so no text of the film ever sits under the page's own headline */
+  /* the first pass plays complete and clean (headline hidden); afterwards only the ambient part
+     (0 -> 4.4 s: the world lighting up and the dive) loops behind the headline, so no film text ever sits under it */
+  v.addEventListener('playing',function(){ started=true; });
   v.addEventListener('timeupdate',function(){ if(!revealed&&v.currentTime>=18.6){ reveal(); return; } if(revealed&&v.currentTime>=4.4&&v.currentTime<18.6){ try{ v.currentTime=0; }catch(e){} } });
+  /* the headline comes up early only if the film cannot start: autoplay refused, media error, or nothing after 15 s */
+  v.addEventListener('error',reveal);
   var p=v.play&&v.play(); if(p&&p.catch){ p.catch(function(){ reveal(); }); }
-  setTimeout(function(){ if(v.paused||v.readyState<2) reveal(); },2500);
-  setTimeout(reveal,21000);
+  setTimeout(function(){ if(!started&&(v.paused||v.readyState<2)) reveal(); },15000);
+  setTimeout(reveal,40000);
 })();
 </script>
 </body>

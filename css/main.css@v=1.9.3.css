@@ -5,6 +5,14 @@
 /* ---------------------------------------------------------------
    Digital Ecosystem — la entrada a la demo, entre Products e Investors
    --------------------------------------------------------------- */
+/* "Soon" chip: same shape as the NEW pill but muted and static - it marks a surface
+   that is announced, not open, so it must not compete with NEW for attention. */
+.nav-soon{
+  display:inline-block;margin-left:8px;padding:3px 7px 2px;border-radius:999px;
+  background:rgba(16,168,186,.12);color:#0E7C8A;font-size:9px;font-weight:700;letter-spacing:1.1px;
+  line-height:1;text-transform:uppercase;vertical-align:2px;white-space:nowrap;
+  border:1px solid rgba(16,168,186,.35)}
+.sub-menu__links a:hover .nav-soon{background:rgba(16,168,186,.18)}
 .nav-new{
   display:inline-block;margin-left:7px;padding:3px 7px 2px;border-radius:999px;
   background:#10A8BA;color:#fff;font-size:9px;font-weight:700;letter-spacing:1.1px;

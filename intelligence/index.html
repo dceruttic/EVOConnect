@@ -134,5 +134,73 @@
 <script src="/intelligence/js/05-copilot-synthetic-data-for-coherent-answer.js"></script>
 <script src="/intelligence/js/06-copilot-intent-router-renderers.js"></script>
 <script src="/intelligence/js/07-clinical-analytics.js"></script>
+
+<!-- ==================================================================
+     COMING SOON LOCK
+     The Intelligence Center is announced, not open. The screen behind stays
+     visible on purpose - it is the whole point of showing it - but the surface
+     is inert: a single fixed layer swallows every pointer event, scrolling is
+     frozen and the app is marked inert so nothing is reachable by keyboard
+     either. The only way out is the explicit link back to the ecosystem.
+     ================================================================== -->
+<style>
+  html.is-locked, html.is-locked body{overflow:hidden !important}
+  #soon-lock{
+    position:fixed; inset:0; z-index:2147483000;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:32px;
+    background:rgba(8,17,33,.42);
+    backdrop-filter:blur(1.5px) saturate(.92); -webkit-backdrop-filter:blur(1.5px) saturate(.92);
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:#fff; cursor:default; user-select:none;
+    animation:soonIn .45s ease-out both}
+  @keyframes soonIn{from{opacity:0}to{opacity:1}}
+  #soon-lock .soon-card{
+    max-width:560px; padding:40px 44px; border-radius:16px;
+    background:rgba(10,20,38,.72); border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 24px 70px rgba(0,0,0,.45)}
+  #soon-lock .soon-chip{
+    display:inline-block; margin-bottom:20px; padding:5px 12px 4px; border-radius:999px;
+    background:rgba(16,168,186,.18); border:1px solid rgba(16,168,186,.5); color:#5FD3E0;
+    font-size:10px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; line-height:1}
+  #soon-lock h2{margin:0 0 14px; font-size:38px; line-height:1.12; font-weight:700; letter-spacing:-.4px}
+  #soon-lock p{margin:0; font-size:16px; line-height:1.6; color:rgba(255,255,255,.76)}
+  #soon-lock .soon-back{
+    display:inline-flex; align-items:center; gap:8px; margin-top:28px;
+    padding:12px 22px; border-radius:8px; text-decoration:none;
+    background:#10A8BA; color:#fff; font-size:15px; font-weight:600;
+    transition:background .2s ease}
+  #soon-lock .soon-back:hover{background:#0E96A6}
+  @media (prefers-reduced-motion:reduce){#soon-lock{animation:none}}
+</style>
+<div id="soon-lock" role="dialog" aria-modal="true" aria-labelledby="soon-title">
+  <div class="soon-card">
+    <span class="soon-chip">STAAR Intelligence Center</span>
+    <h2 id="soon-title">Coming Soon</h2>
+    <p>The STAAR Intelligence Center is in development. What you see behind this panel is a preview of the surface — it is not open for navigation yet.</p>
+    <a class="soon-back" href="/ecosystem">Back to the Digital Ecosystem</a>
+  </div>
+</div>
+<script>
+(function(){
+  var lock = document.getElementById('soon-lock');
+  var app  = document.querySelector('.app');
+  document.documentElement.classList.add('is-locked');
+  if(app && 'inert' in HTMLElement.prototype) app.inert = true;   /* fuera del foco y del tab */
+  if(app) app.setAttribute('aria-hidden','true');
+  /* el overlay se traga todo lo que no sea el link de salida */
+  ['click','mousedown','mouseup','dblclick','contextmenu','wheel','touchstart','touchmove']
+    .forEach(function(ev){
+      lock.addEventListener(ev, function(e){
+        if(e.target.closest && e.target.closest('.soon-back')) return;
+        e.preventDefault(); e.stopPropagation();
+      }, {passive:false});
+    });
+  /* y el teclado no puede salir del overlay */
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Tab'){ e.preventDefault(); var b = lock.querySelector('.soon-back'); if(b) b.focus(); }
+  }, true);
+})();
+</script>
 </body>
 </html>

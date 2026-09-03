@@ -684,20 +684,32 @@ function renderPtSizingGuru(pt) {
 /* Formula comparator — for patients without an ICL Guru report */
 const SIZING_FORMULAS = [
   { code: "ICL_GURU",    name: "ICL Guru",          desc: "AI model · validated on 47k ICL outcomes · real-time cohort match",     recSize: 12.1, vault: 240, conf: 96, author: "EVO Connect",                  predictsVault: true },
-  { code: "REINSTEIN",   name: "Reinstein",         desc: "High-resolution UBM-driven nomogram · sulcus-to-sulcus + crystalline lens rise", recSize: 12.6, vault: 380, conf: 92, author: "Reinstein et al., 2013", predictsVault: true },
-  { code: "LASSO",       name: "Lasso",             desc: "Regression-based machine-learning sizing · multi-center cohort calibrated",     recSize: 12.6, vault: 410, conf: 91, author: "Russo et al., 2022",     predictsVault: true },
-  { code: "KS",          name: "KS",                desc: "Kane-Saxena hybrid · combines aRISE + lens rise + ATA",                          recSize: 12.6, vault: 415, conf: 89, author: "Kane & Saxena, 2022",  predictsVault: true },
+  { code: "REINSTEIN",   name: "Reinstein",         desc: "High-resolution UBM-driven nomogram · sulcus-to-sulcus + crystalline lens rise", recSize: 12.6, vault: 380, conf: 92, author: "Reinstein et al., 2013", predictsVault: false },
+  { code: "LASSO",       name: "Lasso",             desc: "Regression-based machine-learning sizing · multi-center cohort calibrated",     recSize: 12.6, vault: 410, conf: 91, author: "Russo et al., 2022",     predictsVault: false },
+  { code: "KS",          name: "KS",                desc: "Kane-Saxena hybrid · combines aRISE + lens rise + ATA",                          recSize: 12.6, vault: 415, conf: 89, author: "Kane & Saxena, 2022",  predictsVault: false },
   { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR (OCOS)",         predictsVault: false },
-  { code: "ICL_FIT",     name: "ICL Fit",           desc: "OCT-based AS-OCT fit · iris-iris + ATA · CIRCLE/Casia2 imaging-driven",          recSize: 12.1, vault: 320, conf: 90, author: "Pérez-Vives et al., 2021", predictsVault: true },
+  { code: "ICL_FIT",     name: "ICL Fit",           desc: "OCT-based AS-OCT fit · iris-iris + ATA · CIRCLE/Casia2 imaging-driven",          recSize: 12.1, vault: 320, conf: 90, author: "Pérez-Vives et al., 2021", predictsVault: false },
 ];
 // Which formulas are selected for the current run (user-toggled)
-let SELECTED_SIZING_FORMULAS = new Set(["ICL_GURU", "REINSTEIN", "LASSO", "KS"]);
+/* The STAAR reference is not optional: it is always run and always shown, the
+   same rule the STELLA recommendation follows in a handoff case (brief limit 4). */
+const MANDATORY_FORMULA = "STAAR_NOM";
+/* Phase 1 ships the STAAR reference plus the three nomograms named in the ESCRS
+   brief; the wider library (Reinstein, Lasso, KS) lands in Phase 4. */
+let SELECTED_SIZING_FORMULAS = new Set([MANDATORY_FORMULA, "ICL_GURU", "ICL_FIT", "CASIA2"]);
 
 function toggleSizingFormula(code) {
-  if (SELECTED_SIZING_FORMULAS.has(code)) SELECTED_SIZING_FORMULAS.delete(code);
+  if (code === MANDATORY_FORMULA) {
+    if (typeof showToast === 'function') showToast('The STAAR nomogram is always included in the comparison');
+    SELECTED_SIZING_FORMULAS.add(code);
+  }
+  else if (SELECTED_SIZING_FORMULAS.has(code)) SELECTED_SIZING_FORMULAS.delete(code);
   else SELECTED_SIZING_FORMULAS.add(code);
   document.querySelectorAll('.sf-formula-chip').forEach(chip => {
-    chip.classList.toggle('selected', SELECTED_SIZING_FORMULAS.has(chip.getAttribute('data-formula')));
+    const c = chip.getAttribute('data-formula');
+    chip.classList.toggle('selected', SELECTED_SIZING_FORMULAS.has(c));
+    chip.classList.toggle('locked', c === MANDATORY_FORMULA);
+    if (c === MANDATORY_FORMULA) chip.setAttribute('aria-disabled', 'true');
   });
   const countEl = document.getElementById('sfSelectedCount');
   if (countEl) countEl.textContent = SELECTED_SIZING_FORMULAS.size;
@@ -941,15 +953,17 @@ function renderPtSizingFormulas(pt) {
   `;
 
   const formulaChipsHtml = SIZING_FORMULAS.map(f => {
-    const selected = SELECTED_SIZING_FORMULAS.has(f.code);
+    const locked = f.code === MANDATORY_FORMULA;
+    const selected = locked || SELECTED_SIZING_FORMULAS.has(f.code);
+    const lock = '<svg class="sfc-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>';
     return `
-      <button class="sf-formula-chip ${selected ? 'selected' : ''}" data-formula="${f.code}" onclick="toggleSizingFormula('${f.code}')" title="${f.desc}">
+      <button class="sf-formula-chip ${selected ? 'selected' : ''}${locked ? ' locked' : ''}" data-formula="${f.code}"${locked ? ' aria-disabled="true"' : ''} onclick="toggleSizingFormula('${f.code}')" title="${locked ? 'Always included in the comparison' : f.desc}">
         <span class="sfc-check">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
         <span class="sfc-body">
-          <span class="sfc-name">${f.name}</span>
-          <span class="sfc-author">${f.author}</span>
+          <span class="sfc-name">${f.name}${locked ? lock : ''}</span>
+          <span class="sfc-author">${locked ? 'STAAR (OCOS) · always included' : f.author}</span>
         </span>
       </button>
     `;

@@ -154,6 +154,7 @@ function confirmStellaOrder(){
 function runSizingFormulas(patientId) {
   const pt = DATA.patients.find(p => p.id === patientId);
   if (!pt) return;
+  if (typeof MANDATORY_FORMULA !== 'undefined') SELECTED_SIZING_FORMULAS.add(MANDATORY_FORMULA);
   if (SELECTED_SIZING_FORMULAS.size === 0) {
     showToast("Select at least one formula to run");
     return;

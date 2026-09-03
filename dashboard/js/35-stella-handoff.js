@@ -101,6 +101,7 @@
     L15: 'STELLA recommendation',
     L16: 'What the surgeon ordered, and on what argument',
     L17: 'Returned to EVO Connect by API',
+    NV: 'Vault not predicted by this method',
     E1s: 'Same formula re-run here: {v} mm',
     E2s: 'STELLA sent {rec} mm; the same WTW band lookup on the inputs now loaded here returns {got} mm — the inputs were edited in EVO Connect.',
     E3s: 'Approximation of the published approach — coefficients are not the proprietary model. Demonstration only.',
@@ -264,7 +265,7 @@
       SIZING_FORMULAS.push({
         code: 'CASIA2', name: 'CASIA2 formula', desc: 'AS-OCT anterior-segment sizing · Tomey CASIA2',
         recSize: 12.6, vault: 400, conf: 90, author: COPY.M6, modality: 'AS-OCT', device: 'Tomey CASIA2',
-        version: null, predictsVault: true
+        version: null, predictsVault: false
       });
     }
     SIZING_FORMULAS.forEach(function (f) {
@@ -1081,8 +1082,12 @@
     return '<div class="sf-comp-card sh-stella-card" data-formula="STELLA" draggable="false" title="' + esc(COPY.S2) + '" aria-label="' + esc(COPY.S1) + '">' +
       '<div class="sf-comp-head"><div class="sf-comp-badge sh-badge-stella">' + lockSvg() + '</div>' +
       '<div class="sf-comp-name"><div class="nm">' + esc(COPY.P1) + '</div><div class="ds">' + esc(COPY.S1) + '</div></div></div>' +
-      '<div class="sf-comp-stats"><div class="stat"><div class="lbl">Size</div><div class="val">' + esc(R.size) + '<em>mm</em></div></div>' +
-      '<div class="stat"><div class="lbl">Model</div><div class="val sh-small">' + esc(R.model) + '</div></div></div>' +
+      '<div class="sf-comp-stats">' +
+        '<div class="stat"><div class="lbl">Recommended size</div><div class="val">' + esc(R.size) + '<em>mm</em></div></div>' +
+        '<div class="stat vault"><div class="lbl">Predicted vault</div><div class="val novault-val">\u2014</div></div>' +
+      '</div>' +
+      vaultBar(null) +
+      '<div class="sh-model-line">' + esc(R.model) + '</div>' +
       (reran ? '<div class="sh-rerun' + (drift ? ' drift' : '') + '" title="' + esc(reran.basis) + '">' +
         esc(fmt(COPY.E1s, { v: reran.recSize.toFixed(1) })) +
         (drift ? '<em>' + esc(fmt(COPY.E2s, { rec: R.size, got: reran.recSize.toFixed(1) })) + '</em>' : '') +
@@ -1090,21 +1095,55 @@
       '<div class="sh-meta"><div>' + esc(R.formula) + '</div><div>' + esc(rec.caseId) + ' · ' + esc(E) + '</div></div>' +
       '<div class="sf-comp-foot"><span class="sh-locked-lbl">' + esc(COPY.P3) + '</span></div></div>';
   }
+  /* The vault scale is always drawn so every card reads the same; only a method
+     that actually predicts vault gets a marker and a number. Today that is ICL
+     Guru alone. */
+  var VAULT_BANDS = { low:'#F59E0B', 'borderline-low':'#F59E0B', ideal:'#15803D', high:'#0080C7', hyper:'#7E22CE', hypo:'#E45167' };
+  function vaultBar(r) {
+    var has = r && r.predictsVault !== false && r.vault != null;
+    var color = VAULT_BANDS[r && r.band] || '#5A6478';
+
+    var pct = has ? Math.max(2, Math.min(98, ((r.vault - 100) / 900) * 100)) : 0;
+    /* The scale stays fully coloured on every card so the row reads as one
+       system; a method that does not predict vault simply has no marker. */
+    return '<div class="sf-vault-bar sh-bar">' +
+      '<div class="zone z-low" style="left:0%;width:11%"></div>' +
+      '<div class="zone z-bl" style="left:11%;width:6%"></div>' +
+      '<div class="zone z-ideal" style="left:17%;width:55%"></div>' +
+      '<div class="zone z-high" style="left:72%;width:17%"></div>' +
+      '<div class="zone z-hyper" style="left:89%;width:11%"></div>' +
+      (has ? '<div class="marker" style="left:' + pct.toFixed(1) + '%;background:' + color + '" title="' + r.vault + ' \u00b5m"></div>' : '') +
+      '<div class="bar-axis"><span style="left:0%">100</span><span style="left:25%">325</span>' +
+      '<span style="left:50%">550</span><span style="left:75%">775</span><span style="left:100%">1000 \u00b5m</span></div>' +
+      '</div>';
+  }
   function extCard(r, rec) {
     var size = parseFloat(r.recSize), stella = parseFloat(rec.stellaRecommendation.size);
     var d = size - stella, ds = (d >= 0 ? '+' : '') + d.toFixed(1);
     var abbrev = { ICL_GURU: 'IG', REINSTEIN: 'RE', LASSO: 'LA', KS: 'KS', STAAR_NOM: 'SN', ICL_FIT: 'IF', CASIA2: 'C2' }[r.code] || r.code.slice(0, 2);
-    var vault = r.predictsVault === false || r.vault == null ? '—' : fmt(COPY.M8, { N: r.vault });
+    var has = r.predictsVault !== false && r.vault != null;
+    var color = VAULT_BANDS[r.band] || '#5A6478';
     var version = r.version ? ('Version: ' + r.version) : COPY.M5;
-    return '<div class="sf-comp-card sh-ext-card" data-formula="' + esc(r.code) + '" role="button" tabindex="0" aria-label="' + esc(r.name) + ' — go to your decision">' +
-      '<div class="sf-comp-head"><div class="sf-comp-badge sh-badge-ext">' + esc(abbrev) + '</div>' +
+    return '<div class="sf-comp-card sh-ext-card ' + esc(r.band || 'na') + '" data-formula="' + esc(r.code) + '" style="--bandc:' + color + '" role="button" tabindex="0" aria-label="' + esc(r.name) + ' \u2014 go to your decision">' +
+      '<div class="sf-comp-head"><div class="sf-comp-badge" style="background:' + color + '">' + esc(abbrev) + '</div>' +
       '<div class="sf-comp-name"><div class="nm">' + esc(r.name) + '</div><div class="ds">' + esc(COPY.M6) + '</div></div></div>' +
-      '<div class="sf-comp-stats"><div class="stat"><div class="lbl">Size</div><div class="val">' + size.toFixed(1) + '<em>mm</em></div></div>' +
-      '<div class="stat"><div class="lbl">Vault</div><div class="val sh-small">' + esc(vault) + '</div></div></div>' +
-      '<div class="sh-meta"><div>Method: ' + esc(r.name) + '</div><div>Modality: ' + esc(r.modality || '—') + '</div><div>Device: ' + esc(r.device || '—') + '</div><div>' + esc(version) + '</div></div>' +
+      '<div class="sf-comp-stats">' +
+        '<div class="stat"><div class="lbl">Recommended size</div><div class="val">' + size.toFixed(1) + '<em>mm</em></div></div>' +
+        '<div class="stat vault"><div class="lbl">Predicted vault</div>' +
+          (has ? '<div class="val" style="color:' + color + '">' + r.vault + '<em>\u00b5m</em></div>' +
+                 '<div class="band-tag" style="background:' + color + '1A;color:' + color + '">' + esc(bandLabel(r.band)) + '</div>'
+               : '<div class="val novault-val">\u2014</div>') +
+        '</div>' +
+      '</div>' +
+      vaultBar(r) +
+      '<div class="sh-meta"><div>Modality: ' + esc(r.modality || '\u2014') + '</div><div>Device: ' + esc(r.device || '\u2014') + '</div><div>' + esc(version) + '</div></div>' +
       (r.basis ? '<div class="sh-basis" title="' + esc(COPY.E3s) + '">' + esc(r.basis) + '</div>' : '') +
       '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' +
-      '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' ↓</span></div></div>';
+      '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' \u2193</span></div></div>';
+  }
+  function bandLabel(b) {
+    if (!b || b === 'na') return '';
+    return b === 'borderline-low' ? 'Borderline low' : b.charAt(0).toUpperCase() + b.slice(1);
   }
   /* The STELLA panel is the first card of the comparison, so once results are on
      screen its top lines up with the first result card instead of floating above

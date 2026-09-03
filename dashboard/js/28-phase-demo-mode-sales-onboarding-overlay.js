@@ -282,7 +282,7 @@
     const nameText = showingAll ? 'All Phases' : phase.name;
 
     const html = `
-      <div class="pd-banner" id="pdBanner" style="background: linear-gradient(90deg, ${color}1f, ${color}08); border-bottom-color: ${color}55;">
+      <div class="pd-banner" id="pdBanner" style="--pd-accent:${color}">
         <span class="pd-banner-clap" onclick="PhaseDemo.openPanel()" title="Open Phase Demo settings">&#127916;</span>
         <span class="pd-banner-label" style="color:${color}">Phase Demo</span>
         <span class="pd-banner-name">${nameText}</span>

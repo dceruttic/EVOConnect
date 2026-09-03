@@ -110,7 +110,6 @@
     E1s: 'Same formula re-run here: {v} mm',
     E2s: 'STELLA sent {rec} mm; the same WTW band lookup on the inputs now loaded here returns {got} mm — the inputs were edited in EVO Connect.',
     E3s: 'Approximation of the published approach — coefficients are not the proprietary model. Demonstration only.',
-    F1: 'Demonstration only – synthetic data – not for clinical use',
     EYE_ONE: 'This case arrived from STELLA for {lat} only',
     EYE_OU: 'Switch OD / OS — each eye arrived from STELLA separately'
   };
@@ -637,7 +636,8 @@
       '<img class="sh-strip-logo" src="' + STELLA_LOGO + '" alt="STELLA">' +
       '<span class="sh-strip-facts">' + esc(stripFacts(rec)) + '</span>' +
       '<span class="sh-strip-boundary">' + esc(COPY.C3) + '</span>' +
-      '<span class="sh-stamp">' + esc(COPY.F1) + '</span><span class="sh-strip-cta"></span></div>');
+      /* No demo stamp here: the page-wide bar at the bottom already carries it. */
+      '<span class="sh-strip-cta"></span></div>');
     s.querySelector('.sh-strip-cta').appendChild(returnCta(true));
     return s;
   }

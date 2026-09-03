@@ -30,11 +30,6 @@
 .sh-strip-logo { height: 18px; width: auto; grid-row: 1 / span 2; }
 .sh-strip-facts { font-weight: 700; letter-spacing: .01em; white-space: normal; overflow-wrap: anywhere; min-width: 0; line-height: 1.25; }
 .sh-strip-boundary { color: #C9D6F0; font-size: 11px; grid-column: 2; grid-row: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.sh-stamp {
-  grid-column: 3; grid-row: 2; justify-self: end;
-  font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase;
-  color: #FFD9A0; border: 1px solid rgba(255,217,160,.45); border-radius: 4px; padding: 2px 7px; white-space: nowrap;
-}
 .sh-strip-cta { grid-column: 3; grid-row: 1; justify-self: end; }
 .sh-strip .sh-return.compact {
   min-height: 44px; padding: 8px 12px; font-size: 12px; white-space: nowrap;
@@ -260,7 +255,6 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
   .sh-lens-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
-  .sh-stamp { display: none; }
   .sh-return-body { grid-template-columns: 1fr; }
   .sh-return-body img { grid-row: auto; }
 }

@@ -168,7 +168,12 @@ function closePatientFile() {
 function setPatientTab(tab, postopSub) {
   if (!CURRENT_PT) return;
   CURRENT_PT_TAB = tab;
-  if (tab === "postop" && postopSub) CURRENT_PT_POSTOP_SUB = postopSub;
+  /* The timeline passes the milestone code ('1M', '3M', '2Y', …) — it is what
+     the post-op page renders, so clicking a visit opens that visit. */
+  if (tab === "postop" && postopSub) {
+    CURRENT_PT_POSTOP_SUB = postopSub;
+    if (typeof POSTOP_ORDER !== 'undefined' && POSTOP_ORDER.indexOf(postopSub) >= 0) CURRENT_PT_POSTOP_MS = postopSub;
+  }
   const mainContent = document.getElementById("ptMainContent");
   if (!mainContent) return;
   if (tab === "preop")   mainContent.innerHTML = renderPtPreop(CURRENT_PT);

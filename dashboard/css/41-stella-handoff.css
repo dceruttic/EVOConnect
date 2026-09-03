@@ -467,3 +467,23 @@ body{padding-bottom:26px}
 .po-prenote svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;color:#0080C7}
 .po-prenote b{font-weight:700}
 .po-prenote em{font-style:normal;font-weight:700}
+
+/* === timeline "+" : the only place a post-op visit is created === */
+.pt-step-add{flex:none;width:26px;height:26px;border-radius:50%;
+  border:1.5px dashed #B7C2D6;background:#fff;color:#5A6478;
+  font-size:16px;font-weight:700;line-height:1;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:border-color .15s,color .15s,background .15s}
+.pt-step-add:hover{border-color:#0080C7;color:#0080C7;background:#F2F8FE;border-style:solid}
+.pt-add-menu{position:absolute;z-index:9999;min-width:172px;background:#fff;
+  border:1px solid #E2E8F2;border-radius:10px;padding:6px;
+  box-shadow:0 12px 30px rgba(16,36,58,.18)}
+.pt-add-head{font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+  color:#94A0B8;padding:5px 8px 7px}
+.pt-add-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;
+  font:inherit;font-size:12.5px;font-weight:600;color:#10243A;
+  padding:7px 9px;border-radius:7px;cursor:pointer}
+.pt-add-menu button:hover{background:#EEF4FC;color:#0080C7}
+/* the timeline grows as visits are added — keep it reachable */
+.pt-stepper{overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}
+.pt-stepper>.pt-step{flex:none}

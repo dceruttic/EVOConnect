@@ -6,11 +6,44 @@
 var CURRENT_PT_POSTOP_EYE = 'OD';
 var CURRENT_PT_POSTOP_MS  = '1M';
 
+/* ------------------------------------------------------------------
+   Post-op visits are created in ONE place: the patient timeline at the
+   top of the page. A case starts with the four standard follow-ups and
+   the surgeon adds any other timeframe with the "+" controls there —
+   earlier visits before the first follow-up, later ones after 12 mo.
+   This registry is what the timeline renders and what the post-op page
+   reads; there is no second milestone rail.
+------------------------------------------------------------------- */
+var POSTOP_ORDER = ['IMM','4H','1D','7D','1M','3M','6M','9M','1Y','2Y','3Y','4Y','5Y','10Y'];
+var POSTOP_DEFAULT_MS = ['1M','3M','6M','1Y'];
+var POSTOP_EARLY_OPTIONS = ['IMM','4H','1D','7D'];
+var POSTOP_LATE_OPTIONS  = ['2Y','3Y','4Y','5Y','10Y'];
+var POSTOP_LABEL = { IMM:'IMM', '4H':'4 h', '1D':'1 d', '7D':'7 d', '1M':'1 mo', '3M':'3 mo',
+                     '6M':'6 mo', '9M':'9 mo', '1Y':'12 mo', '2Y':'2 yr', '3Y':'3 yr',
+                     '4Y':'4 yr', '5Y':'5 yr', '10Y':'10 yr' };
+window.PT_POSTOP_MILESTONES = window.PT_POSTOP_MILESTONES || {};
+function postopMilestones(ptId){
+  if (!PT_POSTOP_MILESTONES[ptId]) PT_POSTOP_MILESTONES[ptId] = POSTOP_DEFAULT_MS.slice();
+  return PT_POSTOP_MILESTONES[ptId].slice().sort(function(a,b){
+    return POSTOP_ORDER.indexOf(a) - POSTOP_ORDER.indexOf(b);
+  });
+}
+function addPostopMilestone(ptId, ms){
+  if (POSTOP_ORDER.indexOf(ms) < 0) return;
+  var list = postopMilestones(ptId);
+  if (list.indexOf(ms) < 0) PT_POSTOP_MILESTONES[ptId] = list.concat([ms]);
+  if (typeof CURRENT_PT !== 'undefined' && CURRENT_PT && CURRENT_PT.id === ptId) {
+    CURRENT_PT_POSTOP_MS = ms;
+    if (typeof setPatientTab === 'function') setPatientTab('postop', ms);
+  }
+  if (typeof showToast === 'function') showToast((POSTOP_LABEL[ms] || ms) + ' follow-up added to the timeline');
+}
+
 // Pick the most relevant milestone for the patient — the first one whose date hasn't passed yet.
 // Falls back to the latest captured if all are past.
 function _initialPostopMs(pt){
   if (!pt) return '1M';
-  var order = ['IMM','4H','1D','7D','1M','3M','6M','9M','1Y','3Y','5Y','10Y'];
+  var order = postopMilestones(pt.id);
   for (var i = 0; i < order.length; i++){
     var d = postopVisitData(pt, 'OD', order[i]).visitDate;
     if (d.getTime() > Date.now()) return order[i];   // first future = the next visit to capture
@@ -76,14 +109,20 @@ function postopVisitData(pt, eye, ms){
   // Visit date relative to surgery
   var surgDateStr = pt.surgeryDate || 'Mar 28, 2026';
   var sd = new Date(surgDateStr);
-  var offsetDays = ({IMM:0,'4H':0,'1D':1,'7D':7,'1M':30,'3M':90,'6M':180,'9M':270,'1Y':365,'3Y':1095,'5Y':1825,'10Y':3650}[ms] || 30);
+  var offsetDays = ({IMM:0,'4H':0,'1D':1,'7D':7,'1M':30,'3M':90,'6M':180,'9M':270,'1Y':365,'2Y':730,'3Y':1095,'4Y':1460,'5Y':1825,'10Y':3650}[ms] || 30);
   var visitDate = new Date(sd.getTime()); visitDate.setDate(visitDate.getDate() + offsetDays);
   var visitTime = (8 + Math.round(rnd(8, 0, 8))).toString().padStart(2,'0') + ':' + (Math.round(rnd(9,0,55))).toString().padStart(2,'0');
 
   // Has the visit DATE passed AND was it logged? Logged = either auto (date past) OR manual via PT_POSTOP_LOGGED.
+  /* A visit only carries data once it has actually been captured. For a case
+     with a recorded surgery that is "the date has passed"; for a case that has
+     not been through surgery in this demo (Phase 1 has no surgery step) it is
+     only what the surgeon logged here — so a case opened for the first time is
+     empty, as it should be. */
   var datePassed = visitDate.getTime() <= Date.now();
+  var hasSurgery = pt.stage === 'Post-op';
   var manuallyLogged = !!(window.PT_POSTOP_LOGGED && PT_POSTOP_LOGGED[pt.id + ':' + eye + ':' + ms]);
-  var captured = datePassed || manuallyLogged;
+  var captured = manuallyLogged || (datePassed && hasSurgery);
 
   if (!captured) {
     // Future visit — empty fields, only the projected date is known
@@ -217,20 +256,7 @@ function renderPtPostop(pt) {
     '</div>',
   ].join('');
 
-  // === Milestone timeline ===
-  var milestones = ['IMM','4H','1D','7D','1M','3M','6M','9M','1Y','3Y','5Y','10Y'];
-  var msHtml = milestones.map(function(m, i){
-    var st = _msStatus(pt, m);
-    var isActive = m === CURRENT_PT_POSTOP_MS;
-    var cls = 'po-ms ' + st + (isActive ? ' active' : '');
-    return [
-      '<button type="button" class="' + cls + '" onclick="setPostopMilestone(\'' + m + '\')" title="' + m + ' visit">',
-        '<span class="po-ms-node">' + (st === 'done' && !isActive ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>' : '') + '</span>',
-        '<span class="po-ms-lbl">' + m + '</span>',
-      '</button>',
-      i < milestones.length - 1 ? '<span class="po-ms-link"></span>' : ''
-    ].join('');
-  }).join('');
+  /* No inner milestone rail: visits live on the patient timeline above. */
 
   // === Vault thermometer SVG — refreshed to match the reference design ===
   // Vibrant 5-band STAAR vault palette + rounded bar caps + flag-style prediction badges + pill post-op badge.
@@ -502,8 +528,6 @@ function renderPtPostop(pt) {
         '<span class="po-visit-lbl">Visit</span>',
         '<span class="po-visit-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ' + v.visitDate.toLocaleDateString('en-GB') + ' · ' + v.visitTime + '</span>',
       '</div>',
-      // Milestone timeline
-      '<div class="po-milestones">' + msHtml + '</div>',
       // Main two-column grid
       '<div class="po-main-grid">',
         '<div class="po-left">' + leftDataHtml + '</div>',

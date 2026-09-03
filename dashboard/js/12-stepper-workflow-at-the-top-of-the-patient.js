@@ -3,17 +3,22 @@ function renderPtStepper(pt, activeTab){
   // Stage → numeric position
   const stageOrder = { "Consult": 0, "Eligibility": 0, "Biometry": 0, "Sizing": 1, "Scheduled": 2, "Surgery": 3, "Post-op": 4 };
   const ptStageNum = (stageOrder[pt.stage] != null) ? stageOrder[pt.stage] : 0;
-  // Each step
+
+  /* Post-op visits come from the per-patient registry (js/22): the four
+     standard follow-ups plus anything the surgeon added with "+". This
+     timeline is the only place a post-op event is created. */
+  const msList = (typeof postopMilestones === 'function') ? postopMilestones(pt.id) : ['1M','3M','6M','1Y'];
+  const msLabel = (typeof POSTOP_LABEL !== 'undefined') ? POSTOP_LABEL : {};
+
   const steps = [
-    { key: 'preop',     label: 'Pre-op',           tab: 'preop',   num: 0, sub: null },
-    { key: 'sizing',    label: 'ICL selection',    tab: 'sizing',  num: 1, sub: null },
-    { key: 'planner',   label: 'Surgical planner', tab: 'planner', num: 2, sub: null },
-    { key: 'surgery',   label: 'Surgery',          tab: 'surgery', num: 3, sub: null },
-    { key: 'po1',       label: 'Post-op',          tab: 'postop',  num: 4, sub: '1 mo' },
-    { key: 'po3',       label: 'Post-op',          tab: 'postop',  num: 4, sub: '3 mo' },
-    { key: 'po6',       label: 'Post-op',          tab: 'postop',  num: 4, sub: '6 mo' },
-    { key: 'po12',      label: 'Post-op',          tab: 'postop',  num: 4, sub: '12 mo' },
-  ];
+    { key: 'preop',   label: 'Pre-op',           tab: 'preop',   num: 0, ms: null },
+    { key: 'sizing',  label: 'ICL selection',    tab: 'sizing',  num: 1, ms: null },
+    { key: 'planner', label: 'Surgical planner', tab: 'planner', num: 2, ms: null },
+    { key: 'surgery', label: 'Surgery',          tab: 'surgery', num: 3, ms: null },
+  ].concat(msList.map(function(m){
+    return { key: 'po-' + m, label: 'Post-op', tab: 'postop', num: 4, ms: m, sub: msLabel[m] || m };
+  }));
+
   /* Surgical planner and Surgery are Phase 3 deliverables: while Phase 3 is not
      active they are not shown in the timeline at all (not merely locked). */
   const PHASE_HIDDEN_TABS = ['planner', 'surgery'];
@@ -26,51 +31,56 @@ function renderPtStepper(pt, activeTab){
   }
   const visibleSteps = steps.filter(function(s){ return !_phaseHides(s.tab); });
 
-  // Map sub-labels to the milestone codes used by postopVisitData (1mo→1M, etc.)
-  const SUB_TO_MS = { '1 mo': '1M', '3 mo': '3M', '6 mo': '6M', '12 mo': '12Y' === '12Y' ? '1Y' : '12M' };
-  // Better: explicit map (12 mo == 1Y in our milestone scheme)
-  const _subToMs = { '1 mo': '1M', '3 mo': '3M', '6 mo': '6M', '12 mo': '1Y' };
-  function _msIsDone(sub){
-    // For post-op, compute status individually per milestone date vs today.
-    if (pt.stage !== 'Post-op') return false;
-    var ms = _subToMs[sub];
+  function _msIsDone(ms){
     if (!ms || typeof postopVisitData !== 'function') return false;
-    var d = postopVisitData(pt, 'OD', ms).visitDate;
-    return d.getTime() <= Date.now();
+    return !!postopVisitData(pt, CURRENT_PT_POSTOP_EYE || 'OD', ms).captured;
   }
-  // The "next active" post-op milestone is the first one whose date is in the future
-  function _nextActiveSub(){
-    var subs = ['1 mo','3 mo','6 mo','12 mo'];
-    for (var i = 0; i < subs.length; i++) {
-      if (!_msIsDone(subs[i])) return subs[i];
-    }
+  // The "next" post-op visit is the first one not yet captured
+  const nextMs = (function(){
+    for (var i = 0; i < msList.length; i++) if (!_msIsDone(msList[i])) return msList[i];
     return null;
-  }
-  const nextPostopSub = (pt.stage === 'Post-op') ? _nextActiveSub() : null;
+  })();
 
-  // Map for completion state — handles non-postop steps (stage-based) AND post-op sub-steps (date-based)
   function stateFor(s){
-    if (s.tab === 'postop' && s.sub) {
-      // Each post-op sub-step has its own state derived from the milestone date
-      if (_msIsDone(s.sub)) return 'done';
-      if (s.sub === nextPostopSub) return 'active';
+    if (s.tab === 'postop' && s.ms) {
+      if (_msIsDone(s.ms)) return 'done';
+      if (s.ms === nextMs) return 'active';
       return 'pending';
     }
     if (s.num < ptStageNum) return 'done';
     if (s.num === ptStageNum) return 'active';
     return 'pending';
   }
-  const html = visibleSteps.map((s, i) => {
+
+  /* "+" slots: one before the first follow-up (earlier visits) and one after
+     the last (later visits). They only appear when something is left to add. */
+  function addSlot(slot){
+    var pool = slot === 'early'
+      ? (typeof POSTOP_EARLY_OPTIONS !== 'undefined' ? POSTOP_EARLY_OPTIONS : [])
+      : (typeof POSTOP_LATE_OPTIONS  !== 'undefined' ? POSTOP_LATE_OPTIONS  : []);
+    var left = pool.filter(function(m){ return msList.indexOf(m) < 0; });
+    if (!left.length) return '';
+    var title = slot === 'early' ? 'Add an earlier follow-up' : 'Add a later follow-up';
+    return '<button type="button" class="pt-step-add" data-slot="' + slot + '" title="' + title + '"'
+      + ' onclick="openPostopAdd(\'' + slot + '\', event)" aria-label="' + title + '">+</button>'
+      + '<span class="pt-step-link"></span>';
+  }
+
+  const firstPostopIdx = visibleSteps.findIndex(function(s){ return s.tab === 'postop'; });
+  let n = 0;
+  const html = visibleSteps.map(function(s, i){
     const st = stateFor(s);
-    const isActiveTab = activeTab === s.tab && (!s.sub || (CURRENT_PT_POSTOP_SUB || '1 mo') === s.sub);
+    const isActiveTab = activeTab === s.tab && (!s.ms || (CURRENT_PT_POSTOP_MS || '1M') === s.ms);
     const cls = ['pt-step', st, isActiveTab ? 'is-current-tab' : ''].filter(Boolean).join(' ');
-    const onclick = `setPatientTab('${s.tab}'${s.sub ? `,'${s.sub}'` : ''})`;
-    return `
-      <button type="button" class="${cls}" onclick="${onclick}" data-tab="${s.tab}" data-sub="${s.sub||''}" title="${s.label}${s.sub ? ' · ' + s.sub : ''}">
+    const onclick = "setPatientTab('" + s.tab + "'" + (s.ms ? ",'" + s.ms + "'" : '') + ")";
+    n += 1;
+    const before = (i === firstPostopIdx) ? addSlot('early') : '';
+    return before + `
+      <button type="button" class="${cls}" onclick="${onclick}" data-tab="${s.tab}" data-ms="${s.ms||''}" data-sub="${s.sub||''}" title="${s.label}${s.sub ? ' · ' + s.sub : ''}">
         <span class="pt-step-node">
           ${st === 'done'
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'
-            : '<span class="pt-step-num">' + (i + 1) + '</span>'}
+            : '<span class="pt-step-num">' + n + '</span>'}
         </span>
         <span class="pt-step-lbl">
           <span class="pt-step-name">${s.label}</span>
@@ -80,8 +90,45 @@ function renderPtStepper(pt, activeTab){
       ${i < visibleSteps.length - 1 ? '<span class="pt-step-link"></span>' : ''}
     `;
   }).join('');
-  return `<div class="pt-stepper" role="tablist">${html}</div>`;
+  const trailing = (firstPostopIdx >= 0) ? '<span class="pt-step-link"></span>' + addSlot('late').replace(/<span class="pt-step-link"><\/span>$/, '') : '';
+  return `<div class="pt-stepper" role="tablist">${html}${trailing}</div>`;
 }
+
+/* The "+" picker — the only way a non-standard follow-up gets created. */
+function openPostopAdd(slot, ev){
+  if (ev) ev.stopPropagation();
+  closePostopAdd();
+  var pt = (typeof CURRENT_PT !== 'undefined') ? CURRENT_PT : null;
+  if (!pt) return;
+  var have = postopMilestones(pt.id);
+  var pool = slot === 'early' ? POSTOP_EARLY_OPTIONS : POSTOP_LATE_OPTIONS;
+  var left = pool.filter(function(m){ return have.indexOf(m) < 0; });
+  if (!left.length) return;
+  var anchor = ev && ev.currentTarget ? ev.currentTarget : document.querySelector('.pt-step-add[data-slot="' + slot + '"]');
+  var menu = document.createElement('div');
+  menu.className = 'pt-add-menu';
+  menu.id = 'ptAddMenu';
+  menu.innerHTML = '<div class="pt-add-head">'
+    + (slot === 'early' ? 'Add an earlier follow-up' : 'Add a later follow-up') + '</div>'
+    + left.map(function(m){
+        return '<button type="button" onclick="addPostopMilestone(\'' + pt.id + '\',\'' + m + '\');closePostopAdd()">'
+          + (POSTOP_LABEL[m] || m) + '</button>';
+      }).join('');
+  document.body.appendChild(menu);
+  if (anchor) {
+    var r = anchor.getBoundingClientRect();
+    menu.style.top  = Math.round(r.bottom + window.scrollY + 8) + 'px';
+    menu.style.left = Math.round(Math.min(r.left + window.scrollX, window.innerWidth - 190)) + 'px';
+  }
+}
+function closePostopAdd(){
+  var m = document.getElementById('ptAddMenu');
+  if (m) m.remove();
+}
+document.addEventListener('click', function(e){
+  if (e.target.closest && (e.target.closest('#ptAddMenu') || e.target.closest('.pt-step-add'))) return;
+  closePostopAdd();
+});
 
 // Postop sub-step state (which milestone tab is active)
 var CURRENT_PT_POSTOP_SUB = '1 mo';

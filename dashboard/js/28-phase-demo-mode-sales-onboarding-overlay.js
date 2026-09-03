@@ -288,24 +288,6 @@
         <span class="pd-banner-name">${nameText}</span>
         <span class="pd-banner-meta">${labelText}</span>
         <span class="pd-banner-spacer"></span>
-        <button class="pd-banner-switch" type="button" onclick="PhaseDemo.toggleQuick(event)">
-          Switch
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="pd-banner-quick" id="pdBannerQuick">
-          ${Object.keys(PROJECT_PHASES).map(num => {
-            const p = PROJECT_PHASES[num];
-            return `<button type="button" onclick="PhaseDemo.setPhase(${num})">
-              <span class="pd-bq-bar" style="background:${p.color}"></span>
-              <span class="pd-bq-nm">${p.name}</span>
-
-            </button>`;
-          }).join('')}
-          <button type="button" onclick="PhaseDemo.setShowAll()">
-            <span class="pd-bq-bar" style="background:linear-gradient(180deg,#5C18AB,#0080C7,#08B1C2,#03B496,#F6BF2C)"></span>
-            <span class="pd-bq-nm">All Phases</span>
-          </button>
-        </div>
       </div>
     `;
 

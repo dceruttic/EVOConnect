@@ -415,12 +415,15 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
 .sh-missing { border-color: #E05B5B !important; background: #FFF7F7 !important; }
 input.sh-missing { box-shadow: 0 0 0 3px rgba(224,91,91,.14); }
 
-.sh-back { display: inline-flex; align-items: center; gap: 7px; margin-left: 12px;
-  padding: 9px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,.42);
-  background: transparent; color: #fff; font-size: 12.5px; font-weight: 600;
-  text-decoration: none; transition: background .15s, border-color .15s; }
+.sh-back { display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 14px; border-radius: 8px; border: 1px solid #C6D0E0;
+  background: transparent; color: #35507A; font-size: 12.5px; font-weight: 600;
+  text-decoration: none; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
 .sh-back svg { width: 14px; height: 14px; }
-.sh-back:hover { background: rgba(255,255,255,.14); border-color: #fff; }
+.sh-back:hover { background: #EEF4FC; border-color: #0080C7; color: #0080C7; }
+/* on the dark STELLA strip */
+.sh-back.on-dark { border-color: rgba(255,255,255,.42); color: #fff; padding: 7px 12px; }
+.sh-back.on-dark:hover { background: rgba(255,255,255,.14); border-color: #fff; color: #fff; }
 
 /* === Permanent demonstration label (brief limit 6) === */
 .demo-stamp{position:fixed;left:0;right:0;bottom:0;z-index:9998;
@@ -448,9 +451,11 @@ body{padding-bottom:26px}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .sh-crvals .sh-org{display:block;font-style:normal;font-size:9.5px;color:#94A0B8;margin-top:2px}
 
-/* === second order button === */
-.sh-return.alt{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55)}
-.sh-return.alt:hover{background:rgba(255,255,255,.14);border-color:#fff}
+/* === second order button (outlined) — light by default, on-dark in the strip === */
+.sh-return.alt{background:transparent;color:#14406B;border:1px solid #9FB6D4;box-shadow:none}
+.sh-return.alt:hover{background:#EEF4FC;border-color:#0080C7;color:#0080C7}
+.sh-return.alt.compact{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+.sh-return.alt.compact:hover{background:rgba(255,255,255,.14);border-color:#fff;color:#fff}
 .sh-return-cta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
 /* === STELLA panel: provenance note replaces the locked toggle row === */
@@ -487,3 +492,6 @@ body{padding-bottom:26px}
 /* the timeline grows as visits are added — keep it reachable */
 .pt-stepper{overflow-x:auto;scrollbar-width:thin;padding-bottom:4px}
 .pt-stepper>.pt-step{flex:none}
+
+/* the two ordering paths sit side by side, top and bottom */
+.sh-strip-cta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}

@@ -55,10 +55,10 @@
     J8: 'Decision recorded in EVO Connect — nothing was sent to STELLA',
     R1: 'Order Lens (in Stella)',
     R5: 'Go back to STELLA',
-    ORD1: 'Order in STELLA →',
-    ORD1h: 'Opens STELLA on this case, inside its ordering screen. You enter and confirm the lens there — the STAAR system of record.',
-    ORD2: 'Order in the STELLA modal',
-    ORD2h: 'Opens the STELLA ordering surface here, pre-loaded with STELLA\u2019s own case data. The order is created in STELLA and returns over the API.',
+    ORD1: 'Order Lens',
+    ORD1h: 'Leaves for STELLA and opens this case in its ordering screen. You enter and confirm the lens there — the STAAR system of record.',
+    ORD2: 'Order Lens (in Stella)',
+    ORD2h: 'Opens STELLA\u2019s ordering surface here, pre-loaded with STELLA\u2019s own case data. The order is created in STELLA and returns over the API.',
     R6: 'Opens STELLA on this same patient. Nothing is sent — STELLA stays the system of record.',
     V1: 'Cannot order yet — {n} item{s} still missing',
     V2: 'Record your decision for {eye} first (step 4).',
@@ -561,30 +561,34 @@
     return '/stella?patient=' + encodeURIComponent(H.caseId) + '&order=' + encodeURIComponent(curEye(H));
   }
   function orderInStellaBtn(compact) {
-    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD1h) + '">' + esc(COPY.ORD1) + '</button>');
+    var b = el('<button type="button" class="sh-return alt' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD1h) + '">' + esc(COPY.ORD1) + '</button>');
     b.addEventListener('click', guard(b, compact, function () { window.open(stellaOrderHref(), '_blank', 'noopener'); }));
     return b;
   }
   function orderModalBtn(compact) {
-    var b = el('<button type="button" class="sh-return alt' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD2h) + '">' + esc(COPY.ORD2) + '</button>');
+    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD2h) + '">' + esc(COPY.ORD2) + '</button>');
     b.addEventListener('click', guard(b, compact, function () { openOrderModal(H); }));
     return b;
   }
   function orderBtn(compact) { return orderInStellaBtn(compact); }
   /* the single "Go back to STELLA" control — lands on this patient in STELLA */
-  function backToStella() {
+  function backToStella(onDark) {
     var href = '/stella' + (H && H.caseId ? '?patient=' + encodeURIComponent(H.caseId) : '');
-    var a = el('<a class="sh-back" href="' + esc(href) + '" title="' + esc(COPY.R6) + '">' +
+    var a = el('<a class="sh-back' + (onDark ? ' on-dark' : '') + '" href="' + esc(href) + '" title="' + esc(COPY.R6) + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>' +
       esc(COPY.R5) + '</a>');
     return a;
   }
-  function returnCta(compact) {
-    /* one CTA, one meaning: it opens the STELLA ordering surface, and it
-       validates the case first. Returning to STELLA without ordering is a
-       separate, single control (backToStella). */
-    return orderBtn(compact);
+  /* Both ordering paths sit together, top and bottom, with the plain return to
+     STELLA as the secondary control beside them. */
+  function ctaGroup(compact) {
+    var f = document.createDocumentFragment();
+    f.appendChild(orderInStellaBtn(compact));
+    f.appendChild(orderModalBtn(compact));
+    f.appendChild(backToStella(compact));
+    return f;
   }
+  function returnCta(compact) { return ctaGroup(compact); }
   function showReturnPrompt(anchor) {
     var old = document.getElementById('shReturnPrompt'); if (old) old.remove();
     var p = el('<div class="sh-prompt" id="shReturnPrompt" role="dialog" aria-modal="true" aria-labelledby="shPromptTitle">' +
@@ -880,9 +884,7 @@
       '<img src="' + STELLA_LOGO + '" alt="STELLA"><div class="sh-return-cta"></div>' +
       '<div class="sh-return-cap">' + esc(d ? COPY.L2 : COPY.R2) + '</div></div>';
     var cta = box.querySelector('.sh-return-cta');
-    cta.appendChild(orderInStellaBtn(false));
-    cta.appendChild(orderModalBtn(false));
-    cta.appendChild(backToStella());
+    cta.appendChild(ctaGroup(false));
   }
 
   /* The closing analytical view the brief asks for: for one case, what went in,

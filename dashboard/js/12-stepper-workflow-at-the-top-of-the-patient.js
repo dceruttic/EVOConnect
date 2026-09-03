@@ -1,4 +1,17 @@
 // === Stepper / workflow at the top of the patient page ===
+
+/* Pre-op, Surgical planner and Surgery are Phase 3 deliverables: while Phase 3
+   is not active they are not shown in the timeline at all (not merely locked),
+   and navigation must not land on them. */
+var PHASE_HIDDEN_TABS = ['preop', 'planner', 'surgery'];
+function ptTabHidden(tab){
+  if (PHASE_HIDDEN_TABS.indexOf(tab) < 0) return false;
+  var st = window.PHASE_DEMO;
+  if (!st || !st.enabled || st.showAllPhases) return false;
+  var ph = st.map && st.map['patient-' + tab];
+  return !!ph && ph > st.currentPhase;
+}
+
 function renderPtStepper(pt, activeTab){
   // Stage → numeric position
   const stageOrder = { "Consult": 0, "Eligibility": 0, "Biometry": 0, "Sizing": 1, "Scheduled": 2, "Surgery": 3, "Post-op": 4 };
@@ -19,17 +32,7 @@ function renderPtStepper(pt, activeTab){
     return { key: 'po-' + m, label: 'Post-op', tab: 'postop', num: 4, ms: m, sub: msLabel[m] || m };
   }));
 
-  /* Surgical planner and Surgery are Phase 3 deliverables: while Phase 3 is not
-     active they are not shown in the timeline at all (not merely locked). */
-  const PHASE_HIDDEN_TABS = ['planner', 'surgery'];
-  function _phaseHides(tab){
-    if (PHASE_HIDDEN_TABS.indexOf(tab) < 0) return false;
-    var st = window.PHASE_DEMO;
-    if (!st || !st.enabled || st.showAllPhases) return false;
-    var ph = st.map && st.map['patient-' + tab];
-    return !!ph && ph > st.currentPhase;
-  }
-  const visibleSteps = steps.filter(function(s){ return !_phaseHides(s.tab); });
+  const visibleSteps = steps.filter(function(s){ return !ptTabHidden(s.tab); });
 
   function _msIsDone(ms){
     if (!ms || typeof postopVisitData !== 'function') return false;

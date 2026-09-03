@@ -141,8 +141,13 @@ function openPatientFile(id) {
   const pt = DATA.patients.find(p => p.id === id);
   if (!pt) return;
   CURRENT_PT = pt;
-  // Land on the tab matching the patient's current stage, not always pre-op
+  // Land on the tab matching the patient's current stage, not always pre-op —
+  // and never on one the current phase does not ship.
   CURRENT_PT_TAB = _tabForStage(pt.stage);
+  if (typeof ptTabHidden === 'function' && ptTabHidden(CURRENT_PT_TAB)) {
+    CURRENT_PT_TAB = ['sizing', 'postop', 'planner', 'surgery', 'preop']
+      .find(function (t) { return !ptTabHidden(t); }) || 'sizing';
+  }
   // Reset cross-stage attachments rail so it doesn't leak between patients;
   // it'll be re-hydrated from PT_PREOP_DATA the moment the user lands on Sizing.
   if (typeof SF_ATTACHMENTS !== 'undefined') SF_ATTACHMENTS.length = 0;

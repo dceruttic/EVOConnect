@@ -36,7 +36,7 @@
     'evo-credits':     3,
 
     // Patient page tabs (within setPatientTab())
-    'patient-preop':   1,
+    'patient-preop':   3,
     'patient-sizing':  1,
     'patient-planner': 3,
     'patient-surgery': 3,
@@ -102,7 +102,7 @@
       currentPhase: 1,
       showAllPhases: false,
       map: Object.assign({}, DEFAULT_PHASE_MAP, (saved && saved.map) || {}, {
-        'patient-planner': 3, 'patient-surgery': 3
+        'patient-preop': 3, 'patient-planner': 3, 'patient-surgery': 3
       }),
     };
   }

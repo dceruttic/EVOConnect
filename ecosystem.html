@@ -102,6 +102,22 @@
   .hero .lead{font-size:clamp(17px,1.6vw,20px);color:rgba(255,255,255,.86);max-width:720px;margin:22px auto 0}
   .hero .down{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:56px;height:56px;border:1px solid rgba(255,255,255,.35);border-radius:50%;display:flex;align-items:center;justify-content:center}
   .hero .down svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  /* ---------- hero film: A Different Field (20 s, loop) ---------- */
+  .hero .film{position:absolute;inset:0;background:#05070D;overflow:hidden}
+  .hero .film-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transition:opacity 1.2s ease}
+  /* once the headline is up: film dimmed, a soft scrim behind the text block, the page fading to black below */
+  .hero.film-behind .film-video{opacity:.45}
+  .hero.film-behind .film::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 48%,rgba(0,0,0,.55) 0%,rgba(0,0,0,.25) 55%,rgba(0,0,0,0) 100%),linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,.1) 55%,#000 100%)}
+  .hero .hero-in{transition:opacity 1.1s ease,transform 1.1s ease}
+  .hero .hero-in.pre{opacity:0;transform:translateY(10px);pointer-events:none}
+  .hero .down{transition:opacity .8s ease}
+  .hero .hero-in.pre ~ .down{opacity:0}
+  @media (prefers-reduced-motion:reduce){
+    .hero .film-video{display:none}
+    .hero .film{background:#05070D url('/assets/film/film_still.jpg') center/cover no-repeat}
+    .hero .hero-in.pre{opacity:1;transform:none;pointer-events:auto}
+  }
+
 
   /* ---------- strip of three (apple "chapter index") ---------- */
   .trio{background:var(--black);color:#fff;padding:var(--space-6) 24px var(--space-7)}
@@ -260,8 +276,13 @@
 
 <!-- HERO -->
 <section class="hero" id="ecosystem">
-  <div class="sky"></div>
-  <div class="hero-in">
+  <div class="film" aria-hidden="true">
+    <video id="heroFilm" class="film-video" autoplay muted loop playsinline preload="auto" poster="/assets/film/film_poster.jpg">
+      <source src="/assets/film/film_1080p60.mp4" type="video/mp4">
+      <source src="/assets/film/film_1080p60.webm" type="video/webm">
+    </video>
+  </div>
+  <div class="hero-in pre">
     <p class="eyebrow">STAAR Surgical · Digital Ecosystem</p>
     <h1 class="display">Evolution in Visual Freedom<sup>™</sup></h1>
     <p class="lead">Over 4,000,000 lenses sold worldwide. Now one platform with everything a surgeon or a clinic needs to make every ICL better: the sizing call settled with the methods you trust side by side, the whole case in a single record, and your own patient data working for you — case after case.</p>
@@ -450,5 +471,25 @@
 })();
 </script>
 <script src="/js/main.js"></script>
+<script>
+(function(){
+  var hero=document.getElementById('ecosystem'), v=document.getElementById('heroFilm');
+  var content=hero&&hero.querySelector('.hero-in'); if(!hero||!v||!content) return;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches, revealed=false;
+  function reveal(){ if(revealed) return; revealed=true; content.classList.remove('pre'); hero.classList.add('film-behind'); }
+  if(reduce){ reveal(); return; }
+  var c=navigator.connection; var slow=!!(c&&(c.saveData||(c.downlink&&c.downlink<3)));
+  if(slow||window.matchMedia('(max-width:720px)').matches){
+    var mp4=v.querySelector('source[type="video/mp4"]'); var webm=v.querySelector('source[type="video/webm"]');
+    if(webm) webm.remove(); if(mp4){ mp4.src='/assets/film/film_1080p30.mp4'; v.load(); }
+  }
+  /* first pass complete and clean; afterwards only the ambient part (0 -> 4.4 s: the world lighting up and the dive) loops behind the headline,
+     so no text of the film ever sits under the page's own headline */
+  v.addEventListener('timeupdate',function(){ if(!revealed&&v.currentTime>=18.6){ reveal(); return; } if(revealed&&v.currentTime>=4.4&&v.currentTime<18.6){ try{ v.currentTime=0; }catch(e){} } });
+  var p=v.play&&v.play(); if(p&&p.catch){ p.catch(function(){ reveal(); }); }
+  setTimeout(function(){ if(v.paused||v.readyState<2) reveal(); },2500);
+  setTimeout(reveal,21000);
+})();
+</script>
 </body>
 </html>

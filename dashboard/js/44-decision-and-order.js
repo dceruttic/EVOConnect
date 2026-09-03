@@ -45,45 +45,47 @@
     var refSize = ref ? parseFloat(ref.recSize).toFixed(1) : null;
     var ran = results().filter(function (r) { return r.code !== 'STAAR_NOM'; });
     var chk = function (a, b) { return a === b ? ' checked' : ''; };
+    var sel = function (a, b) { return a === b ? ' selected' : ''; };
     var pl = d0.plannedLens || {};
     return '<form class="sh-form" id="ptDecisionForm" novalidate>' +
-      '<fieldset class="sh-fs"><legend>Decision</legend>' +
-        '<label class="sh-radio"><input type="radio" name="pd-choice" value="accept"' + chk(d0.choice, 'accept') + (refSize ? '' : ' disabled') + '>' +
+
+      '<fieldset class="sh-fs" data-step="1"><legend class="sh-lg">1 · Decision</legend>' +
+        '<label class="sh-radio wide"><input type="radio" name="pd-choice" value="accept"' + chk(d0.choice, 'accept') + (refSize ? '' : ' disabled') + '>' +
           '<span>' + (refSize ? esc('Accept the STAAR nomogram (' + refSize + ' mm)') : 'Run the comparison first') + '</span></label>' +
-        '<label class="sh-radio"><input type="radio" name="pd-choice" value="prefer"' + chk(d0.choice, 'prefer') + '><span>Prefer another lens</span></label>' +
-        '<em class="sh-err" data-err="choice" hidden>Choose one</em>' +
-      '</fieldset>' +
-      '<fieldset class="sh-fs" id="pdLensFs"><legend>Planned lens</legend>' +
-        '<div class="sh-lensrow">' +
+        '<label class="sh-radio wide"><input type="radio" name="pd-choice" value="prefer"' + chk(d0.choice, 'prefer') + '><span>Prefer another lens</span></label>' +
+        '<div class="sh-err" data-err="choice" hidden>Choose one.</div></fieldset>' +
+
+      '<fieldset class="sh-fs pd-lens" id="pdLensFs" data-step="2"><legend class="sh-lg">2 · Planned lens</legend>' +
+        '<div class="sh-lens-grid">' +
           '<label><span>Size (mm)</span><select name="pd-size"><option value="">—</option>' +
-            SIZES.map(function (s) { return '<option value="' + s + '"' + (pl.size === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') +
+            SIZES.map(function (x) { return '<option value="' + x + '"' + sel(pl.size, x) + '>' + x + '</option>'; }).join('') +
           '</select></label>' +
-          '<label><span>Power (D)</span><input name="pd-power" value="' + esc(pl.power || '') + '" placeholder="—"></label>' +
-          '<label><span>Axis (°, optional)</span><input name="pd-axis" value="' + esc(pl.axis || '') + '" placeholder="—"></label>' +
+          '<label><span>Power (D)</span><input type="text" name="pd-power" inputmode="decimal" value="' + esc(pl.power || '') + '" placeholder="—"></label>' +
+          '<label><span>Axis (°, optional)</span><input type="text" name="pd-axis" inputmode="numeric" value="' + esc(pl.axis || '') + '" placeholder="—"></label>' +
         '</div>' +
         '<div class="sh-delta-line" id="pdDelta"></div>' +
-        '<em class="sh-err" data-err="size" hidden>Choose the size you are ordering</em>' +
-      '</fieldset>' +
-      '<fieldset class="sh-fs"><legend>Influencing method</legend><div class="sh-chips">' +
+        '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
+
+      '<fieldset class="sh-fs" data-step="3"><legend class="sh-lg">3 · Influencing method</legend><div class="sh-chips">' +
         ran.map(function (r) {
           return '<label class="sh-chip"><input type="radio" name="pd-method" value="' + esc(r.code) + '"' + chk(d0.influencingMethod, r.code) + '>' +
                  '<span>' + esc(METHOD_LABEL[r.code] || r.name) + '</span></label>'; }).join('') +
         '<label class="sh-chip"><input type="radio" name="pd-method" value="OTHER"' + chk(d0.influencingMethod, 'OTHER') + '><span>Other / custom</span></label>' +
-      '</div>' +
-      '<input name="pd-method-other" class="sh-other" placeholder="Which calculator did you use?" value="' + esc(d0.otherMethodName || '') + '" hidden>' +
-      '<em class="sh-err" data-err="method" hidden>Choose the method that influenced you</em>' +
-      '<em class="sh-err" data-err="other" hidden>Name the calculator</em>' +
-      '</fieldset>' +
-      '<fieldset class="sh-fs"><legend>Reason</legend><div class="sh-chips">' +
+        '</div>' +
+        '<input class="sh-other" type="text" name="pd-method-other" maxlength="60" placeholder="Which calculator did you use?" value="' + esc(d0.otherMethodName || '') + '" aria-label="Other / custom method name" hidden>' +
+        '<div class="sh-err" data-err="method" hidden>Select the method that influenced you.</div>' +
+        '<div class="sh-err" data-err="other" hidden>Name the calculator.</div></fieldset>' +
+
+      '<fieldset class="sh-fs" data-step="4"><legend class="sh-lg">4 · Reason</legend><div class="sh-chips">' +
         REASONS.map(function (r) {
           return '<label class="sh-chip"><input type="radio" name="pd-reason" value="' + r[0] + '"' + chk(d0.reason && d0.reason.code, r[0]) + '>' +
                  '<span>' + esc(r[1]) + '</span></label>'; }).join('') +
-      '</div><span class="sh-src" id="pdReasonSrc" hidden></span>' +
-      '<input name="pd-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc((d0.reason && d0.reason.text) || '') + '">' +
-      '<em class="sh-err" data-err="reason" hidden>Choose a reason</em>' +
-      '</fieldset>' +
-      '<div class="sh-form-actions"><button type="submit" class="sh-btn">Save decision</button></div>' +
-      '</form>';
+        '</div>' +
+        '<input class="sh-text" type="text" name="pd-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc((d0.reason && d0.reason.text) || '') + '" aria-label="Reason, optional text">' +
+        '<div class="sh-src" id="pdReasonSrc" hidden></div>' +
+        '<div class="sh-err" data-err="reason" hidden>Select a reason.</div></fieldset>' +
+
+      '<div class="sh-form-actions"><button type="submit" class="sh-btn">Save decision</button></div></form>';
   }
 
   function summary(pt, d) {
@@ -157,15 +159,29 @@
     }
     function chips() { form.querySelectorAll('.sh-chip, .sh-radio').forEach(function (l) {
       var i = l.querySelector('input'); l.classList.toggle('on', !!(i && i.checked)); }); }
+    /* Progressive disclosure: a step stays dimmed until the one before it is
+       answered, so the form reads as four decisions, not one wall. */
+    function gate() {
+      var g = function (n) { return !!form.querySelector('[name="' + n + '"]:checked'); };
+      var done = [true, g('pd-choice'), g('pd-choice') && !!sizeSel.value, g('pd-method')];
+      form.querySelectorAll('.sh-fs').forEach(function (fs, i) { fs.classList.toggle('pending', !done[i]); });
+    }
+    /* Inline validation: clear a step's error as soon as it is answered. */
+    function clearErr(k) { var n = form.querySelector('[data-err="' + k + '"]'); if (n) n.hidden = true; }
+    form.addEventListener('blur', function (e) {
+      if (e.target.name === 'pd-size' && sizeSel.value) clearErr('size');
+      if (e.target.name === 'pd-method-other' && e.target.value.trim()) clearErr('other');
+    }, true);
 
     form.addEventListener('change', function (e) {
       if (e.target.name === 'pd-choice') { syncChoice(); syncDelta(); }
       if (e.target.name === 'pd-size') syncDelta();
       if (e.target.name === 'pd-method') { syncOther(); infer(); }
       if (e.target.name === 'pd-reason') { touched = true; source = 'manual'; infer(); }
-      chips();
+      if (e.target.name) clearErr(String(e.target.name).replace('pd-', '').replace('choice', 'choice'));
+      chips(); gate();
     });
-    syncChoice(); syncOther(); syncDelta(); chips(); infer();
+    syncChoice(); syncOther(); syncDelta(); chips(); infer(); gate();
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -213,7 +229,19 @@
         if (!i || String(i.value).trim() === '') missing.push('Missing input: ' + f[1]);
       });
       if (missing.length) { alertInto(box, missing, null); return; }
-      if (typeof openStellaOrder === 'function') {
+      /* The STELLA ordering surface — the same modal, in STELLA's own design
+         system, that a case arriving from STELLA opens. */
+      if (typeof openStellaLensModal === 'function') {
+        var ref = reference();
+        openStellaLensModal({
+          caseId: 'REV-' + pt.id,
+          eye: (typeof EYE_SCOPE !== 'undefined' && EYE_SCOPE !== 'BOTH') ? EYE_SCOPE : 'OD',
+          refSize: ref ? parseFloat(ref.recSize).toFixed(1) : d.plannedLens.size,
+          model: 'Toric Myopic',
+          power: d.plannedLens.power, axis: d.plannedLens.axis,
+          formula: 'STAAR nomogram', decision: d
+        });
+      } else if (typeof openStellaOrder === 'function') {
         openStellaOrder(pt.id, d.influencingMethod, d.plannedLens.size, 0);
       }
     });

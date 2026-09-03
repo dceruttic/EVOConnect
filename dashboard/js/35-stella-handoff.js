@@ -101,6 +101,11 @@
     L15: 'STELLA recommendation',
     L16: 'What the surgeon ordered, and on what argument',
     L17: 'Returned to EVO Connect by API',
+    /* Same surface, different provenance: a case that did not arrive from
+       STELLA seeds the form from the comparison, not from a STELLA case. */
+    LOC6: 'Seeded from your decision in EVO Connect. Enter and confirm the lens here — the order is created in STELLA.',
+    LOC5: 'from decision',
+    LOC15: 'STAAR nomogram reference',
     NV: 'Vault not predicted by this method',
     E1s: 'Same formula re-run here: {v} mm',
     E2s: 'STELLA sent {rec} mm; the same WTW band lookup on the inputs now loaded here returns {got} mm — the inputs were edited in EVO Connect.',
@@ -435,6 +440,29 @@
     var nick = document.querySelector('.seb-eye-nickname'); if (nick) nick.textContent = rec.caseId + ' · — · —';
     var rx = document.querySelector('.seb-eye-rx b'); if (rx) rx.textContent = parseFloat(I.sph.v).toFixed(2) + ' D';
   }
+
+  /* ---------- STELLA ordering surface for a case that did NOT come from
+     STELLA (js/44). Same modal, same STELLA design system, same divergence
+     confirmation — only the reference differs: the STAAR nomogram instead of
+     the STELLA recommendation. ---------- */
+  window.openStellaLensModal = function (o) {
+    o = o || {};
+    var E = (o.eye || 'OD').toUpperCase();
+    var R = { size: String(o.refSize || ''), model: o.model || 'Toric Myopic',
+              power: o.power ? { sph: String(o.power), axis: o.axis != null ? String(o.axis) : '' } : null,
+              formula: o.formula || 'STAAR nomogram', calculatedAt: new Date().toISOString() };
+    var rec = {
+      caseId: o.caseId || 'CASE', laterality: E, eyes: [E], ui: { eye: E },
+      inputs: {}, stella: {}, derived: {}, decisions: {}, local: true
+    };
+    rec.inputs[E] = o.inputs || {};
+    rec.stella[E] = R;
+    rec.derived[E] = {};
+    if (o.decision) rec.decisions[E] = o.decision;
+    Object.defineProperty(rec, 'stellaRecommendation', { get: function () { return rec.stella[E]; } });
+    openOrderModal(rec);
+    return rec;
+  };
 
   /* ---------- chips (K1; no STELLA / STAAR_NOM chips, DR-0004) ---------- */
   /* Brief limit 4: STELLA is always in the comparison. It is not a togglable
@@ -961,7 +989,7 @@
           '<div class="sh-ok">Order number</div><div class="sh-ono">' + esc(done.orderNo) + '</div>' +
           orderRow('Case · eye', done.caseId + ' · ' + done.eye) +
           orderRow('Ordered lens', done.lens.size + ' mm' + (done.lens.power ? ' · ' + done.lens.power + ' D' : '') + (done.lens.axis ? ' · ' + done.lens.axis + '°' : '')) +
-          orderRow('STELLA recommendation', done.stella.size + ' mm · ' + done.stella.model) +
+          orderRow(rec.local ? 'STAAR nomogram reference' : 'STELLA recommendation', done.stella.size + ' mm · ' + done.stella.model) +
           orderRow('Divergence', done.divergent ? done.delta + ' mm — confirmed by the surgeon' : 'none — recommendation accepted') +
           orderRow('Confirmed', utc(done.confirmedAt)) +
           '<div class="sh-oaudit">' + esc(COPY.L11) + '</div>' +
@@ -974,12 +1002,13 @@
 
     var diverges = ord.size && ord.size !== String(R.size);
     var delta = diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '';
-    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag">' + esc(COPY.L5) + '</em>'; };
+    var local = !!rec.local;
+    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag">' + esc(local ? COPY.LOC5 : COPY.L5) + '</em>'; };
 
     host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, false) +
       '<div class="sh-obody">' +
-        '<div class="sh-oseed">' + esc(COPY.L6) + '</div>' +
-        '<div class="sh-orec"><div class="sh-ok">' + esc(COPY.L15) + '</div>' +
+        '<div class="sh-oseed">' + esc(local ? COPY.LOC6 : COPY.L6) + '</div>' +
+        '<div class="sh-orec"><div class="sh-ok">' + esc(local ? COPY.LOC15 : COPY.L15) + '</div>' +
           '<div class="sh-orec-v">' + esc(R.size) + ' mm</div>' +
           '<div class="sh-orec-m">' + esc(R.model) + (R.power && R.power.sph != null ? ' · ' + esc(R.power.sph) + ' D' : '') +
             (R.power && R.power.axis != null ? ' · axis ' + esc(R.power.axis) + '°' : '') + ' · ' + esc(R.formula) + '</div></div>' +

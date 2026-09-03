@@ -1106,16 +1106,34 @@
   }
   /* The STELLA panel is the first card of the comparison, so once results are on
      screen its top lines up with the first result card instead of floating above
-     the Calculate button. Only on the two-column layout. */
+     the Calculate button. The offset is measured from the panel itself with the
+     margin zeroed, and re-measured whenever the left column changes height (the
+     banner collapsing, chips re-rendering), so it cannot drift. */
+  var _alignRO = null;
   function alignSidePanel() {
-    var side = document.querySelector('.sh-col-side'),
-        main = document.querySelector('.sh-col-main'),
-        grid = document.querySelector('#sfResultsList .sf-comp-grid');
-    if (!side || !main) return;
-    side.style.marginTop = '';
-    if (!grid || !window.matchMedia('(min-width: 1101px)').matches) return;
-    var d = grid.getBoundingClientRect().top - main.getBoundingClientRect().top;
-    if (d > 0) side.style.marginTop = Math.round(d) + 'px';
+    var side = document.querySelector('.sh-col-side');
+    var grid = document.querySelector('#sfResultsList .sf-comp-grid');
+    if (!side) return;
+    if (!grid || !window.matchMedia('(min-width: 1101px)').matches) { side.style.marginTop = ''; return; }
+    /* measure the STATIC position: while the column is sticky its rect reports
+       the pinned offset, which would make the computed distance wrong whenever
+       the page happens to be scrolled. */
+    var prevPos = side.style.position;
+    side.style.marginTop = '0px';
+    side.style.position = 'static';
+    var d = grid.getBoundingClientRect().top - side.getBoundingClientRect().top;
+    side.style.position = prevPos;
+    side.style.marginTop = (d > 0 ? Math.round(d) : 0) + 'px';
+  }
+  function watchAlign() {
+    if (typeof ResizeObserver === 'undefined') return;
+    if (_alignRO) _alignRO.disconnect();
+    var main = document.querySelector('.sh-col-main');
+    if (!main) return;
+    _alignRO = new ResizeObserver(function () {
+      if (currentIsHandoff()) requestAnimationFrame(alignSidePanel);
+    });
+    _alignRO.observe(main);
   }
   window.addEventListener('resize', function () { if (currentIsHandoff()) alignSidePanel(); });
 
@@ -1167,6 +1185,7 @@
     EYE_SCOPE = curEye(rec);
     prefill(rec);
     decorateChips();
+    watchAlign();
     lockEyeScope(rec);
     decorateHeader(rec);
     var lbl = document.getElementById('sebEyeLabel'); if (lbl) lbl.textContent = curEye(rec);

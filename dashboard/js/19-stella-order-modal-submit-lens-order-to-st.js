@@ -205,7 +205,7 @@ function _sfResultCard(r, patientId) {
   const abbrev = { ICL_GURU: 'IG', REINSTEIN: 'RE', LASSO: 'LA', KS: 'KS', STAAR_NOM: 'SN', ICL_FIT: 'IF' }[r.code] || r.code.slice(0, 2);
   const isGuru = r.code === 'ICL_GURU';
   const pdfBtn = isGuru
-    ? `<button class="sf-comp-pdf" type="button" onclick="event.stopPropagation();openIclGuruPdf('${patientId}')" title="Open the original ICL Guru PDF report">
+    ? `<button class="sf-comp-pdf" type="button" onclick="event.stopPropagation();openIclGuruPdf('${patientId}', ${r.size})" title="Open the original ICL Guru PDF report">
          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
          View PDF
        </button>` : '';
@@ -405,29 +405,63 @@ var ICLGURU_REPORT = {
   pages: [{ src: '/assets/iclguru/report-p1.webp' }, { src: '/assets/iclguru/report-p2.webp' }],
   pt: { w: 594.96, h: 841.92 },                    // page box, in PDF points
   name: { x: 78.4, baseline: 89.4, size: 12 },     // "Patient:" value
-  badge: { cx: 252.6, cy: 87.5, r: 12.5, fill: '#3689E7', size: 9.5 }
+  badge: { cx: 252.6, cy: 87.5, r: 12.5, fill: '#3689E7', size: 9.5 },
+  /* Page 2 · "Results": four size cards, measured from the source PDF.
+     The sample report has 12.1 ringed; the ring is repainted onto whichever
+     size ICL Guru actually recommends for this case. */
+  cards: {
+    page: 2, sizes: [12.1, 12.6, 13.2, 13.7],
+    x0: 31.2, w: 119.9, step: 138.0, y0: 247.0, h: 273.9, r: 7.9,
+    grow: 0.8,                       // the selected card's ring sits 0.8 pt outside
+    on: '#4966FF', off: '#EEECF4'    // ring colours, sampled from the render
+  }
 };
 
-function _guruPage(src, name, eye) {
+/* Repaint the "selected size" ring of page 2 onto the recommended size:
+   white over the ring that is there, then the ring where it belongs. */
+function _guruSizeRings(pageNo, size) {
+  var C = ICLGURU_REPORT.cards;
+  if (pageNo !== C.page || size == null) return '';
+  var want = -1, best = 0.051;
+  for (var i = 0; i < C.sizes.length; i++) {
+    var d = Math.abs(C.sizes[i] - Number(size));
+    if (d < best) { best = d; want = i; }
+  }
+  if (want < 0 || want === 0) return '';   // 0 is already the ringed card
+  function box(i, grow) {
+    return { x: C.x0 + C.step * i - grow, y: C.y0 - grow,
+             w: C.w + grow * 2, h: C.h + grow * 2, r: C.r + grow };
+  }
+  function rect(b, stroke, w) {
+    return '<rect x="' + b.x.toFixed(2) + '" y="' + b.y.toFixed(2) + '" width="' + b.w.toFixed(2) +
+      '" height="' + b.h.toFixed(2) + '" rx="' + b.r.toFixed(2) + '" fill="none" stroke="' + stroke +
+      '" stroke-width="' + w + '"/>';
+  }
+  return rect(box(0, C.grow), '#fff', 4) + rect(box(0, 0), C.off, 1) +
+         rect(box(want, 0), '#fff', 3)   + rect(box(want, C.grow), C.on, 1.5);
+}
+
+function _guruPage(src, name, eye, pageNo, size) {
   var R = ICLGURU_REPORT;
   // keep a long name inside the gap between "Patient:" and the OD/OS badge
-  var size = R.name.size;
-  if (String(name).length > 20) size = Math.max(8, size * 20 / String(name).length);
+  var fsize = R.name.size;
+  if (String(name).length > 20) fsize = Math.max(8, fsize * 20 / String(name).length);
   return '<div class="guru-page">' +
     '<img src="' + src + '" alt="ICL Guru PRO report page" loading="lazy">' +
     '<svg class="guru-page-ovl" viewBox="0 0 ' + R.pt.w + ' ' + R.pt.h + '" aria-hidden="true">' +
       '<text x="' + R.name.x + '" y="' + R.name.baseline + '" font-family="Inter, system-ui, sans-serif"' +
-        ' font-size="' + size.toFixed(2) + '" fill="#000">' + _esc(name) + '</text>' +
+        ' font-size="' + fsize.toFixed(2) + '" fill="#000">' + _esc(name) + '</text>' +
       '<circle cx="' + R.badge.cx + '" cy="' + R.badge.cy + '" r="' + R.badge.r + '" fill="' + R.badge.fill + '"/>' +
       '<text x="' + R.badge.cx + '" y="' + (R.badge.cy + R.badge.size * 0.35) + '" text-anchor="middle"' +
         ' font-family="Inter, system-ui, sans-serif" font-size="' + R.badge.size + '" font-weight="700"' +
         ' fill="#fff">' + _esc(eye) + '</text>' +
+      _guruSizeRings(pageNo, size) +
     '</svg></div>';
 }
 function _esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
   return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
-function openIclGuruPdf(patientId){
+function openIclGuruPdf(patientId, size){
   const pt = (DATA.patients || []).find(p => p.id === patientId);
   if (!pt) return;
   closeIclGuruPdf();
@@ -461,7 +495,7 @@ function openIclGuruPdf(patientId){
         '</div>' +
       '</header>' +
       '<div class="guru-doc-body">' +
-        ICLGURU_REPORT.pages.map(function (p) { return _guruPage(p.src, pt.name, eye); }).join('') +
+        ICLGURU_REPORT.pages.map(function (p, i) { return _guruPage(p.src, pt.name, eye, i + 1, size); }).join('') +
       '</div>' +
     '</div>';
   document.body.appendChild(wrap);

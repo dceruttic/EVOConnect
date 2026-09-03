@@ -212,7 +212,7 @@ function _sfResultCard(r, patientId) {
 
   // Vault display: '—' for size-only formulas, with a tooltip explaining
   const vaultValHtml = noVault
-    ? `<div class="val novault" title="STAAR's manufacturer nomogram returns the recommended ICL size only — it does not estimate postoperative vault. Pair it with a vault-prediction formula (Reinstein, Lasso, KS or ICL Guru) for a complete sizing decision.">—<em></em></div>
+    ? `<div class="val novault" title="STAAR's manufacturer nomogram (OCOS) returns the recommended ICL size only — it does not estimate postoperative vault. Pair it with a vault-prediction formula (Reinstein, Lasso, KS or ICL Guru) for a complete sizing decision.">—<em></em></div>
        <div class="band-tag novault-tag">Size only · no vault prediction</div>`
     : `<div class="val" style="color:${bandColor}">${r.vault}<em>µm</em></div>
        <div class="band-tag" style="background:${bandColor}1A;color:${bandColor};">${bandLabel}</div>`;
@@ -304,10 +304,6 @@ function selectSizingFormula(patientId, code, size, vault, color) {
           <div class="sf-chosen-lbl">Chosen formula · flows into Surgical Planner and Surgery</div>
           <div class="sf-chosen-val"><b>${code}</b> — size <b>${size} mm</b> · vault <b style="color:${color}">${vault} µm</b></div>
         </div>
-        <button class="btn btn-primary small sf-order-btn" onclick="openStellaOrder('${patientId}','${code}','${size}',${vault})">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-          Order via STELLA
-        </button>
       `;
     }
   }
@@ -323,7 +319,9 @@ function selectSizingFormula(patientId, code, size, vault, color) {
       list.classList.add('sf-guru-mounted');
       const guruHtml = renderPtSizingGuru(gPt);
 
-      // Sticky action bar — summary + STELLA order CTA. Mounted at TOP and BOTTOM of the report.
+      /* Sticky bar — back + case recap, mounted at the TOP and BOTTOM of the
+         report. No ordering CTA lives here: the order is placed from the
+         decision section, which is the one place that validates the case. */
       const actionBar = (position) => `
         <div class="sf-guru-actionbar ${position}" data-position="${position}">
           <button class="sf-guru-back" type="button" onclick="runSizingFormulas('${patientId}')" title="Back to formula comparator">
@@ -337,10 +335,6 @@ function selectSizingFormula(patientId, code, size, vault, color) {
               <span class="sga-pill"><b>${pt.name}</b> · ${pt.eye || 'OD'}</span>
             </div>
           </div>
-          <button class="sf-guru-stella-btn" type="button" onclick="openStellaOrder('${patientId}','${code}','${size}',${vault})">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-            Order via STELLA
-          </button>
         </div>
       `;
 

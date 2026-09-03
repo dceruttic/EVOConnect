@@ -462,7 +462,7 @@
     rec.derived[E] = {};
     if (o.decision) rec.decisions[E] = o.decision;
     Object.defineProperty(rec, 'stellaRecommendation', { get: function () { return rec.stella[E]; } });
-    openOrderModal(rec);
+    openOrderModal(rec, o.fresh !== false);
     return rec;
   };
 
@@ -598,7 +598,7 @@
   }
   function orderModalBtn(compact) {
     var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD2h) + '">' + esc(COPY.ORD2) + '</button>');
-    b.addEventListener('click', guard(b, compact, function () { openOrderModal(H); }));
+    b.addEventListener('click', guard(b, compact, function () { openOrderModal(H, true); }));
     return b;
   }
   function orderBtn(compact) { return orderInStellaBtn(compact); }
@@ -1126,10 +1126,17 @@
     timers.push(setTimeout(finish, TOTAL));
   }
 
-  function openOrderModal(rec) {
-    stellaTransfer(rec, function () { mountOrderModal(rec); });
+  /* `fresh` is what the Order Lens CTA passes: the surgeon asked to place an
+     order, so the modal opens on STELLA's ordering form even when this eye
+     already carries one. The existing order is not duplicated — confirming
+     keeps its number (see placeOrder), which is the idempotency the
+     integration layer promises. */
+  function openOrderModal(rec, fresh) {
+    stellaTransfer(rec, function () { mountOrderModal(rec, fresh); });
   }
-  function mountOrderModal(rec) {
+  function mountOrderModal(rec, fresh) {
+    rec.ui = rec.ui || {};
+    rec.ui.newOrder = !!fresh;
     ord = stellaSeed(rec);
     var host = el('<div class="sh-omodal-scrim" id="shOrderModal" role="dialog" aria-modal="true" aria-label="' + esc(COPY.L4) + '"></div>');
     document.body.appendChild(host);
@@ -1144,6 +1151,7 @@
   function paintOrderModal(rec) {
     var host = document.getElementById('shOrderModal'); if (!host) return;
     var E = curEye(rec), R = rec.stellaRecommendation, d = rec.decisions[E], done = orderFor(rec, E);
+    if (done && rec.ui && rec.ui.newOrder) done = null;   // the surgeon asked to order
 
     if (done) {
       host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, true) +
@@ -1226,11 +1234,12 @@
     var E = curEye(rec), R = rec.stellaRecommendation;
     if (!ord.size) { ord.err = 'Select the lens size you are ordering.'; return paintOrderModal(rec); }
     if (!ord.power) { ord.err = 'Enter the lens power.'; return paintOrderModal(rec); }
+    var prev = orderFor(rec, E);          // a repeat confirmation updates it, never doubles it
     var diverges = ord.size !== String(R.size);
     if (diverges && !ord.ack) { ord.err = 'Confirm the difference with the STELLA recommendation before placing the order.'; return paintOrderModal(rec); }
     var rc = {
       caseId: rec.caseId, eye: E,
-      orderNo: String(760000 + Math.floor(Math.random() * 9000)),
+      orderNo: (prev && prev.orderNo) || String(760000 + Math.floor(Math.random() * 9000)),
       lens: { size: ord.size, power: ord.power, axis: ord.axis || null },
       stella: { size: String(R.size), model: R.model, formula: R.formula },
       divergent: diverges,
@@ -1243,6 +1252,7 @@
       localStorage.setItem(ORDER_KEY, JSON.stringify(all));
     } catch (e) {}
     ord.err = null;
+    if (rec.ui) rec.ui.newOrder = false;   // show the receipt for what was just placed
     paintOrderModal(rec);
     renderReturn(rec);
   }

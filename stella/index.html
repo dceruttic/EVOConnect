@@ -849,8 +849,21 @@ if(forceLogin){
   try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){}
 }
 
+/* `/stella?patient=PSEUDO-2210` opens STELLA directly on that patient — this is
+   how the single "Go back to STELLA" control in EVO Connect returns the surgeon
+   to the right case. If the browser has no session the login screen is shown
+   first and the patient is opened right after signing in. */
+const deepPid = (() => {
+  try {
+    const v = new URLSearchParams(location.search).get('patient');
+    return v && PATIENTS.some(p => p.pid === v) ? v : null;
+  } catch(e){ return null; }
+})();
+if(deepPid){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
+
 const S = {
-  route: hasSession() ? 'dashboard' : 'login', pid:'PSEUDO-4471', tab:'lens', pop:null, usermenu:false,
+  route: hasSession() ? (deepPid ? 'patient' : 'dashboard') : 'login',
+  pid: deepPid || 'PSEUDO-4471', tab:'lens', pop:null, usermenu:false,
   selector:false, timer:59*60+52,
   eye:'od', expanded:{od:false,os:false}, refrMode:{od:'manifest',os:'manifest'},
   mode:{od:'TORIC',os:'TORIC'}, edof:{od:false,os:false}, mono:{od:false,os:false},
@@ -2253,7 +2266,8 @@ document.addEventListener('click', e => {
   if(d.npSex){ S.newp.sex = d.npSex; render(); return; }
   if(d.npTg){ S.newp[d.npTg] = !S.newp[d.npTg]; render(); return; }
   if(d.flip){ t.classList.toggle('on'); return; }
-  if(d.go){ if(S.route==='login' && d.go==='dashboard') setSession(true);
+  if(d.go){ if(S.route==='login' && d.go==='dashboard'){ setSession(true);
+        if(deepPid){ S.pid = deepPid; S.tab='lens'; loadFields(); go('patient'); return; } }
             if(d.go==='preop') loadFields();
             if(d.go==='patient-new'){ S.newp = NEW_BLANK(); S.newpTried = false; }
             go(d.go); return; }

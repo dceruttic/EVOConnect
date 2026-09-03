@@ -14,6 +14,18 @@ function renderPtStepper(pt, activeTab){
     { key: 'po6',       label: 'Post-op',          tab: 'postop',  num: 4, sub: '6 mo' },
     { key: 'po12',      label: 'Post-op',          tab: 'postop',  num: 4, sub: '12 mo' },
   ];
+  /* Surgical planner and Surgery are Phase 3 deliverables: while Phase 3 is not
+     active they are not shown in the timeline at all (not merely locked). */
+  const PHASE_HIDDEN_TABS = ['planner', 'surgery'];
+  function _phaseHides(tab){
+    if (PHASE_HIDDEN_TABS.indexOf(tab) < 0) return false;
+    var st = window.PHASE_DEMO;
+    if (!st || !st.enabled || st.showAllPhases) return false;
+    var ph = st.map && st.map['patient-' + tab];
+    return !!ph && ph > st.currentPhase;
+  }
+  const visibleSteps = steps.filter(function(s){ return !_phaseHides(s.tab); });
+
   // Map sub-labels to the milestone codes used by postopVisitData (1mo→1M, etc.)
   const SUB_TO_MS = { '1 mo': '1M', '3 mo': '3M', '6 mo': '6M', '12 mo': '12Y' === '12Y' ? '1Y' : '12M' };
   // Better: explicit map (12 mo == 1Y in our milestone scheme)
@@ -48,7 +60,7 @@ function renderPtStepper(pt, activeTab){
     if (s.num === ptStageNum) return 'active';
     return 'pending';
   }
-  const html = steps.map((s, i) => {
+  const html = visibleSteps.map((s, i) => {
     const st = stateFor(s);
     const isActiveTab = activeTab === s.tab && (!s.sub || (CURRENT_PT_POSTOP_SUB || '1 mo') === s.sub);
     const cls = ['pt-step', st, isActiveTab ? 'is-current-tab' : ''].filter(Boolean).join(' ');
@@ -65,7 +77,7 @@ function renderPtStepper(pt, activeTab){
           ${s.sub ? `<span class="pt-step-sub">${s.sub}</span>` : ''}
         </span>
       </button>
-      ${i < steps.length - 1 ? '<span class="pt-step-link"></span>' : ''}
+      ${i < visibleSteps.length - 1 ? '<span class="pt-step-link"></span>' : ''}
     `;
   }).join('');
   return `<div class="pt-stepper" role="tablist">${html}</div>`;

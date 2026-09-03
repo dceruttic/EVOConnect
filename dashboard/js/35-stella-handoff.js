@@ -53,7 +53,14 @@
     J3: 'Prefer another lens',
     J7: 'Save decision',
     J8: 'Decision recorded in EVO Connect — nothing was sent to STELLA',
-    R1: 'Return to STELLA to confirm the order',
+    R1: 'Order Lens (in Stella)',
+    R5: 'Go back to STELLA',
+    R6: 'Opens STELLA on this same patient. Nothing is sent — STELLA stays the system of record.',
+    V1: 'Cannot order yet — {n} item{s} still missing',
+    V2: 'Record your decision for {eye} first (step 4).',
+    V3: 'Choose the lens size you are ordering.',
+    V4: 'Missing input: {f}',
+    V5: 'Complete the highlighted fields, then order the lens in STELLA.',
     R2: 'Nothing is sent back. In STELLA you enter and confirm the lens yourself.',
     R3: 'You are returning to STELLA · STAAR system of record',
     R4: 'Return without recording your decision?',
@@ -73,7 +80,7 @@
     K12: 'Order confirmed in STELLA',
     K13: 'Returned to the linked case record in EVO Connect · STELLA → EVO Connect',
     K14: 'Post-operative vault and implanted lens — record view, not functional',
-    L1: 'Order the lens in STELLA',
+    L1: 'Order Lens (in Stella)',
     L2: 'STELLA opens with its own case data already loaded. Change it to the lens you decided and confirm there.',
     L3: 'STAAR · STELLA ordering surface — you have left EVO Connect',
     L4: 'Confirm ICL order',
@@ -454,20 +461,80 @@
 
   /* ---------- strip + panel ---------- */
   function stripFacts(rec) { var E = curEye(rec); return fmt(COPY.A2, { caseId: rec.caseId, lat: E, size: rec.stella[E].size }); }
-  function returnCta(compact) {
-    /* once the decision is on record the CTA opens the STELLA ordering surface;
-       before that it is still the plain return link to STELLA. */
-    if (H && H.decisions[curEye(H)]) {
-      var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '">' + esc(COPY.L1) + '</button>');
-      b.addEventListener('click', function () { openOrderModal(H); });
-      return b;
-    }
-    var a = el('<a class="sh-return' + (compact ? ' compact' : '') + '" href="/stella" target="_blank" rel="noopener">' + esc(COPY.R1) + '</a>');
-    a.addEventListener('click', function (e) {
-      if (allowReturn || (H && H.eyes.some(function (E) { return !!H.decisions[E]; }))) return;
-      e.preventDefault(); showReturnPrompt(a);
+  /* ---------- pre-order validation (US-7): nothing opens the STELLA ordering
+     surface until the case is complete enough to be ordered. ---------- */
+  var REQUIRED_INPUTS = [
+    { id: 'sf-rx-man-sph', label: 'Manifest sphere' },
+    { id: 'sf-rx-man-cyl', label: 'Manifest cylinder' },
+    { id: 'sf-rx-man-ax',  label: 'Manifest axis' },
+    { id: 'sf-rx-man-k1',  label: 'K1' },
+    { id: 'sf-rx-man-k2',  label: 'K2' },
+    { id: 'sf-acd',        label: 'ACD' },
+    { id: 'sf-wtw',        label: 'WTW' }
+  ];
+  function orderBlockers(rec) {
+    var E = curEye(rec), d = rec.decisions[E], out = [];
+    if (!d) out.push({ msg: fmt(COPY.V2, { eye: E }), focus: '#shDecision' });
+    else if (!d.plannedLens || !d.plannedLens.size) out.push({ msg: COPY.V3, focus: '#shDecision' });
+    REQUIRED_INPUTS.forEach(function (f) {
+      var i = document.getElementById(f.id);
+      if (!i || String(i.value).trim() === '') out.push({ msg: fmt(COPY.V4, { f: f.label }), id: f.id });
     });
+    return out;
+  }
+  function clearOrderAlert() {
+    document.querySelectorAll('.sh-vald').forEach(function (n) { n.remove(); });
+    document.querySelectorAll('.sh-missing').forEach(function (n) { n.classList.remove('sh-missing'); });
+  }
+  function showOrderAlert(btn, blockers, compact) {
+    clearOrderAlert();
+    blockers.forEach(function (b) {
+      if (!b.id) return;
+      var i = document.getElementById(b.id); if (!i) return;
+      i.classList.add('sh-missing');
+      var cell = i.closest('.sf-rx-cell, .sf-input'); if (cell) cell.classList.add('sh-missing');
+    });
+    var n = blockers.length;
+    var box = el('<div class="sh-vald" role="alert">' +
+      '<div class="sh-vald-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v5"/><path d="M12 17.5h.01"/><path d="M10.3 3.9 1.9 18.4A2 2 0 0 0 3.6 21.4h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>' +
+      esc(fmt(COPY.V1, { n: n, s: n === 1 ? '' : 's' })) + '</div><ul>' +
+      blockers.map(function (b) { return '<li>' + esc(b.msg) + '</li>'; }).join('') +
+      '</ul><div class="sh-vald-f">' + esc(COPY.V5) + '</div></div>');
+    /* the sticky strip is too narrow for a panel — there the alert is the toast
+       plus the scroll to what is missing; the full list lives in the return box. */
+    var host = compact ? document.querySelector('#shReturn .sh-return-cta')
+                       : (btn.closest('.sh-return-cta, .sh-return-body') || btn.parentNode);
+    if (host) host.appendChild(box);
+    var first = blockers[0];
+    var t = first.focus ? document.querySelector(first.focus) : document.getElementById(first.id);
+    if (t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (t.focus) try { t.focus({ preventScroll: true }); } catch (e) {} }
+    toast(fmt(COPY.V1, { n: n, s: n === 1 ? '' : 's' }));
+  }
+  /* every "Order Lens (in Stella)" button goes through here */
+  function orderBtn(compact) {
+    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '">' + esc(COPY.L1) + '</button>');
+    b.addEventListener('click', function () {
+      if (!H) return;
+      var blockers = orderBlockers(H);
+      if (blockers.length) { showOrderAlert(b, blockers, compact); return; }
+      clearOrderAlert();
+      openOrderModal(H);
+    });
+    return b;
+  }
+  /* the single "Go back to STELLA" control — lands on this patient in STELLA */
+  function backToStella() {
+    var href = '/stella' + (H && H.caseId ? '?patient=' + encodeURIComponent(H.caseId) : '');
+    var a = el('<a class="sh-back" href="' + esc(href) + '" title="' + esc(COPY.R6) + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>' +
+      esc(COPY.R5) + '</a>');
     return a;
+  }
+  function returnCta(compact) {
+    /* one CTA, one meaning: it opens the STELLA ordering surface, and it
+       validates the case first. Returning to STELLA without ordering is a
+       separate, single control (backToStella). */
+    return orderBtn(compact);
   }
   function showReturnPrompt(anchor) {
     var old = document.getElementById('shReturnPrompt'); if (old) old.remove();
@@ -768,13 +835,8 @@
       '<img src="' + STELLA_LOGO + '" alt="STELLA"><div class="sh-return-cta"></div>' +
       '<div class="sh-return-cap">' + esc(d ? COPY.L2 : COPY.R2) + '</div></div>';
     var cta = box.querySelector('.sh-return-cta');
-    if (d) {
-      var b = el('<button type="button" class="sh-return">' + esc(COPY.L1) + '</button>');
-      b.addEventListener('click', function () { openOrderModal(rec); });
-      cta.appendChild(b);
-    } else {
-      cta.appendChild(returnCta(false));
-    }
+    cta.appendChild(orderBtn(false));
+    cta.appendChild(backToStella());
   }
 
   /* The closing analytical view the brief asks for: for one case, what went in,

@@ -38,8 +38,8 @@
     // Patient page tabs (within setPatientTab())
     'patient-preop':   1,
     'patient-sizing':  1,
-    'patient-planner': 2,
-    'patient-surgery': 2,
+    'patient-planner': 3,
+    'patient-surgery': 3,
     'patient-postop':  1,
 
     // Sidebar/side features (visible widgets, not nav buttons)
@@ -87,9 +87,13 @@
     try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) {}
     return {
       enabled: !!(saved && saved.enabled),
-      currentPhase: (saved && saved.currentPhase) || 1,
-      showAllPhases: !!(saved && saved.showAllPhases),
-      map: Object.assign({}, DEFAULT_PHASE_MAP, (saved && saved.map) || {}),
+      /* every load starts on Phase 1 with every later phase off — the demo
+         must never open on a phase left selected in an earlier rehearsal. */
+      currentPhase: 1,
+      showAllPhases: false,
+      map: Object.assign({}, DEFAULT_PHASE_MAP, (saved && saved.map) || {}, {
+        'patient-planner': 3, 'patient-surgery': 3
+      }),
     };
   }
   function saveState() {
@@ -125,6 +129,14 @@
 
   function applyPhaseFilter() {
     const st = window.PHASE_DEMO;
+    /* Surgical planner / Surgery are removed from the timeline outside Phase 3,
+       so the stepper has to be rebuilt whenever the phase changes. */
+    try {
+      const wrap = document.querySelector('.pt-stepper');
+      if (wrap && typeof CURRENT_PT !== 'undefined' && CURRENT_PT && typeof renderPtStepper === 'function') {
+        wrap.outerHTML = renderPtStepper(CURRENT_PT, (typeof CURRENT_PT_TAB !== 'undefined' && CURRENT_PT_TAB) || 'preop');
+      }
+    } catch (e) {}
     const enabled = st.enabled;
     const showAll = st.showAllPhases;
     const limit = st.currentPhase;
@@ -235,9 +247,9 @@
     const phase = PROJECT_PHASES[st.currentPhase];
     const showingAll = st.showAllPhases;
     const color = showingAll ? '#5C18AB' : phase.color;
-    const labelText = showingAll
-      ? 'All phases · Full vision · Everything visible'
-      : phase.label + ' · ' + phase.duration + ' · ' + phase.price;
+    /* the phase selector shows the phase only — no scope description,
+       no duration, no price (commercial detail stays out of the demo). */
+    const labelText = showingAll ? 'All phases' : '';
     const nameText = showingAll ? 'All Phases' : phase.name;
 
     const html = `
@@ -257,13 +269,12 @@
             return `<button type="button" onclick="PhaseDemo.setPhase(${num})">
               <span class="pd-bq-bar" style="background:${p.color}"></span>
               <span class="pd-bq-nm">${p.name}</span>
-              <span class="pd-bq-meta">${p.duration} · ${p.price}</span>
+
             </button>`;
           }).join('')}
           <button type="button" onclick="PhaseDemo.setShowAll()">
             <span class="pd-bq-bar" style="background:linear-gradient(180deg,#5C18AB,#0080C7,#08B1C2,#03B496,#F6BF2C)"></span>
             <span class="pd-bq-nm">All Phases</span>
-            <span class="pd-bq-meta">Full vision</span>
           </button>
         </div>
       </div>
@@ -319,7 +330,6 @@
             <span class="pd-pill-head">
               <span class="pd-pill-name">${p.name}</span>
             </span>
-            <span class="pd-pill-label">${p.label}</span>
           </span>
           <span class="pd-pill-check" style="background:${p.color}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>

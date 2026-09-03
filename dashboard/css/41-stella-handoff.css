@@ -403,3 +403,21 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
 .sh-lockrow.off .sh-knob { transform: none; }
 .sh-lockrow.off .sh-lock-lbl { color: #5A6478; }
 .sh-lockrow { cursor: default; }
+
+/* === pre-order validation + single "Go back to STELLA" control === */
+.sh-vald { flex-basis: 100%; margin-top: 10px; background: #FFF4F4; border: 1px solid #F3B4B4;
+  border-radius: 9px; padding: 10px 12px; color: #7A1F1F; text-align: left; max-width: 460px; }
+.sh-vald-h { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; }
+.sh-vald-h svg { width: 15px; height: 15px; flex-shrink: 0; color: #C0392B; }
+.sh-vald ul { margin: 7px 0 0; padding-left: 26px; }
+.sh-vald li { font-size: 11.8px; line-height: 1.55; }
+.sh-vald-f { margin-top: 7px; font-size: 11.3px; color: #96504C; }
+.sh-missing { border-color: #E05B5B !important; background: #FFF7F7 !important; }
+input.sh-missing { box-shadow: 0 0 0 3px rgba(224,91,91,.14); }
+
+.sh-back { display: inline-flex; align-items: center; gap: 7px; margin-left: 12px;
+  padding: 9px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,.42);
+  background: transparent; color: #fff; font-size: 12.5px; font-weight: 600;
+  text-decoration: none; transition: background .15s, border-color .15s; }
+.sh-back svg { width: 14px; height: 14px; }
+.sh-back:hover { background: rgba(255,255,255,.14); border-color: #fff; }

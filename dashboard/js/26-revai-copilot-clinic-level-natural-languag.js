@@ -749,6 +749,7 @@ function renderModule(key) {
   document.querySelectorAll("#usNav button").forEach(b => {
     b.classList.toggle("active", b.dataset.mod === key);
   });
+  if (key === "patients" && typeof _restorePatientsView === "function") _restorePatientsView();
 }
 
 document.getElementById("usNav").addEventListener("click", (e) => {

@@ -1,6 +1,46 @@
 /* ================================================================
-   PATIENT PORTRAIT (stylized SVG avatars — no network)
+   PATIENT PORTRAIT
+   ----------------------------------------------------------------
+   Two layers. A stylized SVG avatar is always drawn, and a real
+   photograph is layered on top when one exists for that patient.
+
+   To give a patient a photo, drop an image at
+       /assets/patients/<patient id>.jpg      e.g. 2126-0418.jpg
+   or register it explicitly:
+       PATIENT_PHOTOS['2126-0418'] = '/assets/patients/herrera.jpg';
+
+   A missing or broken file simply falls back to the avatar, so the
+   registry never shows a hole. Use portrait photography of people who
+   consented to it, or synthetic/licensed stock — these records are
+   labelled synthetic and must not be tied to a real person's face.
 ================================================================ */
+window.PATIENT_PHOTOS = window.PATIENT_PHOTOS || {};
+window.PATIENT_PHOTO_DIR = window.PATIENT_PHOTO_DIR || '/assets/patients/';
+window.PATIENT_PHOTO_EXT = window.PATIENT_PHOTO_EXT || 'jpg';
+
+function patientPhotoUrl(pt) {
+  if (!pt) return null;
+  if (PATIENT_PHOTOS[pt.id]) return PATIENT_PHOTOS[pt.id];
+  if (pt.photo) return pt.photo;
+  if (!PATIENT_PHOTO_DIR) return null;
+  return PATIENT_PHOTO_DIR + encodeURIComponent(pt.id) + '.' + PATIENT_PHOTO_EXT;
+}
+
+/* The avatar used everywhere a patient appears. */
+function patientAvatar(pt) {
+  var svg = portraitSvg(pt && pt.portrait);
+  var url = patientPhotoUrl(pt);
+  if (!url) return svg;
+  var alt = pt && pt.name ? String(pt.name).replace(/"/g, '&quot;') : 'Patient';
+  return '<span class="pt-avatar-wrap">'
+    + '<span class="pt-avatar-fb">' + svg + '</span>'
+    + '<img class="pt-avatar-img" src="' + url + '" alt="' + alt + '" loading="lazy"'
+    + ' onload="this.parentNode.classList.add(\'has-photo\')"'
+    + ' onerror="this.remove()">'
+    + '</span>';
+}
+
+
 function portraitSvg(cfg) {
   cfg = cfg || {};
   const bg    = cfg.bg    || "#EDE4F3";

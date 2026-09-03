@@ -147,7 +147,7 @@ function renderPatientTrello() {
       return `
         <div class="trello-card ${rCls}" onclick="openPatientFile('${pt.id}')" tabindex="0">
           <div class="tc-top">
-            <div class="pt-av-xs">${portraitSvg(pt.portrait)}</div>
+            <div class="pt-av-xs">${patientAvatar(pt)}</div>
             <div class="tc-nm" title="${pt.name}">${pt.name}</div>
           </div>
           <div class="tc-id">REV-${pt.id} · ${pt.age}y ${pt.sex}</div>

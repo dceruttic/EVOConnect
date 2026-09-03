@@ -259,7 +259,7 @@ function renderPatientPage(pt) {
       </div>
 
       <div class="pt-page-header">
-        <div class="pt-ph-av">${portraitSvg(pt.portrait)}</div>
+        <div class="pt-ph-av">${patientAvatar(pt)}</div>
         <div class="pt-ph-info">
           <h1>${pt.name}</h1>
           <div class="pt-ph-sub">REV-${pt.id} · ${pt.age}y · ${pt.sex} · eye ${pt.eye} · ${pt.power} D</div>

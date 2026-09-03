@@ -93,6 +93,7 @@ function renderPatients() {
 
   // Patient cards
   const cardsHtml = list.map(pt => _patientListCard(pt)).join("");
+  const rowsHtml  = list.map(pt => _patientListRow(pt)).join("");
 
   return `
     <div class="pt-list-hero">
@@ -117,6 +118,16 @@ function renderPatients() {
 
     <div class="pt-list-filterbar">
       <div class="pt-chips-row">${chipsHtml}</div>
+      <div class="pt-viewtoggle" role="group" aria-label="View">
+        <button type="button" class="ptv active" data-view="tiles" onclick="setPatientsView('tiles')" title="Tile view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          Tiles
+        </button>
+        <button type="button" class="ptv" data-view="table" onclick="setPatientsView('table')" title="Table view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          Table
+        </button>
+      </div>
       <div class="pt-sort">
         <label>Sort:</label>
         <select onchange="sortPatients(this.value)">
@@ -129,6 +140,18 @@ function renderPatients() {
     </div>
 
     <div class="pt-list-grid" id="patientsListGrid">${cardsHtml}</div>
+
+    <div class="pt-list-table-wrap" id="patientsListTable" hidden>
+      <table class="pt-table">
+        <thead>
+          <tr>
+            <th class="c-pt">Patient</th><th>Stage</th><th>Eye</th><th class="c-num">Power</th>
+            <th>Lens</th><th>Risk</th><th>Journey</th><th>Next action</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="patientsTableBody">${rowsHtml}</tbody>
+      </table>
+    </div>
 
     <div class="pt-list-footer">
       <div class="pt-list-powered">
@@ -161,7 +184,7 @@ function _patientListCard(pt) {
   return `
     <button class="pt-card ${cfg.cls}" data-patient-id="${pt.id}" data-stage="${pt.stage}" data-risk="${pt.risk ? pt.risk.level : 'none'}" data-search="${searchStr}" onclick="openPatientFile('${pt.id}')">
       <div class="pt-card-top" style="background: linear-gradient(135deg, ${cfg.color}18, ${cfg.color}05)">
-        <div class="pt-card-avatar">${portraitSvg(pt.portrait)}</div>
+        <div class="pt-card-avatar">${patientAvatar(pt)}</div>
         <div class="pt-card-head-info">
           <div class="pt-card-name">${pt.name}</div>
           <div class="pt-card-meta">REV-${pt.id} · ${pt.age}y · ${pt.sex}</div>
@@ -214,9 +237,61 @@ function _patientListCard(pt) {
   `;
 }
 
+/* Table view of the same registry — same data attributes as the tiles, so the
+   stage chips, the search box and the sort control drive both. */
+function _patientListRow(pt) {
+  const cfg = PATIENT_STAGE_CFG[pt.stage] || PATIENT_STAGE_CFG["Consult"];
+  const progress = PATIENT_STAGE_PROGRESS[pt.stage] || 10;
+  const next = _patientNextAction(pt);
+  const lens = pt.iclGuru ? ((pt.iclGuru.sizing.find(s => s.selected) || {}).size || '—') + ' mm' : '—';
+  const risk = pt.risk
+    ? `<span class="pt-trisk risk-${pt.risk.level}">${pt.risk.level.toUpperCase()} · ${pt.risk.score}</span>`
+    : `<span class="pt-trisk safe">No flags</span>`;
+  const searchStr = `${pt.name} ${pt.id} ${pt.power} ${pt.eye} ${pt.stage}`.toLowerCase();
+  return `
+    <tr class="pt-row" data-patient-id="${pt.id}" data-stage="${pt.stage}" data-risk="${pt.risk ? pt.risk.level : 'none'}" data-search="${searchStr}" onclick="openPatientFile('${pt.id}')" tabindex="0">
+      <td class="c-pt">
+        <span class="pt-trow-av">${patientAvatar(pt)}</span>
+        <span class="pt-trow-id"><b>${pt.name}</b><em>REV-${pt.id} · ${pt.age}y · ${pt.sex}</em></span>
+      </td>
+      <td><span class="pt-tstage" style="background:${cfg.color}">${cfg.label}</span></td>
+      <td>${pt.eye}</td>
+      <td class="c-num mono">${pt.power} D</td>
+      <td>${lens}</td>
+      <td>${risk}</td>
+      <td class="c-prog">
+        <span class="pt-tbar"><i style="width:${progress}%;background:${cfg.color}"></i></span>
+        <em>${progress}%</em>
+      </td>
+            <td class="c-next">${next ? `<b>${next.date}</b> ${next.action}` : "—"}</td>
+      <td class="c-go">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </td>
+    </tr>`;
+}
+
+var PATIENTS_VIEW = 'tiles';
+function setPatientsView(view) {
+  PATIENTS_VIEW = view === 'table' ? 'table' : 'tiles';
+  try { localStorage.setItem('evo_patients_view', PATIENTS_VIEW); } catch (e) {}
+  const grid  = document.getElementById('patientsListGrid');
+  const table = document.getElementById('patientsListTable');
+  if (grid)  grid.hidden  = PATIENTS_VIEW !== 'tiles';
+  if (table) table.hidden = PATIENTS_VIEW !== 'table';
+  document.querySelectorAll('.pt-viewtoggle .ptv').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === PATIENTS_VIEW);
+  });
+}
+/* restore the last view once the registry is on screen */
+function _restorePatientsView() {
+  var v = 'tiles';
+  try { v = localStorage.getItem('evo_patients_view') || 'tiles'; } catch (e) {}
+  if (document.getElementById('patientsListGrid')) setPatientsView(v);
+}
+
 function filterPatients(stage) {
   document.querySelectorAll('.pt-chip').forEach(c => c.classList.toggle('active', c.getAttribute('data-stage') === stage));
-  document.querySelectorAll('.pt-card').forEach(c => {
+  document.querySelectorAll('.pt-card, .pt-row').forEach(c => {
     const ptStage = c.getAttribute('data-stage');
     const risk = c.getAttribute('data-risk');
     let show = true;
@@ -230,7 +305,7 @@ function filterPatients(stage) {
 
 function searchPatients(query) {
   const q = (query || '').toLowerCase().trim();
-  document.querySelectorAll('.pt-card').forEach(c => {
+  document.querySelectorAll('.pt-card, .pt-row').forEach(c => {
     const hay = c.getAttribute('data-search') || '';
     c.style.display = (q === '' || hay.includes(q)) ? '' : 'none';
   });
@@ -238,22 +313,22 @@ function searchPatients(query) {
 
 function sortPatients(mode) {
   const grid = document.getElementById('patientsListGrid');
-  if (!grid) return;
-  const cards = Array.from(grid.querySelectorAll('.pt-card'));
+  const body = document.getElementById('patientsTableBody');
+  if (!grid && !body) return;
   const stageOrder = { "Consult": 0, "Biometry": 1, "Eligibility": 2, "Sizing": 3, "Scheduled": 4, "Post-op": 5 };
   const riskOrder  = { "high": 0, "med": 1, "low": 2, "none": 3 };
-  cards.sort((a, b) => {
+  const byId = {};
+  (DATA.patients || []).forEach(p => { byId[p.id] = p; });
+  const cmp = (a, b) => {
+    const pa = byId[a.getAttribute('data-patient-id')] || {}, pb = byId[b.getAttribute('data-patient-id')] || {};
     if (mode === 'stage') return (stageOrder[a.getAttribute('data-stage')] ?? 99) - (stageOrder[b.getAttribute('data-stage')] ?? 99);
     if (mode === 'risk')  return (riskOrder[a.getAttribute('data-risk')] ?? 99) - (riskOrder[b.getAttribute('data-risk')] ?? 99);
-    if (mode === 'name')  return (a.querySelector('.pt-card-name')?.textContent || '').localeCompare(b.querySelector('.pt-card-name')?.textContent || '');
-    if (mode === 'age') {
-      const aa = parseInt((a.querySelector('.pt-card-meta')?.textContent || '').match(/(\d+)y/)?.[1] || '0');
-      const bb = parseInt((b.querySelector('.pt-card-meta')?.textContent || '').match(/(\d+)y/)?.[1] || '0');
-      return aa - bb;
-    }
+    if (mode === 'name')  return String(pa.name || '').localeCompare(String(pb.name || ''));
+    if (mode === 'age')   return (pa.age || 0) - (pb.age || 0);
     return 0;
-  });
-  cards.forEach(c => grid.appendChild(c));
+  };
+  if (grid) Array.from(grid.querySelectorAll('.pt-card')).sort(cmp).forEach(c => grid.appendChild(c));
+  if (body) Array.from(body.querySelectorAll('.pt-row')).sort(cmp).forEach(r => body.appendChild(r));
 }
 
 function renderEvoCredits() {

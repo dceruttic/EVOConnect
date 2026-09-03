@@ -26,7 +26,7 @@ function renderPreop() {
     <tr class="clickable" onclick="openPatientFile('${pt.id}')">
       <td>
         <div class="patient-cell">
-          <div class="pt-av-sm">${portraitSvg(pt.portrait)}</div>
+          <div class="pt-av-sm">${patientAvatar(pt)}</div>
           <div><b>${pt.name}</b><div class="subtle">REV-${pt.id}</div></div>
         </div>
       </td>
@@ -52,7 +52,7 @@ function renderPreop() {
   const sevLabel = { high: "High risk", med: "Medium risk", low: "Low risk" };
   const riskCasesHtml = riskPatients.map(pt => `
     <div class="risk-case ${pt.risk.level}">
-      <div class="pt-av">${portraitSvg(pt.portrait)}</div>
+      <div class="pt-av">${patientAvatar(pt)}</div>
       <div class="pt-info">
         <div class="nm">${pt.name} <span class="meta">${pt.age}y · ${pt.eye} · ${pt.power} D · REV-${pt.id}</span></div>
         <div class="flag">${pt.risk.flag}</div>

@@ -971,12 +971,12 @@
     };
   }
   /* ---------- transfer layer: the STAAR integration zone ----------
-     The order is created in STELLA, not in EVO Connect. Opening the modal
-     straight away hid that boundary. This step stands in for it: a full
-     takeover, in STAAR's own chrome, that shows what crossed, what STAAR
-     checks on its side of the line, and what it hands to STELLA. EVO Connect
-     is completely covered while it runs — that isolation is the message. */
-  var XFER_STEP = 420, XFER_TAIL = 900;
+     The order is created in STELLA, not in EVO Connect. This modal stands for
+     that boundary: it shows what crossed, walks through the controls STAAR runs
+     on its own side, and ends by handing a draft to STELLA. It runs for about
+     seven seconds, so it is paced — the case travels along the rail, each
+     control resolves in turn — and it can always be skipped. */
+  var XFER_T0 = 1150, XFER_STEP = 1200, XFER_TAIL = 950;
 
   function _xEsc(v) { return esc(v == null ? '' : String(v)); }
   function _xChip(k, v, hi) {
@@ -1008,19 +1008,27 @@
     Object.keys(I).forEach(function (k) {
       var e = I[k]; if (e && e.device && dev.indexOf(e.device) < 0) dev.push(e.device);
     });
-    if (!dev.length && method) {
-      var m = CATALOG_META[d && d.influencingMethod];
+    if (!dev.length && d) {
+      var m = CATALOG_META[d.influencingMethod];
       if (m && m.device && m.device !== '—') dev.push(m.device);
     }
     return {
       eye: E, caseId: rec.caseId,
       lens: size ? size + ' mm' + (R.model ? ' · ' + R.model : '') : null,
-      power: power, acd: val('acd'), wtw: val('ww'),
-      ata: val('ata'), sts: val('sts'),
+      power: power, acd: val('acd'), wtw: val('ww'), ata: val('ata'), sts: val('sts'),
       k: I.k1 && I.k2 ? I.k1.v + ' / ' + I.k2.v + ' D' : val('kmean'),
-      kLabel: (I.k1 && I.k2) ? 'K1 / K2' : 'K MEAN',
+      kLabel: (I.k1 && I.k2) ? 'K1 / K2' : 'K mean',
       method: method, reason: reason, source: dev.length ? dev.join(' · ') : null
     };
+  }
+  function _xNode(cls, label, logo) {
+    return '<div class="shx-node ' + cls + '">' +
+      (logo ? '<img src="' + logo + '" alt="">' : '<span class="shx-shield">' + _xShield() + '</span>') +
+      '<b>' + _xEsc(label) + '</b></div>';
+  }
+  function _xShield() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M12 3l7 3v6c0 4.2-2.9 7.9-7 9-4.1-1.1-7-4.8-7-9V6z"/><polyline points="9 12 11 14 15 10"/></svg>';
   }
 
   function stellaTransfer(rec, done) {
@@ -1028,50 +1036,59 @@
     try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
     var f = _xFacts(rec);
     var chips = [
-      _xChip('CASE', f.caseId), _xChip('EYE', f.eye),
-      _xChip('SELECTED LENS', f.lens, true), _xChip('POWER', f.power, true),
+      _xChip('Case', f.caseId), _xChip('Eye', f.eye),
+      _xChip('Lens', f.lens, true), _xChip('Power', f.power, true),
       _xChip('ACD', f.acd), _xChip('WTW', f.wtw), _xChip('ATA', f.ata), _xChip('STS', f.sts),
-      _xChip(f.kLabel, f.k),
-      _xChip('METHOD', f.method), _xChip('REASON', f.reason), _xChip('SOURCE', f.source)
+      _xChip(f.kLabel, f.k), _xChip('Method', f.method), _xChip('Reason', f.reason),
+      _xChip('Source', f.source)
     ].filter(Boolean);
     var n = chips.length;
     var corr = _xCorr(String(f.caseId) + f.eye);
     var key = String(f.caseId).replace(/[^0-9]/g, '').slice(-4) + '-' + f.eye + '-01';
 
     var CHECKS = [
-      ['Schema validation', 'Interface contract v1.2 · field whitelist · unknown keys rejected, never ignored', 'v1.2 · ' + n + '/' + n + ' fields'],
-      ['Clinical range checks', 'ACD ∈ [2.50–4.50] mm · WTW ∈ [10.0–13.5] mm · size ∈ {12.1, 12.6, 13.2, 13.7}', 'all within range'],
-      ['Laterality & idempotency', f.eye + ' enumerated, never inferred · one key per eye · a repeat submit creates nothing', 'key ' + key],
-      ['Transaction log', 'Append-only, integrity-protected · correlation ID joins the three records', corr]
+      ['Schema validation', 'Interface contract · field whitelist · unknown keys rejected', 'v1.2 · ' + n + '/' + n + ' fields'],
+      ['Clinical range checks', 'ACD, WTW and lens length inside STAAR’s accepted ranges', 'all within range'],
+      ['Laterality & idempotency', f.eye + ' enumerated, never inferred · a repeat submit creates nothing', 'key ' + key],
+      ['Transaction log', 'Append-only · one correlation ID joins the records', corr]
     ];
+    var TOTAL = XFER_T0 + CHECKS.length * XFER_STEP + XFER_TAIL;
 
-    var v = el('<div class="shx' + (reduce ? ' still' : '') + '" role="dialog" aria-modal="true" aria-label="STAAR integration layer">' +
-      '<div class="shx-panel">' +
+    var v = el('<div class="shx" role="dialog" aria-modal="true" aria-labelledby="shxTtl">' +
+      '<div class="shx-card">' +
+        '<div class="shx-prog"><i style="animation-duration:' + TOTAL + 'ms"></i></div>' +
         '<header class="shx-head">' +
-          '<div class="shx-brand"><b>STAAR</b> <span>integration layer</span></div>' +
-          '<div class="shx-meta">Owned by STAAR · validated under STAAR’s QMS</div>' +
-          '<div class="shx-zone">no REVAI component inside this zone</div>' +
+          '<div class="shx-ttl" id="shxTtl"><b>STAAR</b> integration layer</div>' +
+          '<div class="shx-sub">Owned by STAAR · validated under STAAR’s QMS</div>' +
+          '<div class="shx-zone">No REVAI code runs in this zone</div>' +
         '</header>' +
+        '<div class="shx-rail" aria-hidden="true">' +
+          '<div class="shx-track"><i class="shx-packet"></i></div>' +
+          _xNode('a', 'EVO Connect', EVO_LOGO) + _xNode('b', 'STAAR', null) + _xNode('c', 'STELLA', STELLA_LOGO) +
+        '</div>' +
         '<section class="shx-sec">' +
-          '<h3 class="shx-rule"><span>Received from REVAI</span></h3>' +
+          '<h3 class="shx-lbl">Handed over</h3>' +
           '<div class="shx-chips">' + chips.join('') + '</div>' +
         '</section>' +
         '<section class="shx-sec">' +
-          '<h3 class="shx-rule"><span>Controls that live here, not in REVAI</span></h3>' +
+          '<h3 class="shx-lbl">Controls that live here, not in REVAI</h3>' +
           '<ol class="shx-checks">' + CHECKS.map(function (c, i) {
             return '<li class="shx-check" data-i="' + i + '">' +
-              '<span class="shx-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
+              '<span class="shx-dot" aria-hidden="true">' +
+                '<svg class="shx-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+              '</span>' +
               '<span class="shx-ctxt"><b>' + _xEsc(c[0]) + '</b><i>' + _xEsc(c[1]) + '</i></span>' +
               '<span class="shx-cval">' + _xEsc(c[2]) + '</span></li>';
           }).join('') + '</ol>' +
         '</section>' +
-        '<footer class="shx-out"><span class="shx-out-lbl">Handed to STELLA</span>' +
-          '<b class="shx-out-val">Draft order · awaiting the surgeon’s confirmation</b>' +
-          '<span class="shx-out-corr">correlation ' + _xEsc(corr) + '</span></footer>' +
+        '<footer class="shx-foot">' +
+          '<div class="shx-out"><span class="shx-out-lbl">Handed to STELLA</span>' +
+            '<b class="shx-out-val">Draft order · awaiting the surgeon’s confirmation</b>' +
+            '<span class="shx-out-corr">correlation ' + _xEsc(corr) + '</span></div>' +
+          '<button type="button" class="shx-skip">Skip</button>' +
+        '</footer>' +
       '</div></div>');
     document.body.appendChild(v);
-    /* nothing from EVO Connect shows through while the zone is up — a stray
-       toast would contradict the one claim this screen makes */
     document.body.classList.add('shx-open');
 
     var timers = [], finished = false;
@@ -1085,21 +1102,28 @@
     }
     function onKey(e) { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); finish(); } }
     document.addEventListener('keydown', onKey, true);
-    v.addEventListener('click', finish);
+    v.addEventListener('click', function (e) { if (e.target === v || e.target.closest('.shx-skip')) finish(); });
 
     if (reduce) {
-      v.classList.add('done');
-      timers.push(setTimeout(finish, 700));
-    } else {
-      CHECKS.forEach(function (_, i) {
-        timers.push(setTimeout(function () {
-          var li = v.querySelector('.shx-check[data-i="' + i + '"]');
-          if (li) li.classList.add('on');
-        }, 260 + i * XFER_STEP));
-      });
-      timers.push(setTimeout(function () { v.classList.add('done'); }, 260 + CHECKS.length * XFER_STEP));
-      timers.push(setTimeout(finish, 260 + CHECKS.length * XFER_STEP + XFER_TAIL));
+      v.classList.add('at-staar', 'at-stella', 'done');
+      v.querySelectorAll('.shx-check').forEach(function (li) { li.classList.add('on'); });
+      timers.push(setTimeout(finish, 900));
+      return;
     }
+    timers.push(setTimeout(function () { v.classList.add('at-staar'); }, 240));
+    CHECKS.forEach(function (_, i) {
+      var t = XFER_T0 + i * XFER_STEP;
+      timers.push(setTimeout(function () {
+        var li = v.querySelector('.shx-check[data-i="' + i + '"]'); if (li) li.classList.add('run');
+      }, t));
+      timers.push(setTimeout(function () {
+        var li = v.querySelector('.shx-check[data-i="' + i + '"]');
+        if (li) { li.classList.remove('run'); li.classList.add('on'); }
+      }, t + XFER_STEP - 340));
+    });
+    timers.push(setTimeout(function () { v.classList.add('at-stella', 'done'); },
+      XFER_T0 + CHECKS.length * XFER_STEP - 120));
+    timers.push(setTimeout(finish, TOTAL));
   }
 
   function openOrderModal(rec) {

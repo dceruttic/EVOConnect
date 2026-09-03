@@ -670,134 +670,180 @@ body{padding-bottom:26px}
 }
 
 /* ================= transfer layer · STAAR integration zone =================
-   A full takeover in STAAR's own chrome: while it runs, no EVO Connect pixel
-   is visible, which is precisely the point being made. Monospace for the
-   machine-side labels, the product typeface for what a person reads. */
+   A modal, not a takeover: EVO Connect stays visible behind the scrim so the
+   surgeon keeps their place, while the panel itself is unmistakably STAAR's.
+   It runs for ~7s, so everything in it moves with purpose — the case travels
+   the rail, each control resolves in turn, a progress line tracks the whole
+   thing, and Skip is always there. */
 .shx {
   position: fixed; inset: 0; z-index: 9998;
-  display: flex; align-items: center; justify-content: center;
-  padding: max(16px, 3vh) 16px;
-  background: #05070C;
-  animation: shxIn .22s ease-out both;
-  overflow: auto;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(8, 20, 40, .55); backdrop-filter: blur(3px);
+  animation: shxIn .2s ease-out both;
 }
 .shx.out { animation: shxOut .2s ease-in both; }
 @keyframes shxIn  { from { opacity: 0 } to { opacity: 1 } }
 @keyframes shxOut { from { opacity: 1 } to { opacity: 0 } }
 
-.shx-panel {
-  width: min(820px, 100%); margin: auto;
-  --shx-ink: #E8EEF7; --shx-dim: #7C8AA0; --shx-line: #1B2431;
-  --shx-accent: #4FD1C5; --shx-ok: #34D399;
-  background: #0B111B; color: var(--shx-ink);
-  border: 1px solid var(--shx-line); border-radius: 16px;
-  padding: 26px 28px 22px;
-  box-shadow: 0 40px 90px rgba(0,0,0,.6);
-  animation: shxRise .32s cubic-bezier(.22,1,.36,1) both;
+.shx-card {
+  position: relative; overflow: hidden;
+  width: min(600px, 100%); max-height: min(92vh, 780px); overflow-y: auto;
+  background: #fff; border-radius: 16px;
+  box-shadow: 0 30px 80px rgba(6, 16, 36, .42);
+  padding: 22px 24px 16px;
+  animation: shxRise .3s cubic-bezier(.22, 1, .36, 1) both;
+  --shx-ink: #0F2440; --shx-dim: #6B7A93; --shx-line: #E4EBF4;
+  --shx-accent: #0080C7; --shx-ok: #15803D;
+  color: var(--shx-ink);
 }
-@keyframes shxRise { from { transform: translateY(12px) scale(.99); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes shxRise { from { transform: translateY(12px) scale(.985); opacity: 0 } to { transform: none; opacity: 1 } }
 
-.shx-head { display: grid; grid-template-columns: auto 1fr; align-items: baseline; column-gap: 14px; row-gap: 8px; }
-.shx-brand { font-size: 21px; letter-spacing: -.02em; }
-.shx-brand b { font-weight: 800; }
-.shx-brand span { color: var(--shx-accent); font-weight: 500; }
-.shx-meta {
-  font: 600 10.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--shx-dim);
-}
+/* progress line across the whole step */
+.shx-prog { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #EDF2F9; }
+.shx-prog i { display: block; height: 100%; width: 0; background: var(--shx-accent); animation: shxProg linear both; }
+@keyframes shxProg { from { width: 0 } to { width: 100% } }
+
+.shx-head { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 4px 12px; }
+.shx-ttl { font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+.shx-ttl b { font-weight: 800; }
+.shx-sub { grid-column: 1; font-size: 11.5px; color: var(--shx-dim); }
 .shx-zone {
-  grid-column: 1 / -1; justify-self: end;
-  font: 500 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--shx-dim); border: 1px dashed #2A3548; border-radius: 6px; padding: 6px 10px;
+  grid-column: 2; grid-row: 1 / span 2; align-self: center;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: #35507A; background: #EEF4FC; border: 1px solid #D9E5F5; border-radius: 999px;
+  padding: 6px 11px; white-space: nowrap;
 }
 
-.shx-sec { margin-top: 20px; }
-.shx-rule { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
-.shx-rule span {
-  font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--shx-dim); white-space: nowrap;
+/* the case travelling from EVO Connect through STAAR into STELLA */
+.shx-rail {
+  position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
+  align-items: end; margin: 18px 0 4px; padding: 0 4px;
 }
-.shx-rule::after { content: ''; flex: 1; height: 1px; background: var(--shx-line); }
+.shx-track {
+  position: absolute; left: 16%; right: 16%; top: 21px; height: 2px;
+  background: #E4EBF4; border-radius: 2px;
+}
+.shx-packet {
+  position: absolute; top: 50%; left: 0; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%; background: var(--shx-accent);
+  box-shadow: 0 0 0 4px rgba(0, 128, 199, .16);
+  transition: left .85s cubic-bezier(.65, 0, .35, 1), background .3s ease, box-shadow .3s ease;
+}
+.shx.at-staar  .shx-packet { left: 50%; }
+.shx.at-stella .shx-packet { left: 100%; background: var(--shx-ok); box-shadow: 0 0 0 4px rgba(21, 128, 61, .16); }
+.shx-node { display: grid; justify-items: center; gap: 7px; }
+.shx-node img, .shx-node .shx-shield {
+  width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+  border: 1px solid var(--shx-line); background: #fff; object-fit: cover; overflow: hidden;
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease;
+}
+.shx-node .shx-shield { color: var(--shx-dim); background: #F6F9FD; }
+.shx-node .shx-shield svg { width: 22px; height: 22px; }
+.shx-node.c img { background: #001E60; border-color: #001E60; object-fit: contain; padding: 8px; }
+.shx-node b { font-size: 11px; font-weight: 700; color: var(--shx-dim); letter-spacing: .01em; }
+.shx.at-staar .shx-node.b .shx-shield {
+  color: var(--shx-accent); border-color: var(--shx-accent);
+  box-shadow: 0 0 0 3px rgba(0, 128, 199, .12); transform: translateY(-1px);
+}
+.shx.at-staar .shx-node.b b { color: var(--shx-accent); }
+.shx.at-stella .shx-node.b .shx-shield { color: var(--shx-ok); border-color: var(--shx-ok); box-shadow: none; }
+.shx.at-stella .shx-node.b b { color: var(--shx-ok); }
+.shx.at-stella .shx-node.c img { box-shadow: 0 0 0 3px rgba(21, 128, 61, .18); }
+.shx.at-stella .shx-node.c b { color: var(--shx-ok); }
 
-.shx-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.shx-sec { margin-top: 16px; }
+.shx-lbl {
+  margin: 0 0 8px; font-size: 10.5px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--shx-dim);
+}
+.shx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .shx-chip {
-  display: inline-flex; align-items: baseline; gap: 8px;
-  background: #111927; border: 1px solid var(--shx-line); border-radius: 8px; padding: 7px 11px;
+  display: inline-flex; align-items: baseline; gap: 6px;
+  background: #F6F9FD; border: 1px solid var(--shx-line); border-radius: 7px; padding: 5px 9px;
 }
-.shx-chip span {
-  font: 500 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--shx-dim);
-}
-.shx-chip b { font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--shx-ink); }
-.shx-chip.hi { border-color: rgba(79,209,197,.5); background: rgba(79,209,197,.07); }
-.shx-chip.hi b { color: #A9F0E8; }
+.shx-chip span { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--shx-dim); }
+.shx-chip b { font-size: 12.5px; font-weight: 700; }
+.shx-chip.hi { border-color: #BEDCF5; background: #EEF6FD; }
+.shx-chip.hi b { color: var(--shx-accent); }
 
 .shx-checks { list-style: none; margin: 0; padding: 0; border: 1px solid var(--shx-line); border-radius: 12px; overflow: hidden; }
 .shx-check {
-  display: grid; grid-template-columns: 26px minmax(0,1fr) auto; align-items: start;
-  column-gap: 13px; row-gap: 4px; padding: 13px 15px;
-  border-top: 1px solid var(--shx-line); background: #0D1521;
+  position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: start; column-gap: 11px; padding: 11px 13px;
+  border-top: 1px solid var(--shx-line); background: #fff;
+  transition: background .3s ease;
 }
 .shx-check:first-child { border-top: 0; }
+.shx-check.run { background: #F7FBFF; }
+/* the row being checked sweeps once, so a 7s step never looks frozen */
+.shx-check.run::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(0,128,199,0) 0%, rgba(0,128,199,.09) 50%, rgba(0,128,199,0) 100%);
+  animation: shxSweep .95s ease-in-out infinite;
+}
+@keyframes shxSweep { from { transform: translateX(-100%) } to { transform: translateX(100%) } }
 .shx-ctxt { min-width: 0; }
-.shx-ctxt b { display: block; font-size: 13.5px; font-weight: 700; color: #C2CEDD; }
-.shx-ctxt i {
-  display: block; margin-top: 3px; font-style: normal;
-  font: 400 11.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: #63718A;
-}
+.shx-ctxt b { display: block; font-size: 13px; font-weight: 700; color: #64748B; transition: color .3s ease; }
+.shx-ctxt i { display: block; margin-top: 2px; font-style: normal; font-size: 11.5px; line-height: 1.45; color: #94A3B8; }
+.shx-check.run .shx-ctxt b, .shx-check.on .shx-ctxt b { color: var(--shx-ink); }
 .shx-cval {
-  font: 500 11.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--shx-ok); opacity: 0; transform: translateX(-4px);
-  transition: opacity .28s ease, transform .28s ease; white-space: nowrap;
+  font-size: 11.5px; font-weight: 700; color: var(--shx-ok); white-space: nowrap;
+  opacity: 0; transform: translateX(-4px); transition: opacity .3s ease, transform .3s ease;
 }
-.shx-dot {
-  width: 22px; height: 22px; margin-top: 1px; border-radius: 50%;
-  display: grid; place-items: center;
-  border: 1.5px solid #2A3548; background: transparent; color: #06120C;
-  transition: background .22s ease, border-color .22s ease, transform .22s cubic-bezier(.22,1.4,.5,1);
-}
-.shx-dot svg { width: 12px; height: 12px; opacity: 0; transition: opacity .2s ease .06s; }
-.shx-check.on .shx-dot { background: var(--shx-ok); border-color: var(--shx-ok); transform: scale(1.06); }
-.shx-check.on .shx-dot svg { opacity: 1; }
 .shx-check.on .shx-cval { opacity: 1; transform: none; }
-.shx-check.on .shx-ctxt b { color: var(--shx-ink); }
+.shx-dot {
+  width: 20px; height: 20px; margin-top: 1px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff;
+  border: 1.5px solid #D6DEEA; background: #fff;
+  transition: background .25s ease, border-color .25s ease, transform .25s cubic-bezier(.22, 1.4, .5, 1);
+}
+.shx-tick { width: 11px; height: 11px; opacity: 0; transition: opacity .2s ease .05s; }
+.shx-check.run .shx-dot {
+  border-color: var(--shx-accent); border-right-color: transparent;
+  animation: shxSpin .7s linear infinite;
+}
+@keyframes shxSpin { to { transform: rotate(360deg) } }
+.shx-check.on .shx-dot { background: var(--shx-ok); border-color: var(--shx-ok); animation: none; transform: scale(1.05); }
+.shx-check.on .shx-tick { opacity: 1; }
 
+.shx-foot { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
 .shx-out {
-  display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 14px; row-gap: 6px;
-  margin-top: 18px; padding: 15px 17px;
-  border: 1px solid #223447; border-radius: 12px; background: #0C1621;
-  opacity: 0; transform: translateY(6px);
-  transition: opacity .3s ease, transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+  flex: 1; min-width: 0;
+  display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; row-gap: 3px;
+  padding: 11px 13px; border: 1px solid var(--shx-line); border-radius: 12px; background: #F8FAFD;
+  opacity: .45; transition: opacity .35s ease, border-color .35s ease, background .35s ease;
 }
-.shx.done .shx-out {
-  opacity: 1; transform: none;
-  border-color: rgba(79,209,197,.55); box-shadow: 0 0 0 1px rgba(79,209,197,.12) inset;
-}
+.shx.done .shx-out { opacity: 1; border-color: #BBE3C8; background: #F2FBF5; }
 .shx-out-lbl {
-  font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--shx-dim); white-space: nowrap;
+  font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--shx-dim); white-space: nowrap;
 }
-.shx-out-val { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
-.shx-out-corr {
-  grid-column: 2; justify-self: end;
-  font: 500 11.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--shx-accent);
+.shx.done .shx-out-lbl { color: var(--shx-ok); }
+.shx-out-val { font-size: 13px; font-weight: 700; min-width: 0; }
+.shx-out-corr { grid-column: 2; font-size: 11px; font-weight: 600; color: var(--shx-dim); }
+.shx-skip {
+  flex: none; min-height: 44px; padding: 0 16px; border-radius: 10px;
+  border: 1px solid var(--shx-line); background: #fff; color: #35507A;
+  font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
 }
+.shx-skip:hover { background: #EEF4FC; border-color: var(--shx-accent); color: var(--shx-accent); }
+.shx-skip:focus-visible { outline: 2px solid var(--shx-accent); outline-offset: 2px; }
 
-@media (max-width: 640px) {
-  .shx-panel { padding: 20px 18px 18px; }
-  .shx-check { grid-template-columns: 22px minmax(0,1fr); }
-  .shx-cval { grid-column: 2; }
-  .shx-out-corr { grid-column: 1 / -1; justify-self: start; }
+@media (max-width: 560px) {
+  .shx-card { padding: 18px 16px 14px; }
+  .shx-zone { grid-column: 1; grid-row: auto; justify-self: start; margin-top: 6px; }
+  .shx-check { grid-template-columns: 20px minmax(0, 1fr); }
+  .shx-cval { grid-column: 2; margin-top: 4px; }
+  .shx-foot { flex-direction: column; align-items: stretch; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .shx, .shx-panel, .shx.out { animation-duration: .001s; }
-  .shx-dot, .shx-cval, .shx-out { transition-duration: .001s; }
+  .shx, .shx-card, .shx.out { animation-duration: .001s; }
+  .shx-prog i, .shx-check.run::after, .shx-check.run .shx-dot { animation: none; }
+  .shx-prog i { width: 100%; }
+  .shx-packet, .shx-dot, .shx-cval, .shx-out { transition-duration: .001s; }
 }
-.shx.still .shx-check .shx-dot { background: var(--shx-ok); border-color: var(--shx-ok); }
-.shx.still .shx-check .shx-dot svg,
-.shx.still .shx-check .shx-cval { opacity: 1; transform: none; }
 
-/* while the STAAR zone is up, nothing from EVO Connect shows through */
+/* while the STAAR zone is up, nothing from EVO Connect competes with it */
 body.shx-open .toast,
 body.shx-open .evo-toast,
 body.shx-open .copilot-fab { display: none !important; }

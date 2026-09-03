@@ -96,7 +96,9 @@
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(e) {}
     return {
-      enabled: !!(saved && saved.enabled),
+      /* the demo is phase-gated out of the box: a first-time visitor must land
+         in Phase 1, not in the ungated build. An explicit choice still wins. */
+      enabled: (saved && typeof saved.enabled === 'boolean') ? saved.enabled : true,
       /* every load starts on Phase 1 with every later phase off — the demo
          must never open on a phase left selected in an earlier rehearsal. */
       currentPhase: 1,

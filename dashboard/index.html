@@ -63,10 +63,27 @@
       var pend=null; try{pend=JSON.parse(localStorage.getItem('stella_handoff_pending')||'null');}catch(e){}
       var fresh = pend && pend.p && (Date.now()-pend.ts) < 10*60*1000;
       if(q||sess||fresh) document.documentElement.classList.add('sh-direct');
+      /* ---------------------------------------------------------------
+         REVAI clinic home (/dashboard).  Kept in the codebase but OFF for
+         the demo: nobody should ever land on it.  Flip CLINIC_HOME_ENABLED
+         to true to bring it back exactly as it was.
+         Escape hatch for internal review: /dashboard?home=1 (lasts for the
+         browser tab), so the screen stays reachable and testable.
+         --------------------------------------------------------------- */
+      var CLINIC_HOME_ENABLED = false;
+      var homeOn = CLINIC_HOME_ENABLED;
+      try{
+        if(new URLSearchParams(location.search).get('home')==='1'){
+          sessionStorage.setItem('revai_clinic_home','1'); homeOn = true;
+        } else if(sessionStorage.getItem('revai_clinic_home')==='1'){ homeOn = true; }
+      }catch(e){}
+      window.CLINIC_HOME_ENABLED = homeOn;
+
       /* Arriving from the website goes straight into EVO Connect, never through
-         the clinic home: hide it before first paint, then open the app. */
+         the clinic home: hide it before first paint, then open the app.
+         With the clinic home disabled, EVERY entry behaves that way. */
       var app=null; try{app=new URLSearchParams(location.search).get('app');}catch(e){}
-      if(!q && !sess && !fresh && app==='evo') document.documentElement.classList.add('evo-direct');
+      if(!q && !sess && !fresh && (app==='evo' || !homeOn)) document.documentElement.classList.add('evo-direct');
     }catch(e){}
   })();
   </script>
@@ -705,16 +722,26 @@
       }catch(e){}
       /* The clinic home stays hidden BEHIND the app: dropping the class here
          would un-hide it while the universe is still fading in, which is the
-         flash. It is released only if the user actually goes back to it. */
+         flash. It is released only if the user actually goes back to it —
+         and while the clinic home is disabled, there is no way back to it. */
       try{
         var _close = window.closeUniverse;
         if (typeof _close === 'function') {
           window.closeUniverse = function(){
+            if (window.CLINIC_HOME_ENABLED === false) return;   /* stay in the app */
             document.documentElement.classList.remove('evo-direct');
             return _close.apply(this, arguments);
           };
         }
       }catch(e){}
+      /* No affordance that suggests a screen the demo never shows. */
+      if (window.CLINIC_HOME_ENABLED === false) {
+        try{
+          document.querySelectorAll('.us-brand-btn').forEach(function(b){
+            b.removeAttribute('title'); b.style.cursor = 'default';
+          });
+        }catch(e){}
+      }
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
     else boot();

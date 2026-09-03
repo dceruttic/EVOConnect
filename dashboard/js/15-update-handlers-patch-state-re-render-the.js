@@ -735,6 +735,7 @@ function renderPtSizingFormulas(pt) {
   const acd = b.ACD.v.toFixed(2);
   const clr = (170 + Math.round(ptRand(pt.id,41,-50,80)));
   const kMean = ((b.K1.v + b.K2.v) / 2).toFixed(2);
+  const al = (b.AL && b.AL.v ? b.AL.v : (24.0 + ptRand(pt.id, 43, -1.4, 3.2))).toFixed(2);
   const eye = pt.eye.split('/')[0].trim() || 'OD';
   const firstName = pt.name.split(' ').slice(-1)[0] || 'Patient';
 
@@ -927,6 +928,7 @@ function renderPtSizingFormulas(pt) {
         <div class="sf-input"><label>aRISE</label><div class="sf-input-row"><input type="text" id="sf-arise" value="${(parseFloat(acd) - 0.62).toFixed(2)}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label>Crystalline lens rise</label><div class="sf-input-row"><input type="text" id="sf-clr" value="${clr}" /><span class="sf-unit">µm</span></div></div>
         <div class="sf-input"><label>K-mean</label><div class="sf-input-row"><input type="text" id="sf-kmean" value="${kMean}" /><span class="sf-unit">D</span></div></div>
+        <div class="sf-input"><label>Axial length</label><div class="sf-input-row"><input type="text" id="sf-al" value="${al}" /><span class="sf-unit">mm</span></div></div>
       </div>
       <div class="sf-attachments" id="sfAttachments" style="display:none;">
         <div class="sf-att-lbl">Attached scans</div>

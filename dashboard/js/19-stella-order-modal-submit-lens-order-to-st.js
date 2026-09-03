@@ -158,22 +158,20 @@ function runSizingFormulas(patientId) {
     showToast("Select at least one formula to run");
     return;
   }
-  const getN = (id, def) => parseFloat(document.getElementById(id)?.value) || def;
-  const wtw = getN('sf-wtw', 11.6);
-  const acd = getN('sf-acd', 3.1);
-  const clr = getN('sf-clr', 170);
+  /* Every method is computed from the case inputs by the sizing engine
+     (js/42): same inputs, one engine, no hard-coded sizes. */
+  const raw = (window.SIZING_ENGINE ? window.SIZING_ENGINE.readInputs() : {});
   const results = SIZING_FORMULAS
     .filter(f => SELECTED_SIZING_FORMULAS.has(f.code))
     .map(f => {
-      // Formulas that don't predict vault (e.g. STAAR Nomogram / OCOS — size-only)
-      if (f.predictsVault === false) {
-        return { ...f, vault: null, band: 'na', inputs: { wtw, acd, clr } };
-      }
-      const delta = (wtw - 11.7) * 20;
-      const vault = Math.max(120, Math.min(1500, Math.round(f.vault + delta + (ptRand(pt.id, 80 + f.code.charCodeAt(0), -30, 30)))));
-      const band = vault < 200 ? 'low' : vault < 250 ? 'borderline-low' : vault <= 750 ? 'ideal' : vault <= 900 ? 'high' : 'hyper';
-      return { ...f, vault, band, inputs: { wtw, acd, clr } };
+      const e = window.SIZING_ENGINE ? window.SIZING_ENGINE.run(f.code, raw) : null;
+      if (!e) return { ...f, vault: null, band: 'na', inputs: raw };
+      return { ...f, recSize: e.recSize, vault: f.predictsVault === false ? null : e.vault,
+               band: f.predictsVault === false ? 'na' : e.band,
+               target: e.target, basis: e.basis, approx: e.approx,
+               derived: e.derived, inputs: e.inputs };
     });
+
   // Cache for selectSizingFormula() / Guru promotion
   window._SF_LAST_RESULTS = { patientId, results };
 

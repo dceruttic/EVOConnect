@@ -28,9 +28,9 @@
     C3: 'You are leaving STELLA · external service',
     P1: 'STELLA recommendation',
     P2: 'Calculated by STAAR',
-    P3: 'STELLA reference · included in the comparison',
-    P3off: 'STELLA reference · not selected, it will not be calculated',
-    P3hint: 'Deselect it and the STELLA recommendation is not run and not shown.',
+    P3: 'STELLA recommendation · always calculated, always shown first',
+    P3off: 'STELLA recommendation · always calculated, always shown first',
+    P3hint: 'The STELLA recommendation is locked into every comparison — it cannot be deselected, reordered or hidden (brief limit 4).',
     P4: '{size} mm · {model} · {formula} · {calculatedAt}',
     P5: 'STELLA · {size} mm · V8.00 OUS',
     T1: 'from STELLA',
@@ -55,6 +55,10 @@
     J8: 'Decision recorded in EVO Connect — nothing was sent to STELLA',
     R1: 'Order Lens (in Stella)',
     R5: 'Go back to STELLA',
+    ORD1: 'Order in STELLA →',
+    ORD1h: 'Opens STELLA on this case, inside its ordering screen. You enter and confirm the lens there — the STAAR system of record.',
+    ORD2: 'Order in the STELLA modal',
+    ORD2h: 'Opens the STELLA ordering surface here, pre-loaded with STELLA\u2019s own case data. The order is created in STELLA and returns over the API.',
     R6: 'Opens STELLA on this same patient. Nothing is sent — STELLA stays the system of record.',
     V1: 'Cannot order yet — {n} item{s} still missing',
     V2: 'Record your decision for {eye} first (step 4).',
@@ -97,6 +101,9 @@
     L15: 'STELLA recommendation',
     L16: 'What the surgeon ordered, and on what argument',
     L17: 'Returned to EVO Connect by API',
+    E1s: 'Same formula re-run here: {v} mm',
+    E2s: 'STELLA sent {rec} mm; the same WTW band lookup on the inputs now loaded here returns {got} mm — the inputs were edited in EVO Connect.',
+    E3s: 'Approximation of the published approach — coefficients are not the proprietary model. Demonstration only.',
     F1: 'Demonstration only – synthetic data – not for clinical use',
     EYE_ONE: 'This case arrived from STELLA for {lat} only',
     EYE_OU: 'Switch OD / OS — each eye arrived from STELLA separately'
@@ -116,7 +123,6 @@
      infer from and the field falls back to manual. */
   var INFERRED_REASON = { ICL_GURU: 'VAULT_BAND', ICL_FIT: 'ANATOMY_ASOCT', CASIA2: 'ANATOMY_ASOCT' };
   var SIZES = ['12.1', '12.6', '13.2', '13.7'];
-  var OVERRIDES = { ICL_GURU: { recSize: 13.6, vault: 520 }, ICL_FIT: { recSize: 13.7, vault: 480 }, CASIA2: { recSize: 13.6, vault: 510 } };
   var STELLA_CODE = 'STELLA';
   var HANDOFF_SET = [STELLA_CODE, 'ICL_GURU', 'ICL_FIT', 'CASIA2'];
   var HIDDEN_CHIPS = ['STAAR_NOM'];                                     // DR-0004 §6
@@ -153,7 +159,9 @@
       var k = INPUT_KEYS[i], e = src[k];
       var v = e && typeof e === 'object' ? e.v : e;
       if (typeof v !== 'string' || !NUM.test(v.trim())) return null;
-      inputs[k] = { v: v.trim(), u: UNITS[k], prov: 'STELLA' };
+      inputs[k] = { v: v.trim(), u: UNITS[k], prov: 'STELLA',
+        modality: (e && typeof e === 'object' && typeof e.modality === 'string') ? e.modality : null,
+        device:   (e && typeof e === 'object' && typeof e.device === 'string')   ? e.device   : null };
       if (k === 'cyl') inputs[k].notation = 'plus-cyl';
     }
     return inputs;
@@ -172,17 +180,19 @@
   }
   function normalize(raw) {
     if (!raw || typeof raw !== 'object') return null;
-    if (raw.v !== 1 && raw.v !== 1.1) return null;
+    /* v1.2 adds per-value modality + device; the eye-block layout is unchanged. */
+    if (raw.v !== 1 && raw.v !== 1.1 && raw.v !== 1.2) return null;
+    var V11 = (raw.v === 1.1 || raw.v === 1.2);
     var caseId = String(raw.caseId || '');
     if (!/^[A-Z0-9][A-Z0-9-]{2,31}$/.test(caseId)) return null;
     var lat = raw.laterality, eyes;
     if (lat === 'OD' || lat === 'OS') eyes = [lat];
-    else if (lat === 'OU' && raw.v === 1.1) eyes = ['OD', 'OS'];
+    else if (lat === 'OU' && V11) eyes = ['OD', 'OS'];
     else return null;                                                   // enumerated, never inferred
     var inputs = {}, stella = {}, derived = {};
     for (var i = 0; i < eyes.length; i++) {
       var E = eyes[i], src, rec;
-      if (raw.v === 1.1) { var blk = raw.eyes && raw.eyes[E.toLowerCase()]; src = blk && blk.inputs; rec = blk && blk.stella; }
+      if (V11) { var blk = raw.eyes && raw.eyes[E.toLowerCase()]; src = blk && blk.inputs; rec = blk && blk.stella; }
       else { src = raw.inputs && raw.inputs[E]; rec = raw.stellaRecommendation; }
       inputs[E] = normInputs(src); stella[E] = normStella(rec);
       if (!inputs[E] || !stella[E]) return null;
@@ -295,10 +305,10 @@
   function mapping(rec, E) {
     var I = rec.inputs[E];
     return [
-      { id: 'sf-rx-man-sph', v: I.sph.v }, { id: 'sf-rx-man-cyl', v: I.cyl.v, note: 'plus-cyl · as entered in STELLA' },
-      { id: 'sf-rx-man-ax', v: I.axis.v }, { id: 'sf-rx-man-k1', v: stripPlus(I.k1.v) },
-      { id: 'sf-rx-man-k1ax', v: I.k1a.v }, { id: 'sf-rx-man-k2', v: stripPlus(I.k2.v) },
-      { id: 'sf-acd', v: I.acd.v }, { id: 'sf-wtw', v: I.ww.v }
+      { id: 'sf-rx-man-sph', v: I.sph.v, src: I.sph }, { id: 'sf-rx-man-cyl', v: I.cyl.v, src: I.cyl, note: 'plus-cyl · as entered in STELLA' },
+      { id: 'sf-rx-man-ax', v: I.axis.v, src: I.axis }, { id: 'sf-rx-man-k1', v: stripPlus(I.k1.v), src: I.k1 },
+      { id: 'sf-rx-man-k1ax', v: I.k1a.v, src: I.k1a }, { id: 'sf-rx-man-k2', v: stripPlus(I.k2.v), src: I.k2 },
+      { id: 'sf-acd', v: I.acd.v, src: I.acd }, { id: 'sf-wtw', v: I.ww.v, src: I.ww }
     ];
   }
   var ESTIMATE_IDS = ['sf-ata', 'sf-sts', 'sf-arise', 'sf-clr',
@@ -309,8 +319,10 @@
   /* Provenance (DR-0004 Amendment A2): visible T1 pill on every STELLA-sent
      input/KPI, T5 pill on the derived K-mean; everything STELLA did not send
      stays EMPTY and carries no tag — no invented values for a handoff case. */
-  function provTitle(input, kind, note) {
-    var t = kind === 'stella' ? COPY.T1 + ' · ' + COPY.T2 + (note ? ' · ' + note : '') : COPY.T5;
+  function provTitle(input, kind, note, src) {
+    var origin = src && (src.modality || src.device)
+      ? ' · ' + [src.modality, src.device].filter(Boolean).join(' · ') : '';
+    var t = kind === 'stella' ? COPY.T1 + ' · ' + COPY.T2 + origin + (note ? ' · ' + note : '') : COPY.T5;
     input.title = t; input.setAttribute('data-sh-prov', kind);
     var cell = input.closest('.sf-rx-cell, .sf-input'); if (cell) cell.title = t;
   }
@@ -322,10 +334,21 @@
     if (label) label.insertAdjacentElement('afterend', tag); else cell.prepend(tag);
     return tag;
   }
+  /* Visible provenance: modality + device under every value STELLA sent. */
+  function srcLine(input, src) {
+    var cell = input.closest('.sf-rx-cell, .sf-input'); if (!cell) return;
+    var old = cell.querySelector('.sh-src-line'); if (old) old.remove();
+    if (!src || !(src.modality || src.device)) return;
+    var txt = [src.modality, src.device].filter(Boolean).join(' · ');
+    cell.appendChild(el('<span class="sh-src-line" title="' + esc(txt) + '">' + esc(txt) + '</span>'));
+  }
   function clearInput(input) {
     input.value = ''; input.removeAttribute('title'); input.removeAttribute('data-sh-prov'); input.removeAttribute('data-sh-stella');
+    input.removeAttribute('data-sh-modality'); input.removeAttribute('data-sh-device');
     var cell = input.closest('.sf-rx-cell, .sf-input');
-    if (cell) { cell.removeAttribute('title'); var old = cell.querySelector('.sh-prov'); if (old) old.remove(); }
+    if (cell) { cell.removeAttribute('title');
+      var old = cell.querySelector('.sh-prov'); if (old) old.remove();
+      var sl = cell.querySelector('.sh-src-line'); if (sl) sl.remove(); }
   }
   /* EYE_INPUTS[E] holds only STELLA-sent keys (+ derived K-mean); every other managed id is blank. */
   function storeEye(rec, E) {
@@ -342,7 +365,11 @@
     if (hc) hc.value = rec.inputs[E].cyl.v;
     mapping(rec, E).forEach(function (m) {
       var input = document.getElementById(m.id); if (!input) return;
-      input.setAttribute('data-sh-stella', m.v); provTitle(input, 'stella', m.note);
+      input.setAttribute('data-sh-stella', m.v);
+      if (m.src && m.src.modality) input.setAttribute('data-sh-modality', m.src.modality);
+      if (m.src && m.src.device) input.setAttribute('data-sh-device', m.src.device);
+      provTitle(input, 'stella', m.note, m.src);
+      srcLine(input, m.src);
       pill(input, 'stella', COPY.T1, input.title);
       if (!input._shWired) { input.addEventListener('input', onEdit); input._shWired = true; }
     });
@@ -401,7 +428,10 @@
   }
 
   /* ---------- chips (K1; no STELLA / STAAR_NOM chips, DR-0004) ---------- */
-  function stellaSelected() { return SELECTED_SIZING_FORMULAS.has(STELLA_CODE); }
+  /* Brief limit 4: STELLA is always in the comparison. It is not a togglable
+     method — it cannot be deselected, hidden or pushed below the alternatives. */
+  function stellaSelected() { return true; }
+  function forceStella() { try { SELECTED_SIZING_FORMULAS.add(STELLA_CODE); } catch (e) {} }
   function decorateChips() {
     var grid = document.querySelector('.sf-formulas-grid'); if (!grid || grid.previousElementSibling && grid.previousElementSibling.classList.contains('sh-chip-caption')) return;
     grid.insertAdjacentElement('beforebegin', el('<div class="sh-chip-caption">' + esc(COPY.K1) + '</div>'));
@@ -409,10 +439,10 @@
     /* STELLA is a method like any other in the comparison: if it is not selected,
        it is not calculated and its card does not appear in the results. */
     if (!grid.querySelector('[data-formula="' + STELLA_CODE + '"]')) {
-      var chip = el('<button class="sf-formula-chip sh-stella-chip' + (stellaSelected() ? ' selected' : '') + '" data-formula="' + STELLA_CODE + '" type="button" title="' + esc(COPY.P3hint) + '">' +
+      var chip = el('<button class="sf-formula-chip sh-stella-chip selected locked" data-formula="' + STELLA_CODE + '" type="button" aria-disabled="true" title="' + esc(COPY.P3hint) + '">' +
         '<span class="sfc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' +
-        '<span class="sfc-body"><span class="sfc-name">STELLA recommendation</span><span class="sfc-author">Calculated by STAAR</span></span></button>');
-      chip.addEventListener('click', function () { toggleSizingFormula(STELLA_CODE); syncStellaChip(); });
+        '<span class="sfc-body"><span class="sfc-name">STELLA recommendation ' + lockSvg() + '</span><span class="sfc-author">Calculated by STAAR · always included</span></span></button>');
+      chip.addEventListener('click', function () { toast(COPY.P3hint); });
       grid.prepend(chip);
     }
     syncStellaChip();
@@ -510,18 +540,35 @@
     if (t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (t.focus) try { t.focus({ preventScroll: true }); } catch (e) {} }
     toast(fmt(COPY.V1, { n: n, s: n === 1 ? '' : 's' }));
   }
-  /* every "Order Lens (in Stella)" button goes through here */
-  function orderBtn(compact) {
-    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '">' + esc(COPY.L1) + '</button>');
-    b.addEventListener('click', function () {
+  /* Two ways to order, both validated first:
+       · "Order in STELLA →" leaves for STELLA and lands inside its ordering screen
+         for this case — the MVP path of the brief, where the surgeon types it himself.
+       · "Order in the STELLA modal" opens the STELLA ordering surface here,
+         seeded only with STELLA's own case data. */
+  function guard(btn, compact, run) {
+    return function () {
       if (!H) return;
       var blockers = orderBlockers(H);
-      if (blockers.length) { showOrderAlert(b, blockers, compact); return; }
+      if (blockers.length) { showOrderAlert(btn, blockers, compact); return; }
       clearOrderAlert();
-      openOrderModal(H);
-    });
+      run();
+    };
+  }
+  function stellaOrderHref() {
+    if (!H) return '/stella';
+    return '/stella?patient=' + encodeURIComponent(H.caseId) + '&order=' + encodeURIComponent(curEye(H));
+  }
+  function orderInStellaBtn(compact) {
+    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD1h) + '">' + esc(COPY.ORD1) + '</button>');
+    b.addEventListener('click', guard(b, compact, function () { window.open(stellaOrderHref(), '_blank', 'noopener'); }));
     return b;
   }
+  function orderModalBtn(compact) {
+    var b = el('<button type="button" class="sh-return alt' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD2h) + '">' + esc(COPY.ORD2) + '</button>');
+    b.addEventListener('click', guard(b, compact, function () { openOrderModal(H); }));
+    return b;
+  }
+  function orderBtn(compact) { return orderInStellaBtn(compact); }
   /* the single "Go back to STELLA" control — lands on this patient in STELLA */
   function backToStella() {
     var href = '/stella' + (H && H.caseId ? '?patient=' + encodeURIComponent(H.caseId) : '');
@@ -835,7 +882,8 @@
       '<img src="' + STELLA_LOGO + '" alt="STELLA"><div class="sh-return-cta"></div>' +
       '<div class="sh-return-cap">' + esc(d ? COPY.L2 : COPY.R2) + '</div></div>';
     var cta = box.querySelector('.sh-return-cta');
-    cta.appendChild(orderBtn(false));
+    cta.appendChild(orderInStellaBtn(false));
+    cta.appendChild(orderModalBtn(false));
     cta.appendChild(backToStella());
   }
 
@@ -845,7 +893,10 @@
   function caseRecord(rec, E, d, order) {
     var inputs = rec.inputs[E] || {};
     var vals = INPUT_KEYS.map(function (k) {
-      return '<span><em>' + esc(k.toUpperCase()) + '</em>' + esc(inputs[k] ? inputs[k].v + ' ' + inputs[k].u : '—') + '</span>';
+      var I = inputs[k];
+      var org = I && (I.modality || I.device) ? [I.modality, I.device].filter(Boolean).join(' · ') : '';
+      return '<span' + (org ? ' title="' + esc(org) + '"' : '') + '><em>' + esc(k.toUpperCase()) + '</em>' +
+        esc(I ? I.v + ' ' + I.u : '—') + (org ? '<i class="sh-org">' + esc(org) + '</i>' : '') + '</span>';
     }).join('');
     var last = (window._SF_LAST_RESULTS && window._SF_LAST_RESULTS.results) || [];
     var methods = last.length
@@ -1021,11 +1072,21 @@
   /* ---------- comparator cards ---------- */
   function stellaCard(rec) {
     var E = curEye(rec), R = rec.stella[E];
+    /* The recommendation is the one STELLA sent (MVP: received, not recalculated).
+       The same WTW band lookup is also re-run here on the inputs currently loaded,
+       so an input edited inside EVO Connect becomes visible instead of silent. */
+    var reran = null;
+    try { reran = window.SIZING_ENGINE ? window.SIZING_ENGINE.run('STELLA', window.SIZING_ENGINE.readInputs()) : null; } catch (e) {}
+    var drift = reran && Math.abs(parseFloat(reran.recSize) - parseFloat(R.size)) > 0.001;
     return '<div class="sf-comp-card sh-stella-card" data-formula="STELLA" draggable="false" title="' + esc(COPY.S2) + '" aria-label="' + esc(COPY.S1) + '">' +
       '<div class="sf-comp-head"><div class="sf-comp-badge sh-badge-stella">' + lockSvg() + '</div>' +
       '<div class="sf-comp-name"><div class="nm">' + esc(COPY.P1) + '</div><div class="ds">' + esc(COPY.S1) + '</div></div></div>' +
       '<div class="sf-comp-stats"><div class="stat"><div class="lbl">Size</div><div class="val">' + esc(R.size) + '<em>mm</em></div></div>' +
       '<div class="stat"><div class="lbl">Model</div><div class="val sh-small">' + esc(R.model) + '</div></div></div>' +
+      (reran ? '<div class="sh-rerun' + (drift ? ' drift' : '') + '" title="' + esc(reran.basis) + '">' +
+        esc(fmt(COPY.E1s, { v: reran.recSize.toFixed(1) })) +
+        (drift ? '<em>' + esc(fmt(COPY.E2s, { rec: R.size, got: reran.recSize.toFixed(1) })) + '</em>' : '') +
+        '</div>' : '') +
       '<div class="sh-meta"><div>' + esc(R.formula) + '</div><div>' + esc(rec.caseId) + ' · ' + esc(E) + '</div></div>' +
       '<div class="sf-comp-foot"><span class="sh-locked-lbl">' + lockSvg() + esc(COPY.P3) + '</span></div></div>';
   }
@@ -1041,6 +1102,8 @@
       '<div class="sf-comp-stats"><div class="stat"><div class="lbl">Size</div><div class="val">' + size.toFixed(1) + '<em>mm</em></div></div>' +
       '<div class="stat"><div class="lbl">Vault</div><div class="val sh-small">' + esc(vault) + '</div></div></div>' +
       '<div class="sh-meta"><div>Method: ' + esc(r.name) + '</div><div>Modality: ' + esc(r.modality || '—') + '</div><div>Device: ' + esc(r.device || '—') + '</div><div>' + esc(version) + '</div></div>' +
+      (r.basis ? '<div class="sh-basis" title="' + esc(COPY.E3s) + '">' + esc(r.basis) +
+        (r.approx ? '<span class="sh-approx" title="' + esc(COPY.E3s) + '">approx.</span>' : '') + '</div>' : '') +
       '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' +
       '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' ↓</span></div></div>';
   }
@@ -1048,7 +1111,12 @@
   function wrapToggle() {
     var _t = window.toggleSizingFormula;
     if (typeof _t !== 'function') return;
-    window.toggleSizingFormula = function () { var r = _t.apply(this, arguments); if (currentIsHandoff()) syncStellaChip(); return r; };
+    window.toggleSizingFormula = function (code) {
+      if (currentIsHandoff() && code === STELLA_CODE) { toast(COPY.P3hint); return; }
+      var r = _t.apply(this, arguments);
+      if (currentIsHandoff()) { forceStella(); syncStellaChip(); }
+      return r;
+    };
   }
 
   /* ---------- header chip (signal a) ---------- */
@@ -1108,9 +1176,10 @@
     window.runSizingFormulas = function (patientId) {
       if (!isHandoff(patientId)) return _run.apply(this, arguments);
       var rec = H;
-      /* STELLA is one of the selectable methods: if it is not ticked it is not run
-         and its card is not rendered. Everything else runs as before. */
-      var withStella = stellaSelected();
+      /* Brief limit 4: the STELLA recommendation is always run and always the
+         first card. Only the alternatives are selectable. */
+      forceStella();
+      var withStella = true;
       var codes = Array.from(SELECTED_SIZING_FORMULAS).filter(function (c) { return c !== STELLA_CODE; });
       if (EYE_SCOPE !== curEye(rec)) { EYE_SCOPE = curEye(rec); lockEyeScope(rec); }
       var results = [];
@@ -1118,7 +1187,7 @@
         _run.apply(this, arguments);
         var last = (window._SF_LAST_RESULTS && window._SF_LAST_RESULTS.results) || [];
         results = codes.map(function (c) { return last.find(function (r) { return r.code === c; }); }).filter(Boolean)
-          .map(function (r) { var o = OVERRIDES[r.code]; return o ? Object.assign({}, r, o) : r; });
+          ;
         window._SF_LAST_RESULTS = { patientId: patientId, results: results };
       }
       var box = document.getElementById('sfResults'), list = document.getElementById('sfResultsList'), tag = document.getElementById('sfResultTag');
@@ -1148,7 +1217,7 @@
     var _order = window.openStellaOrder;
     window.openStellaOrder = function (patientId) {
       if (!isHandoff(patientId) && !currentIsHandoff()) return _order.apply(this, arguments);
-      toast(COPY.O1);
+      toast(COPY.ORD1);
     };
     var _open = window.openPatientFile;
     window.openPatientFile = function (id) {

@@ -859,10 +859,27 @@ const deepPid = (() => {
     return v && PATIENTS.some(p => p.pid === v) ? v : null;
   } catch(e){ return null; }
 })();
+/* `&order=OD` additionally opens STELLA's ordering screen for that eye, so the
+   "Order in STELLA" button in EVO Connect lands the surgeon exactly where the
+   lens is entered and confirmed — STELLA stays the only ordering system. */
+const deepOrder = (() => {
+  try {
+    const v = (new URLSearchParams(location.search).get('order') || '').toLowerCase();
+    return deepPid && (v === 'od' || v === 'os') ? v : null;
+  } catch(e){ return null; }
+})();
 if(deepPid){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
+function openDeepOrder(){
+  if(!deepOrder) return false;
+  S.pid = deepPid; S.tab = 'lens'; loadFields();
+  S.order = { eye:deepOrder, size:'', power:'', axis:'', ack:false, err:null };
+  go('patient');
+  return true;
+}
 
 const S = {
   route: hasSession() ? (deepPid ? 'patient' : 'dashboard') : 'login',
+  /* order is set after PATIENTS/loadFields are available (see boot below) */
   pid: deepPid || 'PSEUDO-4471', tab:'lens', pop:null, usermenu:false,
   selector:false, timer:59*60+52,
   eye:'od', expanded:{od:false,os:false}, refrMode:{od:'manifest',os:'manifest'},
@@ -1785,18 +1802,41 @@ function revaiTopBanner(){
 function b64url(str){
   return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
-/* v1.1 schema (DR-0004): whitelisted keys only; inputs as typed in STELLA (strings). */
+/* Provenance per value — modality + source device, part of the minimum data set. */
+const INPUT_SOURCE = {
+  sph:  { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
+  cyl:  { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
+  axis: { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
+  bvd:  { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
+  k1:   { modality:'Keratometry',           device:'IOLMaster 700' },
+  k1a:  { modality:'Keratometry',           device:'IOLMaster 700' },
+  k2:   { modality:'Keratometry',           device:'IOLMaster 700' },
+  k2a:  { modality:'Keratometry',           device:'IOLMaster 700' },
+  acd:  { modality:'Optical biometry',      device:'IOLMaster 700' },
+  cct:  { modality:'Pachymetry',            device:'Pentacam AXL Wave' },
+  ww:   { modality:'Optical biometry',      device:'IOLMaster 700' }
+};
+
+/* v1.2 schema (DR-0004): whitelisted keys only; inputs as typed in STELLA (strings),
+   each with its modality and source device. */
 function buildHandoff(lat){
   const eyes = lat==='ou' ? ['od','os'] : [lat];
   const eyeBlock = eye => {
     const f = S.fields[eye], rows = S.results[eye], pick = S.pick[eye];
-    const inputs = {}; ['sph','cyl','axis','bvd','k1','k1a','k2','k2a','acd','cct','ww'].forEach(k => { inputs[k] = String(f[k]); });
+    /* v1.2: every value carries its own modality and source device, as the
+       ESCRS minimum data set requires ("modalidad y dispositivo de origen —
+       por cada valor"). Values stay strings, exactly as typed in STELLA. */
+    const inputs = {};
+    ['sph','cyl','axis','bvd','k1','k1a','k2','k2a','acd','cct','ww'].forEach(k => {
+      const src = INPUT_SOURCE[k] || {};
+      inputs[k] = { v: String(f[k]), modality: src.modality || null, device: src.device || null };
+    });
     return { inputs, stella:{
       size:String(S.targetLength[eye]), model:S.mode[eye]==='TORIC' ? 'Toric Myopic' : 'Myopic',
       power:(pick!=null && rows && rows[pick]) ? {sph:rows[pick].sph, cyl:rows[pick].cyl, axis:rows[pick].axExp} : null,
       cylPower:S.cylPower[eye], formula:'Calculator V8.00 OUS', calculatedAt:S.calculatedAt } };
   };
-  const out = { v:1.1, caseId:S.pid, laterality:lat.toUpperCase(), sentAt:new Date().toISOString(),
+  const out = { v:1.2, caseId:S.pid, laterality:lat.toUpperCase(), sentAt:new Date().toISOString(),
     source:{system:'STELLA', version:'Calculator V8.00 OUS'}, eyes:{} };
   eyes.forEach(e => { out.eyes[e] = eyeBlock(e); });
   return out;
@@ -2267,6 +2307,7 @@ document.addEventListener('click', e => {
   if(d.npTg){ S.newp[d.npTg] = !S.newp[d.npTg]; render(); return; }
   if(d.flip){ t.classList.toggle('on'); return; }
   if(d.go){ if(S.route==='login' && d.go==='dashboard'){ setSession(true);
+        if(deepOrder && openDeepOrder()) return;
         if(deepPid){ S.pid = deepPid; S.tab='lens'; loadFields(); go('patient'); return; } }
             if(d.go==='preop') loadFields();
             if(d.go==='patient-new'){ S.newp = NEW_BLANK(); S.newpTried = false; }
@@ -2383,6 +2424,8 @@ setInterval(()=>{ if(S.timer>0){ S.timer--;
 
 loadFields();
 S.newp = NEW_BLANK();
+/* boot: an `?order=` deep link opens the ordering screen once the session exists */
+if(hasSession() && deepOrder) openDeepOrder();
 render();
 </script>
 </body>

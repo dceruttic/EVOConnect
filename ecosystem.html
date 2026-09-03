@@ -403,7 +403,7 @@
     </div>
     <div class="cell w2 dark rv d1">
       <div><p class="k">Data direction</p><h4><b>One</b> way</h4></div>
-      <div><div class="big">0 bytes</div><p>from EVO Connect into Stella. Case context and confirmed order flow Stella → EVO Connect only.</p></div>
+      <div><div class="big">0 values</div><p>No lens, size, method or reason ever crosses into Stella. The return link carries only the case identifiers Stella itself sent. Case context and the confirmed order flow Stella → EVO Connect only.</p></div>
     </div>
     <div class="cell w2 rv">
       <div><p class="k">Case identity</p><h4>Pseudonymous <b>always</b></h4></div>
@@ -478,12 +478,16 @@
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches, revealed=false, started=false;
   function reveal(){ if(revealed) return; revealed=true; content.classList.remove('pre'); hero.classList.add('film-behind'); }
   if(reduce){ reveal(); return; }
-  /* pick the encode for the connection: light 720p30 on slow links and phones, 1080p60 otherwise */
-  var c=navigator.connection; var slow=!!(c&&(c.saveData||(c.downlink&&c.downlink<5)));
-  if(slow||window.matchMedia('(max-width:720px)').matches){
-    var mp4=v.querySelector('source[type="video/mp4"]'); var webm=v.querySelector('source[type="video/webm"]');
-    if(webm) webm.remove(); if(mp4){ mp4.src='/assets/film/film_720p30.mp4'; v.load(); }
-  }
+  /* pick the encode by SCREEN, not by the browser's bandwidth guess (navigator.connection is unreliable and
+     mislabels fast Wi-Fi as "3g"): HiDPI/Retina desktops get the 1440p master, phones a lighter 1080p30,
+     data-saver the 720p30; a standard desktop keeps the default 1080p60. */
+  var c=navigator.connection||{}; var dpr=window.devicePixelRatio||1;
+  var mp4=v.querySelector('source[type="video/mp4"]'); var webm=v.querySelector('source[type="video/webm"]');
+  var pick=null;
+  if(c.saveData){ pick='/assets/film/film_720p30.mp4'; }
+  else if(window.matchMedia('(max-width:720px)').matches){ pick='/assets/film/film_1080p30.mp4'; }
+  else if(dpr>=1.5&&window.matchMedia('(min-width:1200px)').matches){ pick='/assets/film/film_1440p60.mp4'; }
+  if(pick){ if(webm) webm.remove(); if(mp4){ mp4.src=pick; v.load(); } }
   /* the first pass plays complete and clean (headline hidden); afterwards only the ambient part
      (0 -> 4.4 s: the world lighting up and the dive) loops behind the headline, so no film text ever sits under it */
   v.addEventListener('playing',function(){ started=true; });

@@ -89,7 +89,7 @@ function computeProcedureRec(s){
 
   // Positive scoring
   var score = { 'EVO ICL': 0, 'SMILE': 0, 'Femto-LASIK': 0, 'PRK': 0, 'RLE': 0 };
-  // === Business rule: myopia ≥ 5 D → EVO ICL is the recommendation ===
+  // === Sizing-range rule: myopia ≥ 5 D → EVO ICL is the recommendation ===
   if (sph >= 8) score['EVO ICL'] += 10;
   else if (sph >= 5) score['EVO ICL'] += 8;     // explicit cutoff: ≥5 D → ICL wins
   else if (sph >= 3) score['EVO ICL'] += 3;

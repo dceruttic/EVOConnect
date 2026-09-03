@@ -212,7 +212,7 @@ function _sfResultCard(r, patientId) {
 
   // Vault display: '—' for size-only formulas, with a tooltip explaining
   const vaultValHtml = noVault
-    ? `<div class="val novault" title="STAAR's manufacturer nomogram (OCOS) returns the recommended ICL size only — it does not estimate postoperative vault. Pair it with a vault-prediction formula (Reinstein, Lasso, KS or ICL Guru) for a complete sizing decision.">—<em></em></div>
+    ? `<div class="val novault" title="STAAR's manufacturer nomogram returns the recommended ICL size only — it does not estimate postoperative vault. Pair it with a vault-prediction formula (Reinstein, Lasso, KS or ICL Guru) for a complete sizing decision.">—<em></em></div>
        <div class="band-tag novault-tag">Size only · no vault prediction</div>`
     : `<div class="val" style="color:${bandColor}">${r.vault}<em>µm</em></div>
        <div class="band-tag" style="background:${bandColor}1A;color:${bandColor};">${bandLabel}</div>`;

@@ -233,7 +233,16 @@
          system, that a case arriving from STELLA opens. */
       if (typeof openStellaLensModal === 'function') {
         var ref = reference();
+        /* the anatomy the STAAR integration layer shows as "received from
+           REVAI" — the same values the comparator just ran on */
+        var raw = window.SIZING_ENGINE ? SIZING_ENGINE.readInputs() : {};
+        var inp = {};
+        [['acd', 'mm'], ['ww', 'mm'], ['ata', 'mm'], ['sts', 'mm'], ['kmean', 'D']].forEach(function (p) {
+          var v = p[0] === 'ww' ? raw.wtw : raw[p[0]];
+          if (v != null && String(v).trim() !== '') inp[p[0]] = { v: String(v).trim(), u: p[1] };
+        });
         openStellaLensModal({
+          inputs: inp,
           caseId: 'REV-' + pt.id,
           eye: (typeof EYE_SCOPE !== 'undefined' && EYE_SCOPE !== 'BOTH') ? EYE_SCOPE : 'OD',
           refSize: ref ? parseFloat(ref.recSize).toFixed(1) : d.plannedLens.size,

@@ -145,16 +145,18 @@ function _msStatus(pt, ms){
 }
 
 function renderPtPostop(pt) {
+  /* Post-op capture is never gated on the patient having reached the Post-op
+     stage. In Phase 1 the surgical planner and surgery steps do not exist, so
+     a case can only ever arrive here straight from ICL selection — the surgeon
+     still has to be able to enter each visit and analyse it. When the case has
+     not been through a recorded surgery, the page says so and carries on. */
   var isPostop = pt.stage === 'Post-op';
-  if (!isPostop) {
-    return [
-      '<div class="pd-empty">',
-        '<svg class="e-ic" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7z"/></svg>',
-        '<div><b>No post-op data yet</b></div>',
-        '<div style="margin-top:4px;font-size:12px">Surgery not yet performed. Once the Day-1 check-in is captured, vault, IOP, refraction and AS-OCT scans will populate here.</div>',
-      '</div>'
-    ].join('');
-  }
+  var preSurgeryNote = isPostop ? '' : [
+    '<div class="po-prenote">',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>',
+      '<span><b>No surgery recorded for this case.</b> Enter each visit below and press <em>Save visit data</em> — the values are stored against this case and feed the analysis.</span>',
+    '</div>'
+  ].join('');
   var v = postopVisitData(pt, CURRENT_PT_POSTOP_EYE, CURRENT_PT_POSTOP_MS);
 
   // === Eye picker ===
@@ -490,6 +492,7 @@ function renderPtPostop(pt) {
       '<div class="po-eye-tabs">' + eyeTabsHtml + '</div>',
       // Section title with cyan accent
       '<div class="po-title">Post-op</div>',
+      preSurgeryNote,
       // Context strip
       contextStrip,
       // Bio + IOL

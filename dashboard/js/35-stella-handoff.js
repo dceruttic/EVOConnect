@@ -1242,7 +1242,14 @@
       return r;
     };
     var _tab = window.setPatientTab;
-    window.setPatientTab = function () {
+    window.setPatientTab = function (tab) {
+      /* wrong-eye safeguard: the post-op page opens on the eye that actually
+         arrived from STELLA, not on the OD default. */
+      if (tab === 'postop' && currentIsHandoff() && H &&
+          typeof CURRENT_PT_POSTOP_EYE !== 'undefined' &&
+          H.eyes.indexOf(CURRENT_PT_POSTOP_EYE) < 0) {
+        CURRENT_PT_POSTOP_EYE = curEye(H);
+      }
       var r = _tab.apply(this, arguments);
       decorate();
       return r;

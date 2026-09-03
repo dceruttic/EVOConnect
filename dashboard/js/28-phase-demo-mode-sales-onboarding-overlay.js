@@ -42,6 +42,13 @@
     'patient-surgery': 3,
     'patient-postop':  1,
 
+    // Sizing formulas (chips in the formula comparator).
+    // Phase 1 ships STELLA + the three nomograms named in the ESCRS brief;
+    // the wider method library lands in Phase 4.
+    'formula-REINSTEIN': 4,
+    'formula-LASSO':     4,
+    'formula-KS':        4,
+
     // Sidebar/side features (visible widgets, not nav buttons)
     'ai-sentinel':     1,
     'staar-bi':        1,
@@ -65,6 +72,9 @@
     'patient-planner': 'Patient · Surgical Planner',
     'patient-surgery': 'Patient · Surgery',
     'patient-postop':  'Patient · Post-op',
+    'formula-REINSTEIN': 'Sizing formula · Reinstein',
+    'formula-LASSO':     'Sizing formula · Lasso',
+    'formula-KS':        'Sizing formula · KS',
     'ai-sentinel':     'AI Sentinel (risk flag)',
     'staar-bi':        'STAAR BI Data Layer',
     'marketplace':     'Marketplace',
@@ -189,6 +199,25 @@
       }
       _animateTransition(btn, snapKey, wasLocked, isLocked);
     });
+
+    /* 1b) Sizing-formula chips. A formula whose phase has not landed is removed
+       from the comparator and deselected, so it is neither offered nor run. */
+    ['REINSTEIN', 'LASSO', 'KS'].forEach(function (code) {
+      var locked = !!lockInfo(st.map['formula-' + code]);
+      document.querySelectorAll('.sf-formula-chip[data-formula="' + code + '"]').forEach(function (chip) {
+        chip.hidden = locked;
+        chip.style.display = locked ? 'none' : '';
+      });
+      if (locked && typeof SELECTED_SIZING_FORMULAS !== 'undefined') {
+        try { SELECTED_SIZING_FORMULAS.delete(code); } catch (e) {}
+      }
+    });
+    (function () {
+      if (typeof SELECTED_SIZING_FORMULAS === 'undefined') return;
+      var n = SELECTED_SIZING_FORMULAS.size;
+      var a = document.getElementById('sfSelectedCount'); if (a) a.textContent = n;
+      var b = document.getElementById('sfRunCount'); if (b) b.textContent = n;
+    })();
 
     // 2) Patient page tabs (rendered via renderPtStepper)
     document.querySelectorAll('.pt-step[data-tab]').forEach(step => {

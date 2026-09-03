@@ -392,66 +392,88 @@ function _synthesizeIclGuruFromForm(pt, vault, size){
 
 // Open the ICL Guru PDF in a new browser tab
 /* ================================================================
-   ICL Guru PRO report — opened in a modal, never in a new tab.
-   The report is rendered from the case data (renderPtSizingGuru), so it
-   opens instantly and always matches what the comparator just ran. Print
-   goes through the browser, which is also how the surgeon saves a PDF.
+   ICL Guru PRO report — the real report, opened in a modal.
+   ----------------------------------------------------------------
+   The two pages are the original ICL Guru PDF rendered to images, with
+   the patient name and the OD/OS badge redacted out of them. Those two
+   fields are drawn back on top as an SVG overlay in the page's own
+   coordinate system, so they scale with the page and always match the
+   patient open in EVO Connect. Everything else is the document itself.
 ================================================================ */
+var ICLGURU_REPORT = {
+  pages: [{ src: '/assets/iclguru/report-p1.webp' }, { src: '/assets/iclguru/report-p2.webp' }],
+  pt: { w: 594.96, h: 841.92 },                    // page box, in PDF points
+  name: { x: 78.4, baseline: 89.4, size: 12 },     // "Patient:" value
+  badge: { cx: 252.6, cy: 87.5, r: 12.5, fill: '#3689E7', size: 9.5 }
+};
+
+function _guruPage(src, name, eye) {
+  var R = ICLGURU_REPORT;
+  // keep a long name inside the gap between "Patient:" and the OD/OS badge
+  var size = R.name.size;
+  if (String(name).length > 20) size = Math.max(8, size * 20 / String(name).length);
+  return '<div class="guru-page">' +
+    '<img src="' + src + '" alt="ICL Guru PRO report page" loading="lazy">' +
+    '<svg class="guru-page-ovl" viewBox="0 0 ' + R.pt.w + ' ' + R.pt.h + '" aria-hidden="true">' +
+      '<text x="' + R.name.x + '" y="' + R.name.baseline + '" font-family="Inter, system-ui, sans-serif"' +
+        ' font-size="' + size.toFixed(2) + '" fill="#000">' + _esc(name) + '</text>' +
+      '<circle cx="' + R.badge.cx + '" cy="' + R.badge.cy + '" r="' + R.badge.r + '" fill="' + R.badge.fill + '"/>' +
+      '<text x="' + R.badge.cx + '" y="' + (R.badge.cy + R.badge.size * 0.35) + '" text-anchor="middle"' +
+        ' font-family="Inter, system-ui, sans-serif" font-size="' + R.badge.size + '" font-weight="700"' +
+        ' fill="#fff">' + _esc(eye) + '</text>' +
+    '</svg></div>';
+}
+function _esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+  return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
 function openIclGuruPdf(patientId){
   const pt = (DATA.patients || []).find(p => p.id === patientId);
   if (!pt) return;
   closeIclGuruPdf();
 
-  // A case that has no stored ICL Guru report gets one synthesized from the
-  // values currently on the form — the same path the inline report uses.
-  let gPt = pt;
-  if (!pt.iclGuru) {
-    const last = (window._SF_LAST_RESULTS && _SF_LAST_RESULTS.results) || [];
-    const guru = last.find(r => r.code === 'ICL_GURU');
-    const size = guru ? parseFloat(guru.recSize) : 12.6;
-    const vault = guru && guru.vault != null ? guru.vault : 400;
-    gPt = Object.assign({}, pt, { iclGuru: _synthesizeIclGuruFromForm(pt, vault, size) });
-  }
+  // The eye the surgeon is working on, falling back to the patient's own.
+  var eye = (typeof EYE_SCOPE !== 'undefined' && (EYE_SCOPE === 'OD' || EYE_SCOPE === 'OS'))
+    ? EYE_SCOPE
+    : String(pt.eye || 'OD').split('/')[0].trim().toUpperCase();
+  if (eye !== 'OD' && eye !== 'OS') eye = 'OD';
 
-  const when = new Date().toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
   const wrap = document.createElement('div');
   wrap.className = 'guru-scrim';
   wrap.id = 'guruPdfModal';
   wrap.setAttribute('role', 'dialog');
   wrap.setAttribute('aria-modal', 'true');
   wrap.setAttribute('aria-label', 'ICL Guru PRO report');
-  wrap.innerHTML = `
-    <div class="guru-doc" role="document">
-      <header class="guru-doc-head">
-        <div class="guru-doc-id">
-          <span class="guru-doc-brand">ICL Guru <b>PRO</b></span>
-          <span class="guru-doc-sub">Sizing report · ${pt.name} · REV-${pt.id} · ${when}</span>
-        </div>
-        <div class="guru-doc-actions">
-          <button type="button" class="guru-doc-btn" data-guru="print" title="Print or save as PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
-            Print / Save PDF
-          </button>
-          <button type="button" class="guru-doc-close" data-guru="close" aria-label="Close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
-        </div>
-      </header>
-      <div class="guru-doc-body" id="guruDocBody"></div>
-    </div>`;
+  wrap.innerHTML =
+    '<div class="guru-doc" role="document">' +
+      '<header class="guru-doc-head">' +
+        '<div class="guru-doc-id">' +
+          '<span class="guru-doc-brand">ICL Guru <b>PRO</b></span>' +
+          '<span class="guru-doc-sub">Sizing report · ' + _esc(pt.name) + ' · REV-' + _esc(pt.id) + ' · ' + eye + '</span>' +
+        '</div>' +
+        '<div class="guru-doc-actions">' +
+          '<button type="button" class="guru-doc-btn" data-guru="print" title="Print or save as PDF">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>' +
+            'Print / Save PDF</button>' +
+          '<button type="button" class="guru-doc-close" data-guru="close" aria-label="Close">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</header>' +
+      '<div class="guru-doc-body">' +
+        ICLGURU_REPORT.pages.map(function (p) { return _guruPage(p.src, pt.name, eye); }).join('') +
+      '</div>' +
+    '</div>';
   document.body.appendChild(wrap);
   document.body.style.overflow = 'hidden';
 
-  const body = wrap.querySelector('#guruDocBody');
-  try { body.innerHTML = renderPtSizingGuru(gPt); }
-  catch (e) { body.innerHTML = '<div class="guru-doc-err">The report could not be rendered for this case.</div>'; }
-
-  wrap.addEventListener('click', (e) => {
+  wrap.addEventListener('click', function (e) {
     if (e.target === wrap) return closeIclGuruPdf();
     const b = e.target.closest('[data-guru]'); if (!b) return;
     if (b.dataset.guru === 'close') closeIclGuruPdf();
-    if (b.dataset.guru === 'print') { document.body.classList.add('guru-printing'); window.print();
-      setTimeout(() => document.body.classList.remove('guru-printing'), 300); }
+    if (b.dataset.guru === 'print') {
+      document.body.classList.add('guru-printing'); window.print();
+      setTimeout(function () { document.body.classList.remove('guru-printing'); }, 300);
+    }
   });
   wrap.tabIndex = -1; wrap.focus();
 }

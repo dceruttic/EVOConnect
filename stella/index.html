@@ -852,7 +852,7 @@ const S = {
   savedTarget:{od:false,os:false}, inv:null, orderN:null,
   newp:null, newpTried:false, focusNew:null, loginErr:false,
   rv:{pick:false, eye:null, banner:'open', entered:false},
-  order:null, orders:{}
+  order:null, orders:{}, page:{}
 };
 const patient = () => PATIENTS.find(p => p.pid === S.pid) || PATIENTS[0];
 const app = document.getElementById('app');
@@ -923,10 +923,33 @@ function topbar(opts){
 const siteFooter = right => `<footer class="site">
   <span>This site has stringent security measures in place to protect the loss, misuse and alteration of the information under our control.</span>
   <span>${right||'Stella version 2.00'}</span></footer>`;
-const pager = pages => `<div class="pager">
-  <button disabled>«</button><button disabled>‹</button>
-  ${Array.from({length:pages},(_,i)=>`<button class="${i===0?'on':''}">${i+1}</button>`).join('')}
-  <button>›</button><button>»</button></div>`;
+/* Paginación real: cada tabla lleva su propia página en S.page, y las filas se
+   cortan con pageRows(). El pager se dibuja a partir del total de filas. */
+const PER_PAGE = 5;
+const pageOf = (id, total, per) => {
+  const last = Math.max(1, Math.ceil(total / (per || PER_PAGE)));
+  return Math.min(Math.max(1, S.page[id] || 1), last);
+};
+const pageRows = (id, rows, per) => {
+  const n = per || PER_PAGE, cur = pageOf(id, rows.length, n);
+  return rows.slice((cur - 1) * n, cur * n);
+};
+const pager = (id, total, per) => {
+  const n = per || PER_PAGE;
+  const last = Math.max(1, Math.ceil(total / n)), cur = pageOf(id, total, n);
+  const btn = (label, to, on, off) =>
+    `<button ${off ? 'disabled' : `data-page="${id}:${to}"`}${on ? ' class="on"' : ''}
+      ${label === '«' ? 'aria-label="First page"' : label === '»' ? 'aria-label="Last page"' : ''}>${label}</button>`;
+  /* con muchas páginas se muestra una ventana alrededor de la actual */
+  let from = 1, to = last;
+  if (last > 7) { from = Math.max(1, Math.min(cur - 3, last - 6)); to = Math.min(last, from + 6); }
+  const nums = [];
+  for (let i = from; i <= to; i++) nums.push(btn(String(i), i, i === cur, false));
+  return `<div class="pager" role="navigation" aria-label="Pagination">
+    ${btn('«', 1, false, cur === 1)}${btn('‹', cur - 1, false, cur === 1)}
+    ${nums.join('')}
+    ${btn('›', cur + 1, false, cur === last)}${btn('»', last, false, cur === last)}</div>`;
+};
 
 /* ==================================================================
    DASHBOARD
@@ -953,7 +976,7 @@ function rxDiff(trx, lrx){
   return out + (tail ? tail[0] : '');
 }
 function viewDashboard(){
-  const resv = RESERVATIONS.slice(0,5);
+  const resv = pageRows('dash-resv', RESERVATIONS);
   return topbar() + `<div class="wrap">
     <div class="dash-grid">
       <div>
@@ -982,7 +1005,7 @@ function viewDashboard(){
             <td><a>${SURGEON.id} -<br>Roberto Zaldivar</a></td></tr>`).join('')
             : `<tr><td colspan="9" style="text-align:center;padding:44px">No active reservations</td></tr>`}
           </tbody></table></div>
-          ${pager(4)}
+          ${pager('dash-resv', RESERVATIONS.length)}
         </div>
         <div class="card">
           <div style="display:flex;align-items:center;margin-bottom:14px">
@@ -995,10 +1018,10 @@ function viewDashboard(){
             <th>Order Type${sortIc}</th><th>Order Number${sortIc}</th>
             <th>PO Number${sortIc}</th><th>Status${sortIc}</th>
           </tr></thead><tbody>
-          ${ORDERS.slice(0,5).map(o=>`<tr><td>${o.date}</td><td>${o.by}</td><td>${o.type}</td>
+          ${pageRows('dash-ord', ORDERS).map(o=>`<tr><td>${o.date}</td><td>${o.by}</td><td>${o.type}</td>
             <td><a data-order="${o.n}">${o.n}</a></td><td>${o.op}</td><td>${o.state}</td></tr>`).join('')}
           </tbody></table>
-          ${pager(4)}
+          ${pager('dash-ord', ORDERS.length)}
         </div>
       </div>
       <div>
@@ -1080,7 +1103,7 @@ function viewPatients(){
               <th>Calculations</th><th>Lens OS</th><th>Status</th></tr>
         </thead>
         <tbody>
-        ${PATIENTS.map(p=>`<tr>
+        ${pageRows('patients', PATIENTS).map(p=>`<tr>
           <td>${p.act}</td>
           <td>${p.priority?'<span style="color:var(--teal)">✻</span> ':''}<a data-patient="${p.pid}">${p.pid}</a><div>${p.last}, ${p.first}</div></td>
           <td>${p.dob}</td>
@@ -1090,7 +1113,7 @@ function viewPatients(){
         </tr>`).join('')}
         </tbody>
       </table></div>
-      ${pager(4)}
+      ${pager('patients', PATIENTS.length)}
     </div>
   </div>` + siteFooter();
 }
@@ -1134,7 +1157,7 @@ function viewReservations(){
           <th>Created By<span class="u">Name (Last, First)</span></th>
           <th>Number${sortIc}</th><th>Patient ID${sortIc}</th><th>Lens</th>
           <th>Target Lens</th><th>Reserved Lens</th><th>Status${sortIc}</th><th>Surgeon</th></tr></thead>
-        <tbody>${RESERVATIONS.length?RESERVATIONS.map(b=>`<tr>
+        <tbody>${RESERVATIONS.length?pageRows('resv', RESERVATIONS).map(b=>`<tr>
           <td><input type="checkbox"></td>
           <td>${b.date}</td><td>${b.by}</td><td><a>${b.n}</a></td>
           <td><a data-patient="${b.pid}">${b.pid}</a></td>
@@ -1145,7 +1168,7 @@ function viewReservations(){
           <td><a>${SURGEON.id} - Roberto Zaldivar</a></td></tr>`).join('')
           :`<tr><td colspan="10" style="text-align:center;padding:44px">No reservations</td></tr>`}
         </tbody></table></div>
-      ${pager(2)}
+      ${pager('resv', RESERVATIONS.length)}
     </div>
   </div>` + siteFooter();
 }
@@ -1168,10 +1191,10 @@ function viewOrders(){
         <th>Created By<span class="u">Last, First</span></th>
         <th>Order Type${sortIc}</th><th>Order Number${sortIc}</th>
         <th>PO Number${sortIc}</th><th>Status${sortIc}</th></tr></thead>
-        <tbody>${ORDERS.map(o=>`<tr><td>${o.date}</td><td>${o.by}</td><td>${o.type}</td>
+        <tbody>${pageRows('orders', ORDERS).map(o=>`<tr><td>${o.date}</td><td>${o.by}</td><td>${o.type}</td>
           <td><a data-order="${o.n}">${o.n}</a></td><td>${o.op}</td><td>${o.state}</td></tr>`).join('')}
         </tbody></table>
-      ${pager(3)}
+      ${pager('orders', ORDERS.length)}
     </div>
   </div>` + siteFooter();
 }
@@ -1197,7 +1220,7 @@ function viewSurgeons(){
           <td><a style="font-size:16px;text-decoration:underline">${SURGEON.name}</a><div>ID: ${SURGEON.id}</div></td>
           <td class="k">MENDOZA, 5500</td><td style="color:var(--green-ok)">YES</td>
           <td>VICMO,VTICM5,VICM5,VICM6,VTICMO,VTICH,VICH</td></tr></tbody></table>
-      ${pager(1)}
+      ${pager('surgeons', 1)}
     </div>
   </div>` + siteFooter();
 }
@@ -2202,13 +2225,15 @@ document.addEventListener('click', e => {
   const sel = '[data-go],[data-patient],[data-order],[data-tab],[data-pop],[data-act],[data-editeye],'
             + '[data-exp],[data-refr],[data-mode],[data-tg],[data-flip],[data-reset],[data-pick],'
             + '[data-alt],[data-len],[data-cyl],[data-save],[data-cancel],[data-inv],[data-mtab],'
-            + '[data-scrim],[data-selscrim],[data-np-sex],[data-np-tg],[data-neworder],[data-oscrim]';
+            + '[data-scrim],[data-selscrim],[data-np-sex],[data-np-tg],[data-neworder],[data-oscrim],[data-page]';
   const t = e.target.closest(sel);
   if(!t){ if(S.pop || S.usermenu){ S.pop=null; S.usermenu=false; render(); } return; }
   const d = t.dataset;
   if((d.scrim!==undefined || d.selscrim!==undefined || d.oscrim!==undefined) && e.target !== t) return;
   if(d.oscrim!==undefined){ S.order = null; render(); return; }
   if(d.neworder){ S.order = { eye:d.neworder, size:'', power:'', axis:'', ack:false, err:null }; render(); return; }
+  if(d.page){ const [id, n] = d.page.split(':'); S.page[id] = parseInt(n,10) || 1;
+              const y = window.scrollY; render(); window.scrollTo(0, y); return; }
 
   if(d.npSex){ S.newp.sex = d.npSex; render(); return; }
   if(d.npTg){ S.newp[d.npTg] = !S.newp[d.npTg]; render(); return; }

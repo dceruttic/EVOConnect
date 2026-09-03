@@ -411,6 +411,26 @@
   // When the current module is locked under the active phase settings,
   // jump to the first accessible module in sidebar order. This prevents the
   // user from staring at a Dashboard they shouldn't see in Phase 1.
+  /* Sidebar order, used to answer "what is the first module this phase allows?".
+     In Phase 1 the Dashboard has not landed yet, so EVO Connect must open on
+     Patients rather than on a locked home screen. */
+  var MODULE_ORDER = ['dashboard', 'patients', 'order', 'training', 'analytics',
+                      'community', 'support', 'evo-credits', 'copilot', 'simulator'];
+  function moduleAllowed(key) {
+    const st = window.PHASE_DEMO;
+    const p = st.map[key];
+    if (p === 0) return false;                      // out of scope in every phase
+    if (!st.enabled || st.showAllPhases) return true;
+    return !(p && p > st.currentPhase);
+  }
+  function firstAccessibleModule(preferred) {
+    if (preferred && moduleAllowed(preferred)) return preferred;
+    for (var i = 0; i < MODULE_ORDER.length; i++) {
+      if (moduleAllowed(MODULE_ORDER[i])) return MODULE_ORDER[i];
+    }
+    return 'patients';
+  }
+
   function navigateToAccessibleIfLocked() {
     const st = window.PHASE_DEMO;
     if (!st.enabled) return;
@@ -501,6 +521,8 @@
       if (q) q.classList.toggle('is-open');
     },
     apply: applyPhaseFilter,
+    firstAccessibleModule: firstAccessibleModule,
+    moduleAllowed: moduleAllowed,
   };
   window.PhaseDemo = PhaseDemo;
 
@@ -542,6 +564,7 @@
   function init() {
     renderFab();
     applyPhaseFilter();
+    navigateToAccessibleIfLocked();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

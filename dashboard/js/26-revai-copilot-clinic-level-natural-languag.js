@@ -759,7 +759,11 @@ document.getElementById("usNav").addEventListener("click", (e) => {
 
 function openUniverse() {
   document.getElementById("universeView").classList.add("open");
-  renderModule("dashboard");
+  /* Open on the first module the current phase actually ships — in Phase 1 the
+     Dashboard does not exist yet, so EVO Connect lands on Patients. */
+  var mod = (window.PhaseDemo && typeof PhaseDemo.firstAccessibleModule === 'function')
+    ? PhaseDemo.firstAccessibleModule('dashboard') : 'dashboard';
+  renderModule(mod);
   document.body.style.overflow = "hidden";
 }
 function toggleSidebar() {

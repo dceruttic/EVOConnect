@@ -668,3 +668,9 @@ body{padding-bottom:26px}
   body.guru-printing .guru-page{max-width:none;box-shadow:none;border-radius:0;break-after:page}
   body.guru-printing .guru-page:last-child{break-after:auto}
 }
+
+/* journey 2 concept: values that arrived through the STAAR layer are tagged
+   differently from values typed in STELLA, so the two states of the same
+   ordering surface never look alike. */
+.sh-otag.j2 { background:#E6FFFF; color:#0C7E8B; border:1px solid #10A8BA; }
+.sh-oseed.j2 { color:#0C7E8B; font-weight:600; }

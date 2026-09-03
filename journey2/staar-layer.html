@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STAAR Integration Layer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --teal:#10A8BA; --teal-2:#098B9A; --teal-3:#5CD3E0; --teal-deep:#08545D;
+  --revai:#5C18AB; --revai-2:#8B5CF6;
+  --slate:#101820; --slate-2:#18232C; --slate-3:#22303B;
+  --hair:#2C3B47; --hair-2:#3A4C5A;
+  --ink:#EAF1F4; --ink-2:#9FB2BD; --ink-3:#6B808D;
+  --ok:#3DBE6B; --pending:#E0A93C;
+  --page:#F0F2F4; --paper:#fff; --pline:#DDE2E6; --pink-ink:#1C1C1C; --pink-2:#616469;
+  --font:'Mulish',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding:0 18px 80px;background:var(--page);color:var(--pink-ink);
+  font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto}
+
+/* ---------- concept banner ---------- */
+.concept{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;
+  background:#241436;color:#E8DDF7;margin:0 -18px 0;padding:11px 22px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+}
+.concept b{color:#fff;font-weight:600}
+.concept .sep{opacity:.4}
+
+/* ---------- head ---------- */
+header.pg{padding:38px 0 22px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-2);margin:0 0 10px}
+h1{font-weight:900;font-size:clamp(28px,4vw,42px);line-height:1.06;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance}
+.sub{margin:0;color:var(--pink-2);max-width:66ch;font-size:17px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+button.run{
+  font-family:var(--font);font-weight:700;font-size:14px;border:0;cursor:pointer;
+  background:var(--teal-deep);color:#fff;padding:11px 20px;border-radius:4px;
+}
+button.run:hover{background:#06424A}
+button.reset{
+  font-family:var(--font);font-weight:600;font-size:14px;cursor:pointer;
+  background:transparent;color:var(--pink-2);border:1px solid var(--pline);padding:10px 16px;border-radius:4px;
+}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--pink-2);letter-spacing:.04em}
+
+/* ---------- the three zones ---------- */
+.zones{
+  display:grid;grid-template-columns:190px 1fr 190px;gap:0;
+  margin-top:26px;align-items:stretch;
+}
+@media(max-width:900px){.zones{grid-template-columns:1fr}}
+
+.edge{
+  padding:22px 18px;display:flex;flex-direction:column;gap:8px;
+  border:1px solid var(--pline);background:var(--paper);
+}
+.edge .zlabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink-2)}
+.edge .zname{font-weight:900;font-size:19px;letter-spacing:-.01em}
+.edge .zrole{font-size:13.5px;color:var(--pink-2);line-height:1.45}
+.edge.revai{border-right:0;border-top:3px solid var(--revai)}
+.edge.revai .zname{color:var(--revai)}
+.edge.stella{border-left:0;border-top:3px solid var(--teal)}
+.edge.stella .zname{color:var(--teal-2)}
+.edge .zout{
+  margin-top:auto;font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+  color:var(--pink-2);border-top:1px dashed var(--pline);padding-top:10px;
+}
+@media(max-width:900px){
+  .edge.revai{border-right:1px solid var(--pline)}
+  .edge.stella{border-left:1px solid var(--pline)}
+}
+
+/* the controlled zone itself */
+.staar{
+  background:var(--slate);color:var(--ink);position:relative;
+  border-top:3px solid var(--teal);
+  padding:0 0 4px;
+  box-shadow:0 0 0 1px var(--slate) inset;
+}
+/* the hatch is the "controlled area" marking — it is what says: different owner */
+.staar::before,.staar::after{
+  content:"";position:absolute;top:0;bottom:0;width:10px;
+  background:repeating-linear-gradient(135deg,var(--teal) 0 3px,transparent 3px 8px);
+  opacity:.55;
+}
+.staar::before{left:0}
+.staar::after{right:0}
+.staar-in{padding:22px 30px 4px}
+
+.shead{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:14px}
+.shead .mark{font-weight:900;font-size:19px;letter-spacing:.01em;color:#fff}
+.shead .mark em{font-style:normal;color:var(--teal-3);font-weight:600}
+.shead .own{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.nologo{
+  margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;
+  color:var(--ink-3);border:1px dashed var(--hair-2);padding:4px 9px;border-radius:3px;
+}
+
+/* payload in */
+.io{display:grid;grid-template-columns:1fr;gap:0}
+.iohead{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);margin:18px 0 9px;display:flex;align-items:center;gap:10px;
+}
+.iohead::after{content:"";flex:1;height:1px;background:var(--hair)}
+.fields{display:flex;flex-wrap:wrap;gap:6px}
+.f{
+  background:var(--slate-2);border:1px solid var(--hair);border-radius:3px;
+  padding:6px 10px;font-family:var(--mono);font-size:12px;color:var(--ink);
+}
+.f em{font-style:normal;color:var(--ink-3);margin-right:7px;text-transform:uppercase;font-size:10px;letter-spacing:.07em}
+.f.lens{border-color:var(--teal-2);background:#0C2A2E}
+.f.lens em{color:var(--teal-3)}
+
+/* checks */
+.checks{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair);margin-top:4px}
+.chk{
+  background:var(--slate-2);padding:12px 14px;display:grid;
+  grid-template-columns:26px 1fr auto;gap:12px;align-items:center;
+}
+.chk .st{
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--hair-2);
+  display:grid;place-items:center;font-size:11px;color:transparent;
+  transition:border-color .2s ease,background .2s ease,color .2s ease;
+}
+.chk.on .st{border-color:var(--ok);background:var(--ok);color:#08130C}
+.chk.run .st{border-color:var(--teal-3);border-right-color:transparent;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.chk.run .st{animation:none;border-color:var(--teal-3)}}
+.chk .nm{font-weight:700;font-size:14px}
+.chk .nm span{display:block;font-weight:400;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);margin-top:3px;line-height:1.5}
+.chk .vr{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.05em;text-align:right;white-space:nowrap}
+.chk.on .vr{color:var(--ok)}
+
+/* out */
+.out{
+  margin-top:16px;border:1px solid var(--hair);background:var(--slate-2);
+  padding:14px 16px;display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;
+  opacity:.35;transition:opacity .3s ease;
+}
+.out.on{opacity:1;border-color:var(--teal-2)}
+.out .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+.out .v{font-weight:700;font-size:14.5px;color:#fff}
+.out .cid{font-family:var(--mono);font-size:12px;color:var(--teal-3);margin-left:auto}
+
+.note{
+  margin:16px 0 0;padding:12px 14px;border-left:3px solid var(--teal);
+  background:rgba(16,168,186,.07);font-size:14px;color:var(--ink-2);line-height:1.55;
+}
+.note b{color:#fff;font-weight:700}
+
+/* the three blanks — the rate-determining step, made visible */
+.blanks{margin:22px -30px 0;padding:20px 30px 24px;background:var(--slate-2);border-top:1px solid var(--hair)}
+.blanks .bh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--pending);margin-bottom:14px}
+.brow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.b{border-bottom:2px dashed var(--hair-2);padding-bottom:9px}
+.b .bk{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.b .bv{font-weight:700;font-size:17px;color:var(--pending)}
+.blanks .bcap{margin:16px 0 0;font-size:14px;color:var(--ink-2);max-width:70ch}
+.blanks .bcap b{color:#fff}
+
+/* footer strip */
+.stamp{
+  margin-top:0;padding:11px 30px;background:var(--slate-3);color:var(--ink-3);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+  display:flex;flex-wrap:wrap;gap:6px 18px;
+}
+
+/* ---------- explainer ---------- */
+section.ex{margin-top:52px}
+h2{font-weight:900;font-size:23px;letter-spacing:-.015em;margin:0 0 6px}
+.ex p.lead{margin:0 0 20px;color:var(--pink-2);max-width:66ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--pline);border:1px solid var(--pline)}
+.card{background:var(--paper);padding:16px 18px}
+.card h3{font-size:15px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em}
+.card p{margin:0;font-size:14px;color:var(--pink-2);line-height:1.55}
+.card .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-2);display:block;margin-bottom:7px}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--pline);font-family:var(--mono);font-size:11.5px;color:var(--pink-2);line-height:1.8}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="concept">
+  <span><b>Future state · concept</b></span><span class="sep">/</span>
+  <span>For regulatory and technical evaluation</span><span class="sep">/</span>
+  <span>Not an approved Phase 1 design</span>
+</div>
+
+<div class="wrap">
+
+<header class="pg">
+  <p class="eyebrow">Recorrido 2 · paso 3</p>
+  <h1>The transfer layer belongs to STAAR</h1>
+  <p class="sub">In the future-state sequence this is the only thing standing between the surgeon's choice in REVAI and STELLA's front door. It is not an arrow on a diagram: it is a zone, with an owner, a quality system and a transaction log — none of which are REVAI's.</p>
+  <div class="controls">
+    <button class="run" id="runBtn" type="button">Run the transfer</button>
+    <button class="reset" id="resetBtn" type="button">Reset</button>
+    <span class="hint">OD · PSEUDO-4471 · lente elegida 13,7 mm</span>
+  </div>
+</header>
+
+<div class="zones">
+
+  <div class="edge revai">
+    <div class="zlabel">External service</div>
+    <div class="zname">REVAI</div>
+    <div class="zrole">EVO Connect. Reads studies, runs the methods, records the surgeon's choice.</div>
+    <div class="zout">Ends here →</div>
+  </div>
+
+  <div class="staar">
+    <div class="staar-in">
+
+      <div class="shead">
+        <div class="mark">STAAR <em>integration layer</em></div>
+        <div class="own">Owned by STAAR · validated under STAAR's QMS</div>
+        <div class="nologo">no REVAI component inside this zone</div>
+      </div>
+
+      <div class="io">
+        <div class="iohead">Received from REVAI</div>
+        <div class="fields">
+          <span class="f"><em>case</em>PSEUDO-4471</span>
+          <span class="f"><em>eye</em>OD</span>
+          <span class="f lens"><em>selected lens</em>13.7 mm · Toric Myopic</span>
+          <span class="f lens"><em>power</em>−16.00 +0.50 ×025</span>
+          <span class="f"><em>acd</em>3.40 mm</span>
+          <span class="f"><em>wtw</em>12.20 mm</span>
+          <span class="f"><em>k1 / k2</em>43.00 / 44.50 D</span>
+          <span class="f"><em>method</em>ICL Guru</span>
+          <span class="f"><em>reason</em>Vault prediction</span>
+          <span class="f"><em>source</em>Pentacam AXL Wave · Sonomed UBM</span>
+        </div>
+
+        <div class="iohead">Controls that live here, not in REVAI</div>
+        <div class="checks" id="checks">
+          <div class="chk" data-c="1">
+            <span class="st">✓</span>
+            <span class="nm">Schema validation<span>Interface contract v1.2 · 18 fields on whitelist · unknown keys rejected, never ignored</span></span>
+            <span class="vr" data-v>pending</span>
+          </div>
+          <div class="chk" data-c="2">
+            <span class="st">✓</span>
+            <span class="nm">Clinical range checks<span>ACD ∈ [2.50–4.50] mm · WTW ∈ [10.0–13.5] mm · size ∈ {12.1, 12.6, 13.2, 13.7}</span></span>
+            <span class="vr" data-v>pending</span>
+          </div>
+          <div class="chk" data-c="3">
+            <span class="st">✓</span>
+            <span class="nm">Laterality &amp; idempotency<span>OD enumerated, never inferred · one key per eye · a repeat submit creates nothing</span></span>
+            <span class="vr" data-v>pending</span>
+          </div>
+          <div class="chk" data-c="4">
+            <span class="st">✓</span>
+            <span class="nm">Transaction log<span>Append-only, integrity-protected · correlation ID joins the three records</span></span>
+            <span class="vr" data-v>pending</span>
+          </div>
+        </div>
+
+        <div class="out" id="out">
+          <span class="k">Handed to STELLA</span>
+          <span class="v">Draft order · awaiting the surgeon's confirmation</span>
+          <span class="cid" id="cid">correlation —</span>
+        </div>
+
+        <p class="note">A draft is not an order. <b>STELLA still shows its own recommendation, marks the difference and demands an explicit confirmation</b> before anything is placed. The layer removes the transcription, not the decision.</p>
+      </div>
+
+      <div class="blanks">
+        <div class="bh">Three fields this demonstration cannot fill</div>
+        <div class="brow">
+          <div class="b"><div class="bk">Built by</div><div class="bv">—</div></div>
+          <div class="b"><div class="bk">Validated under</div><div class="bv">—</div></div>
+          <div class="b"><div class="bk">Available from</div><div class="bv">—</div></div>
+        </div>
+        <p class="bcap">They are STAAR's to answer, and they set the pace of everything downstream. <b>The rate-determining step is this zone, not the software on either side of it.</b></p>
+      </div>
+    </div>
+
+    <div class="stamp">
+      <span>Demonstration only – synthetic data – not for clinical use</span>
+      <span>·</span>
+      <span>No automatic import of an externally chosen lens, nor its regulatory path, is implied to be approved</span>
+    </div>
+  </div>
+
+  <div class="edge stella">
+    <div class="zlabel">STAAR system of record</div>
+    <div class="zname">STELLA</div>
+    <div class="zrole">Challenges the difference, takes the confirmation, creates and audits the official order.</div>
+    <div class="zout">→ Starts here</div>
+  </div>
+
+</div>
+
+<section class="ex">
+  <h2>Por qué se ve así</h2>
+  <p class="lead">Cada decisión de diseño de esta pantalla responde una línea del brief o una anotación de la agenda de Bailey.</p>
+  <div class="cards">
+    <div class="card">
+      <span class="tag">Límite del brief</span>
+      <h3>Una zona, no una flecha</h3>
+      <p>El brief pide que la capa quede "visualmente separada del servicio externo de REVAI". Por eso ocupa el centro y el ancho completo, con el rayado de área controlada en los dos bordes.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Límite del brief</span>
+      <h3>Sin marca REVAI adentro</h3>
+      <p>El rótulo "no REVAI component inside this zone" es literal: es la representación gráfica de dónde termina la responsabilidad de REVAI, y se dice en voz alta en la demo.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Agenda §3 · pregunta 22</span>
+      <h3>Los tres campos vacíos</h3>
+      <p>Bailey marcó este paso en rojo y mayúsculas: <b>KEY RATE DETERMINING STEP</b>. Dejarlos en blanco hace que la pregunta de quién construye, quién valida y para cuándo salga sola en la reunión.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Outline técnico</span>
+      <h3>Los cuatro controles</h3>
+      <p>Esquema, rangos clínicos, lateralidad e idempotencia, log transaccional. Son los mismos del outline entregado el 28 de julio: la pantalla los hace visibles en vez de dejarlos en un PDF.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Límite obligatorio 3</span>
+      <h3>Borrador, no orden</h3>
+      <p>Lo que sale de la capa es un draft. El challenge de STELLA y la confirmación explícita siguen siendo el paso siguiente — la automatización mueve el control, no lo saca.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Recorrido 1</span>
+      <h3>Reusa lo construido</h3>
+      <p>El challenge y la confirmación ya existen en el modal de pedido de STELLA. Esta pantalla es la única pieza genuinamente nueva del recorrido 2.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Mock de la Zona STAAR · recorrido 2, paso 3 · propuesta REVAI para revisión de STAAR<br>
+  Paleta y tipografía del ecosistema: STAAR teal #10A8BA · Mulish · mono para lo que es contrato de interfaz<br>
+  Future state · concept — for regulatory and technical evaluation only
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var steps = [
+    { v: 'v1.2 · 18/18 fields' },
+    { v: 'all within range' },
+    { v: 'key 4471-OD-01' },
+    { v: 'STAAR-TX-8F42C1' }
+  ];
+  var chks = Array.prototype.slice.call(document.querySelectorAll('.chk'));
+  var out  = document.getElementById('out');
+  var cid  = document.getElementById('cid');
+  var timers = [];
+
+  function reset(){
+    timers.forEach(clearTimeout); timers = [];
+    chks.forEach(function(c){
+      c.classList.remove('on','run');
+      c.querySelector('[data-v]').textContent = 'pending';
+    });
+    out.classList.remove('on');
+    cid.textContent = 'correlation —';
+  }
+  function run(){
+    reset();
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var step = reduce ? 90 : 620;
+    chks.forEach(function(c, i){
+      timers.push(setTimeout(function(){ c.classList.add('run'); }, i * step));
+      timers.push(setTimeout(function(){
+        c.classList.remove('run'); c.classList.add('on');
+        c.querySelector('[data-v]').textContent = steps[i].v;
+      }, i * step + step * 0.75));
+    });
+    timers.push(setTimeout(function(){
+      out.classList.add('on');
+      cid.textContent = 'correlation STAAR-TX-8F42C1';
+    }, chks.length * step));
+  }
+  document.getElementById('runBtn').addEventListener('click', run);
+  document.getElementById('resetBtn').addEventListener('click', reset);
+  /* the page opens already run, so the first still frame shows the whole thing */
+  chks.forEach(function(c,i){ c.classList.add('on'); c.querySelector('[data-v]').textContent = steps[i].v; });
+  out.classList.add('on'); cid.textContent = 'correlation STAAR-TX-8F42C1';
+})();
+</script>
+</body>
+</html>

@@ -668,3 +668,50 @@ body{padding-bottom:26px}
   body.guru-printing .guru-page{max-width:none;box-shadow:none;border-radius:0;break-after:page}
   body.guru-printing .guru-page:last-child{break-after:auto}
 }
+
+/* ================= transfer layer =================
+   The visible crossing from EVO Connect into STELLA, played before STELLA's
+   ordering surface opens. Short by design: it marks the boundary, it does not
+   make the surgeon wait. */
+.sh-xfer {
+  position: fixed; inset: 0; z-index: 9998;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(6, 16, 36, .72); backdrop-filter: blur(3px);
+  animation: shXferIn .18s ease-out both;
+}
+.sh-xfer.out { animation: shXferOut .2s ease-in both; }
+@keyframes shXferIn  { from { opacity: 0 } to { opacity: 1 } }
+@keyframes shXferOut { from { opacity: 1 } to { opacity: 0 } }
+.sh-xfer-card {
+  background: #fff; border-radius: 16px; padding: 30px 38px 26px;
+  box-shadow: 0 30px 70px rgba(6, 16, 36, .45); text-align: center;
+  max-width: min(460px, calc(100vw - 32px));
+  animation: shXferRise .28s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes shXferRise { from { transform: translateY(10px) scale(.985); opacity: 0 } to { transform: none; opacity: 1 } }
+.sh-xfer-rail { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 18px; }
+.sh-xfer-node {
+  display: grid; place-items: center; overflow: hidden;
+  width: 56px; height: 56px; border-radius: 14px;
+  border: 1px solid #E1E8F2; background: #fff;
+}
+.sh-xfer-node img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* the STELLA mark is white, so it needs STAAR navy behind it */
+.sh-xfer-node.to { background: #001E60; border-color: #001E60; box-shadow: 0 0 0 3px rgba(0, 128, 199, .14); }
+.sh-xfer-node.to img { width: auto; height: auto; max-width: 76%; max-height: 58%; object-fit: contain; }
+.sh-xfer-line { position: relative; flex: 0 0 92px; height: 2px; border-radius: 2px; background: #E1E8F2; overflow: hidden; }
+.sh-xfer-line i {
+  position: absolute; top: 0; bottom: 0; left: -34%; width: 34%; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(0,128,199,0), #0080C7 55%, rgba(0,128,199,0));
+  animation: shXferRun .62s linear infinite;
+}
+@keyframes shXferRun { to { left: 100% } }
+.sh-xfer-ttl { font-size: 15.5px; font-weight: 800; color: #10243A; letter-spacing: -.01em; }
+.sh-xfer-sub { margin-top: 5px; font-size: 12.5px; color: #64748B; line-height: 1.45; }
+.sh-xfer.still .sh-xfer-card,
+.sh-xfer.still { animation-duration: .001s; }
+.sh-xfer.still .sh-xfer-line i { animation: none; left: 33%; }
+@media (prefers-reduced-motion: reduce) {
+  .sh-xfer, .sh-xfer-card, .sh-xfer.out { animation-duration: .001s; }
+  .sh-xfer-line i { animation: none; left: 33%; }
+}

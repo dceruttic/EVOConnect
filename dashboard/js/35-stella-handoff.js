@@ -69,6 +69,8 @@
     R3: 'You are returning to STELLA · STAAR system of record',
     R4: 'Return without recording your decision?',
     R4a: 'Return anyway', R4b: 'Stay',
+    X1: 'Handing this case over to STELLA',
+    X2: 'STAAR system of record \u00b7 the order is created and confirmed there',
     O1: 'Orders are created in STELLA only',
     G1: 'Δ vs STELLA {d} mm',
     K2: 'Same lens as the STELLA recommendation',
@@ -134,6 +136,7 @@
   var STORE_KEY = 'stella_handoff', DECISION_KEY = 'stella_handoff_decision', PENDING_KEY = 'stella_handoff_pending';
   var PENDING_TTL = 10 * 60 * 1000;
   var STELLA_LOGO = '/assets/marketplace/stella_logo_official.svg';   // asset only, not a navigation target
+  var EVO_LOGO = '/assets/marketplace/evo_connect_global.svg';
 
   /* ---------- utils ---------- */
   function fmt(t, o) { return t.replace(/\{(\w+)\}/g, function (_, k) { return o[k] != null ? o[k] : '—'; }); }
@@ -967,7 +970,36 @@
       touched: { size: false, power: false, axis: false }
     };
   }
+  /* ---------- transfer layer ----------
+     The order is created in STELLA, not in EVO Connect. Opening the modal
+     straight away hides that boundary; this short overlay makes the crossing
+     explicit — REVAI on one side, STELLA on the other, the case travelling
+     between them — and only then hands over to STELLA's own surface. */
+  var XFER_MS = 1150;
+  function stellaTransfer(done) {
+    var reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    var v = el('<div class="sh-xfer' + (reduce ? ' still' : '') + '" role="status" aria-live="polite">' +
+      '<div class="sh-xfer-card">' +
+        '<div class="sh-xfer-rail">' +
+          '<span class="sh-xfer-node"><img src="' + EVO_LOGO + '" alt="EVO Connect"></span>' +
+          '<span class="sh-xfer-line"><i></i></span>' +
+          '<span class="sh-xfer-node to"><img src="' + STELLA_LOGO + '" alt="STELLA"></span>' +
+        '</div>' +
+        '<div class="sh-xfer-ttl">' + esc(COPY.X1) + '</div>' +
+        '<div class="sh-xfer-sub">' + esc(COPY.X2) + '</div>' +
+      '</div></div>');
+    document.body.appendChild(v);
+    setTimeout(function () {
+      v.classList.add('out');
+      setTimeout(function () { if (v.parentNode) v.parentNode.removeChild(v); done(); }, 200);
+    }, reduce ? 260 : XFER_MS);
+  }
+
   function openOrderModal(rec) {
+    stellaTransfer(function () { mountOrderModal(rec); });
+  }
+  function mountOrderModal(rec) {
     ord = stellaSeed(rec);
     var host = el('<div class="sh-omodal-scrim" id="shOrderModal" role="dialog" aria-modal="true" aria-label="' + esc(COPY.L4) + '"></div>');
     document.body.appendChild(host);

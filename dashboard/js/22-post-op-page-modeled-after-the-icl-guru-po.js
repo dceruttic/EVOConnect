@@ -56,6 +56,12 @@ function setPostopEye(eye){
   _refreshPostopMain();
 }
 
+/* EVO Credits is a later-phase module: while it is locked, no screen may show
+   or promise EVO points. Defaults to locked-off if the helper is not loaded. */
+function _evoLocked(){
+  return typeof window.evoCreditsLocked === 'function' ? window.evoCreditsLocked() : false;
+}
+
 // Flag the visit as logged + persist any open cell edits + award EVO points
 window.PT_POSTOP_LOGGED = window.PT_POSTOP_LOGGED || {};
 function logPostopVisit(ptId, milestone, eye){
@@ -391,7 +397,8 @@ function renderPtPostop(pt) {
         '</div>',
         '<div class="po-empty-body">',
           '<div class="po-empty-ttl">' + CURRENT_PT_POSTOP_MS + ' visit · not yet captured</div>',
-          '<div class="po-empty-sub">Scheduled for <b>' + v.visitDate.toLocaleDateString("en-GB") + '</b>. Click <b>Save visit data</b> below to log measurements + earn +20 EVO.</div>',
+          '<div class="po-empty-sub">Scheduled for <b>' + v.visitDate.toLocaleDateString("en-GB") + '</b>. Click <b>Save visit data</b> below to log measurements' +
+            (_evoLocked() ? '.' : ' + earn +20 EVO.') + '</div>',
         '</div>',
       '</div>'
     ].join('');
@@ -471,7 +478,7 @@ function renderPtPostop(pt) {
     '<button type="button" class="po-save-btn" onclick="logPostopVisit(\'' + pt.id + '\',\'' + CURRENT_PT_POSTOP_MS + '\',\'' + CURRENT_PT_POSTOP_EYE + '\')">',
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
       ' Save visit data',
-      '<span class="po-save-evo">+20 EVO</span>',
+      (_evoLocked() ? '' : '<span class="po-save-evo">+20 EVO</span>'),
     '</button>'
   ].join('');
 

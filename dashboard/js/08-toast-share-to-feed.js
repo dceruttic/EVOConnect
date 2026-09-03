@@ -78,6 +78,10 @@ function _isEvoCreditsLocked(){
   if (phase && phase > pd.currentPhase) return true;
   return false;
 }
+/* Exposed so the UI can hide every mention of EVO points — chips, hints,
+   earned-credits blocks — in the phases where EVO Credits does not exist yet.
+   Silently not awarding points is not enough: the copy must not promise them. */
+window.evoCreditsLocked = _isEvoCreditsLocked;
 
 // Award points: increments balance, updates any DOM badges, fires the gamification toast.
 // Respects Phase Demo — if EVO Credits unlocks in a later phase, this is a silent no-op

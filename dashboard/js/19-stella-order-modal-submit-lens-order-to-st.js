@@ -132,11 +132,12 @@ function confirmStellaOrder(){
             <span class="val">${_stellaCurrent.eta}</span>
           </div>
         </div>
+        ${(typeof window.evoCreditsLocked === 'function' && window.evoCreditsLocked()) ? '' : `
         <div class="stella-success-evo">
           <span>EVO Credits earned</span>
           <b>+ ${earnedTotal} EVO</b>
           <small>${earnedBase} base + ${earnedBonus} Silver tier bonus</small>
-        </div>
+        </div>`}
         <div class="stella-success-meta">
           <div><span>Tracking</span><b>Available 24h after dispatch</b></div>
           <div><span>Ship-to</span><b>Clínica Refractiva BA</b></div>

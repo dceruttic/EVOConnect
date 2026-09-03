@@ -286,3 +286,29 @@
 .sf-calc-note { font-size: 11.5px; color: var(--mute); }
 
 .sf-results-list { display: flex; flex-direction: column; gap: 10px; }
+
+/* === EHR import: per-section selection (manifest / cycloplegic / autorefractor) === */
+.rxp-hint { font-size: 11.5px; color: #5A6478; margin: 0 0 8px; line-height: 1.45; }
+.rxp-card { transition: opacity .15s, border-color .15s, background .15s; }
+.rxp-card.off { opacity: .55; background: #FAFBFD; border-style: dashed; }
+.rxp-card.off .rxp-row b { color: #94A0B8; }
+.rxp-card-head { display: flex; align-items: center; gap: 8px; }
+.rxp-check { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.rxp-check input[type="checkbox"] { width: 15px; height: 15px; accent-color: #0080C7; cursor: pointer; flex-shrink: 0; margin: 0; }
+.rxp-card.has-stella { border-color: #F0C36B; background: #FFFCF4; }
+.rxp-card.has-stella:not(.off) { border-color: #E0A800; background: #FFF8E6; opacity: 1; border-style: solid; }
+.rxp-warn { display: flex; gap: 7px; align-items: flex-start; margin: 6px 0 9px;
+  background: #FFF3D6; border: 1px solid #F0C36B; border-radius: 6px; padding: 7px 9px;
+  font-size: 11px; line-height: 1.4; color: #6B4E00; }
+.rxp-warn svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; color: #B07C00; }
+.rxp-warn b { font-weight: 700; }
+.rxp-info { margin-left: auto; flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%;
+  background: #E0A800; color: #fff; font-size: 11px; font-weight: 800; font-style: italic;
+  display: inline-flex; align-items: center; justify-content: center; cursor: help; position: relative; }
+.rxp-info:focus { outline: 2px solid #0080C7; outline-offset: 2px; }
+.rxp-info::after { content: attr(data-tip); position: absolute; right: 0; top: calc(100% + 8px);
+  width: 268px; background: #10243A; color: #E8EEF6; font-size: 11px; font-style: normal; font-weight: 500;
+  line-height: 1.5; padding: 9px 11px; border-radius: 7px; text-align: left;
+  box-shadow: 0 8px 22px rgba(0,20,50,.28); opacity: 0; visibility: hidden;
+  transition: opacity .13s; z-index: 30; pointer-events: none; }
+.rxp-info:hover::after, .rxp-info:focus::after { opacity: 1; visibility: visible; }

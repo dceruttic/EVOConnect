@@ -1,5 +1,44 @@
 // === Import-from-EHR modal: state + handlers ===
 let RX_IMPORT_SELECTED = null;
+
+/* --- per-section import selection (manifest / cycloplegic / autorefractor) --- */
+var RX_SECTIONS = [
+  { key:'manifest', label:'Manifest',      cls:'manifest', ids:['sf-rx-man-sph','sf-rx-man-cyl','sf-rx-man-ax','sf-rx-man-k1','sf-rx-man-k1ax','sf-rx-man-k2'] },
+  { key:'cyclo',    label:'Cycloplegic',   cls:'cyclo',    ids:['sf-rx-cyc-sph','sf-rx-cyc-cyl','sf-rx-cyc-ax','sf-rx-cyc-k1','sf-rx-cyc-k1ax','sf-rx-cyc-k2'] },
+  { key:'auto',     label:'Autorefractor', cls:'auto',     ids:['sf-rx-aut-sph','sf-rx-aut-cyl','sf-rx-aut-ax','sf-rx-aut-k1','sf-rx-aut-k1ax','sf-rx-aut-k2'] }
+];
+var RX_SECTION_ON = { manifest:true, cyclo:true, auto:true };
+
+/* A section "holds STELLA data" when any of its inputs still carries the
+   data-sh-stella provenance attribute written by the STELLA handoff. */
+function _rxSectionHasStella(sec){
+  return sec.ids.some(function(id){
+    var el = document.getElementById(id);
+    return !!(el && el.getAttribute('data-sh-stella') !== null && String(el.value).trim() !== '');
+  });
+}
+function _rxStellaValues(sec){
+  return sec.ids.map(function(id){
+    var el = document.getElementById(id);
+    return el ? (el.getAttribute('data-sh-stella') || el.value || '') : '';
+  });
+}
+function toggleRxSection(key){
+  RX_SECTION_ON[key] = !RX_SECTION_ON[key];
+  var card = document.querySelector('.rxp-card[data-sec="'+key+'"]');
+  if (card) card.classList.toggle('off', !RX_SECTION_ON[key]);
+  var cb = document.getElementById('rxsec-'+key);
+  if (cb) cb.checked = RX_SECTION_ON[key];
+  _rxSyncApplyBtn();
+}
+function _rxSyncApplyBtn(){
+  var btn = document.getElementById('rxImportApplyBtn');
+  if (!btn) return;
+  var n = RX_SECTIONS.filter(function(s){ return RX_SECTION_ON[s.key]; }).length;
+  btn.disabled = !RX_IMPORT_SELECTED || n === 0;
+  btn.textContent = n === 0 ? 'Select at least one section'
+    : 'Apply ' + n + ' section' + (n>1?'s':'') + ' to inputs';
+}
 function _rxImportPatientData(p){
   // Deterministic plausible refraction + K's per patient based on their power + biometry
   const sphMan = parseFloat(String(p.power).split('/')[0]) || -6;
@@ -31,11 +70,13 @@ function _rxImportRenderList(filter){
 }
 function openRxImportModal(){
   RX_IMPORT_SELECTED = null;
+  RX_SECTION_ON = { manifest:true, cyclo:true, auto:true };
   var m = document.getElementById('rxImportModal');
   if (!m) return;
   m.classList.add('open'); document.body.style.overflow = 'hidden';
   _rxImportRenderList('');
-  var btn = document.getElementById('rxImportApplyBtn'); if (btn) btn.disabled = true;
+  var btn = document.getElementById('rxImportApplyBtn');
+  if (btn){ btn.disabled = true; btn.textContent = 'Apply to inputs'; }
   var p = document.getElementById('rxImportPreview');
   if (p) p.innerHTML = `<div class="rx-preview-empty">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#94A0B8;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 12h10M7 16h6M7 8h10"/></svg>
@@ -56,9 +97,28 @@ function selectRxImportPatient(id){
   var d = _rxImportPatientData(p);
   var preview = document.getElementById('rxImportPreview');
   if (!preview) return;
-  function block(label, cls, m){
-    return `<div class="rxp-card">
-      <div class="rxp-card-head"><span class="sf-rx-tag ${cls}">${label}</span></div>
+  function block(sec, m){
+    var hasStella = _rxSectionHasStella(sec);
+    // Default: import everything EXCEPT sections that already hold STELLA data.
+    RX_SECTION_ON[sec.key] = !hasStella;
+    var sv = hasStella ? _rxStellaValues(sec) : null;
+    var tip = hasStella
+      ? 'This block was filled by STELLA for this case (Sph ' + sv[0] + ' · Cyl ' + sv[1] + ' · Axis ' + sv[2] + '°). '
+        + 'It arrives deselected so the STELLA values are preserved. Selecting it imports the EHR values instead and overwrites them; '
+        + 'the overwritten fields are flagged as edited by the surgeon and can be reset from the Reset to STELLA values link.'
+      : '';
+    return `<div class="rxp-card${hasStella ? ' off has-stella' : ''}" data-sec="${sec.key}">
+      <div class="rxp-card-head">
+        <label class="rxp-check">
+          <input type="checkbox" id="rxsec-${sec.key}" ${hasStella ? '' : 'checked'} onchange="toggleRxSection('${sec.key}')">
+          <span class="sf-rx-tag ${sec.cls}">${sec.label}</span>
+        </label>
+        ${hasStella ? `<span class="rxp-info" tabindex="0" role="img" aria-label="Why is this deselected?" data-tip="${tip.replace(/"/g,'&quot;')}">i</span>` : ''}
+      </div>
+      ${hasStella ? `<div class="rxp-warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v5"/><path d="M12 17.5h.01"/><path d="M10.3 3.9 1.9 18.4A2 2 0 0 0 3.6 21.4h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        <span><b>Already filled from STELLA.</b> Selecting this section will overwrite the STELLA values.</span>
+      </div>` : ''}
       <div class="rxp-row"><span>Sphere</span><b>${m.sph} D</b></div>
       <div class="rxp-row"><span>Cylinder</span><b>${m.cyl} D</b></div>
       <div class="rxp-row"><span>Axis</span><b>${m.ax}°</b></div>
@@ -72,33 +132,51 @@ function selectRxImportPatient(id){
       <div class="rxp-name">${p.name}</div>
       <div class="rxp-sub">REV-${p.id} · ${p.age||'-'}y · ${p.eye||'-'} · ${p.power||'-'} D</div>
     </div>
+    <div class="rxp-hint">Tick the blocks you want to import. Unticked blocks are not imported and leave their inputs untouched.</div>
     <div class="rxp-grid">
-      ${block('Manifest', 'manifest', d.manifest)}
-      ${block('Cycloplegic', 'cyclo', d.cyclo)}
-      ${block('Autorefractor', 'auto', d.auto)}
+      ${block(RX_SECTIONS[0], d.manifest)}
+      ${block(RX_SECTIONS[1], d.cyclo)}
+      ${block(RX_SECTIONS[2], d.auto)}
     </div>
   `;
-  var btn = document.getElementById('rxImportApplyBtn'); if (btn) btn.disabled = false;
+  _rxSyncApplyBtn();
 }
 function applyRxImport(){
   if (!RX_IMPORT_SELECTED) return;
   var p = (DATA.patients || []).find(x => x.id === RX_IMPORT_SELECTED);
   if (!p) return;
   var d = _rxImportPatientData(p);
-  function setVal(id, v){ var el = document.getElementById(id); if (el) el.value = v; }
-  // Manifest
-  setVal('sf-rx-man-sph', d.manifest.sph); setVal('sf-rx-man-cyl', d.manifest.cyl); setVal('sf-rx-man-ax', d.manifest.ax);
-  setVal('sf-rx-man-k1', d.manifest.k1);   setVal('sf-rx-man-k1ax', d.manifest.k1ax); setVal('sf-rx-man-k2', d.manifest.k2);
-  // Cycloplegia
-  setVal('sf-rx-cyc-sph', d.cyclo.sph); setVal('sf-rx-cyc-cyl', d.cyclo.cyl); setVal('sf-rx-cyc-ax', d.cyclo.ax);
-  setVal('sf-rx-cyc-k1', d.cyclo.k1);   setVal('sf-rx-cyc-k1ax', d.cyclo.k1ax); setVal('sf-rx-cyc-k2', d.cyclo.k2);
-  // Auto
-  setVal('sf-rx-aut-sph', d.auto.sph); setVal('sf-rx-aut-cyl', d.auto.cyl); setVal('sf-rx-aut-ax', d.auto.ax);
-  setVal('sf-rx-aut-k1', d.auto.k1);   setVal('sf-rx-aut-k1ax', d.auto.k1ax); setVal('sf-rx-aut-k2', d.auto.k2);
-  // Hidden compatibility
-  setVal('sf-sph', d.manifest.sph); setVal('sf-cyl', d.manifest.cyl);
+  var src = { manifest: d.manifest, cyclo: d.cyclo, auto: d.auto };
+  var keys = ['sph','cyl','ax','k1','k1ax','k2'];
+  var applied = [], overwroteStella = false;
+
+  RX_SECTIONS.forEach(function(sec){
+    if (!RX_SECTION_ON[sec.key]) return;               // deselected → not imported, variables untouched
+    var m = src[sec.key];
+    sec.ids.forEach(function(id, i){
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (el.getAttribute('data-sh-stella') !== null) overwroteStella = true;
+      el.value = m[keys[i]];
+      // let the STELLA handoff provenance logic flag the divergence
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    applied.push(sec.label);
+  });
+
+  if (!applied.length) return;
+
+  // Hidden compatibility fields follow the manifest block only
+  if (RX_SECTION_ON.manifest){
+    var hs = document.getElementById('sf-sph'); if (hs) hs.value = d.manifest.sph;
+    var hc = document.getElementById('sf-cyl'); if (hc) hc.value = d.manifest.cyl;
+  }
+
   closeRxImportModal();
-  if (typeof showToast === 'function') showToast('Refractions imported from ' + p.name);
+  if (typeof showToast === 'function') {
+    showToast(applied.join(' + ') + ' imported from ' + p.name
+      + (overwroteStella ? ' · STELLA values overwritten — flagged as edited by surgeon' : ''));
+  }
 }
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape'){

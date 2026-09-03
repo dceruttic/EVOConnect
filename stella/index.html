@@ -142,6 +142,14 @@ td a{font-size:13.008px}
   color:rgba(255,255,255,.42);cursor:default}
 
 /* preop */
+.preop-branch{margin:8px 0 0 0;padding:8px 10px 10px;border:1px solid transparent;border-radius:8px;
+  cursor:pointer;transition:background .12s,border-color .12s,box-shadow .12s;position:relative}
+.preop-branch:hover,.preop-branch:focus-visible{background:#F2F8F9;border-color:var(--line-2);
+  box-shadow:0 1px 3px rgba(16,42,52,.07);outline:none}
+.preop-branch .pb-open{position:absolute;right:10px;top:8px;font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  text-transform:uppercase;color:var(--teal);opacity:0;transition:opacity .12s;white-space:nowrap}
+.preop-branch:hover .pb-open,.preop-branch:focus-visible .pb-open{opacity:1}
+.preop-run{cursor:pointer}
 .eyerow{display:flex;gap:18px;align-items:stretch;min-width:0}
 .eyeid{flex:none;width:112px}
 .eyeboxes{display:flex;gap:14px;flex:1;min-width:0;align-items:stretch}
@@ -1314,7 +1322,9 @@ function preopTree(){
   const p = patient();
   if(!p.runs || !p.runs.length)
     return `<div class="card-s" style="padding:28px 0">No pre-op data saved.</div>`;
-  const branch = (eye, target) => `<div style="margin:12px 0 0 0">
+  const branch = (eye, target) => `<div class="preop-branch" data-act="opencalc" data-eye="${eye}"
+    role="button" tabindex="0" title="Open ${eye.toUpperCase()} calculation">
+    <span class="pb-open">Open ›</span>
     <div style="display:flex;align-items:center;gap:10px">
       <span class="eyebadge" style="border-radius:3px;padding:2px 6px">${eye.toUpperCase()}</span>
       <span style="font-size:15px;color:var(--ink)">${eye.toUpperCase()} Pre-Op Saved</span></div>
@@ -2221,6 +2231,11 @@ document.addEventListener('input', e => {
   }
 });
 
+document.addEventListener('keydown', e => {
+  if(e.key!=='Enter' && e.key!==' ') return;
+  const b = e.target.closest && e.target.closest('.preop-branch');
+  if(b){ e.preventDefault(); b.click(); }
+});
 document.addEventListener('click', e => {
   const sel = '[data-go],[data-patient],[data-order],[data-tab],[data-pop],[data-act],[data-editeye],'
             + '[data-exp],[data-refr],[data-mode],[data-tg],[data-flip],[data-reset],[data-pick],'
@@ -2258,6 +2273,7 @@ document.addEventListener('click', e => {
       case 'placeorder': placeOrder(); return;
       case 'newpreop':
       case 'opencalc': loadFields(); go('preop'); return;
+
       case 'savepre':  toast('Pre-op data saved','Demonstration only — nothing was written.', true); return;
       case 'calc': {
         const od = eyeReady('od') ? computeSeries(S.fields.od, S.cylPower.od, S.mode.od==='TORIC') : null;

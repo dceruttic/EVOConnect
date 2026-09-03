@@ -117,7 +117,7 @@
   .hero .hero-in.pre ~ .down{opacity:0}
   @media (prefers-reduced-motion:reduce){
     .hero .film-video{display:none}
-    .hero .film{background:#05070D url('/assets/film/film_poster.jpg') center/cover no-repeat}
+    .hero .film{background:#05070D url('/assets/film/film_still.jpg') center/cover no-repeat}
     .hero .hero-in.pre{opacity:1;transform:none;pointer-events:auto}
   }
 
@@ -761,7 +761,8 @@
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches, revealed=false;
   function reveal(){ if(revealed) return; revealed=true; content.classList.remove('pre'); hero.classList.add('film-behind'); }
   if(reduce){ reveal(); return; }
-  if(window.matchMedia('(max-width:720px)').matches){
+  var c=navigator.connection; var slow=!!(c&&(c.saveData||(c.downlink&&c.downlink<3)));
+  if(slow||window.matchMedia('(max-width:720px)').matches){
     var mp4=v.querySelector('source[type="video/mp4"]'); var webm=v.querySelector('source[type="video/webm"]');
     if(webm) webm.remove(); if(mp4){ mp4.src='/assets/film/film_1080p30.mp4'; v.load(); }
   }

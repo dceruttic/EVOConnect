@@ -186,10 +186,44 @@ function runSizingFormulas(patientId) {
   list.classList.remove('sf-guru-mounted');
   tag.textContent = `${results.length} formula${results.length !== 1 ? 's' : ''} · ${results.filter(r=>r.band==='ideal').length} ideal`;
   list.innerHTML = `<div class="sf-comp-grid">${results.map(r => _sfResultCard(r, patientId)).join('')}</div>`;
+  /* The card body is the shortcut to the decision, the same as in a handoff
+     case; the footer buttons keep their own actions. */
+  if (!list._sfCardNav) {
+    list._sfCardNav = true;
+    list.addEventListener('click', function (e) {
+      if (e.target.closest('button')) return;
+      if (!e.target.closest('.sh-ext-card')) return;
+      const dec = document.getElementById('ptOrder');
+      if (dec) try { dec.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (err) {}
+    });
+    list.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('sh-ext-card')) {
+        e.preventDefault(); e.target.click();
+      }
+    });
+  }
   try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) {}
 }
 
 function _sfResultCard(r, patientId) {
+  /* One comparator card for both journeys: the renderer that the STELLA
+     handoff uses (js/35) is the canonical one. Here there is no STELLA
+     recommendation to compare against, so the card drops the delta line and
+     keeps the native footer actions — View PDF for ICL Guru, and Select. */
+  if (window.SH_CARDS && typeof SH_CARDS.methodCard === 'function') {
+    var bc = r.predictsVault === false ? '#94A0B8'
+      : ({ hypo: '#E45167', low: '#F59E0B', 'borderline-low': '#F59E0B',
+           ideal: '#15803D', high: '#0080C7', hyper: '#7E22CE' }[r.band] || '#5A6478');
+    var pdf = r.code === 'ICL_GURU'
+      ? '<button class="sf-comp-pdf" type="button" title="Open the original ICL Guru PDF report"' +
+        ' onclick="event.stopPropagation();openIclGuruPdf(\'' + patientId + '\', ' + r.recSize + ')">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+        'View PDF</button>' : '';
+    var foot = '<div class="actions">' + pdf +
+      '<button class="btn btn-primary small" onclick="event.stopPropagation();selectSizingFormula(\'' + patientId + '\',\'' + r.code + '\',\'' + r.recSize + '\',' + (r.vault || 0) + ',\'' + bc + '\')">Select</button></div>';
+    return SH_CARDS.methodCard(r, null, { foot: foot });
+  }
+
   const noVault = r.predictsVault === false;
   const bandColor = noVault
     ? "#94A0B8"

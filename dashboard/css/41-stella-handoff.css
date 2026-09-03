@@ -164,7 +164,13 @@ body.sh-handoff-active .copilot-fab { right: 344px; }
 .sh-meta { display: grid; gap: 2px; font-size: 11px; color: #354052; }
 .sh-delta { font-size: 12px; font-weight: 700; color: #354052; font-variant-numeric: tabular-nums; }
 .sh-locked-lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--sh-teal-dk); }
-.sh-conf { color: #5A6478 !important; font-weight: 600; }
+.sh-conf { color: #5A6478 !important; font-weight: 600; white-space: nowrap; }
+/* In the native journey the card footer also carries actions (View PDF,
+   Select). Let them drop to their own row instead of squeezing the
+   confidence label onto two lines. */
+.sh-ext-card .sf-comp-foot { flex-wrap: wrap; row-gap: 10px; }
+.sh-ext-card .sf-comp-foot .actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.sh-ext-card .sf-comp-foot .sf-comp-pdf { white-space: nowrap; }
 .sh-goto { font-size: 11px; font-weight: 700; color: var(--navy); }
 .sh-ext-card { cursor: pointer; }
 .sh-ext-card:focus-visible, .sh-stella-chip:focus-visible, .sh-switch:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
@@ -668,9 +674,3 @@ body{padding-bottom:26px}
   body.guru-printing .guru-page{max-width:none;box-shadow:none;border-radius:0;break-after:page}
   body.guru-printing .guru-page:last-child{break-after:auto}
 }
-
-/* journey 2 concept: values that arrived through the STAAR layer are tagged
-   differently from values typed in STELLA, so the two states of the same
-   ordering surface never look alike. */
-.sh-otag.j2 { background:#E6FFFF; color:#0C7E8B; border:1px solid #10A8BA; }
-.sh-oseed.j2 { color:#0C7E8B; font-weight:600; }

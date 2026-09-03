@@ -59,13 +59,13 @@
     ORD1h: 'Leaves for STELLA and opens this case in its ordering screen. You enter and confirm the lens there — the STAAR system of record.',
     ORD2: 'Order Lens (in Stella)',
     ORD2h: 'Opens STELLA\u2019s ordering surface here, pre-loaded with STELLA\u2019s own case data. The order is created in STELLA and returns over the API.',
-    R6: 'Opens STELLA on this same case. No clinical value is sent — STELLA stays the system of record.',
+    R6: 'Opens STELLA on this same patient. Nothing is sent — STELLA stays the system of record.',
     V1: 'Cannot order yet — {n} item{s} still missing',
     V2: 'Record your decision for {eye} first (step 4).',
     V3: 'Choose the lens size you are ordering.',
     V4: 'Missing input: {f}',
     V5: 'Complete the highlighted fields, then order the lens in STELLA.',
-    R2: 'No lens, size, method or reason is sent back. In STELLA you enter and confirm the lens yourself.',
+    R2: 'Nothing is sent back. In STELLA you enter and confirm the lens yourself.',
     R3: 'You are returning to STELLA · STAAR system of record',
     R4: 'Return without recording your decision?',
     R4a: 'Return anyway', R4b: 'Stay',
@@ -967,8 +967,8 @@
       touched: { size: false, power: false, axis: false }
     };
   }
-  function openOrderModal(rec, seedOverride) {
-    ord = seedOverride || stellaSeed(rec);
+  function openOrderModal(rec) {
+    ord = stellaSeed(rec);
     var host = el('<div class="sh-omodal-scrim" id="shOrderModal" role="dialog" aria-modal="true" aria-label="' + esc(COPY.L4) + '"></div>');
     document.body.appendChild(host);
     host.addEventListener('click', function (e) { if (e.target === host) closeOrderModal(); });
@@ -1003,11 +1003,11 @@
     var diverges = ord.size && ord.size !== String(R.size);
     var delta = diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '';
     var local = !!rec.local;
-    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag' + (ord.j2 ? ' j2' : '') + '">' + esc(ord.srcLabel || (local ? COPY.LOC5 : COPY.L5)) + '</em>'; };
+    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag">' + esc(local ? COPY.LOC5 : COPY.L5) + '</em>'; };
 
     host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, false) +
       '<div class="sh-obody">' +
-        '<div class="sh-oseed' + (ord.j2 ? ' j2' : '') + '">' + esc(ord.seedNote || (local ? COPY.LOC6 : COPY.L6)) + '</div>' +
+        '<div class="sh-oseed">' + esc(local ? COPY.LOC6 : COPY.L6) + '</div>' +
         '<div class="sh-orec"><div class="sh-ok">' + esc(local ? COPY.LOC15 : COPY.L15) + '</div>' +
           '<div class="sh-orec-v">' + esc(R.size) + ' mm</div>' +
           '<div class="sh-orec-m">' + esc(R.model) + (R.power && R.power.sph != null ? ' · ' + esc(R.power.sph) + ' D' : '') +
@@ -1019,7 +1019,7 @@
           '<label><span>Power (D) ' + tag('power') + '</span><input data-of="power" value="' + esc(ord.power) + '" placeholder="—"></label>' +
           '<label><span>Axis (°, optional) ' + tag('axis') + '</span><input data-of="axis" value="' + esc(ord.axis) + '" placeholder="—"></label>' +
         '</div>' +
-        (d && !ord.j2 ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
+        (d ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
               (d.plannedLens.power ? ' · <b>' + esc(d.plannedLens.power) + ' D</b>' : '') +
               '. It is not carried into STELLA — enter it here yourself.</div>' : '') +
         (diverges ? '<div class="sh-odiff"><div class="t">' + esc(COPY.L7) + '</div>' +
@@ -1146,9 +1146,15 @@
       '<span style="left:50%">550</span><span style="left:75%">775</span><span style="left:100%">1000 \u00b5m</span></div>' +
       '</div>';
   }
-  function extCard(r, rec) {
-    var size = parseFloat(r.recSize), stella = parseFloat(rec.stellaRecommendation.size);
-    var d = size - stella, ds = (d >= 0 ? '+' : '') + d.toFixed(1);
+  /* One card renderer for both journeys. `rec` is the STELLA handoff when the
+     case came from STELLA and null when it did not — without it the card simply
+     drops the "Δ vs STELLA" line. `opts.foot` replaces the footer actions. */
+  function extCard(r, rec, opts) {
+    opts = opts || {};
+    var size = parseFloat(r.recSize);
+    var stella = (rec && rec.stellaRecommendation) ? parseFloat(rec.stellaRecommendation.size) : null;
+    var d = stella != null ? size - stella : null;
+    var ds = d == null ? null : (d >= 0 ? '+' : '') + d.toFixed(1);
     var abbrev = { ICL_GURU: 'IG', REINSTEIN: 'RE', LASSO: 'LA', KS: 'KS', STAAR_NOM: 'SN', ICL_FIT: 'IF', CASIA2: 'C2' }[r.code] || r.code.slice(0, 2);
     var has = r.predictsVault !== false && r.vault != null;
     var color = VAULT_BANDS[r.band] || '#5A6478';
@@ -1167,9 +1173,15 @@
       vaultBar(r) +
       '<div class="sh-meta"><div>Modality: ' + esc(r.modality || '\u2014') + '</div><div>Device: ' + esc(r.device || '\u2014') + '</div><div>' + esc(version) + '</div></div>' +
       (r.basis ? '<div class="sh-basis" title="' + esc(COPY.E3s) + '">' + esc(r.basis) + '</div>' : '') +
-      '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' +
-      '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' \u2193</span></div></div>';
+      (ds != null ? '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' : '') +
+      '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span>' +
+        (opts.foot != null ? opts.foot : '<span class="sh-goto">' + esc(COPY.J1) + ' \u2193</span>') +
+      '</div></div>';
   }
+  /* Shared with the native EVO Connect comparator (js/19), so both journeys
+     render the same card instead of two designs that drift apart. */
+  window.SH_CARDS = { methodCard: extCard, vaultBar: vaultBar, bandLabel: function (b) { return bandLabel(b); } };
+
   function bandLabel(b) {
     if (!b || b === 'na') return '';
     return b === 'borderline-low' ? 'Borderline low' : b.charAt(0).toUpperCase() + b.slice(1);
@@ -1380,14 +1392,5 @@
       window.closeUniverse = function () { unveil(); return _close.apply(this, arguments); };
     }
   }
-  /* seam for js/36 (journey 2 concept). Read-only except openOrderModal,
-     which journey 2 calls with its own seed. Nothing here writes to STELLA. */
-  window.SH = {
-    openOrderModal: openOrderModal,
-    record: function () { return H; },
-    eye: function (r) { return curEye(r || H); },
-    renderReturn: renderReturn
-  };
-
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();

@@ -1743,7 +1743,7 @@ function viewPreop(){
    Approved strings kept: C3 boundary line. STELLA reads nothing back:
    no location, no storage reads, no referrer.
    ================================================================== */
-const HANDOFF_MAX_CHARS = 2048;
+const HANDOFF_MAX_CHARS = 4096;   /* v1.2 adds the provenance dictionary; still well inside URL limits */
 const RV_HERO = { kicker:'EVO Connect by STAAR',
   title:'Compare with other sizing methodologies',
   sub:'ICL Guru, ICLFIT and CASIA2 next to the STELLA result — in EVO Connect',
@@ -1802,20 +1802,17 @@ function revaiTopBanner(){
 function b64url(str){
   return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
-/* Provenance per value — modality + source device, part of the minimum data set. */
-const INPUT_SOURCE = {
-  sph:  { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
-  cyl:  { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
-  axis: { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
-  bvd:  { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
-  k1:   { modality:'Keratometry',           device:'IOLMaster 700' },
-  k1a:  { modality:'Keratometry',           device:'IOLMaster 700' },
-  k2:   { modality:'Keratometry',           device:'IOLMaster 700' },
-  k2a:  { modality:'Keratometry',           device:'IOLMaster 700' },
-  acd:  { modality:'Optical biometry',      device:'IOLMaster 700' },
-  cct:  { modality:'Pachymetry',            device:'Pentacam AXL Wave' },
-  ww:   { modality:'Optical biometry',      device:'IOLMaster 700' }
+/* Provenance for every value — modality + source device, part of the minimum
+   data set. Sent as a small dictionary plus a key→source map, so the payload
+   stays inside the URL budget instead of repeating the strings per value. */
+const INPUT_SOURCES = {
+  R: { modality:'Subjective refraction', device:'Manifest refraction · phoropter' },
+  K: { modality:'Keratometry',           device:'IOLMaster 700' },
+  B: { modality:'Optical biometry',      device:'IOLMaster 700' },
+  P: { modality:'Pachymetry',            device:'Pentacam AXL Wave' }
 };
+const INPUT_SRC = { sph:'R', cyl:'R', axis:'R', bvd:'R', k1:'K', k1a:'K', k2:'K', k2a:'K',
+                    acd:'B', cct:'P', ww:'B' };
 
 /* v1.2 schema (DR-0004): whitelisted keys only; inputs as typed in STELLA (strings),
    each with its modality and source device. */
@@ -1823,21 +1820,15 @@ function buildHandoff(lat){
   const eyes = lat==='ou' ? ['od','os'] : [lat];
   const eyeBlock = eye => {
     const f = S.fields[eye], rows = S.results[eye], pick = S.pick[eye];
-    /* v1.2: every value carries its own modality and source device, as the
-       ESCRS minimum data set requires ("modalidad y dispositivo de origen —
-       por cada valor"). Values stay strings, exactly as typed in STELLA. */
-    const inputs = {};
-    ['sph','cyl','axis','bvd','k1','k1a','k2','k2a','acd','cct','ww'].forEach(k => {
-      const src = INPUT_SOURCE[k] || {};
-      inputs[k] = { v: String(f[k]), modality: src.modality || null, device: src.device || null };
-    });
+    const inputs = {}; ['sph','cyl','axis','bvd','k1','k1a','k2','k2a','acd','cct','ww'].forEach(k => { inputs[k] = String(f[k]); });
     return { inputs, stella:{
       size:String(S.targetLength[eye]), model:S.mode[eye]==='TORIC' ? 'Toric Myopic' : 'Myopic',
       power:(pick!=null && rows && rows[pick]) ? {sph:rows[pick].sph, cyl:rows[pick].cyl, axis:rows[pick].axExp} : null,
       cylPower:S.cylPower[eye], formula:'Calculator V8.00 OUS', calculatedAt:S.calculatedAt } };
   };
   const out = { v:1.2, caseId:S.pid, laterality:lat.toUpperCase(), sentAt:new Date().toISOString(),
-    source:{system:'STELLA', version:'Calculator V8.00 OUS'}, eyes:{} };
+    source:{system:'STELLA', version:'Calculator V8.00 OUS'},
+    sources:INPUT_SOURCES, src:INPUT_SRC, eyes:{} };
   eyes.forEach(e => { out.eyes[e] = eyeBlock(e); });
   return out;
 }

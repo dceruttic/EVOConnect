@@ -28,8 +28,8 @@
     C3: 'You are leaving STELLA · external service',
     P1: 'STELLA recommendation',
     P2: 'Calculated by STAAR',
-    P3: 'STELLA recommendation · always calculated, always shown first',
-    P3off: 'STELLA recommendation · always calculated, always shown first',
+    P3: 'Calculated in STELLA with its own calculation parameters.',
+    P3off: 'Calculated in STELLA with its own calculation parameters.',
     P3hint: 'The STELLA recommendation is locked into every comparison — it cannot be deselected, reordered or hidden (brief limit 4).',
     P4: '{size} mm · {model} · {formula} · {calculatedAt}',
     P5: 'STELLA · {size} mm · V8.00 OUS',
@@ -152,16 +152,24 @@
   var INPUT_KEYS = ['sph', 'cyl', 'axis', 'bvd', 'k1', 'k1a', 'k2', 'k2a', 'acd', 'cct', 'ww'];
   var UNITS = { sph: 'D', cyl: 'D', axis: '°', bvd: 'mm', k1: 'D', k1a: '°', k2: 'D', k2a: '°', acd: 'mm', cct: 'µm', ww: 'mm' };
 
-  function normInputs(src) {
+  /* v1.2 carries provenance as a case-level dictionary (`sources`) plus a
+     key→source map (`src`); v1.1 and v1 carry none. Both shapes parse. */
+  function provFor(raw, k) {
+    var code = raw && raw.src && typeof raw.src[k] === 'string' ? raw.src[k] : null;
+    var d = code && raw.sources && typeof raw.sources === 'object' ? raw.sources[code] : null;
+    if (!d || typeof d !== 'object') return { modality: null, device: null };
+    return { modality: typeof d.modality === 'string' ? d.modality : null,
+             device:   typeof d.device === 'string'   ? d.device   : null };
+  }
+  function normInputs(src, raw) {
     if (!src || typeof src !== 'object') return null;
     var inputs = {};
     for (var i = 0; i < INPUT_KEYS.length; i++) {
       var k = INPUT_KEYS[i], e = src[k];
       var v = e && typeof e === 'object' ? e.v : e;
       if (typeof v !== 'string' || !NUM.test(v.trim())) return null;
-      inputs[k] = { v: v.trim(), u: UNITS[k], prov: 'STELLA',
-        modality: (e && typeof e === 'object' && typeof e.modality === 'string') ? e.modality : null,
-        device:   (e && typeof e === 'object' && typeof e.device === 'string')   ? e.device   : null };
+      var pr = provFor(raw, k);
+      inputs[k] = { v: v.trim(), u: UNITS[k], prov: 'STELLA', modality: pr.modality, device: pr.device };
       if (k === 'cyl') inputs[k].notation = 'plus-cyl';
     }
     return inputs;
@@ -194,7 +202,7 @@
       var E = eyes[i], src, rec;
       if (V11) { var blk = raw.eyes && raw.eyes[E.toLowerCase()]; src = blk && blk.inputs; rec = blk && blk.stella; }
       else { src = raw.inputs && raw.inputs[E]; rec = raw.stellaRecommendation; }
-      inputs[E] = normInputs(src); stella[E] = normStella(rec);
+      inputs[E] = normInputs(src, raw); stella[E] = normStella(rec);
       if (!inputs[E] || !stella[E]) return null;
       var k1 = parseFloat(inputs[E].k1.v), k2 = parseFloat(inputs[E].k2.v);
       derived[E] = { kmean: { v: ((k1 + k2) / 2).toFixed(2), u: 'D', prov: 'DERIVED', rule: '(K1+K2)/2' } };
@@ -451,14 +459,8 @@
     var on = stellaSelected();
     var chip = document.querySelector('.sh-stella-chip');
     if (chip) chip.classList.toggle('selected', on);
-    var row = document.querySelector('.sh-lockrow');
-    if (row) {
-      row.classList.toggle('off', !on);
-      var sw = row.querySelector('.sh-switch'), lbl = row.querySelector('.sh-lock-lbl');
-      if (sw) sw.setAttribute('aria-checked', String(on));
-      if (lbl) lbl.innerHTML = lockSvg() + esc(on ? COPY.P3 : COPY.P3off);
-      row.title = COPY.P3hint;
-    }
+    var note = document.querySelector('.sh-note');
+    if (note) { note.textContent = COPY.P3; note.title = COPY.P3hint; }
   }
 
   /* ---------- eye scope (D5 + OU, DR-0004 §5) ---------- */
@@ -484,7 +486,7 @@
   }
   function refreshEyeViews(rec) {
     var strip = document.querySelector('.sh-strip-facts'); if (strip) strip.textContent = stripFacts(rec);
-    var side = document.querySelector('.sh-col-side'); if (side) { side.innerHTML = ''; side.appendChild(buildPanel(rec)); }
+    var side = document.querySelector('.sh-col-side'); if (side) { side.innerHTML = ''; side.appendChild(buildPanel(rec)); alignSidePanel(); }
     var body = document.getElementById('shDecisionBody'); if (body) renderDecision(body, rec);
     var t = document.getElementById('shDecisionEye'); if (t) t.textContent = ' · ' + curEye(rec);
   }
@@ -620,8 +622,7 @@
       '<div class="sh-panel-body">' +
         '<div class="sh-panel-head"><img src="' + STELLA_LOGO + '" alt="STELLA">' +
           '<div><div class="sh-panel-title" id="shPanelTitle">' + esc(COPY.P1) + '</div><div class="sh-panel-tag">' + esc(COPY.P2) + '</div></div></div>' +
-        '<div class="sh-lockrow" title="' + esc(COPY.P3) + '"><span class="sh-switch" role="switch" aria-checked="true" aria-disabled="true" tabindex="0" aria-label="' + esc(COPY.P3) + '"><span class="sh-knob"></span></span>' +
-          '<span class="sh-lock-lbl">' + lockSvg() + esc(COPY.P3) + '</span></div>' +
+        '<div class="sh-note">' + esc(COPY.P3) + '</div>' +
         eyesHtml +
         '<div class="sh-size">' + esc(R.size) + '<em>mm</em><span class="sh-size-eye">' + esc(E) + '</span></div>' +
         '<div class="sh-line">' + esc(fmt(COPY.P4, { size: R.size, model: R.model, formula: R.formula, calculatedAt: utc(R.calculatedAt) })) + '</div>' +
@@ -1085,7 +1086,7 @@
         (drift ? '<em>' + esc(fmt(COPY.E2s, { rec: R.size, got: reran.recSize.toFixed(1) })) + '</em>' : '') +
         '</div>' : '') +
       '<div class="sh-meta"><div>' + esc(R.formula) + '</div><div>' + esc(rec.caseId) + ' · ' + esc(E) + '</div></div>' +
-      '<div class="sf-comp-foot"><span class="sh-locked-lbl">' + lockSvg() + esc(COPY.P3) + '</span></div></div>';
+      '<div class="sf-comp-foot"><span class="sh-locked-lbl">' + esc(COPY.P3) + '</span></div></div>';
   }
   function extCard(r, rec) {
     var size = parseFloat(r.recSize), stella = parseFloat(rec.stellaRecommendation.size);
@@ -1103,6 +1104,21 @@
       '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' +
       '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span><span class="sh-goto">' + esc(COPY.J1) + ' ↓</span></div></div>';
   }
+  /* The STELLA panel is the first card of the comparison, so once results are on
+     screen its top lines up with the first result card instead of floating above
+     the Calculate button. Only on the two-column layout. */
+  function alignSidePanel() {
+    var side = document.querySelector('.sh-col-side'),
+        main = document.querySelector('.sh-col-main'),
+        grid = document.querySelector('#sfResultsList .sf-comp-grid');
+    if (!side || !main) return;
+    side.style.marginTop = '';
+    if (!grid || !window.matchMedia('(min-width: 1101px)').matches) return;
+    var d = grid.getBoundingClientRect().top - main.getBoundingClientRect().top;
+    if (d > 0) side.style.marginTop = Math.round(d) + 'px';
+  }
+  window.addEventListener('resize', function () { if (currentIsHandoff()) alignSidePanel(); });
+
   function scrollToDecision() { var d = document.getElementById('shDecision'); if (d) d.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   function wrapToggle() {
     var _t = window.toggleSizingFormula;
@@ -1196,6 +1212,7 @@
         (ran ? '' : '<div class="sh-none">' + esc(COPY.N2) + '</div>');
       rec.ui.methodsRun = codes.slice();
       refreshSizeOptions(rec);
+      alignSidePanel();
       try { box.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
     };
     var _select = window.selectSizingFormula;

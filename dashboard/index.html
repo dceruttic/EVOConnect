@@ -53,7 +53,8 @@
 
   <!-- STELLA handoff: land straight on the patient case, never flash the REVAI home -->
   <style>html.sh-direct #dashboardView{visibility:hidden}html.sh-direct body{background:var(--cream,#fff)}html.sh-direct .universe{animation:none!important}
-  html.evo-direct #dashboardView{visibility:hidden}html.evo-direct .universe{animation:none!important}</style>
+  html.evo-direct #dashboardView{visibility:hidden}
+  html.evo-direct .universe,html.evo-direct .universe.open{animation:none!important;opacity:1}</style>
   <script>
   (function(){
     try{
@@ -702,7 +703,18 @@
         if(typeof openUniverse==='function') openUniverse();
         history.replaceState(null,'',location.pathname+location.hash);
       }catch(e){}
-      document.documentElement.classList.remove('evo-direct');
+      /* The clinic home stays hidden BEHIND the app: dropping the class here
+         would un-hide it while the universe is still fading in, which is the
+         flash. It is released only if the user actually goes back to it. */
+      try{
+        var _close = window.closeUniverse;
+        if (typeof _close === 'function') {
+          window.closeUniverse = function(){
+            document.documentElement.classList.remove('evo-direct');
+            return _close.apply(this, arguments);
+          };
+        }
+      }catch(e){}
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
     else boot();

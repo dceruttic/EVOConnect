@@ -252,10 +252,6 @@ function renderPatientPage(pt) {
         </button>
         <span class="pt-breadcrumb">Patients · <b>${pt.name}</b></span>
         <div style="flex:1"></div>
-        <button class="btn btn-ghost small" onclick="shareToFeed('${pt.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-          Share to Feed
-        </button>
       </div>
 
       <div class="pt-page-header">

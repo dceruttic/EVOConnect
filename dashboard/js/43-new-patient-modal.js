@@ -10,7 +10,6 @@
 (function () {
   'use strict';
 
-  var NP_STAGES = ['Consult', 'Biometry', 'Eligibility', 'Sizing'];
 
   function el(html) { var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -66,13 +65,6 @@
               '<select name="sex"><option value="F">Female</option><option value="M">Male</option><option value="Other">Other</option></select></label>' +
             '<label class="np-f"><span>Eye</span>' +
               '<select name="eye"><option value="OD/OS">OD / OS</option><option value="OD">OD</option><option value="OS">OS</option></select></label>' +
-            '<label class="np-f"><span>Sphere OD (D)</span>' +
-              '<input name="od" placeholder="-8.00" required><em class="np-err" data-err="od" hidden>A number, e.g. -8.00</em></label>' +
-            '<label class="np-f"><span>Sphere OS (D)</span>' +
-              '<input name="os" placeholder="-7.75"><em class="np-err" data-err="os" hidden>A number, e.g. -7.75</em></label>' +
-            '<label class="np-f"><span>Stage</span><select name="stage">' +
-              NP_STAGES.map(function (s) { return '<option value="' + s + '">' + s + '</option>'; }).join('') +
-            '</select></label>' +
             '<label class="np-f np-wide np-check"><input type="checkbox" name="open" checked>' +
               '<span>Open the patient file after creating</span></label>' +
           '</form>' +
@@ -103,19 +95,18 @@
     var err = function (k, on) { var n = f.querySelector('[data-err="' + k + '"]'); if (n) n.hidden = !on; return on; };
     var num = function (x) { return /^[-+]?\d{1,2}(\.\d{1,2})?$/.test(String(x).trim()); };
 
-    var name = v('name').trim(), age = parseInt(v('age'), 10), od = v('od').trim(), os = v('os').trim();
+    var name = v('name').trim(), age = parseInt(v('age'), 10);
     var bad = false;
     bad = err('name', !name) || bad;
     bad = err('age', !(age >= 18 && age <= 60)) || bad;
-    bad = err('od', !num(od)) || bad;
-    bad = err('os', os !== '' && !num(os)) || bad;
     if (bad) { var first = f.querySelector('.np-err:not([hidden])'); if (first) first.scrollIntoView({ block: 'center' }); return; }
 
-    var sex = v('sex'), eye = v('eye'), stage = v('stage');
-    var power = os ? (od + ' / ' + os) : od;
+    var sex = v('sex'), eye = v('eye');
+    /* Refraction is not asked for here — it is entered in the pre-op step, which
+       is exactly where a new case starts. */
     var pt = {
-      id: v('id'), name: name, age: age, sex: sex, eye: eye, power: power,
-      stage: stage, risk: null, iclGuru: null, portrait: portraitFor(sex),
+      id: v('id'), name: name, age: age, sex: sex, eye: eye, power: '\u2014',
+      stage: 'Consult', risk: null, iclGuru: null, portrait: portraitFor(sex),
       surgeryDate: null, createdAt: new Date().toISOString()
     };
     DATA.patients.unshift(pt);

@@ -264,7 +264,8 @@
   // ---- Banner at top of usMain ----
   function renderBanner() {
     const st = window.PHASE_DEMO;
-    const main = document.getElementById('usMain');
+    /* Render into the fixed slot above the scroll column when it exists. */
+    const main = document.getElementById('pdBannerSlot') || document.getElementById('usMain');
     if (!main) return;
     let banner = document.getElementById('pdBanner');
 

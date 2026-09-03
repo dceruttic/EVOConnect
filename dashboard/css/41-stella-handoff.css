@@ -601,3 +601,9 @@ body{padding-bottom:26px}
 .sh-grid .sf-vault-bar.sh-bar{opacity:1}
 .sh-grid .sf-vault-bar.sh-bar .zone{opacity:1}
 .sh-grid .sf-comp-card .stat.vault .novault-val{font-size:22px;line-height:1}
+
+/* === the phase banner lives above the scroll column, never inside it === */
+.universe-col{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+.universe-col > #usMain{flex:1 1 auto;min-height:0}
+#pdBannerSlot{flex:none}
+#pdBannerSlot .pd-banner{position:static;padding-left:32px;padding-right:32px}

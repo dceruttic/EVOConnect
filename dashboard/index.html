@@ -564,9 +564,14 @@
     </div>
   </aside>
 
-  <main class="universe-main" id="usMain">
-    <!-- Module content injected by JS -->
-  </main>
+  <!-- The phase banner sits OUTSIDE the scrolling column, so it never travels
+       with the content. #usMain keeps its own scroll. -->
+  <div class="universe-col">
+    <div id="pdBannerSlot"></div>
+    <main class="universe-main" id="usMain">
+      <!-- Module content injected by JS -->
+    </main>
+  </div>
 
   <!-- ================================================================
        PHASE DEMO MODE — floating button + modal panel
@@ -712,6 +717,10 @@
 
 <!-- Permanent demonstration label (brief limit 6) — every screen, always visible. -->
 <div class="demo-stamp" role="note">Demonstration only – synthetic data – not for clinical use</div>
+
+<!-- Decision + Order Lens for the normal (non-handoff) flow. Before js/35 so
+     the handoff wrapper installs on top and wins for handoff cases. -->
+<script src="/dashboard/js/44-decision-and-order.js"></script>
 
 <!-- STELLA → EVO Connect handoff (Journey 1). Must stay LAST: wraps globals defined above. -->
 <script src="/dashboard/js/35-stella-handoff.js"></script>

@@ -35,12 +35,6 @@ function renderPreop() {
       <td class="subtle">${pt.power}</td>
       <td>${pt.stage}</td>
       <td><span class="status ${pt.status}"><span class="sdot"></span>${pt.stage}</span></td>
-      <td class="share-cell">
-        <button class="share-btn" onclick="event.stopPropagation(); shareToFeed('${pt.id}')" title="Share this case to the Community Feed">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-          Share to Feed
-        </button>
-      </td>
     </tr>
   `).join("");
 

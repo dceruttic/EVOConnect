@@ -52,7 +52,8 @@
   <link rel="stylesheet" href="/dashboard/css/41-stella-handoff.css">
 
   <!-- STELLA handoff: land straight on the patient case, never flash the REVAI home -->
-  <style>html.sh-direct #dashboardView{visibility:hidden}html.sh-direct body{background:var(--cream,#fff)}html.sh-direct .universe{animation:none!important}</style>
+  <style>html.sh-direct #dashboardView{visibility:hidden}html.sh-direct body{background:var(--cream,#fff)}html.sh-direct .universe{animation:none!important}
+  html.evo-direct #dashboardView{visibility:hidden}html.evo-direct .universe{animation:none!important}</style>
   <script>
   (function(){
     try{
@@ -61,6 +62,10 @@
       var pend=null; try{pend=JSON.parse(localStorage.getItem('stella_handoff_pending')||'null');}catch(e){}
       var fresh = pend && pend.p && (Date.now()-pend.ts) < 10*60*1000;
       if(q||sess||fresh) document.documentElement.classList.add('sh-direct');
+      /* Arriving from the website goes straight into EVO Connect, never through
+         the clinic home: hide it before first paint, then open the app. */
+      var app=null; try{app=new URLSearchParams(location.search).get('app');}catch(e){}
+      if(!q && !sess && !fresh && app==='evo') document.documentElement.classList.add('evo-direct');
     }catch(e){}
   })();
   </script>
@@ -679,6 +684,24 @@
   /* Marketplace → Stella. Stella keeps its own demo session, so it lands on the
      login page the first time and on its dashboard once you have signed in. */
   function openStellaApp(){ window.open('/stella', '_blank', 'noopener'); }
+</script>
+
+<script>
+  /* `/dashboard?app=evo` — the entry point used by the website. Opens EVO
+     Connect directly on the first module the current phase ships (Patients in
+     Phase 1) and cleans the parameter out of the address bar. */
+  (function(){
+    function boot(){
+      if(!document.documentElement.classList.contains('evo-direct')) return;
+      try{
+        if(typeof openUniverse==='function') openUniverse();
+        history.replaceState(null,'',location.pathname+location.hash);
+      }catch(e){}
+      document.documentElement.classList.remove('evo-direct');
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+    else boot();
+  })();
 </script>
 
 <!-- New Patient modal: both entry points create a real record. -->

@@ -391,9 +391,76 @@ function _synthesizeIclGuruFromForm(pt, vault, size){
 }
 
 // Open the ICL Guru PDF in a new browser tab
+/* ================================================================
+   ICL Guru PRO report — opened in a modal, never in a new tab.
+   The report is rendered from the case data (renderPtSizingGuru), so it
+   opens instantly and always matches what the comparator just ran. Print
+   goes through the browser, which is also how the surgeon saves a PDF.
+================================================================ */
 function openIclGuruPdf(patientId){
-  const pt = DATA.patients.find(p => p.id === patientId);
-  const pdfPath = (pt && pt.iclGuru && pt.iclGuru.pdfPath) || "./ICLCalculation-Mariela-Guzman-2026-04-22T13-47-OD.pdf";
-  try { window.open(pdfPath, '_blank'); }
-  catch(e) { showToast('Could not open PDF — file may be blocked locally'); }
+  const pt = (DATA.patients || []).find(p => p.id === patientId);
+  if (!pt) return;
+  closeIclGuruPdf();
+
+  // A case that has no stored ICL Guru report gets one synthesized from the
+  // values currently on the form — the same path the inline report uses.
+  let gPt = pt;
+  if (!pt.iclGuru) {
+    const last = (window._SF_LAST_RESULTS && _SF_LAST_RESULTS.results) || [];
+    const guru = last.find(r => r.code === 'ICL_GURU');
+    const size = guru ? parseFloat(guru.recSize) : 12.6;
+    const vault = guru && guru.vault != null ? guru.vault : 400;
+    gPt = Object.assign({}, pt, { iclGuru: _synthesizeIclGuruFromForm(pt, vault, size) });
+  }
+
+  const when = new Date().toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+  const wrap = document.createElement('div');
+  wrap.className = 'guru-scrim';
+  wrap.id = 'guruPdfModal';
+  wrap.setAttribute('role', 'dialog');
+  wrap.setAttribute('aria-modal', 'true');
+  wrap.setAttribute('aria-label', 'ICL Guru PRO report');
+  wrap.innerHTML = `
+    <div class="guru-doc" role="document">
+      <header class="guru-doc-head">
+        <div class="guru-doc-id">
+          <span class="guru-doc-brand">ICL Guru <b>PRO</b></span>
+          <span class="guru-doc-sub">Sizing report · ${pt.name} · REV-${pt.id} · ${when}</span>
+        </div>
+        <div class="guru-doc-actions">
+          <button type="button" class="guru-doc-btn" data-guru="print" title="Print or save as PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+            Print / Save PDF
+          </button>
+          <button type="button" class="guru-doc-close" data-guru="close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="guru-doc-body" id="guruDocBody"></div>
+    </div>`;
+  document.body.appendChild(wrap);
+  document.body.style.overflow = 'hidden';
+
+  const body = wrap.querySelector('#guruDocBody');
+  try { body.innerHTML = renderPtSizingGuru(gPt); }
+  catch (e) { body.innerHTML = '<div class="guru-doc-err">The report could not be rendered for this case.</div>'; }
+
+  wrap.addEventListener('click', (e) => {
+    if (e.target === wrap) return closeIclGuruPdf();
+    const b = e.target.closest('[data-guru]'); if (!b) return;
+    if (b.dataset.guru === 'close') closeIclGuruPdf();
+    if (b.dataset.guru === 'print') { document.body.classList.add('guru-printing'); window.print();
+      setTimeout(() => document.body.classList.remove('guru-printing'), 300); }
+  });
+  wrap.tabIndex = -1; wrap.focus();
 }
+
+function closeIclGuruPdf(){
+  const m = document.getElementById('guruPdfModal');
+  if (m) { m.remove(); document.body.style.overflow = ''; document.body.classList.remove('guru-printing'); }
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('guruPdfModal')) closeIclGuruPdf();
+});

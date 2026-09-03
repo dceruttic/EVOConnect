@@ -624,3 +624,38 @@ body{padding-bottom:26px}
 /* the seeded-value tag must not wrap its label onto two lines */
 .sh-ofield > label{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .sh-otag{white-space:nowrap}
+
+/* === ICL Guru PRO report — modal, not a new tab === */
+.guru-scrim{position:fixed;inset:0;z-index:9997;background:rgba(8,20,40,.6);
+  display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(2px)}
+.guru-doc{width:min(1080px,100%);max-height:92vh;background:#fff;border-radius:14px;
+  box-shadow:0 28px 70px rgba(6,16,36,.45);display:flex;flex-direction:column;overflow:hidden}
+.guru-doc-head{display:flex;align-items:center;gap:16px;padding:14px 18px;
+  border-bottom:1px solid #E6ECF5;background:#F8FAFD;flex:none}
+.guru-doc-brand{display:block;font-size:14px;font-weight:800;letter-spacing:.02em;color:#10243A}
+.guru-doc-brand b{color:#0080C7}
+.guru-doc-sub{display:block;margin-top:2px;font-size:11.5px;color:#7B879E}
+.guru-doc-actions{margin-left:auto;display:flex;align-items:center;gap:8px}
+.guru-doc-btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:12.5px;font-weight:700;
+  padding:9px 14px;border-radius:8px;border:1px solid #D9E1EC;background:#fff;color:#35507A;cursor:pointer}
+.guru-doc-btn svg{width:14px;height:14px}
+.guru-doc-btn:hover{background:#EEF4FC;border-color:#0080C7;color:#0080C7}
+.guru-doc-close{border:0;background:transparent;color:#94A0B8;cursor:pointer;padding:6px;border-radius:7px;line-height:0}
+.guru-doc-close svg{width:18px;height:18px}
+.guru-doc-close:hover{background:#EDF1F7;color:#10243A}
+.guru-doc-body{overflow:auto;padding:18px;background:#F4F7FB;flex:1 1 auto;min-height:0}
+.guru-doc-body > *{background:#fff;border-radius:10px}
+.guru-doc-err{padding:40px;text-align:center;color:#7B879E;font-size:13px}
+@media (max-width:720px){.guru-scrim{padding:0}.guru-doc{max-height:100vh;border-radius:0}}
+
+/* printing the report prints only the report */
+@media print{
+  body.guru-printing > *:not(.guru-scrim){display:none!important}
+  body.guru-printing .guru-scrim{position:static;background:none;padding:0;backdrop-filter:none;display:block}
+  body.guru-printing .guru-doc{max-height:none;box-shadow:none;border-radius:0;width:100%}
+  body.guru-printing .guru-doc-actions{display:none}
+  body.guru-printing .guru-doc-body{overflow:visible;background:#fff;padding:0}
+}
+/* the report's own download link points at a file that does not exist —
+   inside the modal the header's Print / Save PDF is the real action */
+.guru-doc-body .guru-download{display:none}

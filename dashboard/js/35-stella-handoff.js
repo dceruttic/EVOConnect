@@ -81,8 +81,6 @@
     K7: 'Recorded in EVO Connect · nothing was written to STELLA',
     K8: 'Agreement — recorded exactly as an override would be',
     K9: 'Override — recorded with its influencing method and reason',
-    K10: 'Type these values into STELLA',
-    K11: 'EVO Connect does not send them. You transcribe them yourself — that is the only bridge back.',
     K12: 'Order confirmed in STELLA',
     K13: 'Returned to the linked case record in EVO Connect · STELLA → EVO Connect',
     K14: 'Post-operative vault and implanted lens — record view, not functional',

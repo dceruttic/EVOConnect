@@ -21,11 +21,11 @@ const REVAI_LOGO_SVG = `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/
 ================================================================ */
 const PATIENT_STAGE_CFG = {
   "Consult":     { cls: "consult",   color: "#0071B0", label: "Consult" },
-  "Biometry":    { cls: "biometry",  color: "#2472D3", label: "Biometry" },
-  "Eligibility": { cls: "biometry",  color: "#2472D3", label: "Eligibility" },
-  "Sizing":      { cls: "sizing",    color: "#00D5E1", label: "Sizing" },
-  "Scheduled":   { cls: "scheduled", color: "#E78A27", label: "Scheduled" },
-  "Post-op":     { cls: "postop",    color: "#009C76", label: "Post-op" },
+  "Biometry":    { cls: "biometry",  color: "#1F62B8", label: "Biometry" },
+  "Eligibility": { cls: "biometry",  color: "#1F62B8", label: "Eligibility" },
+  "Sizing":      { cls: "sizing",    color: "#0F7C86", label: "Sizing" },
+  "Scheduled":   { cls: "scheduled", color: "#A8620C", label: "Scheduled" },
+  "Post-op":     { cls: "postop",    color: "#00745B", label: "Post-op" },
 };
 const PATIENT_STAGE_PROGRESS = {
   "Consult": 15, "Biometry": 30, "Eligibility": 40, "Sizing": 55, "Scheduled": 75, "Post-op": 95,
@@ -108,7 +108,7 @@ function renderPatients() {
       <div class="pt-list-actions">
         <div class="pt-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
-          <input placeholder="Search by name, ID, or refraction..." oninput="searchPatients(this.value)"/>
+          <input placeholder="Search by name, ID, or refraction..." aria-label="Search patients by name, ID or refraction" oninput="searchPatients(this.value)"/>
         </div>
         <button class="btn btn-primary small"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>New patient</button>
       </div>
@@ -130,7 +130,7 @@ function renderPatients() {
       </div>
       <div class="pt-sort">
         <label>Sort:</label>
-        <select onchange="sortPatients(this.value)">
+        <select onchange="sortPatients(this.value)" aria-label="Sort patients">
           <option value="stage">By stage</option>
           <option value="risk">By risk</option>
           <option value="name">By name</option>
@@ -492,7 +492,7 @@ function renderEvoCredits() {
             <clipPath id="bar-clip-apr"><rect x="278" width="22" y="22"  height="148" rx="4"/></clipPath>
           </defs>
           <!-- Y-axis gridlines + labels -->
-          <g font-family="Inter, sans-serif" font-size="9" fill="#63708A">
+          <g font-family="Inter, sans-serif" font-size="11" fill="#63708A">
             <line x1="32" y1="22"  x2="316" y2="22"  stroke="#EAEEF5" stroke-width="1" stroke-dasharray="2 3"/>
             <line x1="32" y1="86"  x2="316" y2="86"  stroke="#EAEEF5" stroke-width="1" stroke-dasharray="2 3"/>
             <line x1="32" y1="150" x2="316" y2="150" stroke="#EAEEF5" stroke-width="1" stroke-dasharray="2 3"/>
@@ -510,46 +510,46 @@ function renderEvoCredits() {
               <rect x="38" y="149" width="22" height="21" fill="#22C55E"/>
               <rect x="38" y="160" width="22" height="10" fill="#001E60"/>
             </g>
-            <text x="49" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A6478">Nov</text>
+            <text x="49" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A6478">Nov</text>
             <!-- Dec: 100/220/360 = 680 -->
             <g clip-path="url(#bar-clip-dec)">
               <rect x="86"  y="124" width="22" height="13" fill="#5BA3D6"/>
               <rect x="86"  y="137" width="22" height="22" fill="#22C55E"/>
               <rect x="86"  y="159" width="22" height="11" fill="#001E60"/>
             </g>
-            <text x="97" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A6478">Dec</text>
+            <text x="97" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A6478">Dec</text>
             <!-- Jan: 140/260/410 = 810 -->
             <g clip-path="url(#bar-clip-jan)">
               <rect x="134" y="106" width="22" height="14" fill="#5BA3D6"/>
               <rect x="134" y="120" width="22" height="38" fill="#22C55E"/>
               <rect x="134" y="158" width="22" height="12" fill="#001E60"/>
             </g>
-            <text x="145" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A6478">Jan</text>
+            <text x="145" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A6478">Jan</text>
             <!-- Feb: 170/310/450 = 930 -->
             <g clip-path="url(#bar-clip-feb)">
               <rect x="182" y="92"  width="22" height="16" fill="#5BA3D6"/>
               <rect x="182" y="108" width="22" height="49" fill="#22C55E"/>
               <rect x="182" y="157" width="22" height="13" fill="#001E60"/>
             </g>
-            <text x="193" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A6478">Feb</text>
+            <text x="193" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A6478">Feb</text>
             <!-- Mar: 240/410/470 = 1120 -->
             <g clip-path="url(#bar-clip-mar)">
               <rect x="230" y="58"  width="22" height="22" fill="#5BA3D6"/>
               <rect x="230" y="80"  width="22" height="76" fill="#22C55E"/>
               <rect x="230" y="156" width="22" height="14" fill="#001E60"/>
             </g>
-            <text x="241" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A6478">Mar</text>
+            <text x="241" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A6478">Mar</text>
             <!-- Apr (current month, highlighted): 432/540/530 = 1502 -->
             <g clip-path="url(#bar-clip-apr)">
               <rect x="278" y="22"  width="22" height="42" fill="#5BA3D6"/>
               <rect x="278" y="64"  width="22" height="53" fill="#22C55E"/>
               <rect x="278" y="117" width="22" height="53" fill="#001E60"/>
             </g>
-            <text x="289" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#001E60">Apr</text>
+            <text x="289" y="186" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#001E60">Apr</text>
             <!-- Apr value pill -->
             <g>
               <rect x="261" y="2" width="56" height="18" rx="9" fill="#001E60"/>
-              <text x="289" y="14.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#fff">240</text>
+              <text x="289" y="14.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#fff">240</text>
             </g>
           </g>
         </svg>

@@ -217,7 +217,7 @@
 .po-ctx-k { font-size: 11px; font-weight: 800; color: #63708A; letter-spacing: .12em; text-transform: uppercase; }
 .po-ctx-v { font-size: 12.5px; font-weight: 700; color: #001E60; margin-top: 1px; }
 .po-ctx-date { background: #F5F8FB; }
-.po-disclaimer-btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; background: #FEF3E2; border: 1px solid #F4C57A; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: #B26821; cursor: pointer; font-family: inherit; transition: all .14s; }
+.po-disclaimer-btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px; background: #FEF3E2; border: 1px solid #F4C57A; border-radius: 8px; font-size: 11.5px; font-weight: 700; color: #8A4E14; cursor: pointer; font-family: inherit; transition: all .14s; }
 .po-disclaimer-btn:hover { background: #F4C57A; color: #5A3815; }
 
 /* Bio strip — patient + medical record + IOL + biometry */

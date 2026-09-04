@@ -963,9 +963,9 @@ body.shx-open .demo-stamp { z-index: 9999; }
 .sfx-band{
   display:inline-block; margin-left:9px; padding:3px 9px; border-radius:999px;
   font-size:11px; font-weight:800; letter-spacing:.02em;
-  background:#E7F5EC; color:#15803D; vertical-align:6px;
+  background:#E7F5EC; color:#146C34; vertical-align:6px;
 }
-.sfx-a-vault.low .sfx-band,.sfx-a-vault.borderline-low .sfx-band{background:#FDF0DC; color:#A15C00}
+.sfx-a-vault.low .sfx-band,.sfx-a-vault.borderline-low .sfx-band{background:#FDF0DC; color:#8A4E00}
 .sfx-a-vault.high .sfx-band{background:#E4F1FA; color:#0071B0}
 .sfx-a-vault.hyper .sfx-band{background:#F3E9FB; color:#7E22CE}
 .sfx-a-vault.hypo .sfx-band{background:#FBE7EB; color:#C0243C}

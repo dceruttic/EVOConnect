@@ -18,10 +18,10 @@
   --gold: #0071B0;          /* primary accent — now STAAR blue (not purple) */
   --gold-lt: #3FA8DC;
   --purple: #0071B0;        /* legacy alias → STAAR blue (cascades to old class names) */
-  --warn: #E78A27;
+  --warn: #B96A0F;    /* text-safe; the fill kept below */
   --warn-lt: #EEA33C;
   --line: #E1E5EE;
-  --green: #009C76;
+  --green: #00805F;   /* text-safe on white and on cream (4.9) */
   --green-dk: #007F5A;
 
   /* === Estructura real REVAI (extraída del CSS de producción) === */

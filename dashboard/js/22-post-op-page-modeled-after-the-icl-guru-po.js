@@ -309,7 +309,7 @@ function renderPtPostop(pt) {
                   'L ' + (x - badgeW) + ' ' + (y - badgeH/2 + 5) + ' ',
                   'Q ' + (x - badgeW) + ' ' + (y - badgeH/2) + ' ' + (x - badgeW + 6) + ' ' + (y - badgeH/2) + ' Z" ',
                 'fill="' + COLORS.ideal + '"/>',
-          '<text x="' + (x - badgeW/2 + 2) + '" y="' + (y + 3.5) + '" text-anchor="middle" font-family="Inter" font-size="10" font-weight="800" fill="#fff">' + value + ' µm</text>',
+          '<text x="' + (x - badgeW/2 + 2) + '" y="' + (y + 3.5) + '" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#fff">' + value + ' µm</text>',
         '</g>'
       ].join('');
     }
@@ -338,8 +338,8 @@ function renderPtPostop(pt) {
     var parts = [
       '<svg viewBox="0 0 ' + totalW + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" class="po-vault-svg">',
         // Column headers
-        '<text x="' + leftCenter + '" y="14" text-anchor="middle" font-family="Inter" font-size="10" font-weight="800" fill="#5A6478" letter-spacing="0.10em">PREDICTION</text>',
-        '<text x="' + rightCenter + '" y="14" text-anchor="middle" font-family="Inter" font-size="10" font-weight="800" fill="#5A6478" letter-spacing="0.10em">POST-OP</text>',
+        '<text x="' + leftCenter + '" y="14" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#5A6478" letter-spacing="0.10em">PREDICTION</text>',
+        '<text x="' + rightCenter + '" y="14" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#5A6478" letter-spacing="0.10em">POST-OP</text>',
         // PREDICTION bar (full opacity)
         buildBands(leftBarX, 1),
         // POST-OP bar (translucent — only the data marker is full-opacity)
@@ -347,7 +347,7 @@ function renderPtPostop(pt) {
         // Y-axis scale (centered between the two bars)
         [1500,1000,900,800,700,600,500,400,300,200,0].map(function(val){
           var y = py(val);
-          return '<text x="' + axisCenter + '" y="' + (y+3) + '" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#63708A">' + val + '</text>';
+          return '<text x="' + axisCenter + '" y="' + (y+3) + '" text-anchor="middle" font-family="Inter" font-size="11" font-weight="700" fill="#63708A">' + val + '</text>';
         }).join(''),
     ];
 
@@ -382,6 +382,7 @@ function renderPtPostop(pt) {
     var hasFlash = v.autoFilled ? ' po-cell-flash' : '';
     return '<span class="po-cell-edit-wrap' + hasFlash + '">' +
       '<input type="text" class="po-cell-edit" value="' + displayVal + '" placeholder="—" ' +
+      'aria-label="' + String(field).replace(/[-_]/g, ' ') + ' \u00b7 ' + CURRENT_PT_POSTOP_EYE + ' \u00b7 ' + CURRENT_PT_POSTOP_MS + (unit ? ' (' + unit + ')' : '') + '" ' +
       'onblur="setPostopFieldFromInput(\'' + pt.id + '\',\'' + CURRENT_PT_POSTOP_EYE + '\',\'' + CURRENT_PT_POSTOP_MS + '\',\'' + field + '\',this.value)" ' +
       'onfocus="this.parentElement.classList.remove(\'po-cell-flash\')"/>' +
       (unit ? '<span class="po-cell-unit">' + unit + '</span>' : '') +
@@ -506,10 +507,10 @@ function renderPtPostop(pt) {
         showOctImage
           ? '<img src="' + octImg.url + '" alt="AS-OCT scan ' + CURRENT_PT_POSTOP_EYE + '" class="po-oct-img" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"/>'
           : '',
-        '<div class="po-img-fallback" style="' + (showOctImage ? 'display:none;' : 'display:flex;') + 'flex-direction:column;align-items:center;gap:10px;color:#63708A;padding:40px;">',
+        '<div class="po-img-fallback" style="' + (showOctImage ? 'display:none;' : 'display:flex;') + 'flex-direction:column;align-items:center;gap:10px;color:#C9D6E6;padding:40px;">',
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>',
           '<div style="font-size:13px;font-weight:700;text-align:center;">No OCT scan attached yet</div>',
-          '<div style="font-size:11px;color:#5A6478;text-align:center;max-width:300px;line-height:1.5;">Click <b>Import scan</b> above to bring it from the EHR or upload from this device.</div>',
+          '<div style="font-size:11px;color:#AFC0D4;text-align:center;max-width:300px;line-height:1.5;">Click <b>Import scan</b> above to bring it from the EHR or upload from this device.</div>',
         '</div>',
       '</div>',
       '<div class="po-image-foot">',

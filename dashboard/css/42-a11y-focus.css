@@ -74,3 +74,16 @@
   background:#E7F5EC; color:#15803D; border:1px solid #BBE3C8; font-weight:800;
 }
 .pt-ph-chips .c.ordered svg{width:12px; height:12px}
+
+/* ================================================================
+   Step headings — audit A-07
+   These were h4 sitting under the patient's h1, so the outline skipped
+   two levels. They are h2 now, which is correct for the document and
+   wrong for the browser default: size them as the step titles they are.
+================================================================ */
+.sf-step-info > h2,
+.sf-step-info > h4,
+#ptDecision .sf-step-info > h2 {
+  font-size: 15px; font-weight: 800; line-height: 1.25; letter-spacing: -.01em;
+  color: var(--ink, #001E60); margin: 0;
+}

@@ -28,7 +28,7 @@ function renderPostopVaultEvolution(pt){
   var grid = [0, 200, 300, 500, 800, 1000].map(function(val){
     var y = py(val);
     return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="rgba(15,29,64,0.06)" stroke-dasharray="3 4"/>' +
-           '<text x="' + (PL - 10) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#63708A">' + val + '</text>';
+           '<text x="' + (PL - 10) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="11" font-weight="700" fill="#63708A">' + val + '</text>';
   }).join('');
 
   // X-axis labels — current milestone is highlighted
@@ -93,7 +93,7 @@ function renderPostopVaultEvolution(pt){
       '<svg class="po-vault-evo-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">',
         bandsHtml,
         grid,
-        '<text x="' + (PL - 30) + '" y="' + (PT_ + 8) + '" font-family="Inter" font-size="9" font-weight="800" fill="#63708A">µm</text>',
+        '<text x="' + (PL - 30) + '" y="' + (PT_ + 8) + '" font-family="Inter" font-size="11" font-weight="800" fill="#63708A">µm</text>',
         lineSvg,
         xLabels,
         emptyOverlay,
@@ -117,7 +117,7 @@ function renderPostopEyePhotoSection(pt){
 
   // Header actions — the upload button always there; clear only when there's an upload
   var headActions =
-    '<input type="file" id="' + inputId + '" accept="image/*" style="display:none" onchange="uploadEyePhoto(this,\'' + pt.id + '\',\'' + eye + '\',\'' + ms + '\')"/>' +
+    '<input type="file" id="' + inputId + '" accept="image/*" style="display:none" aria-label="Upload an eye photo for ' + eye + ' at ' + ms + '" onchange="uploadEyePhoto(this,\'' + pt.id + '\',\'' + eye + '\',\'' + ms + '\')"/>' +
     '<button type="button" class="po-eyephoto-upload" onclick="document.getElementById(\'' + inputId + '\').click()">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
       ' ' + (hasUpload ? 'Replace photo' : (hasPhoto ? 'Replace photo' : 'Upload photo')) +

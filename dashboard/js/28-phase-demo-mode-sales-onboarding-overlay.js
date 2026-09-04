@@ -460,12 +460,75 @@
     }
   }
 
+  /* ---- admin gate ----------------------------------------------------
+     Deliberately light. This is a static demo, so the check runs in the
+     browser and anyone who opens the console can get past it — it is not
+     security and is not meant to be. It exists so that people the demo is
+     shared with do not wander into the phase controls and end up confused
+     about what the product does, while the panel stays one code away for
+     roadmap work. Unlocks for the rest of the browser tab. */
+  var PD_ADMIN_KEY = 'pd_admin_unlocked';
+  var PD_ADMIN_HASH = '45c16a67';
+  function pdHash(v) {
+    var h = 0x811c9dc5;
+    /* Math.imul: a plain multiply overflows the 53-bit mantissa before the
+       shift and would not be FNV-1a at all. */
+    for (var i = 0; i < v.length; i++) { h ^= v.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h.toString(16);
+  }
+  function pdUnlocked() {
+    try { return sessionStorage.getItem(PD_ADMIN_KEY) === '1'; } catch (e) { return false; }
+  }
+  function pdAskPassword(onOk) {
+    var old = document.getElementById('pdGate'); if (old) old.remove();
+    var g = document.createElement('div');
+    g.className = 'pd-gate'; g.id = 'pdGate';
+    g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); g.setAttribute('aria-labelledby', 'pdGateTtl');
+    g.innerHTML =
+      '<form class="pd-gate-card" novalidate>' +
+        '<div class="pd-gate-ttl" id="pdGateTtl">Phase Demo settings</div>' +
+        '<p class="pd-gate-sub">These controls change what the demo shows. Enter the admin code to open them.</p>' +
+        '<input class="pd-gate-in" type="password" inputmode="numeric" autocomplete="off" ' +
+          'aria-label="Admin code" placeholder="Admin code">' +
+        '<div class="pd-gate-err" role="alert" hidden>Wrong code.</div>' +
+        '<div class="pd-gate-actions">' +
+          '<button type="button" class="pd-gate-btn ghost" data-pd="cancel">Cancel</button>' +
+          '<button type="submit" class="pd-gate-btn">Open</button>' +
+        '</div>' +
+      '</form>';
+    document.body.appendChild(g);
+    var input = g.querySelector('.pd-gate-in'), err = g.querySelector('.pd-gate-err');
+    function close() { document.removeEventListener('keydown', onKey, true); g.remove(); }
+    function onKey(e) { if (e.key === 'Escape') { e.preventDefault(); close(); } }
+    document.addEventListener('keydown', onKey, true);
+    g.addEventListener('click', function (e) { if (e.target === g || e.target.closest('[data-pd="cancel"]')) close(); });
+    g.querySelector('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (pdHash(input.value.trim()) !== PD_ADMIN_HASH) {
+        err.hidden = false;
+        g.querySelector('.pd-gate-card').classList.remove('shake');
+        void g.offsetWidth;
+        g.querySelector('.pd-gate-card').classList.add('shake');
+        input.select();
+        return;
+      }
+      try { sessionStorage.setItem(PD_ADMIN_KEY, '1'); } catch (x) {}
+      close(); onOk();
+    });
+    input.focus();
+  }
+
   // ---- Public API ----
   const PhaseDemo = {
     openPanel() {
+      if (!pdUnlocked()) return pdAskPassword(function () { PhaseDemo.openPanel(); });
       renderPanel();
       const ov = document.getElementById('pdOverlay');
       if (ov) ov.classList.add('is-open');
+    },
+    lockPanel() {
+      try { sessionStorage.removeItem(PD_ADMIN_KEY); } catch (e) {}
+      PhaseDemo.closePanel();
     },
     closePanel() {
       const ov = document.getElementById('pdOverlay');

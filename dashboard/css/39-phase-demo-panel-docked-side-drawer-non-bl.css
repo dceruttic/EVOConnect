@@ -228,3 +228,46 @@
   margin-left: auto;
 }
 .pd-btn-primary:hover { background: #2a2247; }
+
+/* ================= admin gate =================
+   A speed bump in front of the phase controls, not a lock: the demo is shared
+   with people who should read it, not reconfigure it. */
+.pd-gate {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(8, 20, 40, .55); backdrop-filter: blur(3px);
+  animation: pdGateIn .16s ease-out both;
+}
+@keyframes pdGateIn { from { opacity: 0 } to { opacity: 1 } }
+.pd-gate-card {
+  width: min(360px, 100%); background: #fff; border-radius: 14px; padding: 22px 22px 18px;
+  box-shadow: 0 26px 60px rgba(6, 16, 36, .4);
+  display: flex; flex-direction: column; gap: 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.pd-gate-card.shake { animation: pdShake .3s ease-in-out; }
+@keyframes pdShake {
+  0%, 100% { transform: none } 25% { transform: translateX(-5px) }
+  50% { transform: translateX(5px) } 75% { transform: translateX(-3px) }
+}
+.pd-gate-ttl { font-size: 16px; font-weight: 800; color: #10243A; letter-spacing: -.01em; }
+.pd-gate-sub { margin: -4px 0 2px; font-size: 12.5px; line-height: 1.5; color: #64748B; }
+.pd-gate-in {
+  min-height: 42px; padding: 9px 12px; border-radius: 9px; border: 1.5px solid #DDE4EE;
+  font: inherit; font-size: 15px; font-weight: 700; letter-spacing: .18em; color: #10243A;
+}
+.pd-gate-in:focus-visible { outline: none; border-color: #5C18AB; box-shadow: 0 0 0 3px rgba(92, 24, 171, .14); }
+.pd-gate-err { font-size: 12px; font-weight: 700; color: #B03144; }
+.pd-gate-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 2px; }
+.pd-gate-btn {
+  min-height: 40px; padding: 9px 16px; border-radius: 9px; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 700;
+  background: #5C18AB; color: #fff; border: 1.5px solid #5C18AB;
+}
+.pd-gate-btn.ghost { background: #fff; color: #47536B; border-color: #DDE4EE; }
+.pd-gate-btn.ghost:hover { background: #F1F4F9; }
+.pd-gate-btn:focus-visible { outline: 2px solid #5C18AB; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .pd-gate { animation-duration: .001s; }
+  .pd-gate-card.shake { animation: none; }
+}

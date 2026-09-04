@@ -152,6 +152,89 @@ function confirmStellaOrder(){
 }
 
 // Runs only the selected formulas — reactive to user's multi-select
+/* ================================================================
+   The answer, before the evidence
+   ----------------------------------------------------------------
+   Audit AHA-1: four equal cards landed at once and three of them said the
+   same thing, so the surgeon had to read all four to find the one number
+   that decides the case — and the clinically interesting fact, that the
+   methods disagree, was never stated anywhere. This block says the answer,
+   says the disagreement in a sentence, and draws the spread on the only
+   axis that matters: the four manufactured lengths.
+================================================================ */
+var SF_SIZES = [12.1, 12.6, 13.2, 13.7];
+var SF_ABBREV = { ICL_GURU:'IG', REINSTEIN:'RE', LASSO:'LA', KS:'KS', STAAR_NOM:'SN', ICL_FIT:'IF', CASIA2:'C2' };
+
+/* The lead is the method that actually answers the question: one that
+   predicts vault, best confidence first. With none, the STAAR reference. */
+function _sfLead(results) {
+  var withVault = results.filter(function (r) { return r.vault != null && r.predictsVault !== false; });
+  var pool = withVault.length ? withVault : results;
+  return pool.slice().sort(function (a, b) { return (b.conf || 0) - (a.conf || 0); })[0] || null;
+}
+function _sfConsensus(results) {
+  var by = {};
+  results.forEach(function (r) {
+    var k = parseFloat(r.recSize).toFixed(1);
+    (by[k] = by[k] || []).push(r);
+  });
+  var sizes = Object.keys(by).sort(function (a, b) { return by[b].length - by[a].length; });
+  var top = sizes[0], n = by[top].length, total = results.length;
+  if (sizes.length === 1) {
+    return { text: 'All ' + total + ' methods agree on ' + top + ' mm.', unanimous: true };
+  }
+  var others = results.filter(function (r) { return parseFloat(r.recSize).toFixed(1) !== top; });
+  var names = others.slice(0, 2).map(function (r) {
+    var d = parseFloat(r.recSize) - parseFloat(top);
+    return r.name + ' ' + (d >= 0 ? '+' : '') + d.toFixed(1);
+  }).join(' · ');
+  var more = others.length > 2 ? ' · +' + (others.length - 2) + ' more' : '';
+  return { text: n + ' of ' + total + ' methods agree on ' + top + ' mm — ' + names + ' mm' + more, unanimous: false };
+}
+function _sfAxis(results) {
+  var cells = SF_SIZES.map(function (sz) {
+    var here = results.filter(function (r) { return Math.abs(parseFloat(r.recSize) - sz) < 0.051; });
+    var dots = here.map(function (r) {
+      var band = (r.vault != null && r.predictsVault !== false) ? r.band : 'na';
+      return '<span class="sfx-dot ' + band + '" title="' + _esc(r.name + ' · ' + r.recSize + ' mm') + '">' +
+             _esc(SF_ABBREV[r.code] || r.code.slice(0, 2)) + '</span>';
+    }).join('');
+    return '<div class="sfx-col' + (here.length ? ' on' : '') + '">' +
+             '<div class="sfx-dots">' + dots + '</div>' +
+             '<div class="sfx-tick"></div><div class="sfx-mm">' + sz.toFixed(1) + '</div>' +
+           '</div>';
+  }).join('');
+  return '<div class="sfx-axis" role="img" aria-label="Recommended length by method">' + cells + '</div>';
+}
+function _sfHeadline(results, patientId) {
+  if (!results.length) return '';
+  var lead = _sfLead(results);
+  if (!lead) return '';
+  var cons = _sfConsensus(results);
+  var hasVault = lead.vault != null && lead.predictsVault !== false;
+  var bandLbl = hasVault ? (lead.band === 'borderline-low' ? 'Borderline low'
+                  : lead.band.charAt(0).toUpperCase() + lead.band.slice(1)) : '';
+  return '<div class="sfx" data-lead="' + _esc(lead.code) + '">' +
+    '<div class="sfx-answer">' +
+      '<div class="sfx-a-main">' +
+        '<span class="sfx-k">Recommended</span>' +
+        '<span class="sfx-size">' + parseFloat(lead.recSize).toFixed(1) + '<em>mm</em></span>' +
+      '</div>' +
+      (hasVault
+        ? '<div class="sfx-a-vault ' + _esc(lead.band) + '">' +
+            '<span class="sfx-k">Predicted vault</span>' +
+            '<span class="sfx-vault">' + lead.vault + '<em>µm</em></span>' +
+            '<span class="sfx-band">' + _esc(bandLbl) + '</span>' +
+          '</div>'
+        : '<div class="sfx-a-vault na"><span class="sfx-k">Predicted vault</span>' +
+          '<span class="sfx-novault">not predicted by this method</span></div>') +
+      '<div class="sfx-a-src">' + _esc(lead.name) + '<span>' + (lead.conf || 0) + '% model confidence</span></div>' +
+    '</div>' +
+    '<p class="sfx-cons' + (cons.unanimous ? ' agree' : '') + '">' + _esc(cons.text) + '</p>' +
+    _sfAxis(results) +
+  '</div>';
+}
+
 function runSizingFormulas(patientId) {
   const pt = DATA.patients.find(p => p.id === patientId);
   if (!pt) return;
@@ -185,7 +268,10 @@ function runSizingFormulas(patientId) {
   el.classList.remove('sf-guru-mode');
   list.classList.remove('sf-guru-mounted');
   tag.textContent = `${results.length} formula${results.length !== 1 ? 's' : ''} · ${results.filter(r=>r.band==='ideal').length} ideal`;
-  list.innerHTML = `<div class="sf-comp-grid">${results.map(r => _sfResultCard(r, patientId)).join('')}</div>`;
+  var _lead = _sfLead(results);
+  results.forEach(function (r) { r._lead = (_lead && r.code === _lead.code); });
+  list.innerHTML = _sfHeadline(results, patientId) +
+    `<div class="sf-comp-grid">${results.map(r => _sfResultCard(r, patientId)).join('')}</div>`;
   /* The card body is the shortcut to the decision, the same as in a handoff
      case; the footer buttons keep their own actions. */
   if (!list._sfCardNav) {
@@ -221,7 +307,7 @@ function _sfResultCard(r, patientId) {
         'View PDF</button>' : '';
     var foot = '<div class="actions">' + pdf +
       '<button class="btn btn-primary small" onclick="event.stopPropagation();selectSizingFormula(\'' + patientId + '\',\'' + r.code + '\',\'' + r.recSize + '\',' + (r.vault || 0) + ',\'' + bc + '\')">Select</button></div>';
-    return SH_CARDS.methodCard(r, null, { foot: foot });
+    return SH_CARDS.methodCard(r, null, { foot: foot, lead: r._lead === true });
   }
 
   const noVault = r.predictsVault === false;

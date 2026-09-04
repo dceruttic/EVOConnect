@@ -935,3 +935,85 @@ body.shx-open .demo-stamp { z-index: 9999; }
     grid-column: 1; grid-row: auto;
   }
 }
+
+/* ================= the answer, before the evidence =================
+   Audit AHA-1. Four equal cards landed at once and three said the same
+   thing; the disagreement between methods — the clinically interesting
+   fact — was never stated. This block leads with the number that decides
+   the case, says the disagreement in one sentence, and plots every method
+   on the only axis that matters: the four manufactured lengths. */
+.sfx{
+  border:1px solid #D7E2F0; border-left:4px solid #0071B0; border-radius:12px;
+  background:linear-gradient(180deg,#FBFDFF 0%,#F4F9FE 100%);
+  padding:16px 20px 14px; margin:0 0 16px;
+}
+.sfx-answer{display:flex; flex-wrap:wrap; align-items:flex-end; gap:8px 32px}
+.sfx-k{
+  display:block; font-size:11px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; color:#5D6A82; margin-bottom:2px;
+}
+.sfx-size{font-size:38px; font-weight:800; line-height:1; letter-spacing:-.02em; color:#001E60; font-variant-numeric:tabular-nums}
+.sfx-size em{font-style:normal; font-size:15px; font-weight:700; margin-left:4px; color:#5D6A82}
+.sfx-vault{font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; color:#15803D}
+.sfx-vault em{font-style:normal; font-size:14px; font-weight:700; margin-left:3px; opacity:.75}
+.sfx-a-vault.low .sfx-vault,.sfx-a-vault.borderline-low .sfx-vault{color:#A15C00}
+.sfx-a-vault.high .sfx-vault{color:#0071B0}
+.sfx-a-vault.hyper .sfx-vault{color:#7E22CE}
+.sfx-a-vault.hypo .sfx-vault{color:#C0243C}
+.sfx-band{
+  display:inline-block; margin-left:9px; padding:3px 9px; border-radius:999px;
+  font-size:11px; font-weight:800; letter-spacing:.02em;
+  background:#E7F5EC; color:#15803D; vertical-align:6px;
+}
+.sfx-a-vault.low .sfx-band,.sfx-a-vault.borderline-low .sfx-band{background:#FDF0DC; color:#A15C00}
+.sfx-a-vault.high .sfx-band{background:#E4F1FA; color:#0071B0}
+.sfx-a-vault.hyper .sfx-band{background:#F3E9FB; color:#7E22CE}
+.sfx-a-vault.hypo .sfx-band{background:#FBE7EB; color:#C0243C}
+.sfx-novault{font-size:13px; font-weight:600; color:#5D6A82}
+.sfx-a-src{margin-left:auto; text-align:right; font-size:13px; font-weight:800; color:#001E60}
+.sfx-a-src span{display:block; font-size:11px; font-weight:600; color:#5D6A82; margin-top:2px}
+.sfx-cons{
+  margin:14px 0 0; padding-top:12px; border-top:1px solid #DCE7F4;
+  font-size:13.5px; font-weight:700; color:#243A5E;
+}
+.sfx-cons.agree{color:#15803D}
+
+/* the spread, on the four manufactured lengths */
+.sfx-axis{display:grid; grid-template-columns:repeat(4,1fr); margin-top:12px}
+.sfx-col{display:flex; flex-direction:column; align-items:center; gap:5px}
+.sfx-dots{display:flex; gap:4px; min-height:24px; align-items:flex-end; flex-wrap:wrap; justify-content:center}
+.sfx-dot{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:26px; height:22px; padding:0 6px; border-radius:6px;
+  font-size:11px; font-weight:800; letter-spacing:.02em;
+  background:#E3EAF3; color:#3E4C66;
+}
+.sfx-dot.ideal{background:#15803D; color:#fff}
+.sfx-dot.low,.sfx-dot.borderline-low{background:#A15C00; color:#fff}
+.sfx-dot.high{background:#0071B0; color:#fff}
+.sfx-dot.hyper{background:#7E22CE; color:#fff}
+.sfx-dot.hypo{background:#C0243C; color:#fff}
+.sfx-tick{width:100%; height:3px; border-radius:2px; background:#DCE7F4}
+.sfx-col.on .sfx-tick{background:#9FBEDC}
+.sfx-mm{font-size:11px; font-weight:700; color:#5D6A82; font-variant-numeric:tabular-nums}
+
+/* the card that answers the question is the one that looks like it does */
+.sh-ext-card.sh-lead{border-color:#9FBEDC; box-shadow:0 2px 10px rgba(0,60,120,.10)}
+/* provenance is required by the brief, but it is not the answer */
+.sh-provbox{margin:2px 0 0}
+.sh-provbox summary{
+  cursor:pointer; list-style:none; font-size:11px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; color:#5D6A82; padding:4px 0;
+}
+.sh-provbox summary::-webkit-details-marker{display:none}
+.sh-provbox summary::before{content:'▸ '; color:#9AA6BC}
+.sh-provbox[open] summary::before{content:'▾ '}
+.sh-provbox .sh-meta{margin-top:2px}
+.sh-novault-line{
+  font-size:11.5px; font-weight:600; color:#5D6A82;
+  background:#F4F7FB; border-radius:7px; padding:7px 10px; margin:2px 0 4px;
+}
+@media (max-width:720px){
+  .sfx-a-src{margin-left:0; text-align:left; width:100%}
+  .sfx-size{font-size:32px}
+}

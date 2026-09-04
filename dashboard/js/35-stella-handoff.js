@@ -65,7 +65,7 @@
     V3: 'Choose the lens size you are ordering.',
     V4: 'Missing input: {f}',
     V5: 'Complete the highlighted fields, then order the lens in STELLA.',
-    R2: 'The case crosses through STAAR’s layer. You confirm the lens in STELLA — the order is created there.',
+    R2: 'Nothing is sent back. In STELLA you enter and confirm the lens yourself.',
     R3: 'You are returning to STELLA · STAAR system of record',
     R4: 'Return without recording your decision?',
     R4a: 'Return anyway', R4b: 'Stay',
@@ -81,6 +81,8 @@
     K7: 'Recorded in EVO Connect · nothing was written to STELLA',
     K8: 'Agreement — recorded exactly as an override would be',
     K9: 'Override — recorded with its influencing method and reason',
+    K10: 'Type these values into STELLA',
+    K11: 'EVO Connect does not send them. You transcribe them yourself — that is the only bridge back.',
     K12: 'Order confirmed in STELLA',
     K13: 'Returned to the linked case record in EVO Connect · STELLA → EVO Connect',
     K14: 'Post-operative vault and implanted lens — record view, not functional',
@@ -89,12 +91,7 @@
     L3: 'STAAR · STELLA ordering surface — you have left EVO Connect',
     L4: 'Confirm ICL order',
     L5: 'from STELLA',
-    L5x: 'via STAAR layer',
     L6: 'Loaded from the STELLA case. EVO Connect writes nothing here — the values below are STELLA’s own.',
-    L6x: 'Received through the STAAR integration layer. STELLA loads its own recommendation alongside — confirm any difference before ordering.',
-    LOC6x: 'Received through the STAAR integration layer. The reference from the comparison sits alongside — confirm any difference before ordering.',
-    XB1: 'Three fields this demonstration cannot fill',
-    XB2: 'They are STAAR’s to answer, and they set the pace of everything downstream.',
     L7: 'The lens you entered differs from the STELLA recommendation',
     L8: 'STELLA recommends {rec} mm; you entered {got} mm ({d} mm). You can order the lens you entered, but the difference has to be confirmed.',
     L9: 'I confirm I am ordering {got} mm instead of the {rec} mm recommended by STELLA.',
@@ -985,28 +982,13 @@
   var ORDER_SIZES = ['12.1', '12.6', '13.2', '13.7'];
   var ord = null;                                                       // modal draft
 
-  /* What the ordering form opens on. When the surgeon has recorded a decision
-     it is that lens that travelled the layer, so it is that lens the form shows
-     — and STELLA's own recommendation sits above it, with the divergence block
-     asking for an explicit confirmation. With no decision on record the form
-     falls back to STELLA's own numbers. */
   function stellaSeed(rec) {
-    var R = rec.stellaRecommendation, d = rec.decisions[curEye(rec)];
-    var pl = d && d.plannedLens ? d.plannedLens : null;
-    var rp = R.power || {};
-    var base = {
-      size: String(R.size),
-      power: rp.sph != null ? String(rp.sph) : '',
-      axis: rp.axis != null ? String(rp.axis) : '',
-      ack: false, err: null, viaLayer: false,
-      touched: { size: false, power: false, axis: false }
-    };
-    if (!pl || !pl.size) return base;
+    var R = rec.stellaRecommendation;
     return {
-      size: String(pl.size),
-      power: pl.power != null && pl.power !== '' ? String(pl.power) : base.power,
-      axis: pl.axis != null && pl.axis !== '' ? String(pl.axis) : base.axis,
-      ack: false, err: null, viaLayer: true,
+      size: String(R.size),
+      power: R.power && R.power.sph != null ? String(R.power.sph) : '',
+      axis: R.power && R.power.axis != null ? String(R.power.axis) : '',
+      ack: false, err: null,
       touched: { size: false, power: false, axis: false }
     };
   }
@@ -1121,15 +1103,6 @@
               '<span class="shx-cval">' + _xEsc(c[2]) + '</span></li>';
           }).join('') + '</ol>' +
         '</section>' +
-        '<section class="shx-sec shx-blanks">' +
-          '<h3 class="shx-lbl">' + _xEsc(COPY.XB1) + '</h3>' +
-          '<div class="shx-brow">' +
-            ['Built by', 'Validated under', 'Available from'].map(function (k) {
-              return '<div class="shx-b"><span>' + _xEsc(k) + '</span><b>—</b></div>';
-            }).join('') +
-          '</div>' +
-          '<p class="shx-bcap">' + _xEsc(COPY.XB2) + '</p>' +
-        '</section>' +
         '<footer class="shx-foot">' +
           '<div class="shx-out"><span class="shx-out-lbl">Handed to STELLA</span>' +
             '<b class="shx-out-val">Draft order · awaiting the surgeon’s confirmation</b>' +
@@ -1222,12 +1195,11 @@
     var diverges = ord.size && ord.size !== String(R.size);
     var delta = diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '';
     var local = !!rec.local;
-    var src = ord.viaLayer ? COPY.L5x : (local ? COPY.LOC5 : COPY.L5);
-    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag' + (ord.viaLayer ? ' via' : '') + '">' + esc(src) + '</em>'; };
+    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag">' + esc(local ? COPY.LOC5 : COPY.L5) + '</em>'; };
 
     host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, false) +
       '<div class="sh-obody">' +
-        '<div class="sh-oseed' + (ord.viaLayer ? ' via' : '') + '">' + esc(ord.viaLayer ? (local ? COPY.LOC6x : COPY.L6x) : (local ? COPY.LOC6 : COPY.L6)) + '</div>' +
+        '<div class="sh-oseed">' + esc(local ? COPY.LOC6 : COPY.L6) + '</div>' +
         '<div class="sh-orec"><div class="sh-ok">' + esc(local ? COPY.LOC15 : COPY.L15) + '</div>' +
           '<div class="sh-orec-v">' + esc(R.size) + ' mm</div>' +
           '<div class="sh-orec-m">' + esc(R.model) + (R.power && R.power.sph != null ? ' · ' + esc(R.power.sph) + ' D' : '') +
@@ -1239,7 +1211,7 @@
           '<label><span>Power (D) ' + tag('power') + '</span><input data-of="power" value="' + esc(ord.power) + '" placeholder="—"></label>' +
           '<label><span>Axis (°, optional) ' + tag('axis') + '</span><input data-of="axis" value="' + esc(ord.axis) + '" placeholder="—"></label>' +
         '</div>' +
-        (d && !ord.viaLayer ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
+        (d ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
               (d.plannedLens.power ? ' · <b>' + esc(d.plannedLens.power) + ' D</b>' : '') +
               '. It is not carried into STELLA — enter it here yourself.</div>' : '') +
         (diverges ? '<div class="sh-odiff"><div class="t">' + esc(COPY.L7) + '</div>' +
@@ -1353,6 +1325,10 @@
   function vaultBar(r) {
     var has = r && r.predictsVault !== false && r.vault != null;
     var color = VAULT_BANDS[r && r.band] || '#5A6478';
+    /* Audit AHA-1: the full colour scale used to be drawn on every card, so a
+       method that predicts no vault looked like one whose value you simply
+       could not find. No prediction, no scale. */
+    if (!has) return '<div class="sh-novault-line">No vault prediction \u2014 this method returns length only</div>';
 
     var pct = has ? Math.max(2, Math.min(98, ((r.vault - 100) / 900) * 100)) : 0;
     /* The scale stays fully coloured on every card so the row reads as one
@@ -1381,7 +1357,8 @@
     var has = r.predictsVault !== false && r.vault != null;
     var color = VAULT_BANDS[r.band] || '#5A6478';
     var version = r.version ? ('Version: ' + r.version) : COPY.M5;
-    return '<div class="sf-comp-card sh-ext-card ' + esc(r.band || 'na') + '" data-formula="' + esc(r.code) + '" style="--bandc:' + color + '" role="button" tabindex="0" aria-label="' + esc(r.name) + ' \u2014 go to your decision">' +
+    /* the card that answers the question carries the weight (audit AHA-1) */
+    return '<div class="sf-comp-card sh-ext-card ' + esc(r.band || 'na') + (opts.lead ? ' sh-lead' : '') + '" data-formula="' + esc(r.code) + '" style="--bandc:' + color + '" role="button" tabindex="0" aria-label="' + esc(r.name) + ' \u2014 go to your decision">' +
       '<div class="sf-comp-head"><div class="sf-comp-badge" style="background:' + color + '">' + esc(abbrev) + '</div>' +
       '<div class="sf-comp-name"><div class="nm">' + esc(r.name) + '</div><div class="ds">' + esc(COPY.M6) + '</div></div></div>' +
       '<div class="sf-comp-stats">' +
@@ -1393,7 +1370,11 @@
         '</div>' +
       '</div>' +
       vaultBar(r) +
+      /* Audit AHA-1: provenance is required by the brief, but it is not the
+         answer — three grey lines per card used to outweigh the number. */
+      '<details class="sh-provbox"><summary>Source &amp; device</summary>' +
       '<div class="sh-meta"><div>Modality: ' + esc(r.modality || '\u2014') + '</div><div>Device: ' + esc(r.device || '\u2014') + '</div><div>' + esc(version) + '</div></div>' +
+      '</details>' +
       (r.basis ? '<div class="sh-basis" title="' + esc(COPY.E3s) + '">' + esc(r.basis) + '</div>' : '') +
       (ds != null ? '<div class="sh-delta">' + esc(fmt(COPY.D1, { d: ds })) + '</div>' : '') +
       '<div class="sf-comp-foot"><span class="conf sh-conf">' + esc(fmt(COPY.M7, { NN: r.conf })) + '</span>' +

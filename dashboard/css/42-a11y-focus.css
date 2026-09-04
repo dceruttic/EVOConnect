@@ -49,3 +49,20 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ================================================================
+   Refraction and biometry fields — audit A-03
+   These were 76 × 20 px: the smallest boxes in the product, and the ones a
+   surgeon spends the most time in. The wrapper is what the eye reads as the
+   field, so the height belongs there and the ring already follows it.
+================================================================ */
+.sf-rx-cell .sf-input-row,
+.sf-input .sf-input-row { min-height: 32px; padding-top: 5px; padding-bottom: 5px; }
+.sf-rx-cell .sf-input-row input,
+.sf-input .sf-input-row input { line-height: 1.35; }
+@media (pointer: coarse) {
+  .sf-rx-cell .sf-input-row,
+  .sf-input .sf-input-row { min-height: 44px; }
+}
+/* the label is the field's name, so clicking it should land in the field */
+.sf-rx-cell label, .sf-input > label { cursor: pointer; }

@@ -105,7 +105,7 @@ function _procRecRationaleHtml(r, s, pt){
   var rows = [];
   if (topName === 'EVO ICL') {
     if (sph >= 8) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 10, 'High myopia → ICL preferred'));
-    else if (sph >= 5) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 8, 'Sphere ≥ 5 D · within the ICL range'));
+    else if (sph >= 5) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 8, 'Business rule: sphere ≥ 5 D → EVO ICL'));
     else if (sph >= 3) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 3, 'Moderate myopia · ICL eligible'));
     else rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 1, 'Low myopia · LASIK/SMILE typically preferred'));
     if (acd >= 3.0) rows.push(row('ACD', acd.toFixed(2) + ' mm', 0, '✓ ≥ 3.0 mm — meets STAAR IFU'));
@@ -687,7 +687,7 @@ const SIZING_FORMULAS = [
   { code: "REINSTEIN",   name: "Reinstein",         desc: "High-resolution UBM-driven nomogram · sulcus-to-sulcus + crystalline lens rise", recSize: 12.6, vault: 380, conf: 92, author: "Reinstein et al., 2013", predictsVault: false },
   { code: "LASSO",       name: "Lasso",             desc: "Regression-based machine-learning sizing · multi-center cohort calibrated",     recSize: 12.6, vault: 410, conf: 91, author: "Russo et al., 2022",     predictsVault: false },
   { code: "KS",          name: "KS",                desc: "Kane-Saxena hybrid · combines aRISE + lens rise + ATA",                          recSize: 12.6, vault: 415, conf: 89, author: "Kane & Saxena, 2022",  predictsVault: false },
-  { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR manufacturer reference", predictsVault: false },
+  { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR (OCOS)",         predictsVault: false },
   { code: "ICL_FIT",     name: "ICL Fit",           desc: "OCT-based AS-OCT fit · iris-iris + ATA · CIRCLE/Casia2 imaging-driven",          recSize: 12.1, vault: 320, conf: 90, author: "Pérez-Vives et al., 2021", predictsVault: false },
 ];
 // Which formulas are selected for the current run (user-toggled)
@@ -864,45 +864,45 @@ function renderPtSizingFormulas(pt) {
           <div class="sf-rx-head"><span class="sf-rx-tag manifest">Manifest</span><span class="sf-rx-sub">Subjective refraction</span></div>
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label>Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-man-sph" value="${sphMan}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-man-cyl" value="-0.50"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-ax" value="178"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-man-sph" value="${sphMan}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-man-cyl" value="-0.50"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-ax" value="178"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label>K1</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1" value="${(b.K1.v).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1ax" value="178"/><span class="sf-unit">°</span></div></div>
-            <div class="sf-rx-cell"><label>K2</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k2" value="${(b.K2.v).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1" value="${(b.K1.v).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1ax" value="178"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k2" value="${(b.K2.v).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
           </div>
         </div>
         <div class="sf-rx-card">
           <div class="sf-rx-head"><span class="sf-rx-tag cyclo">Cycloplegic</span><span class="sf-rx-sub">Cycloplegic refraction</span></div>
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label>Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-sph" value="${sphCyc}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-cyl" value="-0.50"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-ax" value="180"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-sph" value="${sphCyc}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-cyl" value="-0.50"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-ax" value="180"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label>K1</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1" value="${(b.K1.v - 0.05).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1ax" value="180"/><span class="sf-unit">°</span></div></div>
-            <div class="sf-rx-cell"><label>K2</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k2" value="${(b.K2.v - 0.04).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1" value="${(b.K1.v - 0.05).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1ax" value="180"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k2" value="${(b.K2.v - 0.04).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
           </div>
         </div>
         <div class="sf-rx-card">
           <div class="sf-rx-head"><span class="sf-rx-tag auto">Autorefractor</span><span class="sf-rx-sub">Objective refraction</span></div>
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label>Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-sph" value="${sphAuto}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-cyl" value="-0.62"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-ax" value="175"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-sph" value="${sphAuto}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-cyl" value="-0.62"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-ax" value="175"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label>K1</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1" value="${(b.K1.v + 0.03).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label>K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1ax" value="176"/><span class="sf-unit">°</span></div></div>
-            <div class="sf-rx-cell"><label>K2</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k2" value="${(b.K2.v + 0.06).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1" value="${(b.K1.v + 0.03).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1ax" value="176"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k2" value="${(b.K2.v + 0.06).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
           </div>
         </div>
       </div>
@@ -937,14 +937,14 @@ function renderPtSizingFormulas(pt) {
         </div>
       </div>
       <div class="sf-inputs-grid">
-        <div class="sf-input"><label>WTW (white-to-white)</label><div class="sf-input-row"><input type="text" id="sf-wtw" value="${wtw}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label>ATA (angle-to-angle)</label><div class="sf-input-row"><input type="text" id="sf-ata" value="${ata}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label>STS (sulcus-to-sulcus)</label><div class="sf-input-row"><input type="text" id="sf-sts" value="${sts}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label>ACD</label><div class="sf-input-row"><input type="text" id="sf-acd" value="${acd}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label>aRISE</label><div class="sf-input-row"><input type="text" id="sf-arise" value="${(parseFloat(acd) - 0.62).toFixed(2)}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label>Crystalline lens rise</label><div class="sf-input-row"><input type="text" id="sf-clr" value="${clr}" /><span class="sf-unit">µm</span></div></div>
-        <div class="sf-input"><label>K-mean</label><div class="sf-input-row"><input type="text" id="sf-kmean" value="${kMean}" /><span class="sf-unit">D</span></div></div>
-        <div class="sf-input"><label>Axial length</label><div class="sf-input-row"><input type="text" id="sf-al" value="${al}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-wtw">WTW (white-to-white)</label><div class="sf-input-row"><input type="text" id="sf-wtw" value="${wtw}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-ata">ATA (angle-to-angle)</label><div class="sf-input-row"><input type="text" id="sf-ata" value="${ata}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-sts">STS (sulcus-to-sulcus)</label><div class="sf-input-row"><input type="text" id="sf-sts" value="${sts}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-acd">ACD</label><div class="sf-input-row"><input type="text" id="sf-acd" value="${acd}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-arise">aRISE</label><div class="sf-input-row"><input type="text" id="sf-arise" value="${(parseFloat(acd) - 0.62).toFixed(2)}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-clr">Crystalline lens rise</label><div class="sf-input-row"><input type="text" id="sf-clr" value="${clr}" /><span class="sf-unit">µm</span></div></div>
+        <div class="sf-input"><label for="sf-kmean">K-mean</label><div class="sf-input-row"><input type="text" id="sf-kmean" value="${kMean}" /><span class="sf-unit">D</span></div></div>
+        <div class="sf-input"><label for="sf-al">Axial length</label><div class="sf-input-row"><input type="text" id="sf-al" value="${al}" /><span class="sf-unit">mm</span></div></div>
       </div>
       <div class="sf-attachments" id="sfAttachments" style="display:none;">
         <div class="sf-att-lbl">Attached scans</div>
@@ -967,7 +967,7 @@ function renderPtSizingFormulas(pt) {
         </span>
         <span class="sfc-body">
           <span class="sfc-name">${f.name}${locked ? lock : ''}</span>
-          <span class="sfc-author">${locked ? 'STAAR reference · always included' : f.author}</span>
+          <span class="sfc-author">${locked ? 'STAAR (OCOS) · always included' : f.author}</span>
         </span>
       </button>
     `;
@@ -1058,7 +1058,7 @@ function renderPtSizingFormulas(pt) {
         </div>
         <div class="rx-import-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#5A6478;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input type="text" id="scanImportSearch" placeholder="Search patient by name or ID…" oninput="filterScanImportPatients(this.value)">
+          <input type="text" id="scanImportSearch" aria-label="Search patients to import a scan from" placeholder="Search patient by name or ID…" oninput="filterScanImportPatients(this.value)">
         </div>
         <div class="rx-import-body scan-import-body">
           <div class="rx-import-list" id="scanImportList"></div>
@@ -1139,7 +1139,7 @@ function renderPtSizingFormulas(pt) {
 
         <div class="rx-import-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#5A6478;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          <input type="text" id="rxImportSearch" placeholder="Search patient by name or ID…" oninput="filterRxImportPatients(this.value)">
+          <input type="text" id="rxImportSearch" aria-label="Search patients to import a refraction from" placeholder="Search patient by name or ID…" oninput="filterRxImportPatients(this.value)">
         </div>
 
         <div class="rx-import-body">

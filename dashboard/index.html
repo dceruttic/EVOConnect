@@ -210,7 +210,7 @@
         <div class="home-search-row">
           <div class="home-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input type="text" placeholder="Search patients by Name, Surname, Document." />
+            <input type="text" placeholder="Search patients by Name, Surname, Document." aria-label="Search patients" />
             <svg class="dropdown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <button class="all-patients-btn">All patients</button>
@@ -415,7 +415,7 @@
               <span class="tag-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Activated</span>
             </div>
             <div class="ttl">Stella by STAAR</div>
-            <div class="desc">EVO ICL planning &amp; ordering — STAAR’s system of record.</div>
+            <div class="desc">EVO ICL planning &amp; ordering — replaces OCOS.</div>
           </div>
         </div>
 
@@ -665,7 +665,7 @@
   <div class="copilot-body" id="copilotMessages"></div>
   <div class="copilot-suggest" id="copilotSuggest"></div>
   <form class="copilot-input" onsubmit="event.preventDefault(); sendCopilotMsg();">
-    <input id="copilotInput" placeholder="Ask about a patient, OR, outcomes, drafts…" autocomplete="off" />
+    <input id="copilotInput" aria-label="Ask the clinical copilot" placeholder="Ask about a patient, OR, outcomes, drafts…" autocomplete="off" />
     <button type="submit" class="send" title="Send">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
     </button>

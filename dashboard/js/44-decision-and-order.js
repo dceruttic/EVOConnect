@@ -81,7 +81,7 @@
             '<span>' + (refSize ? esc('Accept the STAAR nomogram (' + refSize + ' mm)') : 'Run the comparison first') + '</span></label>' +
           '<label class="sh-radio"><input type="radio" name="pd-choice" value="prefer"' + chk(d0.choice, 'prefer') + '><span>Prefer another lens</span></label>' +
         '</div>' +
-        '<div class="sh-err" data-err="choice" hidden>Choose one.</div></fieldset>' +
+        '<div class="sh-err" role="alert" data-err="choice" hidden>Choose one.</div></fieldset>' +
 
       /* Step 2 is one panel, not four stacked cards: the lens sits beside the
          method, the reason beside the note, so the width does the work the
@@ -100,7 +100,7 @@
               '<label><span>Axis (°)</span><input type="text" name="pd-axis" inputmode="numeric" value="' + esc(pl.axis || '') + '" placeholder="—"></label>' +
             '</div>' +
             '<div class="sh-delta-line" id="pdDelta"></div>' +
-            '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div>' +
+            '<div class="sh-err" role="alert" data-err="size" hidden>Select the planned lens size.</div>' +
           '</div>' +
 
           '<div class="pd-cell pd-cell-method" data-branch="prefer">' +
@@ -112,8 +112,8 @@
               '<label class="sh-chip"><input type="radio" name="pd-method" value="OTHER"' + chk(d0.influencingMethod, 'OTHER') + '><span>Other / custom</span></label>' +
             '</div>' +
             '<input class="sh-other" type="text" name="pd-method-other" maxlength="60" placeholder="Which calculator did you use?" value="' + esc(d0.otherMethodName || '') + '" aria-label="Other / custom method name" hidden>' +
-            '<div class="sh-err" data-err="method" hidden>Select the method that influenced you.</div>' +
-            '<div class="sh-err" data-err="other" hidden>Name the calculator.</div>' +
+            '<div class="sh-err" role="alert" data-err="method" hidden>Select the method that influenced you.</div>' +
+            '<div class="sh-err" role="alert" data-err="other" hidden>Name the calculator.</div>' +
           '</div>' +
 
           '<div class="pd-cell pd-cell-reason" data-branch="prefer">' +
@@ -124,7 +124,7 @@
                        '<span>' + esc(r[1]) + '</span></label>'; }).join('') +
             '</div>' +
             '<div class="sh-src" id="pdReasonSrc" hidden></div>' +
-            '<div class="sh-err" data-err="reason" hidden>Select a reason.</div>' +
+            '<div class="sh-err" role="alert" data-err="reason" hidden>Select a reason.</div>' +
           '</div>' +
 
           '<div class="pd-cell pd-cell-note">' +

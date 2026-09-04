@@ -696,23 +696,23 @@
       '<fieldset class="sh-fs"><legend class="sh-lg">Decision</legend>' +
         '<label class="sh-radio"><input type="radio" name="sh-choice" value="accept"' + chk(d.choice, 'accept') + '><span>' + esc(fmt(COPY.J2, { size: R.size })) + '</span></label>' +
         '<label class="sh-radio"><input type="radio" name="sh-choice" value="prefer"' + chk(d.choice, 'prefer') + '><span>' + esc(COPY.J3) + '</span></label>' +
-        '<div class="sh-err" data-err="choice" hidden>Choose Accept or Prefer.</div></fieldset>' +
+        '<div class="sh-err" role="alert" data-err="choice" hidden>Choose Accept or Prefer.</div></fieldset>' +
       '<fieldset class="sh-fs sh-lens" id="shLensFs"><legend class="sh-lg">Planned lens</legend><div class="sh-lens-grid">' +
         '<label><span>Size (mm)</span><select name="sh-size"><option value="">—</option>' + sizeOptions().map(function (s) { return '<option value="' + s + '"' + sel(d.plannedLens && d.plannedLens.size, s) + '>' + s + '</option>'; }).join('') + '</select></label>' +
         '<label><span>Power (D)</span><input type="text" name="sh-power" inputmode="decimal" value="' + esc(pw) + '" placeholder="—"></label>' +
         '<label><span>Axis (°, optional)</span><input type="text" name="sh-axis" inputmode="numeric" value="' + esc(ax) + '" placeholder="—"></label>' +
         '</div><div class="sh-delta-line" id="shDelta" data-stella="' + esc(R.size) + '"></div>' +
-        '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
+        '<div class="sh-err" role="alert" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
       '<fieldset class="sh-fs"><legend class="sh-lg">Influencing method</legend><div class="sh-chips">' +
         METHODS.map(function (m) { return '<label class="sh-chip"><input type="radio" name="sh-method" value="' + m.code + '"' + chk(d.influencingMethod, m.code) + '><span>' + esc(m.label) + '</span></label>'; }).join('') +
         '</div><input class="sh-other" type="text" name="sh-method-other" maxlength="60" placeholder="name required" value="' + esc(d.otherMethodName || '') + '" aria-label="Other / custom method name" hidden>' +
-        '<div class="sh-err" data-err="method" hidden>Select the influencing method.</div>' +
-        '<div class="sh-err" data-err="other" hidden>Name the method.</div></fieldset>' +
+        '<div class="sh-err" role="alert" data-err="method" hidden>Select the influencing method.</div>' +
+        '<div class="sh-err" role="alert" data-err="other" hidden>Name the method.</div></fieldset>' +
       '<fieldset class="sh-fs"><legend class="sh-lg">Reason</legend><div class="sh-chips">' +
         REASONS.map(function (r) { return '<label class="sh-chip"><input type="radio" name="sh-reason" value="' + r.code + '"' + chk(d.reason && d.reason.code, r.code) + '><span>' + esc(r.label) + '</span></label>'; }).join('') +
         '</div><input class="sh-text" type="text" name="sh-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc(d.reason && d.reason.text || '') + '" aria-label="Reason, optional text">' +
         '<div class="sh-src" id="shReasonSrc" hidden></div>' +
-        '<div class="sh-err" data-err="reason" hidden>Select a reason.</div></fieldset>' +
+        '<div class="sh-err" role="alert" data-err="reason" hidden>Select a reason.</div></fieldset>' +
       '<div class="sh-form-actions"><button type="submit" class="sh-btn">' + esc(COPY.J7) + '</button></div></form>';
   }
   function describe(rec, d) {

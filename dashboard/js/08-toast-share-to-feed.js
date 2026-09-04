@@ -7,6 +7,10 @@ function showToast(msg) {
     el = document.createElement("div");
     el.id = "globalToast";
     el.className = "toast";
+    /* audit A-05: a toast that is not announced is invisible to anyone not
+       looking at that corner of the screen */
+    el.setAttribute("role", "status");
+    el.setAttribute("aria-live", "polite");
     document.body.appendChild(el);
   }
   el.innerHTML = `<span class="chk">&#10003;</span>${msg}`;

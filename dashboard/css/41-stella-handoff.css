@@ -850,3 +850,38 @@ body.shx-open .copilot-fab { display: none !important; }
 /* the demonstration label is a regulatory notice, not a product component:
    it stays, on top of the zone (brief limit 6) */
 body.shx-open .demo-stamp { z-index: 9999; }
+
+/* ================= decision form · dashboard density =================
+   The form was sized for touch everywhere: 44px controls, full-width option
+   rows, and three lens fields stretched across the whole column — a 12.6 mm
+   value sitting in a 600px box. This tightens the scale to a dashboard one
+   (8-32) and caps each control at the width its value actually needs. The
+   44px touch minimum still applies wherever the pointer is coarse. */
+.sh-form { gap: 10px; }
+.sh-fs { padding: 10px 12px; gap: 7px; border-radius: 9px; }
+.sh-lg { font-size: 9.5px; }
+.sh-chips { gap: 6px; }
+.sh-radio input, .sh-chip input { width: 15px; height: 15px; }
+
+/* the decision options read as one row of choices */
+.sh-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.sh-choices .sh-radio { flex: 0 1 auto; }
+
+/* a lens size never needs the full column width */
+.sh-lens-grid { grid-template-columns: 150px 132px 132px; justify-content: start; gap: 10px; }
+.sh-lens-grid label { font-size: 9.5px; gap: 3px; }
+.sh-text { max-width: 560px; }
+/* the divergence line only earns its row once it has something to say */
+.sh-delta-line:empty { display: none; }
+
+@media (pointer: fine) {
+  .sh-radio, .sh-chip { min-height: 36px; padding: 6px 11px; font-size: 12.5px; }
+  .sh-lens-grid select, .sh-lens-grid input, .sh-other, .sh-text {
+    min-height: 36px; padding: 6px 9px; font-size: 13px;
+  }
+  .sh-form .sh-btn { min-height: 38px; padding: 8px 16px; font-size: 13px; }
+}
+@media (max-width: 620px) {
+  .sh-lens-grid { grid-template-columns: 1fr 1fr; }
+  .sh-lens-grid label:first-child { grid-column: 1 / -1; }
+}

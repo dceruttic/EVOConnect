@@ -75,9 +75,12 @@
     return '<form class="sh-form" id="ptDecisionForm" novalidate>' +
 
       '<fieldset class="sh-fs" data-step="1"><legend class="sh-lg">1 · Decision</legend>' +
-        '<label class="sh-radio wide"><input type="radio" name="pd-choice" value="accept"' + chk(d0.choice, 'accept') + (refSize ? '' : ' disabled') + '>' +
-          '<span>' + (refSize ? esc('Accept the STAAR nomogram (' + refSize + ' mm)') : 'Run the comparison first') + '</span></label>' +
-        '<label class="sh-radio wide"><input type="radio" name="pd-choice" value="prefer"' + chk(d0.choice, 'prefer') + '><span>Prefer another lens</span></label>' +
+        /* the two options are short: one row, not two full-width bars */
+        '<div class="sh-choices">' +
+          '<label class="sh-radio"><input type="radio" name="pd-choice" value="accept"' + chk(d0.choice, 'accept') + (refSize ? '' : ' disabled') + '>' +
+            '<span>' + (refSize ? esc('Accept the STAAR nomogram (' + refSize + ' mm)') : 'Run the comparison first') + '</span></label>' +
+          '<label class="sh-radio"><input type="radio" name="pd-choice" value="prefer"' + chk(d0.choice, 'prefer') + '><span>Prefer another lens</span></label>' +
+        '</div>' +
         '<div class="sh-err" data-err="choice" hidden>Choose one.</div></fieldset>' +
 
       '<fieldset class="sh-fs pd-lens" id="pdLensFs" data-step="2"><legend class="sh-lg">2 · Planned lens</legend>' +

@@ -105,7 +105,7 @@ function _procRecRationaleHtml(r, s, pt){
   var rows = [];
   if (topName === 'EVO ICL') {
     if (sph >= 8) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 10, 'High myopia → ICL preferred'));
-    else if (sph >= 5) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 8, 'Sphere ≥ 5 D · within the ICL range'));
+    else if (sph >= 5) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 8, 'Business rule: sphere ≥ 5 D → EVO ICL'));
     else if (sph >= 3) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 3, 'Moderate myopia · ICL eligible'));
     else rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 1, 'Low myopia · LASIK/SMILE typically preferred'));
     if (acd >= 3.0) rows.push(row('ACD', acd.toFixed(2) + ' mm', 0, '✓ ≥ 3.0 mm — meets STAAR IFU'));
@@ -687,7 +687,7 @@ const SIZING_FORMULAS = [
   { code: "REINSTEIN",   name: "Reinstein",         desc: "High-resolution UBM-driven nomogram · sulcus-to-sulcus + crystalline lens rise", recSize: 12.6, vault: 380, conf: 92, author: "Reinstein et al., 2013", predictsVault: false },
   { code: "LASSO",       name: "Lasso",             desc: "Regression-based machine-learning sizing · multi-center cohort calibrated",     recSize: 12.6, vault: 410, conf: 91, author: "Russo et al., 2022",     predictsVault: false },
   { code: "KS",          name: "KS",                desc: "Kane-Saxena hybrid · combines aRISE + lens rise + ATA",                          recSize: 12.6, vault: 415, conf: 89, author: "Kane & Saxena, 2022",  predictsVault: false },
-  { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR manufacturer reference", predictsVault: false },
+  { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR (OCOS)",         predictsVault: false },
   { code: "ICL_FIT",     name: "ICL Fit",           desc: "OCT-based AS-OCT fit · iris-iris + ATA · CIRCLE/Casia2 imaging-driven",          recSize: 12.1, vault: 320, conf: 90, author: "Pérez-Vives et al., 2021", predictsVault: false },
 ];
 // Which formulas are selected for the current run (user-toggled)
@@ -930,6 +930,10 @@ function renderPtSizingFormulas(pt) {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18"/></svg>
             Import OCT
           </button>
+          <button class="sf-sg-ehr-btn pentacam" type="button" onclick="openScanImportModal('PENTACAM')" title="Imports WTW, ACD, K-mean and crystalline lens rise from an OCULUS Pentacam Scheimpflug report">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg>
+            Import Pentacam
+          </button>
         </div>
       </div>
       <div class="sf-inputs-grid">
@@ -963,7 +967,7 @@ function renderPtSizingFormulas(pt) {
         </span>
         <span class="sfc-body">
           <span class="sfc-name">${f.name}${locked ? lock : ''}</span>
-          <span class="sfc-author">${locked ? 'STAAR reference · always included' : f.author}</span>
+          <span class="sfc-author">${locked ? 'STAAR (OCOS) · always included' : f.author}</span>
         </span>
       </button>
     `;
@@ -978,7 +982,7 @@ function renderPtSizingFormulas(pt) {
         <div class="sf-step-num">1</div>
         <div class="sf-step-info">
           <h4 style="margin:0">Input Data</h4>
-          <p class="muted" style="margin:2px 0 0;font-size:12px">Load refractions, keratometry and biometry. Each block can also be imported from EHR / UBM / OCT individually.</p>
+          <p class="muted" style="margin:2px 0 0;font-size:12px">Load refractions, keratometry and biometry. Each block can also be imported from EHR / UBM / OCT / Pentacam individually.</p>
         </div>
       </div>
       ${inputsHtml}

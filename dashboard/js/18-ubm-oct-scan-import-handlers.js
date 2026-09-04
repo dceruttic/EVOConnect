@@ -15,6 +15,22 @@ var SF_ATTACHMENTS = [];           // array of { id, type, patientName, date, sr
 
 function _scanValuesForPatient(p, mode){
   var b = patientBiometry(p);
+  if (mode === 'PENTACAM') {
+    /* Scheimpflug tomography: corneal diameter, chamber depth, front
+       keratometry, lens rise and pachymetry — what a Pentacam report carries.
+       ATA and STS are not among them: those come from AS-OCT and UBM. */
+    var k1 = +(b.K1.v + ptRand(p.id, 71, -0.12, 0.12)).toFixed(2);
+    var k2 = +(b.K2.v + ptRand(p.id, 72, -0.12, 0.12)).toFixed(2);
+    return {
+      wtw:   (b.WTW.v + ptRand(p.id, 73, -0.06, 0.06)).toFixed(2),
+      acd:   (b.ACD.v + ptRand(p.id, 74, -0.03, 0.03)).toFixed(2),
+      k1:    k1.toFixed(2), k2: k2.toFixed(2),
+      kmean: ((k1 + k2) / 2).toFixed(2),
+      clr:   String(170 + Math.round(ptRand(p.id, 75, -45, 70))),
+      cct:   String(Math.round(b.CCT.v)),
+      angle: (36 + ptRand(p.id, 76, -5, 6)).toFixed(1)
+    };
+  }
   if (mode === 'UBM') {
     return {
       sts: (b.WTW.v + 0.30 + ptRand(p.id, 81, -0.10, 0.10)).toFixed(2),
@@ -31,6 +47,11 @@ function _scanValuesForPatient(p, mode){
 }
 
 function _scanImagePath(mode, ptId){
+  if (mode === 'PENTACAM') {
+    var eye = (typeof EYE_SCOPE !== 'undefined' && EYE_SCOPE === 'OS') ? 'OS' : 'OD';
+    return (typeof resolvePentacamImage === 'function' ? resolvePentacamImage(eye).url
+                                                      : '/assets/pentacam_saracco_OD.webp');
+  }
   if (mode === 'UBM') return _galleryUbmForPatient(ptId || '', 'OD').url;
   // OCT — rotate through OCT gallery so different patients show different scans
   return _galleryOctForPatient(ptId || '', 'OD').url;
@@ -61,9 +82,10 @@ function openScanImportModal(mode){
   m.classList.add('open'); document.body.style.overflow = 'hidden';
   var ttl = document.getElementById('scanImportTitle');
   var sub = document.getElementById('scanImportSub');
-  if (ttl) ttl.textContent = 'Import ' + mode + ' scan';
-  if (sub) sub.textContent = mode === 'UBM'
-    ? 'Pick a patient. The UBM image attaches to Sizing and STS / ACD / lens rise auto-populate.'
+  if (ttl) ttl.textContent = mode === 'PENTACAM' ? 'Import Pentacam report' : 'Import ' + mode + ' scan';
+  if (sub) sub.textContent =
+      mode === 'UBM' ? 'Pick a patient. The UBM image attaches to Sizing and STS / ACD / lens rise auto-populate.'
+    : mode === 'PENTACAM' ? 'Pick a patient. The Pentacam report attaches to Sizing and WTW / ACD / K-mean / lens rise auto-populate.'
     : 'Pick a patient. The OCT image attaches to Sizing and ATA / aRISE / ACD auto-populate.';
   var btn = document.getElementById('scanImportApplyBtn'); if (btn) btn.disabled = true;
   _scanImportRenderList('');
@@ -90,7 +112,14 @@ function selectScanImportPatient(id){
   var img = _scanImagePath(SCAN_IMPORT_MODE, SCAN_IMPORT_SELECTED);
   var preview = document.getElementById('scanImportPreview');
   var values;
-  if (SCAN_IMPORT_MODE === 'UBM') {
+  if (SCAN_IMPORT_MODE === 'PENTACAM') {
+    values = '<div class="scan-prev-row"><span>WTW</span><b>' + v.wtw + ' mm</b></div>' +
+             '<div class="scan-prev-row"><span>ACD</span><b>' + v.acd + ' mm</b></div>' +
+             '<div class="scan-prev-row"><span>K-mean</span><b>' + v.kmean + ' D</b></div>' +
+             '<div class="scan-prev-row"><span>Crystalline lens rise</span><b>' + v.clr + ' µm</b></div>' +
+             '<div class="scan-prev-note">Also on this report: K1 ' + v.k1 + ' / K2 ' + v.k2 +
+               ' D · CCT ' + v.cct + ' µm · chamber angle ' + v.angle + '° — no field for these in Sizing.</div>';
+  } else if (SCAN_IMPORT_MODE === 'UBM') {
     values = '<div class="scan-prev-row"><span>STS</span><b>' + v.sts + ' mm</b></div>' +
              '<div class="scan-prev-row"><span>ACD</span><b>' + v.acd + ' mm</b></div>' +
              '<div class="scan-prev-row"><span>Crystalline lens rise</span><b>' + v.clr + ' µm</b></div>';
@@ -106,7 +135,8 @@ function selectScanImportPatient(id){
     '<div class="scan-prev-meta">' +
       '<div class="scan-prev-meta-l">' +
         '<div class="scan-prev-name">' + p.name + '</div>' +
-        '<div class="scan-prev-sub">REV-' + p.id + ' · ' + (p.eye||'-') + ' · ' + SCAN_IMPORT_MODE + ' study</div>' +
+        '<div class="scan-prev-sub">REV-' + p.id + ' · ' + (p.eye||'-') + ' · ' +
+          (SCAN_IMPORT_MODE === 'PENTACAM' ? 'Pentacam report' : SCAN_IMPORT_MODE + ' study') + '</div>' +
       '</div>' +
       '<div class="scan-prev-vals">' + values + '</div>' +
     '</div>';
@@ -119,7 +149,9 @@ function applyScanImport(){
   if (!p) return;
   var v = _scanValuesForPatient(p, SCAN_IMPORT_MODE);
   function setVal(id, val){ var el = document.getElementById(id); if (el){ el.value = val; _highlightImportedField(id); } }
-  if (SCAN_IMPORT_MODE === 'UBM') {
+  if (SCAN_IMPORT_MODE === 'PENTACAM') {
+    setVal('sf-wtw', v.wtw); setVal('sf-acd', v.acd); setVal('sf-kmean', v.kmean); setVal('sf-clr', v.clr);
+  } else if (SCAN_IMPORT_MODE === 'UBM') {
     setVal('sf-sts', v.sts); setVal('sf-acd', v.acd); setVal('sf-clr', v.clr);
   } else {
     setVal('sf-ata', v.ata); setVal('sf-arise', v.arise); setVal('sf-acd', v.acd);
@@ -140,7 +172,7 @@ function applyScanImport(){
   });
   _renderScanAttachments();
   closeScanImportModal();
-  if (typeof showToast === 'function') showToast(SCAN_IMPORT_MODE + ' scan attached · values imported from ' + p.name + (eyes.length>1 ? ' · OD + OS' : ' · ' + eyes[0]));
+  if (typeof showToast === 'function') showToast((SCAN_IMPORT_MODE === 'PENTACAM' ? 'Pentacam report' : SCAN_IMPORT_MODE + ' scan') + ' attached · values imported from ' + p.name + (eyes.length>1 ? ' · OD + OS' : ' · ' + eyes[0]));
 }
 
 function _renderScanAttachments(){
@@ -151,11 +183,12 @@ function _renderScanAttachments(){
   wrap.style.display = '';
 
   function cardHtml(a){
-    var typeBg = a.type === 'UBM' ? '#00609B' : '#5C18AB';
+    var typeBg = { UBM: '#00609B', PENTACAM: '#E78A27' }[a.type] || '#5C18AB';
+    var typeLbl = a.type === 'PENTACAM' ? 'Pentacam' : a.type;
     return '<div class="sf-att-card" onclick="openScanLightbox(\'' + a.id + '\')">' +
       '<div class="sf-att-thumb" style="background-image:url(\'' + a.src + '\');"></div>' +
       '<div class="sf-att-meta">' +
-        '<span class="sf-att-tag" style="background:' + typeBg + ';">' + a.type + '</span>' +
+        '<span class="sf-att-tag" style="background:' + typeBg + ';">' + typeLbl + '</span>' +
         '<div class="sf-att-name">' + a.patientName + ' · ' + a.eye + '</div>' +
         '<div class="sf-att-sub">REV-' + a.patientRev + ' · ' + a.date + '</div>' +
       '</div>' +

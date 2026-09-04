@@ -68,6 +68,10 @@
 .sf-sg-ehr-btn.ubm:hover { background: #00609B; border-color: #00609B; color: #fff; }
 .sf-sg-ehr-btn.oct { border-color: #C8BEEB; color: #5C18AB; }
 .sf-sg-ehr-btn.oct:hover { background: #5C18AB; border-color: #5C18AB; color: #fff; }
+.sf-sg-ehr-btn.pentacam { border-color: #F2D3A8; color: #B76A12; }
+.sf-sg-ehr-btn.pentacam:hover { background: #E78A27; border-color: #E78A27; color: #fff; }
+/* what the report also carries but Sizing has no field for */
+.scan-prev-note { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #E1E8F2; font-size: 11px; line-height: 1.5; color: #7B879E; }
 
 /* Flash highlight when a Sizing field is auto-populated by UBM/OCT */
 .sf-input.sf-input-imported {

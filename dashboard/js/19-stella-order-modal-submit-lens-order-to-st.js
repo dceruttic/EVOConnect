@@ -315,6 +315,12 @@ function _sfResultCard(r, patientId) {
   `;
 }
 
+/* the method's own name, never the enum that identifies it in code */
+function _sfLabel(code) {
+  var f = (typeof SIZING_FORMULAS !== 'undefined' ? SIZING_FORMULAS : []).find(function (x) { return x.code === code; });
+  return (f && f.name) || code;
+}
+
 function selectSizingFormula(patientId, code, size, vault, color) {
   document.querySelectorAll('.sf-comp-card').forEach(card => {
     card.classList.toggle('selected', card.getAttribute('data-formula') === code);
@@ -335,8 +341,9 @@ function selectSizingFormula(patientId, code, size, vault, color) {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <div class="sf-chosen-body">
-          <div class="sf-chosen-lbl">Chosen formula · flows into Surgical Planner and Surgery</div>
-          <div class="sf-chosen-val"><b>${code}</b> — size <b>${size} mm</b> · vault <b style="color:${color}">${vault} µm</b></div>
+          <div class="sf-chosen-lbl">Chosen formula</div>
+          <div class="sf-chosen-val"><b>${_sfLabel(code)}</b> — size <b>${size} mm</b>${
+            vault ? ` · vault <b style="color:${color}">${vault} µm</b>` : ''}</div>
         </div>
       `;
     }

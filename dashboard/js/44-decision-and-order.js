@@ -83,7 +83,7 @@
         '</div>' +
         '<div class="sh-err" data-err="choice" hidden>Choose one.</div></fieldset>' +
 
-      '<fieldset class="sh-fs pd-lens" id="pdLensFs" data-step="2"><legend class="sh-lg">2 · Planned lens</legend>' +
+      '<fieldset class="sh-fs pd-lens" id="pdLensFs" data-step="2" data-branch="prefer"><legend class="sh-lg">2 · Planned lens</legend>' +
         '<div class="sh-lens-grid">' +
           '<label><span>Size (mm)</span><select name="pd-size"><option value="">—</option>' +
             SIZES.map(function (x) { return '<option value="' + x + '"' + sel(pl.size, x) + '>' + x + '</option>'; }).join('') +
@@ -94,7 +94,7 @@
         '<div class="sh-delta-line" id="pdDelta"></div>' +
         '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
 
-      '<fieldset class="sh-fs" data-step="3"><legend class="sh-lg">3 · Influencing method</legend><div class="sh-chips">' +
+      '<fieldset class="sh-fs" data-step="3" data-branch="prefer"><legend class="sh-lg">3 · Influencing method</legend><div class="sh-chips">' +
         ran.map(function (r) {
           return '<label class="sh-chip"><input type="radio" name="pd-method" value="' + esc(r.code) + '"' + chk(d0.influencingMethod, r.code) + '>' +
                  '<span>' + esc(METHOD_LABEL[r.code] || r.name) + '</span></label>'; }).join('') +
@@ -104,14 +104,18 @@
         '<div class="sh-err" data-err="method" hidden>Select the method that influenced you.</div>' +
         '<div class="sh-err" data-err="other" hidden>Name the calculator.</div></fieldset>' +
 
-      '<fieldset class="sh-fs" data-step="4"><legend class="sh-lg">4 · Reason</legend><div class="sh-chips">' +
+      '<fieldset class="sh-fs" data-step="4" data-branch="prefer"><legend class="sh-lg">4 · Reason</legend><div class="sh-chips">' +
         REASONS.map(function (r) {
           return '<label class="sh-chip"><input type="radio" name="pd-reason" value="' + r[0] + '"' + chk(d0.reason && d0.reason.code, r[0]) + '>' +
                  '<span>' + esc(r[1]) + '</span></label>'; }).join('') +
         '</div>' +
-        '<input class="sh-text" type="text" name="pd-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc((d0.reason && d0.reason.text) || '') + '" aria-label="Reason, optional text">' +
         '<div class="sh-src" id="pdReasonSrc" hidden></div>' +
         '<div class="sh-err" data-err="reason" hidden>Select a reason.</div></fieldset>' +
+
+      /* Kept out of the branch: accepting the recommendation asks for nothing
+         except, if the surgeon wants it, a note. */
+      '<fieldset class="sh-fs" data-step="note"><legend class="sh-lg">Comment (optional)</legend>' +
+        '<input class="sh-text" type="text" name="pd-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc((d0.reason && d0.reason.text) || '') + '" aria-label="Comment, optional"></fieldset>' +
 
       '<div class="sh-form-actions"><button type="submit" class="sh-btn">Save decision</button></div></form>';
   }
@@ -126,6 +130,7 @@
     var method = d.influencingMethod === 'OTHER'
       ? (d.otherMethodName || 'Other / custom') + ' (outside the ecosystem)'
       : (METHOD_LABEL[d.influencingMethod] || d.influencingMethod);
+    var accepted = d.choice === 'accept';
     var reason = (REASONS.find(function (r) { return r[0] === d.reason.code; }) || [, d.reason.code])[1];
     var lens = size + ' mm' + (d.plannedLens.power ? ' · ' + d.plannedLens.power + ' D' : '') +
                (d.plannedLens.axis ? ' · ' + d.plannedLens.axis + '°' : '');
@@ -137,8 +142,10 @@
       '<div class="sh-kv"><span>Planned lens</span><b>' + esc(lens) +
         (delta ? ' <em class="sh-rec-delta ' + (same ? 'same' : 'diff') + '">' + esc(delta) + '</em>' : '') + '</b></div>' +
       '<div class="sh-kv"><span>Influencing method</span><b>' + esc(method) + '</b></div>' +
-      '<div class="sh-kv"><span>Reason</span><b>' + esc(reason) + (d.reason.text ? ' — ' + esc(d.reason.text) : '') +
-        ' <span class="sh-src ' + esc(d.reasonSource) + '">' + esc(d.reasonSource) + '</span></b></div>' +
+      (accepted
+        ? (d.reason.text ? '<div class="sh-kv"><span>Comment</span><b>' + esc(d.reason.text) + '</b></div>' : '')
+        : '<div class="sh-kv"><span>Reason</span><b>' + esc(reason) + (d.reason.text ? ' — ' + esc(d.reason.text) : '') +
+          ' <span class="sh-src ' + esc(d.reasonSource) + '">' + esc(d.reasonSource) + '</span></b></div>') +
       '<div class="sh-kv"><span>Recorded</span><b>' + esc(utc(d.recordedAt)) + '</b></div>' +
       '<div class="sh-record-foot">Recorded in EVO Connect. The order itself is created in STELLA.</div>' +
       '<div class="sh-form-actions"><button type="button" class="sh-btn ghost" id="ptEditDecision">Edit</button></div></div>';
@@ -151,8 +158,12 @@
     var sizeSel = form.querySelector('[name="pd-size"]');
     var touched = false, source = 'manual';
 
+    /* Accepting the STAAR nomogram is not a case to justify: the lens, the
+       method and the reason are all implied by the acceptance, so those steps
+       collapse and only the optional comment stays. */
     function syncChoice() {
       var c = (form.querySelector('[name="pd-choice"]:checked') || {}).value;
+      form.dataset.choice = c || '';
       form.querySelector('#pdLensFs').classList.toggle('accept', c === 'accept');
       if (c === 'accept' && refSize) { sizeSel.value = refSize; sizeSel.disabled = true; }
       else sizeSel.disabled = false;
@@ -191,8 +202,12 @@
        answered, so the form reads as four decisions, not one wall. */
     function gate() {
       var g = function (n) { return !!form.querySelector('[name="' + n + '"]:checked'); };
-      var done = [true, g('pd-choice'), g('pd-choice') && !!sizeSel.value, g('pd-method')];
-      form.querySelectorAll('.sh-fs').forEach(function (fs, i) { fs.classList.toggle('pending', !done[i]); });
+      var accepted = (form.querySelector('[name="pd-choice"]:checked') || {}).value === 'accept';
+      var done = { '1': true, '2': g('pd-choice'), '3': g('pd-choice') && !!sizeSel.value,
+                   '4': g('pd-method'), 'note': accepted || g('pd-reason') };
+      form.querySelectorAll('.sh-fs').forEach(function (fs) {
+        fs.classList.toggle('pending', !done[fs.getAttribute('data-step')]);
+      });
     }
     /* Inline validation: clear a step's error as soon as it is answered. */
     function clearErr(k) { var n = form.querySelector('[data-err="' + k + '"]'); if (n) n.hidden = true; }
@@ -217,13 +232,15 @@
       var g = function (n) { return (form.querySelector('[name="' + n + '"]:checked') || {}).value; };
       var choice = g('pd-choice'), method = g('pd-method'), reason = g('pd-reason');
       var other = form.querySelector('[name="pd-method-other"]').value.trim();
-      var size = choice === 'accept' && refSize ? refSize : sizeSel.value;
+      var accepted = choice === 'accept';
+      var size = accepted && refSize ? refSize : sizeSel.value;
+      if (accepted) { method = 'STAAR_NOM'; reason = 'ACCEPTED'; other = ''; }
       var bad = false;
       bad = err('choice', !choice) || bad;
       bad = err('size', !size) || bad;
-      bad = err('method', !method) || bad;
-      bad = err('other', method === 'OTHER' && !other) || bad;
-      bad = err('reason', !reason) || bad;
+      bad = accepted ? false : (err('method', !method) || bad);
+      bad = accepted ? false : (err('other', method === 'OTHER' && !other) || bad);
+      bad = accepted ? false : (err('reason', !reason) || bad);
       if (bad) { var f = form.querySelector('.sh-err:not([hidden])'); if (f) f.scrollIntoView({ block: 'center' }); return; }
 
       storeDecision(pt, {
@@ -232,7 +249,7 @@
                        axis: form.querySelector('[name="pd-axis"]').value.trim() || null },
         influencingMethod: method, otherMethodName: method === 'OTHER' ? other : null,
         reason: { code: reason, text: form.querySelector('[name="pd-reason-text"]').value.trim().slice(0, 140) },
-        reasonSource: source, recordedAt: new Date().toISOString()
+        reasonSource: accepted ? 'accepted' : source, recordedAt: new Date().toISOString()
       });
       render(pt);
       if (typeof showToast === 'function') showToast('Decision recorded in EVO Connect — nothing was sent to STELLA');

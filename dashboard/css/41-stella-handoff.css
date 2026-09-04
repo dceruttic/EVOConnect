@@ -885,3 +885,8 @@ body.shx-open .demo-stamp { z-index: 9999; }
   .sh-lens-grid { grid-template-columns: 1fr 1fr; }
   .sh-lens-grid label:first-child { grid-column: 1 / -1; }
 }
+
+/* Accepting the recommendation is not a case to justify: the planned lens,
+   the influencing method and the reason are implied by the acceptance, so
+   those steps leave the form and only the optional comment stays. */
+.sh-form[data-choice="accept"] .sh-fs[data-branch="prefer"] { display: none; }

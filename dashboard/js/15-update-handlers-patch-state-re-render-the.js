@@ -105,7 +105,7 @@ function _procRecRationaleHtml(r, s, pt){
   var rows = [];
   if (topName === 'EVO ICL') {
     if (sph >= 8) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 10, 'High myopia → ICL preferred'));
-    else if (sph >= 5) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 8, 'Business rule: sphere ≥ 5 D → EVO ICL'));
+    else if (sph >= 5) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 8, 'Sphere ≥ 5 D · within the ICL range'));
     else if (sph >= 3) rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 3, 'Moderate myopia · ICL eligible'));
     else rows.push(row('Sphere', '−' + sph.toFixed(2) + ' D', 1, 'Low myopia · LASIK/SMILE typically preferred'));
     if (acd >= 3.0) rows.push(row('ACD', acd.toFixed(2) + ' mm', 0, '✓ ≥ 3.0 mm — meets STAAR IFU'));
@@ -687,7 +687,7 @@ const SIZING_FORMULAS = [
   { code: "REINSTEIN",   name: "Reinstein",         desc: "High-resolution UBM-driven nomogram · sulcus-to-sulcus + crystalline lens rise", recSize: 12.6, vault: 380, conf: 92, author: "Reinstein et al., 2013", predictsVault: false },
   { code: "LASSO",       name: "Lasso",             desc: "Regression-based machine-learning sizing · multi-center cohort calibrated",     recSize: 12.6, vault: 410, conf: 91, author: "Russo et al., 2022",     predictsVault: false },
   { code: "KS",          name: "KS",                desc: "Kane-Saxena hybrid · combines aRISE + lens rise + ATA",                          recSize: 12.6, vault: 415, conf: 89, author: "Kane & Saxena, 2022",  predictsVault: false },
-  { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR (OCOS)",         predictsVault: false },
+  { code: "STAAR_NOM",   name: "STAAR Nomogram",    desc: "Manufacturer reference · WTW + ACD lookup · returns size only, not vault",      recSize: 13.2, vault: 0,   conf: 82, author: "STAAR manufacturer reference", predictsVault: false },
   { code: "ICL_FIT",     name: "ICL Fit",           desc: "OCT-based AS-OCT fit · iris-iris + ATA · CIRCLE/Casia2 imaging-driven",          recSize: 12.1, vault: 320, conf: 90, author: "Pérez-Vives et al., 2021", predictsVault: false },
 ];
 // Which formulas are selected for the current run (user-toggled)
@@ -967,7 +967,7 @@ function renderPtSizingFormulas(pt) {
         </span>
         <span class="sfc-body">
           <span class="sfc-name">${f.name}${locked ? lock : ''}</span>
-          <span class="sfc-author">${locked ? 'STAAR (OCOS) · always included' : f.author}</span>
+          <span class="sfc-author">${locked ? 'STAAR reference · always included' : f.author}</span>
         </span>
       </button>
     `;

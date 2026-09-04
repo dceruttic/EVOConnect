@@ -21,12 +21,20 @@
 
 
 <section class="ph ir-hero">
-  <div class="ph-bg" style="background-image:url('/assets/site/img/home-hero-carousal-2-1600x800-min.webp')"></div>
+  <div class="ir-slides">
+    <div class="ph-bg on" style="background-image:url('/assets/site/img/home-hero-carousal-2-1600x800-min.webp')"></div>
+    <div class="ph-bg" style="background-image:url('/assets/site/img/kayaking_first_person_staar_homepage.jpg')"></div>
+    <div class="ph-bg" style="background-image:url('/assets/site/img/home-hero-carousal-3-1600x800-min.webp')"></div>
+  </div>
   <div class="ph-in ir-in">
     <h1>Investors</h1>
     <p>4,000,000+ ICL lenses have been sold to date and STAAR markets these lenses in over 85 countries. EVO ICL allows you to upgrade your vision, putting the daily hassles of contacts and glasses behind you.</p>
   </div>
-  <div class="ir-dots" aria-hidden="true"><i></i><i class="on"></i><i></i></div>
+  <div class="ir-dots" role="tablist" aria-label="Hero images">
+    <button class="on" type="button" aria-label="Image 1"></button>
+    <button type="button" aria-label="Image 2"></button>
+    <button type="button" aria-label="Image 3"></button>
+  </div>
 </section>
 
 <div class="subbar" aria-label="Investor sections">
@@ -70,10 +78,10 @@
 
 <section class="sec" id="benefits">
   <div class="sec-in">
-    <p class="kicker">EVO Benefits</p>
+    <p class="kicker">Who we are</p>
     <h2>Watch to learn more</h2>
     <div class="ir-video">
-      <iframe src="https://player.vimeo.com/video/1073682472" title="EVO Benefits"
+      <iframe src="https://player.vimeo.com/video/1008935539" title="Who Is STAAR Surgical"
         allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>
@@ -121,5 +129,33 @@
     </div>
   </div>
 </footer>
+
+<script>
+/* Hero slider. Autoplay cada 6s con crossfade, los dots cambian de imagen y el ciclo
+   se detiene apenas alguien interactua: si el visitante eligio una imagen, no se la
+   sacamos de encima. Se respeta prefers-reduced-motion, donde queda fijo en la primera. */
+(function(){
+  var slides = document.querySelectorAll('.ir-slides .ph-bg');
+  var dots   = document.querySelectorAll('.ir-dots button');
+  if(slides.length < 2 || dots.length !== slides.length) return;
+  var i = 0, timer = null;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function show(n){
+    i = (n + slides.length) % slides.length;
+    slides.forEach(function(el,k){ el.classList.toggle('on', k === i); });
+    dots.forEach(function(el,k){ el.classList.toggle('on', k === i); el.setAttribute('aria-selected', k === i); });
+  }
+  function start(){ if(!still && !timer) timer = setInterval(function(){ show(i+1); }, 6000); }
+  function stop(){ clearInterval(timer); timer = null; }
+
+  dots.forEach(function(d,k){ d.addEventListener('click', function(){ stop(); show(k); }); });
+  var hero = document.querySelector('.ir-hero');
+  if(hero){ hero.addEventListener('mouseenter', stop); hero.addEventListener('mouseleave', start); }
+  document.addEventListener('visibilitychange', function(){ document.hidden ? stop() : start(); });
+
+  show(0); start();
+})();
+</script>
 </body>
 </html>

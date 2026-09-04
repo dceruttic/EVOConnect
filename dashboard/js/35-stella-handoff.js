@@ -982,12 +982,18 @@
   var ORDER_SIZES = ['12.1', '12.6', '13.2', '13.7'];
   var ord = null;                                                       // modal draft
 
+  /* The ordering form opens on what the surgeon decided, falling back to the
+     recommendation only when there is no decision yet. Seeding it from the
+     reference instead meant a surgeon who planned 13.2 was shown 13.7 to
+     confirm — the divergence they had just recorded, silently undone. */
   function stellaSeed(rec) {
     var R = rec.stellaRecommendation;
+    var d = rec.decisions ? rec.decisions[curEye(rec)] : null;
+    var pl = d && d.plannedLens ? d.plannedLens : null;
     return {
-      size: String(R.size),
-      power: R.power && R.power.sph != null ? String(R.power.sph) : '',
-      axis: R.power && R.power.axis != null ? String(R.power.axis) : '',
+      size: String((pl && pl.size) || R.size),
+      power: String((pl && pl.power) || (R.power && R.power.sph != null ? R.power.sph : '')),
+      axis: String((pl && pl.axis) || (R.power && R.power.axis != null ? R.power.axis : '')),
       ack: false, err: null,
       touched: { size: false, power: false, axis: false }
     };
@@ -1183,6 +1189,18 @@
           orderRow('Ordered lens', done.lens.size + ' mm' + (done.lens.power ? ' · ' + done.lens.power + ' D' : '') + (done.lens.axis ? ' · ' + done.lens.axis + '°' : '')) +
           orderRow(rec.local ? 'STAAR nomogram reference' : 'STELLA recommendation', done.stella.size + ' mm · ' + done.stella.model) +
           orderRow('Divergence', done.divergent ? done.delta + ' mm — confirmed by the surgeon' : 'none — recommendation accepted') +
+          /* audit AHA-2: the receipt used to omit the why, which is the half
+             of the record that makes the other half defensible */
+          (function () {
+            var d = rec.decisions[E]; if (!d) return '';
+            var meth = ({ ICL_GURU:'ICL Guru', ICL_FIT:'ICLFIT', CASIA2:'CASIA2', REINSTEIN:'Reinstein',
+                          LASSO:'Lasso', KS:'KS', STAAR_NOM:'STAAR nomogram', OTHER: d.otherMethodName || 'Other' })[d.influencingMethod] || d.influencingMethod;
+            var why = d.reason ? (({ VAULT_BAND:'Vault prediction', WTW_DISC:'WTW discrepancy',
+                          ANATOMY_ASOCT:'AS-OCT anatomy', EXPERIENCE:'Surgeon experience', OTHER:'Other',
+                          ACCEPTED:'Recommendation accepted' })[d.reason.code] || d.reason.code) : '';
+            return orderRow('Influenced by', meth) +
+                   (why ? orderRow('Reason', why + (d.reason.text ? ' — ' + d.reason.text : '')) : '');
+          })() +
           orderRow('Confirmed', utc(done.confirmedAt)) +
           '<div class="sh-oaudit">' + esc(COPY.L11) + '</div>' +
         '</div></div>' +
@@ -1277,6 +1295,14 @@
     if (rec.ui) rec.ui.newOrder = false;   // show the receipt for what was just placed
     paintOrderModal(rec);
     renderReturn(rec);
+    /* the order number is now the case's state, not a fact trapped in a modal */
+    try {
+      var host = document.querySelector('.pt-ph-chips');
+      if (host && typeof CURRENT_PT !== 'undefined' && CURRENT_PT && typeof ptOrderChip === 'function') {
+        host.querySelectorAll('.c.ordered').forEach(function (n) { n.remove(); });
+        host.insertAdjacentHTML('beforeend', ptOrderChip(CURRENT_PT));
+      }
+    } catch (e) {}
   }
 
   /* the order is confirmed in the STELLA tab, so watch for it coming back */

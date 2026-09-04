@@ -66,3 +66,11 @@
 }
 /* the label is the field's name, so clicking it should land in the field */
 .sf-rx-cell label, .sf-input > label { cursor: pointer; }
+
+/* the order is the case's state, so it reads like the other state chips
+   but carries the weight of a result (audit AHA-2) */
+.pt-ph-chips .c.ordered{
+  display:inline-flex; align-items:center; gap:6px;
+  background:#E7F5EC; color:#15803D; border:1px solid #BBE3C8; font-weight:800;
+}
+.pt-ph-chips .c.ordered svg{width:12px; height:12px}

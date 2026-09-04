@@ -239,6 +239,39 @@ function renderJourneyTimeline(journey) {
   }).join("")}</div>`;
 }
 
+
+/* ================================================================
+   Order on record — audit AHA-2
+   ----------------------------------------------------------------
+   STELLA returns an order number and it used to live only inside the
+   modal that produced it: close the modal and the result of the whole
+   journey was gone from the screen. An order is the case's state, so it
+   belongs on the patient, next to stage and risk, on every tab.
+================================================================ */
+function ptOrdersFor(pt) {
+  var out = [];
+  try {
+    var all = JSON.parse(localStorage.getItem('stella_order_confirmed') || '{}');
+    var ids = ['REV-' + pt.id, pt.id, pt.caseId].filter(Boolean);
+    Object.keys(all).forEach(function (k) {
+      var caseId = k.split('|')[0];
+      if (ids.indexOf(caseId) >= 0) out.push(all[k]);
+    });
+  } catch (e) {}
+  return out;
+}
+function ptOrderChip(pt) {
+  var os = ptOrdersFor(pt);
+  if (!os.length) return '';
+  return os.map(function (o) {
+    var lens = o.lens ? o.lens.size + ' mm' : '';
+    return '<span class="c ordered" title="Order confirmed in STELLA on ' +
+      (o.confirmedAt || '').slice(0, 10) + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+      'Ordered ' + o.eye + ' \u00b7 ' + lens + ' \u00b7 No. ' + o.orderNo + '</span>';
+  }).join('');
+}
+
 function renderPatientPage(pt) {
   const journey = patientJourney(pt);
   const doneCount = journey.filter(s => s.status === "done").length;
@@ -269,6 +302,7 @@ function renderPatientPage(pt) {
             <span class="c eye">${pt.eye}</span>
             <span class="c pwr">${pt.power} D</span>
             ${pt.risk ? `<span class="c risk-${pt.risk.level}">${pt.risk.level.toUpperCase()} risk · ${pt.risk.score}</span>` : ''}
+            ${typeof ptOrderChip === 'function' ? ptOrderChip(pt) : ''}
           </div>
         </div>
         <div class="pt-ph-progress">

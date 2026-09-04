@@ -91,7 +91,7 @@
 }
 .home-top .branch:hover { border-color: var(--teal); }
 .home-top .branch .lbl {
-  font-size: 10px; font-weight: 500; color: var(--mute);
+  font-size: 11px; font-weight: 500; color: var(--mute);
   letter-spacing: .3px;
 }
 .home-top .branch .val {
@@ -170,7 +170,7 @@
   outline: none;
   transition: all .15s;
 }
-.home-search input::placeholder { color: #94A0B8; }
+.home-search input::placeholder { color: #63708A; }
 .home-search input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(36,114,211,.1); }
 .home-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--mute); }
 .home-search .dropdown {

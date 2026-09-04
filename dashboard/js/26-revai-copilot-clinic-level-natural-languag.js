@@ -91,7 +91,7 @@ function revCopilotLineChart(values, labels, opts){
       </linearGradient>
       <linearGradient id="rcpStrokeG" x1="0" x2="1" y1="0" y2="0">
         <stop offset="0" stop-color="#5C18AB"/>
-        <stop offset="1" stop-color="#0080C7"/>
+        <stop offset="1" stop-color="#0071B0"/>
       </linearGradient>
     </defs>
     <path d="${areaPath}" fill="url(#rcpLineG)"/>
@@ -121,16 +121,16 @@ function revCopilotForecastChart(){
   return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="rcpFcCI" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0" stop-color="#0080C7" stop-opacity="0.28"/>
-        <stop offset="1" stop-color="#0080C7" stop-opacity="0.04"/>
+        <stop offset="0" stop-color="#0071B0" stop-opacity="0.28"/>
+        <stop offset="1" stop-color="#0071B0" stop-opacity="0.04"/>
       </linearGradient>
     </defs>
     <path d="${bandPath}" fill="url(#rcpFcCI)"/>
     <polyline points="${pastPts}" fill="none" stroke="#5C18AB" stroke-width="2.6" stroke-linejoin="round"/>
-    <polyline points="${bridge}" fill="none" stroke="#0080C7" stroke-width="2.4" stroke-dasharray="5 4"/>
-    <polyline points="${futPts}" fill="none" stroke="#0080C7" stroke-width="2.6" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    <polyline points="${bridge}" fill="none" stroke="#0071B0" stroke-width="2.4" stroke-dasharray="5 4"/>
+    <polyline points="${futPts}" fill="none" stroke="#0071B0" stroke-width="2.6" stroke-linejoin="round" stroke-dasharray="5 4"/>
     ${past.map((v,i)=>`<circle cx="${xp(i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#5C18AB" stroke-width="2.2"/><text x="${xp(i)}" y="${y(v)-10}" fill="#5C18AB" font-size="10" font-weight="700" text-anchor="middle">${v}</text>`).join('')}
-    ${fut.map((v,i)=>`<circle cx="${xp(past.length+i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#0080C7" stroke-width="2.2"/><text x="${xp(past.length+i)}" y="${y(v)-10}" fill="#0080C7" font-size="10" font-weight="700" text-anchor="middle">${v}</text>`).join('')}
+    ${fut.map((v,i)=>`<circle cx="${xp(past.length+i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#0071B0" stroke-width="2.2"/><text x="${xp(past.length+i)}" y="${y(v)-10}" fill="#0071B0" font-size="10" font-weight="700" text-anchor="middle">${v}</text>`).join('')}
     <line x1="${xp(past.length-1)+xStep/2}" x2="${xp(past.length-1)+xStep/2}" y1="${pad}" y2="${h-pad}" stroke="#5C18AB" stroke-opacity="0.18" stroke-dasharray="3 4"/>
     <text x="${xp(past.length-1)+xStep/2+6}" y="${pad+10}" fill="#8b86a0" font-size="10" font-weight="600">Forecast →</text>
     ${ticks}
@@ -143,7 +143,7 @@ function revCopilotBarChart(items, opts){
   const max = Math.max.apply(null, items.map(d=>d.value)) * 1.15;
   const bw = (w - pad*2) / items.length * 0.68;
   const gap = (w - pad*2) / items.length;
-  const palette = ['#5C18AB','#0080C7','#08B1C2','#03B496','#F6BF2C','#D12C4A'];
+  const palette = ['#5C18AB','#0071B0','#08B1C2','#03B496','#F6BF2C','#D12C4A'];
   const bars = items.map((d,i) => {
     const bh = (d.value / max) * (h - pad*2 - 14);
     const x = pad + i*gap + (gap-bw)/2;
@@ -169,7 +169,7 @@ function revCopilotHBarChart(items){
       <text x="${w}" y="${cy+15}" fill="#1c1530" font-size="12" font-weight="800" text-anchor="end">${d.value}${d.suffix||''}</text>`;
   }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="rcpHbarG" x1="0" x2="1"><stop offset="0" stop-color="#5C18AB"/><stop offset="1" stop-color="#0080C7"/></linearGradient></defs>
+    <defs><linearGradient id="rcpHbarG" x1="0" x2="1"><stop offset="0" stop-color="#5C18AB"/><stop offset="1" stop-color="#0071B0"/></linearGradient></defs>
     ${rows}
   </svg>`;
 }
@@ -181,7 +181,7 @@ function revCopilotDonutChart(pctOk, label){
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#F2EFF8" stroke-width="22"/>
     <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#rcpDonG)" stroke-width="22"
       stroke-dasharray="${ok} ${bad}" stroke-dashoffset="${circ/4}" transform="rotate(-90 ${cx} ${cy})" stroke-linecap="round"/>
-    <defs><linearGradient id="rcpDonG" x1="0" x2="1"><stop offset="0" stop-color="#03B496"/><stop offset="1" stop-color="#0080C7"/></linearGradient></defs>
+    <defs><linearGradient id="rcpDonG" x1="0" x2="1"><stop offset="0" stop-color="#03B496"/><stop offset="1" stop-color="#0071B0"/></linearGradient></defs>
     <text x="${cx}" y="${cy-2}" fill="#1c1530" font-size="28" font-weight="800" text-anchor="middle">${pctOk}%</text>
     <text x="${cx}" y="${cy+18}" fill="#8b86a0" font-size="10.5" font-weight="700" text-anchor="middle" letter-spacing="0.5">${label||'ON-TIME'}</text>
   </svg>`;
@@ -491,8 +491,8 @@ function revCopilotAnsForecast(){
     </div>
     <div class="rcp-pill-row">
       <span class="rcp-pill"><span class="dotx" style="background:#5C18AB"></span> History (6 mo)</span>
-      <span class="rcp-pill"><span class="dotx" style="background:#0080C7"></span> Forecast</span>
-      <span class="rcp-pill"><span class="dotx" style="background:#0080C780"></span> 95% CI</span>
+      <span class="rcp-pill"><span class="dotx" style="background:#0071B0"></span> Forecast</span>
+      <span class="rcp-pill"><span class="dotx" style="background:#0071B080"></span> 95% CI</span>
     </div>
     <div class="rcp-kpis">
       <div class="rcp-kpi accent-teal"><div class="l">Forecast Q3</div><div class="v">${sumFc}</div><div class="d">cases · base case</div></div>

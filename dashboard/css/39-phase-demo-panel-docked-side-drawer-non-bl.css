@@ -34,7 +34,7 @@
 .pd-panel::before {
   content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
   width: 3px; height: 40px; border-radius: 0 3px 3px 0;
-  background: linear-gradient(180deg, #5C18AB, #0080C7);
+  background: linear-gradient(180deg, #5C18AB, #0071B0);
   opacity: 0.55;
 }
 .pd-panel-head {
@@ -45,7 +45,7 @@
 .pd-panel-head-ic {
   width: 36px; height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #5C18AB, #0080C7);
+  background: linear-gradient(135deg, #5C18AB, #0071B0);
   display: grid; place-items: center;
   color: #fff; font-size: 18px;
   flex-shrink: 0;
@@ -139,7 +139,7 @@
   letter-spacing: .04em; text-transform: uppercase;
 }
 .pd-pill-meta {
-  font-size: 10.5px; font-weight: 700; color: #6b6680;
+  font-size: 11px; font-weight: 700; color: #6b6680;
   letter-spacing: .02em;
 }
 .pd-pill-label {
@@ -158,7 +158,7 @@
 .pd-pill-check svg { width: 11px; height: 11px; }
 
 .pd-pill.pd-pill-all .pd-pill-bar {
-  background: linear-gradient(180deg, #5C18AB 0%, #0080C7 25%, #08B1C2 50%, #03B496 75%, #F6BF2C 100%);
+  background: linear-gradient(180deg, #5C18AB 0%, #0071B0 25%, #08B1C2 50%, #03B496 75%, #F6BF2C 100%);
 }
 
 /* Feature mapping editor */
@@ -180,7 +180,7 @@
 .pd-map-head:hover { background: #f4eff9; }
 .pd-map-head svg { width: 12px; height: 12px; transition: transform .18s; }
 .pd-map.is-open .pd-map-head svg { transform: rotate(90deg); }
-.pd-map-ct { font-size: 10.5px; font-weight: 600; color: #6b6680; margin-left: auto; }
+.pd-map-ct { font-size: 11px; font-weight: 600; color: #6b6680; margin-left: auto; }
 .pd-map-body {
   display: none;
   padding: 8px 12px 12px;

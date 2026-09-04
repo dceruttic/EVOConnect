@@ -13,7 +13,7 @@
   transition: background .18s, border-color .18s, color .18s, left .22s ease;
   box-shadow: 0 2px 8px rgba(0,30,96,.22);
 }
-.us-collapse-btn:hover { background: #0080C7; border-color: #0080C7; color: #fff; }
+.us-collapse-btn:hover { background: #0071B0; border-color: #0071B0; color: #fff; }
 .us-collapse-btn svg { width: 12px; height: 12px; transition: transform .2s; }
 /* When sidebar is collapsed (72px wide) the button slides left to follow the right edge */
 .universe.sidebar-collapsed .us-collapse-btn,

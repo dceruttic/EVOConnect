@@ -245,7 +245,7 @@ function renderProcRecForm(pt){
     ].join('');
   }
   return [
-    '<div class="pc-section-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#0080C7;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg><span>REFRACTION &amp; BIOMETRY</span></div>',
+    '<div class="pc-section-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#0071B0;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg><span>REFRACTION &amp; BIOMETRY</span></div>',
     '<div class="pc-form-grid pc-grid-2">',
       slider('sphere',   'Myopia (Spherical Equivalent)', 'Positive value, e.g. 5.00 for −5 D', '0',   '15',  '0.25', s.sphere,   'D'),
       slider('cylinder', 'Astigmatism (Cylinder)',         'Magnitude only',                     '0',   '6',   '0.25', s.cylinder, 'D'),
@@ -255,7 +255,7 @@ function renderProcRecForm(pt){
       slider('pupil',    'Scotopic Pupil Diameter',         'mm',                                 '4.0', '9.0', '0.1',  s.pupil,    'mm'),
       slider('hoa',      'HOA RMS',                         'Total, 6 mm zone',                   '0',   '1.0', '0.01', s.hoa,      'µm'),
     '</div>',
-    '<div class="pc-section-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#0080C7;"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg><span>OCULAR HEALTH STATUS</span></div>',
+    '<div class="pc-section-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#0071B0;"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg><span>OCULAR HEALTH STATUS</span></div>',
     '<div class="pc-form-grid pc-grid-3">',
       btnGroup('osd',    'Ocular Surface Disease', 'DEWS II grade',          [{v:'none',lbl:'None / Minimal'},{v:'mild',lbl:'Mild (I–II)'},{v:'moderate',lbl:'Moderate (III)'},{v:'severe',lbl:'Severe (IV)'}], s.osd),
       btnGroup('cornea', 'Corneal Status',         'Topography / Tomography', [{v:'normal',lbl:'Normal'},{v:'fruste',lbl:'Forme fruste'},{v:'kerato',lbl:'Keratoconus'},{v:'ectasia',lbl:'Other ectasia'},{v:'scar',lbl:'Scar / Opacity'}], s.cornea),
@@ -268,7 +268,7 @@ function renderProcRecResult(pt){
   var s = PT_PROC_REC[pt.id];
   var r = computeProcedureRec(s);
   var palette = {
-    'EVO ICL':     'linear-gradient(160deg,#001E60 0%,#0080C7 70%,#08B1C2 100%)',
+    'EVO ICL':     'linear-gradient(160deg,#001E60 0%,#0071B0 70%,#08B1C2 100%)',
     'SMILE':       'linear-gradient(160deg,#1A2E54 0%,#2472D3 100%)',
     'Femto-LASIK': 'linear-gradient(160deg,#0E2A4D 0%,#1F4E92 100%)',
     'PRK':         'linear-gradient(160deg,#3F1A2E 0%,#7E2A56 100%)',

@@ -18,21 +18,21 @@
 }
 .sf-comp-name { min-width: 0; flex: 1; }
 .sf-comp-name .nm { font-size: 13.5px; font-weight: 700; color: #001E60; line-height: 1.15; letter-spacing: -.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sf-comp-name .ds { font-size: 10.5px; color: #5A6478; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sf-comp-name .ds { font-size: 11px; color: #5A6478; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .sf-comp-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 0 4px; border-top: 1px solid #EAEEF5; border-bottom: 1px dashed #EAEEF5; }
-.sf-comp-stats .stat .lbl { font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5A6478; margin-bottom: 4px; }
+.sf-comp-stats .stat .lbl { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5A6478; margin-bottom: 4px; }
 .sf-comp-stats .stat .val { font-size: 24px; font-weight: 800; color: #001E60; letter-spacing: -.025em; line-height: 1; font-variant-numeric: tabular-nums; }
 .sf-comp-stats .stat .val em { font-size: 11px; font-weight: 600; color: #5A6478; font-style: normal; margin-left: 3px; letter-spacing: 0; }
-.sf-comp-stats .stat.vault .val.novault { color: #94A0B8; cursor: help; }
+.sf-comp-stats .stat.vault .val.novault { color: #63708A; cursor: help; }
 .sf-comp-stats .stat.vault .band-tag.novault-tag { background: #F5F8FB; color: #5A6478; border: 1px dashed #D8E0EE; }
 .sf-vault-bar.novault { opacity: .35; position: relative; }
-.sf-vault-bar.novault .novault-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #5A6478; letter-spacing: .04em; text-transform: uppercase; opacity: 1; background: rgba(245,248,251,.85); border-radius: 4px; }
-.sf-comp-card.novault .sf-comp-badge { background: #94A0B8 !important; }
+.sf-vault-bar.novault .novault-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #5A6478; letter-spacing: .04em; text-transform: uppercase; opacity: 1; background: rgba(245,248,251,.85); border-radius: 4px; }
+.sf-comp-card.novault .sf-comp-badge { background: #63708A !important; }
 
 .sf-comp-stats .stat.vault .band-tag {
   display: inline-block; margin-top: 5px;
-  font-size: 9.5px; font-weight: 700;
+  font-size: 11px; font-weight: 700;
   padding: 2px 6px; border-radius: 4px;
   letter-spacing: .04em;
 }
@@ -52,7 +52,7 @@
   box-shadow: 0 0 0 3px rgba(255,255,255,.95), 0 2px 6px rgba(0,30,96,.35);
 }
 .sf-vault-bar .bar-axis { position: absolute; left: 0; right: 0; bottom: -2px; height: 10px; }
-.sf-vault-bar .bar-axis span { position: absolute; transform: translateX(-50%); font-size: 8px; font-weight: 600; color: #94A0B8; line-height: 1; }
+.sf-vault-bar .bar-axis span { position: absolute; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #63708A; line-height: 1; }
 .sf-vault-bar .bar-axis span:first-child { transform: translateX(0); }
 .sf-vault-bar .bar-axis span:last-child  { transform: translateX(-100%); }
 
@@ -110,7 +110,7 @@
 .sf-guru-back:hover { background: rgba(255,255,255,.22); transform: translateX(-2px); }
 .sf-guru-summary { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .sga-tag {
-  font-size: 10px; font-weight: 800; letter-spacing: .16em;
+  font-size: 11px; font-weight: 800; letter-spacing: .16em;
   text-transform: uppercase;
   color: #08B1C2;
 }
@@ -194,7 +194,7 @@
 .sfr-metrics { display: flex; gap: 18px; flex-wrap: wrap; }
 .sfm { display: flex; flex-direction: column; gap: 2px; }
 .sfm span {
-  font-size: 9.5px; font-weight: 700; letter-spacing: 0.4px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
   text-transform: uppercase; color: var(--mute);
 }
 .sfm b {
@@ -214,7 +214,7 @@
 .sf-chosen-ic svg { width: 22px; height: 22px; }
 .sf-chosen-body { flex: 1; }
 .sf-chosen-lbl {
-  font-size: 10.5px; font-weight: 800; letter-spacing: 0.6px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.6px;
   text-transform: uppercase; color: var(--mute);
 }
 .sf-chosen-val {
@@ -283,7 +283,7 @@
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .sf-formula-chip .sfc-author {
-  font-size: 10.5px; color: var(--mute); font-weight: 500;
+  font-size: 11px; color: var(--mute); font-weight: 500;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 

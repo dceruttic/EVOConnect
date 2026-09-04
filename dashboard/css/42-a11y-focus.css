@@ -1,0 +1,51 @@
+/* ================================================================
+   Keyboard focus — accessibility floor
+   ----------------------------------------------------------------
+   Audit A-01: 49 of 69 controls reached by Tab drew nothing. The cause
+   was not a missing rule but 22 `outline: none` declarations scattered
+   through the stylesheets, mostly on inputs whose border was being drawn
+   by a wrapper. This file loads last and wins on purpose: a focus ring is
+   the one thing a component must not be allowed to remove silently.
+   Components with their own ring (the decision chips, the gate) already
+   draw a compatible one and simply match it here.
+================================================================ */
+:is(a[href], button, input, select, textarea, summary,
+    [tabindex]:not([tabindex="-1"]), [role="button"]):focus-visible {
+  outline: 2px solid #00A6DC !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+/* inputs that sit inside a bordered wrapper: ring the wrapper, not the
+   bare field, so the indicator follows the shape the surgeon sees */
+.sf-input-row:focus-within,
+.rx-import-search:focus-within,
+.chat-input:focus-within,
+.composer:focus-within {
+  outline: 2px solid #00A6DC;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+/* on the navy surfaces the ring needs the light end of the palette */
+.us-sidebar :is(a, button, [tabindex]):focus-visible,
+.sh-strip :is(a, button, [tabindex]):focus-visible,
+.pd-banner :is(a, button, [tabindex]):focus-visible,
+.sh-return-boundary :is(a, button):focus-visible {
+  outline-color: #7FD4F5 !important;
+}
+/* a locked module is still reachable by keyboard; it must say where it is */
+.phase-locked:focus-visible { outline-color: #7FD4F5 !important; }
+
+/* ================================================================
+   Reduced motion — audit A-06
+   41 animation declarations, 2 stylesheets that honoured the setting.
+   The floor lives here; the deliberate exceptions (the STAAR integration
+   zone, the report modal) already handle it themselves.
+================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

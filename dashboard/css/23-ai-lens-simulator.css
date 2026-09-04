@@ -22,7 +22,7 @@
 }
 .sim-hero-ic svg { width: 28px; height: 28px; }
 .sim-hero-eyebrow {
-  font-size: 10px; font-weight: 800; color: #C4B5FD;
+  font-size: 11px; font-weight: 800; color: #C4B5FD;
   letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 4px;
 }
 .sim-hero h3 {
@@ -94,9 +94,9 @@
   position: absolute; top: -10px; right: 12px;
   padding: 3px 10px; border-radius: 999px;
   background: var(--purple); color: #fff;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase;
 }
-.sim-size-lbl { font-size: 10px; color: var(--mute); font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+.sim-size-lbl { font-size: 11px; color: var(--mute); font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
 .sim-size-val { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.4px; font-variant-numeric: tabular-nums; }
 .sim-metric-row {
   display: flex; flex-direction: column; gap: 6px; margin-top: 8px;
@@ -107,9 +107,9 @@
 }
 .sim-metric .smk { font-size: 11px; color: var(--mute); font-weight: 600; }
 .sim-metric .smv { font-size: 13px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
-.sim-metric .smv small { font-size: 10px; color: var(--mute); font-weight: 500; }
+.sim-metric .smv small { font-size: 11px; color: var(--mute); font-weight: 500; }
 .sim-metric .smb {
-  font-size: 9px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase;
   padding: 2px 7px; border-radius: 999px;
 }
 .sim-metric .smb.ideal { background: rgba(0,156,118,.16); color: #00754F; }
@@ -133,7 +133,7 @@
 .sim-alert.warn     { background: rgba(231,138,39,.06); border-color: rgba(231,138,39,.3); }
 .sim-alert.good     { background: rgba(0,156,118,.06); border-color: rgba(0,156,118,.3); }
 .sim-alert-tag {
-  flex: 0 0 auto; font-size: 10px; font-weight: 800; letter-spacing: 0.4px;
+  flex: 0 0 auto; font-size: 11px; font-weight: 800; letter-spacing: 0.4px;
   padding: 4px 9px; border-radius: 999px; text-transform: uppercase;
   white-space: nowrap;
 }

@@ -9,7 +9,7 @@ function renderVaultEvolutionChart(){
   var grid = [0, 30, 60, 90, 120].map(function(val){
     var y = py(val);
     return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="rgba(15,29,64,0.08)"/>' +
-           '<text x="' + (PL - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#94A0B8">' + val + '</text>';
+           '<text x="' + (PL - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#63708A">' + val + '</text>';
   }).join('');
   // X-axis labels
   var xLabels = TPS.map(function(t, i){
@@ -31,13 +31,13 @@ function renderVaultEvolutionChart(){
   var areaPath = maeVals.map(function(v, i){ return (i===0?'M':'L') + ' ' + px(i) + ' ' + py(v); }).join(' ') +
                  ' L ' + px(TPS.length - 1) + ' ' + (H - PB) + ' L ' + px(0) + ' ' + (H - PB) + ' Z';
   return '<svg class="ipa-evo-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' +
-    '<defs><linearGradient id="vaultEvoGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0080C7" stop-opacity="0.22"/><stop offset="1" stop-color="#0080C7" stop-opacity="0"/></linearGradient></defs>' +
+    '<defs><linearGradient id="vaultEvoGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0071B0" stop-opacity="0.22"/><stop offset="1" stop-color="#0071B0" stop-opacity="0"/></linearGradient></defs>' +
     grid +
     '<path d="' + areaPath + '" fill="url(#vaultEvoGrad)"/>' +
     lineSvg(stdVals, '#5C18AB', true) +
-    lineSvg(maeVals, '#0080C7', false) +
+    lineSvg(maeVals, '#0071B0', false) +
     xLabels +
-    '<text x="' + (PL - 32) + '" y="' + (PT + 10) + '" font-family="Inter" font-size="9" font-weight="800" fill="#94A0B8" letter-spacing=".06em">µm</text>' +
+    '<text x="' + (PL - 32) + '" y="' + (PT + 10) + '" font-family="Inter" font-size="9" font-weight="800" fill="#63708A" letter-spacing=".06em">µm</text>' +
   '</svg>';
 }
 
@@ -51,7 +51,7 @@ function renderRotationEvolutionChart(){
   var grid = [0, 25, 50, 75, 100].map(function(val){
     var y = py(val);
     return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="rgba(15,29,64,0.08)"/>' +
-           '<text x="' + (PL - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#94A0B8">' + val + '</text>';
+           '<text x="' + (PL - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#63708A">' + val + '</text>';
   }).join('');
   var xLabels = TPS.map(function(t, i){
     return '<text x="' + px(i) + '" y="' + (H - 12) + '" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#001E60">' + t + '</text>';
@@ -78,7 +78,7 @@ function renderRotationEvolutionChart(){
     lineSvg(midVals, '#08B1C2') +
     lineSvg(highVals, '#5C18AB') +
     xLabels +
-    '<text x="' + (PL - 28) + '" y="' + (PT + 10) + '" font-family="Inter" font-size="9" font-weight="800" fill="#94A0B8">%</text>' +
+    '<text x="' + (PL - 28) + '" y="' + (PT + 10) + '" font-family="Inter" font-size="9" font-weight="800" fill="#63708A">%</text>' +
   '</svg>';
 }
 
@@ -330,7 +330,7 @@ function renderAnalytics() {
   const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const heatHtml = A.activity.map((row, di) => `
     <div style="display:flex; gap:3px; align-items:center;">
-      <span style="width:28px; font-size:10px; color:var(--mute); font-weight:600;">${days[di]}</span>
+      <span style="width:28px; font-size:11px; color:var(--mute); font-weight:600;">${days[di]}</span>
       <div style="display:grid; grid-template-columns:repeat(12, 1fr); gap:3px; flex:1;">
         ${row.map(v => `<div class="heat-cell" data-v="${v}" title="${v} cases"></div>`).join("")}
       </div>

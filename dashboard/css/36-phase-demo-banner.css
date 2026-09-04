@@ -12,7 +12,7 @@
   position: sticky; top: 0; z-index: 400; flex: none;
 }
 .pd-banner-clap { font-size: 14px; cursor: pointer; }
-.pd-banner-label { font-weight: 800; letter-spacing: .04em; text-transform: uppercase; font-size: 10.5px; opacity: .85; }
+.pd-banner-label { font-weight: 800; letter-spacing: .04em; text-transform: uppercase; font-size: 11px; opacity: .85; }
 .pd-banner-name { font-weight: 800; font-size: 13px; }
 .pd-banner-meta { font-weight: 600; opacity: .75; font-size: 11.5px; }
 .pd-banner-spacer { flex: 1; }
@@ -45,4 +45,4 @@
 .pd-banner-quick button:hover { background: #f5f3fb; }
 .pd-banner-quick .pd-bq-bar { width: 4px; height: 16px; border-radius: 2px; flex-shrink: 0; }
 .pd-banner-quick .pd-bq-nm { font-weight: 800; }
-.pd-banner-quick .pd-bq-meta { font-size: 10px; opacity: .65; font-weight: 600; margin-left: auto; }
+.pd-banner-quick .pd-bq-meta { font-size: 11px; opacity: .65; font-weight: 600; margin-left: auto; }

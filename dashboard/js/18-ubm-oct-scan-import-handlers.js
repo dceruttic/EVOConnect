@@ -67,7 +67,7 @@ function _scanImportRenderList(filter){
         '<div class="rxi-name">' + p.name + '</div>' +
         '<div class="rxi-sub">REV-' + p.id + ' · ' + (p.age||'-') + 'y · ' + (p.eye||'-') + ' · ' + (p.power||'-') + ' D</div>' +
       '</div>' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#94A0B8;flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#63708A;flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>' +
     '</button>';
   }).join('');
   var list = document.getElementById('scanImportList');
@@ -92,9 +92,9 @@ function openScanImportModal(mode){
   var preview = document.getElementById('scanImportPreview');
   if (preview) preview.innerHTML =
     '<div class="rx-preview-empty">' +
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#94A0B8;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#63708A;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>' +
     '<div style="font-size:13px;color:#5A6478;font-weight:600;margin-top:10px;">Select a patient</div>' +
-    '<div style="font-size:11.5px;color:#94A0B8;margin-top:4px;">The ' + mode + ' scan preview will appear here.</div>' +
+    '<div style="font-size:11.5px;color:#63708A;margin-top:4px;">The ' + mode + ' scan preview will appear here.</div>' +
     '</div>';
 }
 function closeScanImportModal(){

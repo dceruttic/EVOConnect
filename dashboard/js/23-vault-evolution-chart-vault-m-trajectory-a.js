@@ -28,7 +28,7 @@ function renderPostopVaultEvolution(pt){
   var grid = [0, 200, 300, 500, 800, 1000].map(function(val){
     var y = py(val);
     return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="rgba(15,29,64,0.06)" stroke-dasharray="3 4"/>' +
-           '<text x="' + (PL - 10) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#94A0B8">' + val + '</text>';
+           '<text x="' + (PL - 10) + '" y="' + (y + 4) + '" text-anchor="end" font-family="Inter" font-size="10" font-weight="700" fill="#63708A">' + val + '</text>';
   }).join('');
 
   // X-axis labels — current milestone is highlighted
@@ -38,7 +38,7 @@ function renderPostopVaultEvolution(pt){
     var weight = isActive ? '900' : '700';
     return '<text x="' + px(i) + '" y="' + (H - 14) + '" text-anchor="middle" font-family="Inter" font-size="11" font-weight="' + weight + '" fill="' + color + '">' + m + '</text>' +
            // Tick mark
-           '<line x1="' + px(i) + '" y1="' + (H - PB + 2) + '" x2="' + px(i) + '" y2="' + (H - PB - 2) + '" stroke="' + (isActive ? '#001E60' : '#94A0B8') + '" stroke-width="' + (isActive ? '2' : '1') + '"/>';
+           '<line x1="' + px(i) + '" y1="' + (H - PB + 2) + '" x2="' + px(i) + '" y2="' + (H - PB - 2) + '" stroke="' + (isActive ? '#001E60' : '#63708A') + '" stroke-width="' + (isActive ? '2' : '1') + '"/>';
   }).join('');
 
   // Captured line + dots
@@ -53,14 +53,14 @@ function renderPostopVaultEvolution(pt){
       // Soft area below the line for emphasis
       var areaD = pathD + ' L ' + pathPts[pathPts.length - 1].x + ' ' + (H - PB) + ' L ' + pathPts[0].x + ' ' + (H - PB) + ' Z';
       lineSvg += '<path d="' + areaD + '" fill="rgba(0,128,199,0.10)"/>';
-      lineSvg += '<path d="' + pathD + '" stroke="#0080C7" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+      lineSvg += '<path d="' + pathD + '" stroke="#0071B0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
     }
     // Dots + value labels
     pathPts.forEach(function(p){
       var isActive = p.ms === CURRENT_PT_POSTOP_MS;
       lineSvg += '<g>' +
-        '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + (isActive ? 8 : 6) + '" fill="#fff" stroke="#0080C7" stroke-width="' + (isActive ? 3.5 : 2.6) + '"/>' +
-        (isActive ? '<circle cx="' + p.x + '" cy="' + p.y + '" r="3" fill="#0080C7"/>' : '') +
+        '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + (isActive ? 8 : 6) + '" fill="#fff" stroke="#0071B0" stroke-width="' + (isActive ? 3.5 : 2.6) + '"/>' +
+        (isActive ? '<circle cx="' + p.x + '" cy="' + p.y + '" r="3" fill="#0071B0"/>' : '') +
         '<text x="' + p.x + '" y="' + (p.y - (isActive ? 14 : 11)) + '" text-anchor="middle" font-family="Inter" font-size="' + (isActive ? '11' : '10') + '" font-weight="800" fill="#001E60">' + p.v + '</text>' +
       '</g>';
     });
@@ -69,7 +69,7 @@ function renderPostopVaultEvolution(pt){
   // Empty-state overlay if no captured visits at all
   var emptyOverlay = '';
   if (capturedCount === 0) {
-    emptyOverlay = '<text x="' + (W/2) + '" y="' + (H/2) + '" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#94A0B8">No vault data captured yet · log a visit to see the trend</text>';
+    emptyOverlay = '<text x="' + (W/2) + '" y="' + (H/2) + '" text-anchor="middle" font-family="Inter" font-size="13" font-weight="700" fill="#63708A">No vault data captured yet · log a visit to see the trend</text>';
   }
 
   // Legend bands (compact)
@@ -93,14 +93,14 @@ function renderPostopVaultEvolution(pt){
       '<svg class="po-vault-evo-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">',
         bandsHtml,
         grid,
-        '<text x="' + (PL - 30) + '" y="' + (PT_ + 8) + '" font-family="Inter" font-size="9" font-weight="800" fill="#94A0B8">µm</text>',
+        '<text x="' + (PL - 30) + '" y="' + (PT_ + 8) + '" font-family="Inter" font-size="9" font-weight="800" fill="#63708A">µm</text>',
         lineSvg,
         xLabels,
         emptyOverlay,
       '</svg>',
       '<div class="po-vault-evo-foot">',
         '<span><b>' + capturedCount + '</b> of ' + MS.length + ' visits captured</span>',
-        capturedCount > 0 ? '<span>Latest vault: <b style="color:#0080C7">' + capturedOnly[capturedOnly.length - 1].vault + ' µm</b> at ' + capturedOnly[capturedOnly.length - 1].ms + '</span>' : '',
+        capturedCount > 0 ? '<span>Latest vault: <b style="color:#0071B0">' + capturedOnly[capturedOnly.length - 1].vault + ' µm</b> at ' + capturedOnly[capturedOnly.length - 1].ms + '</span>' : '',
       '</div>',
     '</div>'
   ].join('');

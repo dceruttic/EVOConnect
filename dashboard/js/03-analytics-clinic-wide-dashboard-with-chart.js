@@ -147,7 +147,7 @@ function renderIclPerfSection(){
               '<h4>Vault prediction error — MAE &amp; Std</h4>',
             '</div>',
             '<div class="ipa-evo-legend">',
-              '<span class="ipa-evo-pill" style="--c:#0080C7"><span class="ipa-evo-dot"></span> Mean Abs Error</span>',
+              '<span class="ipa-evo-pill" style="--c:#0071B0"><span class="ipa-evo-dot"></span> Mean Abs Error</span>',
               '<span class="ipa-evo-pill" style="--c:#5C18AB"><span class="ipa-evo-dot"></span> Std Error</span>',
             '</div>',
           '</div>',

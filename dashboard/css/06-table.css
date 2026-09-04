@@ -49,7 +49,7 @@
 /* Biometry data list */
 .biom-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .biom-item { padding: 12px 14px; border-radius: 8px; background: var(--cream); }
-.biom-item .lbl { font-size: 10.5px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.biom-item .lbl { font-size: 11px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .biom-item .val { font-size: 20px; font-weight: 700; margin-top: 2px; letter-spacing: -.01em; }
 .biom-item .unit { font-size: 13px; color: var(--mute); font-weight: 500; }
 .biom-item .bar { height: 4px; background: var(--sand); border-radius: 100px; margin-top: 8px; overflow: hidden; }
@@ -68,7 +68,7 @@
 }
 .ai-panel h3 { font-size: 15px; font-weight: 700; color: white; }
 .ai-panel .ai-eyebrow {
-  font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--gold-lt);
+  font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--gold-lt);
   text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px;
 }
 .ai-rec {
@@ -93,7 +93,7 @@
 .formula-row.winner { background: rgba(127,33,224,.08); border: 1px solid rgba(127,33,224,.25); }
 .formula-row .name { font-weight: 600; }
 .formula-row .val { font-variant-numeric: tabular-nums; font-weight: 700; }
-.formula-row .tag { font-size: 10px; padding: 2px 8px; border-radius: 100px; background: var(--gold); color: white; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-left: 8px; }
+.formula-row .tag { font-size: 11px; padding: 2px 8px; border-radius: 100px; background: var(--gold); color: white; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-left: 8px; }
 
 /* Vault prediction bar chart */
 .vault-chart { display: flex; align-items: flex-end; gap: 10px; height: 140px; padding: 10px 0; }
@@ -110,9 +110,9 @@
 }
 .vault-chart .b span {
   position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-  font-size: 10.5px; font-weight: 700; color: var(--ink);
+  font-size: 11px; font-weight: 700; color: var(--ink);
 }
-.vault-chart .lbl { font-size: 10.5px; color: var(--mute); font-weight: 600; }
+.vault-chart .lbl { font-size: 11px; color: var(--mute); font-weight: 600; }
 
 /* Pipeline stepper */
 .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-bottom: 16px; }
@@ -136,7 +136,7 @@
 .pipe-step.done .node { background: var(--teal); border-color: var(--teal); color: white; }
 .pipe-step.active .node { background: var(--gold); border-color: var(--gold); color: white; box-shadow: 0 0 0 5px rgba(127,33,224,.15); }
 .pipe-step .lbl { font-size: 11.5px; font-weight: 600; color: var(--ink); }
-.pipe-step .sub { font-size: 10.5px; color: var(--mute); }
+.pipe-step .sub { font-size: 11px; color: var(--mute); }
 
 /* OR timer / live ops */
 .or-card { padding: 18px 20px; }
@@ -236,7 +236,7 @@
   position: absolute; top: 8px; left: 8px; z-index: 2;
   padding: 3px 8px; border-radius: 6px;
   background: rgba(255,255,255,.92); color: var(--navy);
-  font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
   box-shadow: 0 2px 6px rgba(0,30,96,.18);
   backdrop-filter: blur(4px);
 }
@@ -244,7 +244,7 @@
   position: absolute; bottom: 8px; right: 8px; z-index: 2;
   padding: 3px 8px; border-radius: 6px;
   background: rgba(0,0,0,.62); color: white;
-  font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums;
   letter-spacing: .02em;
   backdrop-filter: blur(4px);
 }
@@ -287,7 +287,7 @@
 .msg .bubble { padding: 10px 13px; border-radius: 12px; background: var(--cream); font-size: 13px; line-height: 1.45; }
 .msg.me .bubble { background: var(--teal); color: white; }
 .msg.revai .bubble { background: rgba(127,33,224,.08); }
-.msg .meta { font-size: 10.5px; color: var(--mute); margin-top: 4px; }
+.msg .meta { font-size: 11px; color: var(--mute); margin-top: 4px; }
 .chat-input {
   margin-top: 12px; padding: 10px; border: 1px solid var(--line); border-radius: 10px;
   display: flex; align-items: center; gap: 8px;

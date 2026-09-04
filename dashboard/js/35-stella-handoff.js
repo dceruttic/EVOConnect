@@ -1349,7 +1349,7 @@
   /* The vault scale is always drawn so every card reads the same; only a method
      that actually predicts vault gets a marker and a number. Today that is ICL
      Guru alone. */
-  var VAULT_BANDS = { low:'#F59E0B', 'borderline-low':'#F59E0B', ideal:'#15803D', high:'#0080C7', hyper:'#7E22CE', hypo:'#E45167' };
+  var VAULT_BANDS = { low:'#F59E0B', 'borderline-low':'#F59E0B', ideal:'#15803D', high:'#0071B0', hyper:'#7E22CE', hypo:'#E45167' };
   function vaultBar(r) {
     var has = r && r.predictsVault !== false && r.vault != null;
     var color = VAULT_BANDS[r && r.band] || '#5A6478';

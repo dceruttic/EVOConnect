@@ -237,7 +237,7 @@ function renderProcedureResultBanner(pt){
   else { rec = 'Cataract'; conf = 80; why = 'Refractive profile suggests lens-based intervention'; alt = 'EVO ICL · 60% match'; }
   // Visual styling per recommendation
   const palette = {
-    'EVO ICL':  { bg: 'linear-gradient(135deg,#001E60 0%,#0080C7 60%,#08B1C2 100%)', accent: '#08B1C2' },
+    'EVO ICL':  { bg: 'linear-gradient(135deg,#001E60 0%,#0071B0 60%,#08B1C2 100%)', accent: '#08B1C2' },
     'SMILE':    { bg: 'linear-gradient(135deg,#1A2E54 0%,#2472D3 100%)',              accent: '#4A9EFF' },
     'LASIK':    { bg: 'linear-gradient(135deg,#0E2A4D 0%,#1F4E92 100%)',              accent: '#5B8FD0' },
     'PRK':      { bg: 'linear-gradient(135deg,#3F1A2E 0%,#7E2A56 100%)',              accent: '#D17AAA' },
@@ -277,7 +277,7 @@ function renderPreopAttachmentsList(pt){
   const items = store.attachments || [];
   if (items.length === 0) {
     return `<div class="preop-att-empty">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:#94A0B8;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:#63708A;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       No studies attached yet — use the cards above to ingest OCT, UBM, Pentacam or IOL Master data.
     </div>`;
   }
@@ -328,7 +328,7 @@ function _ensurePreopPreviewMounted(){
       '<div class="scan-lightbox-head">' +
         '<div>' +
           '<div id="preopPreviewTitle" style="font-size:14px;font-weight:800;">Preview</div>' +
-          '<div id="preopPreviewSub" style="font-size:11px;color:#94A0B8;margin-top:2px;"></div>' +
+          '<div id="preopPreviewSub" style="font-size:11px;color:#63708A;margin-top:2px;"></div>' +
         '</div>' +
         '<button type="button" onclick="closePreopAttachPreview()" style="background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;padding:6px 12px;cursor:pointer;font-size:12px;">Close</button>' +
       '</div>' +
@@ -354,7 +354,7 @@ function openPreopAttachPreview(ptId, attId){
   if (sub) sub.textContent = 'REV-' + ptId + ' · captured ' + a.date + ' · ' + (a.source === 'UPLOAD' ? 'uploaded from device' : 'from EHR');
   if (body) {
     var valRows = Object.entries(a.values || {}).map(function(kv){
-      return '<div style="display:flex;justify-content:space-between;padding:8px 14px;font-size:13px;border-bottom:1px solid #1A2540;"><span style="color:#94A0B8;">' + kv[0].toUpperCase() + '</span><b style="color:#fff;font-variant-numeric:tabular-nums;">' + kv[1] + '</b></div>';
+      return '<div style="display:flex;justify-content:space-between;padding:8px 14px;font-size:13px;border-bottom:1px solid #1A2540;"><span style="color:#63708A;">' + kv[0].toUpperCase() + '</span><b style="color:#fff;font-variant-numeric:tabular-nums;">' + kv[1] + '</b></div>';
     }).join('');
     body.innerHTML = a.src
       ? '<div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:920px;">' +
@@ -364,7 +364,7 @@ function openPreopAttachPreview(ptId, attId){
       : '<div style="display:flex;flex-direction:column;align-items:center;gap:18px;color:#fff;padding:32px;">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:64px;height:64px;color:#5A6478;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
           '<div style="font-size:14px;font-weight:800;color:#fff;">' + label + ' report · auto-parsed</div>' +
-          '<div style="font-size:11.5px;color:#94A0B8;">No raw image — values were extracted from the structured report.</div>' +
+          '<div style="font-size:11.5px;color:#63708A;">No raw image — values were extracted from the structured report.</div>' +
           '<div style="width:100%;max-width:520px;background:#0E1428;border:1px solid #1A2540;border-radius:8px;overflow:hidden;">' + valRows + '</div>' +
         '</div>';
   }
@@ -613,7 +613,7 @@ function renderPtSizingGuru(pt) {
             <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
               <circle cx="20" cy="20" r="16" fill="none" stroke="#4A7BE3" stroke-width="2.4"/>
               <circle cx="20" cy="20" r="6" fill="#4A7BE3"/>
-              <path d="M 8 20 Q 20 6 32 20 Q 20 34 8 20" fill="none" stroke="#0080C7" stroke-width="2" opacity="0.7"/>
+              <path d="M 8 20 Q 20 6 32 20 Q 20 34 8 20" fill="none" stroke="#0071B0" stroke-width="2" opacity="0.7"/>
             </svg>
           </div>
           <div>
@@ -1064,9 +1064,9 @@ function renderPtSizingFormulas(pt) {
           <div class="rx-import-list" id="scanImportList"></div>
           <div class="scan-import-preview" id="scanImportPreview">
             <div class="rx-preview-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#94A0B8;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#63708A;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>
               <div style="font-size:13px;color:#5A6478;font-weight:600;margin-top:10px;">Select a patient</div>
-              <div style="font-size:11.5px;color:#94A0B8;margin-top:4px;">The scan preview will appear here.</div>
+              <div style="font-size:11.5px;color:#63708A;margin-top:4px;">The scan preview will appear here.</div>
             </div>
           </div>
         </div>
@@ -1146,9 +1146,9 @@ function renderPtSizingFormulas(pt) {
           <div class="rx-import-list" id="rxImportList"></div>
           <div class="rx-import-preview" id="rxImportPreview">
             <div class="rx-preview-empty">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#94A0B8;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 12h10M7 16h6M7 8h10"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:#63708A;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 12h10M7 16h6M7 8h10"/></svg>
               <div style="font-size:13px;color:#5A6478;font-weight:600;margin-top:10px;">Select a patient</div>
-              <div style="font-size:11.5px;color:#94A0B8;margin-top:4px;">Their EHR record will appear here for review.</div>
+              <div style="font-size:11.5px;color:#63708A;margin-top:4px;">Their EHR record will appear here for review.</div>
             </div>
           </div>
         </div>

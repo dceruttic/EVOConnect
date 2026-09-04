@@ -119,7 +119,7 @@ function _ensureEyePhotoLightboxMounted(){
     '<div class="scan-lightbox-inner">' +
       '<div class="scan-lightbox-head">' +
         '<div><div id="eyePhotoLbTitle" style="font-size:14px;font-weight:800;">Eye photo</div>' +
-        '<div id="eyePhotoLbSub" style="font-size:11px;color:#94A0B8;margin-top:2px;"></div></div>' +
+        '<div id="eyePhotoLbSub" style="font-size:11px;color:#63708A;margin-top:2px;"></div></div>' +
         '<button type="button" onclick="closeEyePhotoLightbox()" style="background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;padding:6px 12px;cursor:pointer;font-size:12px;">Close</button>' +
       '</div>' +
       '<div class="scan-lightbox-body" id="eyePhotoLbBody"></div>' +

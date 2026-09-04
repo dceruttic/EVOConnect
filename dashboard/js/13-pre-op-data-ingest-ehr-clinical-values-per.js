@@ -25,7 +25,7 @@ function renderPreopDataIngestSection(pt){
     ehrCardBody = `
       <div class="pec-status"><span class="preop-ehr-chip">Not yet imported</span></div>
       <div class="preop-ehr-empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:#94A0B8;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:#63708A;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         AL · K1 · K2 · ACD · WTW · CCT · pupil will appear here once imported.
       </div>`;
   }

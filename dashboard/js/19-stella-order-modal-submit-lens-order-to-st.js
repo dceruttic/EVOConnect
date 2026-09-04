@@ -211,9 +211,9 @@ function _sfResultCard(r, patientId) {
      recommendation to compare against, so the card drops the delta line and
      keeps the native footer actions — View PDF for ICL Guru, and Select. */
   if (window.SH_CARDS && typeof SH_CARDS.methodCard === 'function') {
-    var bc = r.predictsVault === false ? '#94A0B8'
+    var bc = r.predictsVault === false ? '#63708A'
       : ({ hypo: '#E45167', low: '#F59E0B', 'borderline-low': '#F59E0B',
-           ideal: '#15803D', high: '#0080C7', hyper: '#7E22CE' }[r.band] || '#5A6478');
+           ideal: '#15803D', high: '#0071B0', hyper: '#7E22CE' }[r.band] || '#5A6478');
     var pdf = r.code === 'ICL_GURU'
       ? '<button class="sf-comp-pdf" type="button" title="Open the original ICL Guru PDF report"' +
         ' onclick="event.stopPropagation();openIclGuruPdf(\'' + patientId + '\', ' + r.recSize + ')">' +
@@ -226,10 +226,10 @@ function _sfResultCard(r, patientId) {
 
   const noVault = r.predictsVault === false;
   const bandColor = noVault
-    ? "#94A0B8"
+    ? "#63708A"
     : ({
         "hypo": "#E45167", "low": "#F59E0B", "borderline-low": "#F59E0B",
-        "ideal": "#15803D", "high": "#0080C7", "hyper": "#7E22CE"
+        "ideal": "#15803D", "high": "#0071B0", "hyper": "#7E22CE"
       }[r.band] || "#5A6478");
   const bandLabel = noVault
     ? "Size only"
@@ -410,9 +410,9 @@ function _synthesizeIclGuruFromForm(pt, vault, size){
     let zones;
     if (isHyper) zones = [{ band:"hyper", pct:100, color:"#7E22CE" }];
     else if (numV < 250) zones = [{ band:"low", pct:80, color:"#F59E0B" }, { band:"ideal", pct:20, color:"#15803D" }];
-    else if (numV <= 750) zones = [{ band:"ideal", pct:90, color:"#15803D" }, { band:"high", pct:10, color:"#0080C7" }];
-    else if (numV <= 900) zones = [{ band:"ideal", pct:30, color:"#15803D" }, { band:"high", pct:60, color:"#0080C7" }, { band:"hyper", pct:10, color:"#7E22CE" }];
-    else zones = [{ band:"high", pct:35, color:"#0080C7" }, { band:"hyper", pct:65, color:"#7E22CE" }];
+    else if (numV <= 750) zones = [{ band:"ideal", pct:90, color:"#15803D" }, { band:"high", pct:10, color:"#0071B0" }];
+    else if (numV <= 900) zones = [{ band:"ideal", pct:30, color:"#15803D" }, { band:"high", pct:60, color:"#0071B0" }, { band:"hyper", pct:10, color:"#7E22CE" }];
+    else zones = [{ band:"high", pct:35, color:"#0071B0" }, { band:"hyper", pct:65, color:"#7E22CE" }];
     return { size: s.toFixed(1), vaultUm: v, peripheralUm: v, angle: 25 - i*4, stability: "high", zones, selected: Math.abs(s - size) < 0.05 };
   });
   return {

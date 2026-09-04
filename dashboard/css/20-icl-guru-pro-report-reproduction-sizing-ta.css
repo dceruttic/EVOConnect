@@ -12,11 +12,11 @@
   display: flex; align-items: center; gap: 6px;
 }
 .gb-pro {
-  font-size: 9.5px; padding: 2px 7px; border-radius: 999px;
+  font-size: 11px; padding: 2px 7px; border-radius: 999px;
   background: #4A7BE3; color: #fff; letter-spacing: 0.6px;
 }
 .guru-brand-sub {
-  font-size: 9px; font-weight: 700; letter-spacing: 1.4px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.4px;
   text-transform: uppercase; color: #6C6278;
 }
 .guru-download {
@@ -55,7 +55,7 @@
   padding: 6px 8px; border-radius: 6px; background: var(--cream);
   display: flex; flex-direction: column; gap: 2px;
 }
-.gmb-pow-grid span { font-size: 10px; color: var(--mute); font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
+.gmb-pow-grid span { font-size: 11px; color: var(--mute); font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
 .gmb-pow-grid b { font-size: 13px; color: #0F1D40; font-variant-numeric: tabular-nums; }
 
 .guru-sizes-grid {
@@ -86,14 +86,14 @@
   position: absolute; top: -10px; left: 16px;
   padding: 4px 12px; border-radius: 999px;
   background: #3955E8; color: #fff;
-  font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;
 }
 .gsc-sz-lbl { font-size: 11px; color: var(--mute); font-weight: 600; }
 .gsc-sz-val { font-size: 24px; font-weight: 800; color: #0F1D40; letter-spacing: -0.5px; margin: -4px 0 4px; }
-.gsc-vault-lbl { font-size: 10.5px; color: var(--mute); font-weight: 600; margin-top: 4px; }
+.gsc-vault-lbl { font-size: 11px; color: var(--mute); font-weight: 600; margin-top: 4px; }
 .gsc-vault-val { font-size: 17px; font-weight: 800; color: #0F1D40; font-variant-numeric: tabular-nums; margin-top: -2px; }
 .gsc-vault-val.hyper { color: #C84FD9; font-size: 14px; letter-spacing: 0.5px; }
-.gsc-peri { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; font-size: 10.5px; }
+.gsc-peri { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; font-size: 11px; }
 .gsc-peri span { color: var(--mute); }
 .gsc-peri b { color: #0F1D40; font-variant-numeric: tabular-nums; font-weight: 700; }
 .gsc-zones {
@@ -113,7 +113,7 @@
   clip-path: polygon(8% 25%, 0 50%, 8% 75%, 15% 90%, 85% 90%, 92% 75%, 100% 50%, 92% 25%, 85% 10%, 15% 10%);
   opacity: 0.85;
 }
-.gsc-stability-lbl { font-size: 10.5px; color: var(--mute); font-weight: 600; margin-top: 6px; }
+.gsc-stability-lbl { font-size: 11px; color: var(--mute); font-weight: 600; margin-top: 6px; }
 .gsc-stability-bar {
   display: flex; gap: 2px; padding: 2px; background: var(--cream);
   border-radius: 6px; position: relative; height: 14px; margin-top: 2px;
@@ -124,11 +124,11 @@
 .ssb-seg.active.low  { background: #93BAF0; }
 .ssb-pointer {
   position: absolute; top: -12px; transform: translateX(-50%);
-  color: #2472D3; font-size: 10px;
+  color: #2472D3; font-size: 11px;
 }
 .gsc-stability-scale {
   display: flex; justify-content: space-between;
-  font-size: 9.5px; color: var(--mute); font-weight: 600; margin-top: 2px;
+  font-size: 11px; color: var(--mute); font-weight: 600; margin-top: 2px;
 }
 
 .guru-bands-wrap { padding: 12px; border-radius: 10px; background: var(--cream); }
@@ -143,7 +143,7 @@
 .guru-bands-strip .bd.hyper { flex: 4; }
 .guru-bands-scale {
   display: flex; justify-content: space-between;
-  font-size: 9.5px; color: var(--mute); font-weight: 600; margin-top: 4px;
+  font-size: 11px; color: var(--mute); font-weight: 600; margin-top: 4px;
   font-variant-numeric: tabular-nums;
 }
 .guru-bands-legend {
@@ -272,7 +272,7 @@
 }
 .sizing-eye-banner.v2 .seb-eye-rx b { color: #001E60; font-weight: 800; font-variant-numeric: tabular-nums; }
 .sizing-eye-banner.v2 .seb-eye-rx .dot { color: #C0C7D5; }
-.sizing-eye-banner.v2 .seb-eye-rx .muted { color: #94A0B8; font-weight: 500; }
+.sizing-eye-banner.v2 .seb-eye-rx .muted { color: #63708A; font-weight: 500; }
 
 .sizing-eye-banner.v2 .seb-status-row {
   display: flex; flex-wrap: wrap; gap: 6px;
@@ -281,7 +281,7 @@
   display: inline-flex; align-items: center; gap: 5px;
   padding: 4px 10px; border-radius: 999px;
   background: #F4F6FA; color: #5A6478;
-  font-size: 10.5px; font-weight: 700;
+  font-size: 11px; font-weight: 700;
   border: 1px solid rgba(0,30,96,.06);
   letter-spacing: .02em;
 }
@@ -292,12 +292,12 @@
   display: inline-flex; align-items: center;
   padding: 3px 8px; border-radius: 5px;
   background: rgba(92,24,171,.10); color: #4A1480;
-  font-size: 10px; font-weight: 800; letter-spacing: .04em;
+  font-size: 11px; font-weight: 800; letter-spacing: .04em;
 }
 .seb-risk {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 4px 10px; border-radius: 999px;
-  font-size: 10.5px; font-weight: 800; letter-spacing: .04em;
+  font-size: 11px; font-weight: 800; letter-spacing: .04em;
   border: 1px solid currentColor;
   background: rgba(255,255,255,.6);
 }
@@ -330,7 +330,7 @@
   letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1;
 }
 .seb-ring-lbl {
-  font-size: 7.5px; font-weight: 800; color: #5A6478;
+  font-size: 11px; font-weight: 800; color: #5A6478;
   letter-spacing: .08em; text-transform: uppercase; margin-top: 2px;
 }
 
@@ -352,7 +352,7 @@
 }
 .seb-kpi:last-child { border-right: 0; }
 .seb-kpi .kpi-lbl {
-  font-size: 9.5px; font-weight: 800; color: #5A6478;
+  font-size: 11px; font-weight: 800; color: #5A6478;
   letter-spacing: .12em; text-transform: uppercase;
 }
 .seb-kpi .kpi-val {
@@ -361,7 +361,7 @@
   display: inline-flex; align-items: baseline; gap: 3px;
 }
 .seb-kpi .kpi-val em {
-  font-style: normal; font-size: 10px; font-weight: 600; color: #5A6478;
+  font-style: normal; font-size: 11px; font-weight: 600; color: #5A6478;
 }
 
 @media (max-width: 920px) {

@@ -1,7 +1,7 @@
 /* ===== EVO CREDITS PAGE — STAAR design system ===== */
 .evo-credits-page { padding: 4px 6px 40px; max-width: 1280px; margin: 0 auto; font-family: 'Inter', 'Helvetica Neue', sans-serif; color: #001E60; }
 .evo-page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
-.evo-page-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #0080C7; margin-bottom: 6px; }
+.evo-page-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #0071B0; margin-bottom: 6px; }
 .evo-page-title { font-size: 30px; font-weight: 700; margin: 0 0 6px; letter-spacing: -.015em; color: #001E60; }
 .evo-page-sub { font-size: 14px; color: #5A6478; margin: 0; max-width: 620px; line-height: 1.55; }
 .evo-clinic-pill { display:flex; align-items:center; gap:10px; background:#F5F8FB; border:1px solid #E1E5EE; border-radius:999px; padding:6px 14px 6px 6px; font-size:12px; font-weight:600; color:#001E60; flex-shrink:0; }
@@ -16,7 +16,7 @@
 .evo-balance-amount sup { font-size:18px; color:#7FB3DC; font-weight:600; letter-spacing:.08em; }
 .evo-balance-meta { display:flex; gap:28px; margin-top:20px; position:relative; z-index:1; flex-wrap:wrap; }
 .evo-balance-meta-item { display:flex; flex-direction:column; gap:4px; }
-.evo-balance-meta-item .lbl { font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#7FB3DC; }
+.evo-balance-meta-item .lbl { font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#7FB3DC; }
 .evo-balance-meta-item .val { font-size:15px; font-weight:600; color:#fff; }
 .evo-balance-meta-item .val.pos { color:#5BE0A0; }
 .evo-balance-meta-item .val.neg { color:#FF8A8A; }
@@ -24,7 +24,7 @@
 /* Top row of balance card: title+amount on left, Buy CTA on right */
 .evo-balance-top { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; position:relative; z-index:1; }
 .evo-buy-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; background:#fff; color:#001E60; font-size:12px; font-weight:700; letter-spacing:.005em; cursor:pointer; transition:transform .15s, background .15s, box-shadow .15s; box-shadow:0 2px 8px rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.14); flex-shrink:0; }
-.evo-buy-btn:hover { background:#0080C7; color:#fff; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,128,199,.45); }
+.evo-buy-btn:hover { background:#0071B0; color:#fff; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,128,199,.45); }
 .evo-buy-btn svg { stroke:currentColor; }
 
 /* Buy Credits modal */
@@ -38,17 +38,17 @@
 .evo-buy-close:hover { background:#001E60; color:#fff; }
 
 .evo-buy-section { margin-bottom:18px; }
-.evo-buy-section-lbl { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#5A6478; margin-bottom:8px; }
+.evo-buy-section-lbl { font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#5A6478; margin-bottom:8px; }
 
 .evo-buy-presets { display:flex; gap:6px; flex-wrap:wrap; }
 .evo-preset { flex:1 1 auto; min-width:70px; padding:10px 6px; border-radius:8px; border:1.5px solid #E1E5EE; background:#fff; color:#001E60; font-size:14px; font-weight:700; cursor:pointer; transition:all .15s; display:flex; flex-direction:column; align-items:center; gap:1px; line-height:1.1; }
-.evo-preset span { font-size:9px; font-weight:600; color:#5A6478; letter-spacing:.12em; text-transform:uppercase; }
-.evo-preset:hover { border-color:#0080C7; }
+.evo-preset span { font-size:11px; font-weight:600; color:#5A6478; letter-spacing:.12em; text-transform:uppercase; }
+.evo-preset:hover { border-color:#0071B0; }
 .evo-preset.active { background:#001E60; border-color:#001E60; color:#fff; box-shadow:0 4px 12px rgba(0,30,96,.18); }
 .evo-preset.active span { color:rgba(255,255,255,.7); }
 
 .evo-buy-input-row { display:flex; align-items:stretch; border:1.5px solid #E1E5EE; border-radius:8px; overflow:hidden; transition:border-color .15s; background:#fff; }
-.evo-buy-input-row:focus-within { border-color:#0080C7; box-shadow:0 0 0 3px rgba(0,128,199,.10); }
+.evo-buy-input-row:focus-within { border-color:#0071B0; box-shadow:0 0 0 3px rgba(0,128,199,.10); }
 .evo-buy-input-row input { flex:1; border:0; padding:10px 14px; font-size:15px; font-weight:700; color:#001E60; font-family:inherit; outline:none; background:transparent; }
 .evo-buy-input-row input::-webkit-outer-spin-button, .evo-buy-input-row input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
 .evo-buy-input-suffix { display:inline-flex; align-items:center; padding:0 14px; background:#F5F8FB; font-size:11px; font-weight:700; letter-spacing:.12em; color:#5A6478; border-left:1px solid #E1E5EE; }
@@ -62,13 +62,13 @@
 
 .evo-buy-pay { border-top:1px solid #E1E5EE; padding-top:14px; }
 .evo-buy-pm { display:flex; align-items:center; gap:8px; padding:10px 12px; background:#F5F8FB; border-radius:7px; font-size:12.5px; color:#001E60; font-weight:600; margin-bottom:12px; }
-.evo-buy-pm-change { margin-left:auto; font-size:11px; font-weight:700; color:#0080C7; text-decoration:none; cursor:pointer; }
+.evo-buy-pm-change { margin-left:auto; font-size:11px; font-weight:700; color:#0071B0; text-decoration:none; cursor:pointer; }
 .evo-buy-pm-change:hover { text-decoration:underline; }
 
 .evo-buy-actions { display:flex; gap:8px; }
 .evo-buy-cancel { flex:0 0 auto; padding:11px 18px; border-radius:8px; background:#F5F8FB; border:1px solid #E1E5EE; color:#001E60; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
 .evo-buy-cancel:hover { background:#EAEEF5; }
-.evo-buy-confirm { flex:1 1 auto; padding:11px 16px; border-radius:8px; background:linear-gradient(135deg,#0080C7,#001E60); border:none; color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; transition:transform .15s, box-shadow .15s; box-shadow:0 4px 12px rgba(0,30,96,.22); }
+.evo-buy-confirm { flex:1 1 auto; padding:11px 16px; border-radius:8px; background:linear-gradient(135deg,#0071B0,#001E60); border:none; color:#fff; font-size:13.5px; font-weight:700; cursor:pointer; transition:transform .15s, box-shadow .15s; box-shadow:0 4px 12px rgba(0,30,96,.22); }
 .evo-buy-confirm:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,30,96,.32); }
 
 /* Projection: shows the upcoming debit and resulting balance, so reading is unambiguous */
@@ -81,7 +81,7 @@
 .evo-balance-projection .proj-tag { font-size:11px; font-weight:500; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.08em; }
 
 .evo-debit-card { background:#fff; border:1px solid #E1E5EE; border-radius:8px; padding:24px 26px; box-shadow:0 1px 3px rgba(0,30,96,.05); position:relative; }
-.evo-debit-card .eyebrow { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#E78A27; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.evo-debit-card .eyebrow { font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:#E78A27; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
 .evo-debit-card .eyebrow .dot { width:8px; height:8px; border-radius:50%; background:#E78A27; }
 .evo-debit-card h3 { font-size:18px; font-weight:700; margin:0 0 6px; color:#001E60; letter-spacing:-.01em; }
 .evo-debit-card p { font-size:13px; color:#5A6478; margin:0 0 16px; line-height:1.5; }
@@ -89,17 +89,17 @@
 .evo-debit-amount-row .num { font-size:30px; font-weight:700; color:#9A4A0E; letter-spacing:-.02em; }
 .evo-debit-amount-row .when { font-size:11px; font-weight:600; color:#9A4A0E; text-transform:uppercase; letter-spacing:.10em; }
 .evo-debit-progress-track { height:6px; background:#EAEEF5; border-radius:999px; overflow:hidden; }
-.evo-debit-progress-fill { height:100%; background:linear-gradient(90deg,#0080C7,#3FA8DC); width:71%; border-radius:999px; }
+.evo-debit-progress-fill { height:100%; background:linear-gradient(90deg,#0071B0,#3FA8DC); width:71%; border-radius:999px; }
 .evo-debit-progress-meta { display:flex; justify-content:space-between; font-size:11px; color:#5A6478; margin-top:6px; font-weight:500; }
 
 .evo-credits-page .evo-section-title { font-size:13px; font-weight:700; letter-spacing:.10em; text-transform:uppercase; color:#001E60; margin:8px 0 14px; display:flex; align-items:center; gap:10px; }
-.evo-credits-page .evo-section-title::before { content:''; width:3px; height:14px; background:#0080C7; border-radius:2px; display:inline-block; }
+.evo-credits-page .evo-section-title::before { content:''; width:3px; height:14px; background:#0071B0; border-radius:2px; display:inline-block; }
 
 .evo-sources-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
 .evo-source-card { background:#fff; border:1px solid #E1E5EE; border-radius:8px; padding:22px 24px; transition:transform .15s, box-shadow .15s, border-color .15s; }
 .evo-source-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,30,96,.08); border-color:#BFD9EC; }
 .evo-source-icon { width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
-.evo-source-icon.community { background:#E6F2FB; color:#0080C7; }
+.evo-source-icon.community { background:#E6F2FB; color:#0071B0; }
 .evo-source-icon.postop    { background:#DCFCE7; color:#15803D; }
 .evo-source-icon.orders    { background:#E1EAF8; color:#001E60; }
 .evo-source-card h4 { font-size:13px; font-weight:700; margin:0 0 4px; color:#001E60; letter-spacing:-.005em; }
@@ -120,7 +120,7 @@
 .evo-ledger-filter button { font-size:11px; font-weight:600; padding:5px 11px; border-radius:4px; border:1px solid #E1E5EE; background:#fff; color:#5A6478; cursor:pointer; transition:all .15s; }
 .evo-ledger-filter button.active { background:#001E60; border-color:#001E60; color:#fff; }
 .evo-ledger table { width:100%; border-collapse:collapse; }
-.evo-ledger thead th { text-align:left; padding:11px 22px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:#5A6478; background:#F5F8FB; border-bottom:1px solid #E1E5EE; }
+.evo-ledger thead th { text-align:left; padding:11px 22px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:#5A6478; background:#F5F8FB; border-bottom:1px solid #E1E5EE; }
 .evo-ledger thead th:last-child, .evo-ledger tbody td:last-child { text-align:right; }
 .evo-ledger tbody tr { border-bottom:1px solid #EAEEF5; }
 .evo-ledger tbody tr:last-child { border-bottom:none; }
@@ -141,12 +141,12 @@
 .evo-trend-card h3 { font-size:13px; font-weight:700; margin:0 0 2px; color:#001E60; letter-spacing:-.005em; }
 .evo-trend-card .sub { font-size:11px; color:#5A6478; margin:0; }
 .evo-trend-summary { text-align:right; line-height:1; }
-.evo-trend-summary .lbl { display:block; font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#5A6478; margin-bottom:3px; }
+.evo-trend-summary .lbl { display:block; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#5A6478; margin-bottom:3px; }
 .evo-trend-summary .val { font-size:18px; font-weight:800; color:#001E60; letter-spacing:-.02em; }
-.evo-trend-summary .val em { font-size:10px; font-weight:600; color:#5A6478; font-style:normal; letter-spacing:.08em; margin-left:2px; }
+.evo-trend-summary .val em { font-size:11px; font-weight:600; color:#5A6478; font-style:normal; letter-spacing:.08em; margin-left:2px; }
 .evo-trend-chart { width:100%; height:auto; max-height:200px; display:block; margin-top:6px; }
 .evo-trend-legend { display:flex; gap:14px; margin-top:10px; padding-top:10px; border-top:1px solid #EAEEF5; flex-wrap:wrap; justify-content:center; }
-.evo-trend-legend-item { display:flex; align-items:center; gap:5px; font-size:10.5px; color:#5A6478; font-weight:500; }
+.evo-trend-legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:#5A6478; font-weight:500; }
 .evo-trend-legend-item .swatch { width:8px; height:8px; border-radius:2px; display:inline-block; }
 
 /* Sidebar EVO Credits highlight (STAAR blue) */

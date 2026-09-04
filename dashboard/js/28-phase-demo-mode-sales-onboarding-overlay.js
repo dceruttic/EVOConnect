@@ -11,7 +11,7 @@
 
   const PROJECT_PHASES = {
     1: { name: 'Phase 1',     label: 'Core clinical + STAAR data',   duration: '12-14 mo', price: '$2.1M', color: '#5C18AB' },
-    2: { name: 'Phase 2',     label: 'Planning + Execution',         duration: '6 mo',     price: '$0.7M', color: '#0080C7' },
+    2: { name: 'Phase 2',     label: 'Planning + Execution',         duration: '6 mo',     price: '$0.7M', color: '#0071B0' },
     3: { name: 'Phase 3',     label: 'Analytics + Engagement',       duration: '4 mo',     price: '$0.4M', color: '#08B1C2' },
     4: { name: 'Phase 4',     label: 'Operations + Community',       duration: '4 mo',     price: '$0.3M', color: '#03B496' },
     5: { name: 'Phase 5 & 6', label: 'STAAR Intelligence Center',    duration: '4 mo',     price: '$1.4M', color: '#F6BF2C' },

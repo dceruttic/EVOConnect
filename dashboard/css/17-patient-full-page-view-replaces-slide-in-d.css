@@ -26,12 +26,12 @@
 .pt-ph-info .pt-ph-sub { font-size: 13px; color: var(--mute); font-variant-numeric: tabular-nums; }
 .pt-ph-info .pt-ph-chips { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
 .pt-ph-info .pt-ph-chips .c {
-  font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
   background: var(--cream); color: var(--ink); letter-spacing: 0.2px;
 }
 .pt-ph-info .pt-ph-chips .c.stage { background: rgba(127,33,224,.1); color: var(--purple); }
 .pt-ph-info .pt-ph-chips .c.eye   { background: rgba(36,114,211,.1); color: var(--teal); }
-.pt-ph-info .pt-ph-chips .c.pwr   { background: rgba(0,213,225,.14); color: #0097a5; }
+.pt-ph-info .pt-ph-chips .c.pwr   { background: rgba(0,213,225,.14); color: #007A85; }
 .pt-ph-info .pt-ph-chips .c.risk-high { background: rgba(228,81,103,.14); color: #B03144; }
 .pt-ph-info .pt-ph-chips .c.risk-med  { background: rgba(231,138,39,.16); color: #A1641A; }
 .pt-ph-info .pt-ph-chips .c.risk-low  { background: rgba(0,156,118,.14); color: #00754F; }
@@ -58,14 +58,14 @@
 .pt-step-node { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; font-weight: 800; transition: background .15s, border-color .15s, color .15s, box-shadow .15s; border: 2px solid; }
 .pt-step.done    .pt-step-node { background: #15803D; border-color: #15803D; color: #fff; }
 .pt-step.done    .pt-step-node svg { width: 13px; height: 13px; }
-.pt-step.active  .pt-step-node { background: #fff; border-color: #0080C7; color: #0080C7; box-shadow: 0 0 0 4px rgba(0,128,199,.15); }
-.pt-step.pending .pt-step-node { background: #fff; border-color: #D8E0EE; color: #94A0B8; }
-.pt-step.is-current-tab .pt-step-node { box-shadow: 0 0 0 4px rgba(0,128,199,.18); border-color: #0080C7; color: #0080C7; }
+.pt-step.active  .pt-step-node { background: #fff; border-color: #0071B0; color: #0071B0; box-shadow: 0 0 0 4px rgba(0,128,199,.15); }
+.pt-step.pending .pt-step-node { background: #fff; border-color: #D8E0EE; color: #63708A; }
+.pt-step.is-current-tab .pt-step-node { box-shadow: 0 0 0 4px rgba(0,128,199,.18); border-color: #0071B0; color: #0071B0; }
 .pt-step.is-current-tab.done .pt-step-node { background: #15803D; border-color: #15803D; color: #fff; box-shadow: 0 0 0 4px rgba(21,128,61,.18); }
 .pt-step-lbl { display: flex; flex-direction: column; gap: 1px; line-height: 1.15; min-width: 0; text-align: left; }
 .pt-step-name { font-size: 12.5px; font-weight: 700; color: #001E60; white-space: nowrap; }
-.pt-step-sub  { font-size: 10px; font-weight: 600; color: #5A6478; letter-spacing: .04em; text-transform: uppercase; }
-.pt-step.pending .pt-step-name, .pt-step.pending .pt-step-sub { color: #94A0B8; }
+.pt-step-sub  { font-size: 11px; font-weight: 600; color: #5A6478; letter-spacing: .04em; text-transform: uppercase; }
+.pt-step.pending .pt-step-name, .pt-step.pending .pt-step-sub { color: #63708A; }
 .pt-step.done    .pt-step-name { color: #001E60; }
 .pt-step.done    .pt-step-sub  { color: #15803D; }
 .pt-step-link {
@@ -88,7 +88,7 @@
   transition: all .15s;
 }
 .pt-journey-btn:hover { background: #001E60; color: #fff; border-color: #001E60; }
-.pt-journey-btn-ct { font-size: 10px; font-weight: 700; padding: 2px 6px; background: rgba(0,30,96,.08); border-radius: 999px; color: inherit; letter-spacing: .04em; }
+.pt-journey-btn-ct { font-size: 11px; font-weight: 700; padding: 2px 6px; background: rgba(0,30,96,.08); border-radius: 999px; color: inherit; letter-spacing: .04em; }
 .pt-journey-btn:hover .pt-journey-btn-ct { background: rgba(255,255,255,.18); }
 
 /* Journey drawer (slide-in from right) */
@@ -130,12 +130,12 @@
   height: 2px; background: var(--purple); border-radius: 2px 2px 0 0;
 }
 .pt-tab .num {
-  display: inline-block; margin-left: 5px; font-size: 10px; padding: 1px 6px;
+  display: inline-block; margin-left: 5px; font-size: 11px; padding: 1px 6px;
   border-radius: 999px; background: var(--cream); color: var(--mute); font-weight: 700;
 }
 .pt-tab.active .num { background: rgba(127,33,224,.12); color: var(--purple); }
 .pt-mode-badge {
-  font-size: 9.5px; padding: 3px 8px; border-radius: 999px; font-weight: 700;
+  font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.4px; margin-right: 4px;
 }
 .pt-mode-badge.read { background: rgba(36,114,211,.12); color: var(--teal); }

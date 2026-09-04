@@ -6,7 +6,7 @@
   --navy: #001E60;          /* STAAR signature navy */
   --navy2: #14296E;         /* gradient mid */
   --navy3: #2A3F87;         /* lighter navy */
-  --teal: #0080C7;          /* STAAR clinical blue */
+  --teal: #0071B0;          /* STAAR clinical blue */
   --teal-lt: #3FA8DC;
   --teal-dk: #00609B;
   --teal-a: #00A6DC;        /* bright cyan accent */
@@ -15,9 +15,9 @@
   --ink: #001E60;           /* primary text matches navy */
   --mute: #5A6478;          /* secondary text */
   --white: #FFFFFF;
-  --gold: #0080C7;          /* primary accent — now STAAR blue (not purple) */
+  --gold: #0071B0;          /* primary accent — now STAAR blue (not purple) */
   --gold-lt: #3FA8DC;
-  --purple: #0080C7;        /* legacy alias → STAAR blue (cascades to old class names) */
+  --purple: #0071B0;        /* legacy alias → STAAR blue (cascades to old class names) */
   --warn: #E78A27;
   --warn-lt: #EEA33C;
   --line: #E1E5EE;

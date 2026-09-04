@@ -152,7 +152,7 @@ function dchLineChart(values, labels){
   return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="dchLineG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#5C18AB" stop-opacity=".32"/><stop offset="1" stop-color="#5C18AB" stop-opacity=".01"/></linearGradient>
-      <linearGradient id="dchLineS" x1="0" x2="1"><stop offset="0" stop-color="#5C18AB"/><stop offset="1" stop-color="#0080C7"/></linearGradient>
+      <linearGradient id="dchLineS" x1="0" x2="1"><stop offset="0" stop-color="#5C18AB"/><stop offset="1" stop-color="#0071B0"/></linearGradient>
     </defs>
     <path d="${area}" fill="url(#dchLineG)"/>
     <polyline points="${pts}" fill="none" stroke="url(#dchLineS)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
@@ -165,7 +165,7 @@ function dchBarChart(items, opts){
   const max = Math.max.apply(null, items.map(d=>d.value)) * 1.18 + 0.1;
   const bw = (w - pad*2) / items.length * 0.68;
   const gap = (w - pad*2) / items.length;
-  const palette = ['#5C18AB','#0080C7','#08B1C2','#03B496','#F6BF2C','#D12C4A','#7d6fa3','#A05B3A','#34e6b7'];
+  const palette = ['#5C18AB','#0071B0','#08B1C2','#03B496','#F6BF2C','#D12C4A','#7d6fa3','#A05B3A','#34e6b7'];
   const bars = items.map((d,i) => {
     const bh = Math.max(2, (d.value / max) * (h - pad*2 - 14));
     const x = pad + i*gap + (gap-bw)/2;
@@ -190,7 +190,7 @@ function dchHBarChart(items){
       <text x="${w}" y="${cy+15}" fill="#1c1530" font-size="11.5" font-weight="800" text-anchor="end">${d.value}${d.suffix||''}</text>`;
   }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="dchHbar" x1="0" x2="1"><stop offset="0" stop-color="#5C18AB"/><stop offset="1" stop-color="#0080C7"/></linearGradient></defs>
+    <defs><linearGradient id="dchHbar" x1="0" x2="1"><stop offset="0" stop-color="#5C18AB"/><stop offset="1" stop-color="#0071B0"/></linearGradient></defs>
     ${rows}
   </svg>`;
 }
@@ -259,13 +259,13 @@ function dchForecastChart(past, fut, futLo, futHi, pastLabels, futLabels){
   const all2 = pastLabels.concat(futLabels);
   const tks = all2.map((m,i) => `<text x="${xp(i)}" y="${h-9}" fill="#8b86a0" font-size="10" text-anchor="middle">${m}</text>`).join('');
   return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="dchFc" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0080C7" stop-opacity=".28"/><stop offset="1" stop-color="#0080C7" stop-opacity=".04"/></linearGradient></defs>
+    <defs><linearGradient id="dchFc" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0071B0" stop-opacity=".28"/><stop offset="1" stop-color="#0071B0" stop-opacity=".04"/></linearGradient></defs>
     <path d="${bandPath}" fill="url(#dchFc)"/>
     <polyline points="${pastPts}" fill="none" stroke="#5C18AB" stroke-width="2.6"/>
-    <polyline points="${bridge}" fill="none" stroke="#0080C7" stroke-width="2.4" stroke-dasharray="5 4"/>
-    <polyline points="${futPts}" fill="none" stroke="#0080C7" stroke-width="2.6" stroke-dasharray="5 4"/>
+    <polyline points="${bridge}" fill="none" stroke="#0071B0" stroke-width="2.4" stroke-dasharray="5 4"/>
+    <polyline points="${futPts}" fill="none" stroke="#0071B0" stroke-width="2.6" stroke-dasharray="5 4"/>
     ${past.map((v,i)=>`<circle cx="${xp(i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#5C18AB" stroke-width="2.2"/><text x="${xp(i)}" y="${y(v)-9}" fill="#5C18AB" font-size="10" font-weight="800" text-anchor="middle">${v}</text>`).join('')}
-    ${fut.map((v,i)=>`<circle cx="${xp(past.length+i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#0080C7" stroke-width="2.2"/><text x="${xp(past.length+i)}" y="${y(v)-9}" fill="#0080C7" font-size="10" font-weight="800" text-anchor="middle">${v}</text>`).join('')}
+    ${fut.map((v,i)=>`<circle cx="${xp(past.length+i)}" cy="${y(v)}" r="4" fill="#fff" stroke="#0071B0" stroke-width="2.2"/><text x="${xp(past.length+i)}" y="${y(v)-9}" fill="#0071B0" font-size="10" font-weight="800" text-anchor="middle">${v}</text>`).join('')}
     <text x="${xp(past.length-1)+xStep/2}" y="20" fill="#8b86a0" font-size="10" font-weight="700">Forecast →</text>
     ${tks}
   </svg>`;

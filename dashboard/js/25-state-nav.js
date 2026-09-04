@@ -20,7 +20,7 @@ const REVAI_LOGO_SVG = `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/
    Patients module — rich list of every patient + stage
 ================================================================ */
 const PATIENT_STAGE_CFG = {
-  "Consult":     { cls: "consult",   color: "#0080C7", label: "Consult" },
+  "Consult":     { cls: "consult",   color: "#0071B0", label: "Consult" },
   "Biometry":    { cls: "biometry",  color: "#2472D3", label: "Biometry" },
   "Eligibility": { cls: "biometry",  color: "#2472D3", label: "Eligibility" },
   "Sizing":      { cls: "sizing",    color: "#00D5E1", label: "Sizing" },
@@ -492,7 +492,7 @@ function renderEvoCredits() {
             <clipPath id="bar-clip-apr"><rect x="278" width="22" y="22"  height="148" rx="4"/></clipPath>
           </defs>
           <!-- Y-axis gridlines + labels -->
-          <g font-family="Inter, sans-serif" font-size="9" fill="#94A0B8">
+          <g font-family="Inter, sans-serif" font-size="9" fill="#63708A">
             <line x1="32" y1="22"  x2="316" y2="22"  stroke="#EAEEF5" stroke-width="1" stroke-dasharray="2 3"/>
             <line x1="32" y1="86"  x2="316" y2="86"  stroke="#EAEEF5" stroke-width="1" stroke-dasharray="2 3"/>
             <line x1="32" y1="150" x2="316" y2="150" stroke="#EAEEF5" stroke-width="1" stroke-dasharray="2 3"/>

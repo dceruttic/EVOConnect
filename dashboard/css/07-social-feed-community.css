@@ -18,7 +18,7 @@
   font-weight: 700; font-size: 13px; border: 2px solid white;
 }
 .story-ring.add .inner { background: var(--cream); color: var(--teal); border: 2px dashed var(--line); }
-.story .nm { font-size: 10.5px; color: var(--mute); max-width: 68px; text-align: center; line-height: 1.2; }
+.story .nm { font-size: 11px; color: var(--mute); max-width: 68px; text-align: center; line-height: 1.2; }
 
 .composer {
   display: flex; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 10px;
@@ -110,14 +110,14 @@
   width: 28px; height: 28px; border-radius: 50%;
   background: linear-gradient(135deg, var(--gold) 0%, var(--teal-dk) 100%);
   color: white; display: grid; place-items: center;
-  font-weight: 700; font-size: 10px; flex-shrink: 0;
+  font-weight: 700; font-size: 11px; flex-shrink: 0;
 }
 .comment .bubble {
   background: var(--cream); padding: 8px 12px; border-radius: 14px;
   font-size: 12.5px; line-height: 1.45;
 }
 .comment .bubble b { font-weight: 700; font-size: 12px; display: block; margin-bottom: 2px; }
-.comment-meta { font-size: 10.5px; color: var(--mute); margin: 4px 0 0 12px; display: flex; gap: 12px; }
+.comment-meta { font-size: 11px; color: var(--mute); margin: 4px 0 0 12px; display: flex; gap: 12px; }
 .comment-meta button { color: var(--mute); font-weight: 600; }
 .comment-meta button:hover { color: var(--teal); }
 
@@ -128,7 +128,7 @@
   transition: background .15s;
 }
 .trend-item:hover { background: var(--cream); }
-.trend-item .cat { font-size: 10.5px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.trend-item .cat { font-size: 11px; color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
 .trend-item .tag { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-top: 2px; }
 .trend-item .posts { font-size: 11px; color: var(--mute); margin-top: 1px; }
 

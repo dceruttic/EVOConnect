@@ -178,7 +178,7 @@ function renderPtPreop(pt) {
           AI Sentinel · risk flag
         </span>
         <span class="ai-sent-brand">
-          <span class="muted small" style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;">Powered by</span>
+          <span class="muted small" style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;">Powered by</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="3.99 5.98 334.56 24.42" aria-label="STAAR Surgical" style="width:78px;height:auto;display:block;"><defs><style>.aisl-fill{fill:#001E60;stroke-width:0px;}</style></defs><path class="aisl-fill" d="m56,16.54c-1.46-2.12-3.53-4.01-6.15-5.61-5.2-3.19-12.07-4.95-19.36-4.95s-14.16,1.76-19.36,4.95c-2.62,1.6-4.68,3.49-6.15,5.61-.37.54-.7,1.09-.99,1.65h3.9c.46,0,.9-.2,1.21-.55,1.06-1.21,2.43-2.34,4.08-3.36,4.59-2.81,10.73-4.36,17.3-4.36s12.71,1.55,17.3,4.36c1.75,1.07,3.18,2.28,4.26,3.56.17.2.17.49,0,.69-1.08,1.29-2.51,2.49-4.26,3.56-1.71,1.05-3.51,1.92-5.42,2.61,1.31-1.88,2.15-4.1,2.34-6.51h-3.96c-.53,4.65-4.49,8.27-9.27,8.27s-8.75-3.62-9.28-8.27h-3.95c.54,6.82,6.27,12.25,13.23,12.21,6.87-.03,13.17-1.76,18.37-4.94,2.62-1.6,4.68-3.49,6.15-5.61.19-.28.37-.56.54-.84.3-.5.3-1.13,0-1.63-.17-.28-.35-.56-.54-.84"/></svg>
         </span>
       </h4>

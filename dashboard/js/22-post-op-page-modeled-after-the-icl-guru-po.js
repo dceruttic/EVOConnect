@@ -218,7 +218,7 @@ function renderPtPostop(pt) {
         '<div><div class="po-ctx-k">Clinic</div><div class="po-ctx-v">' + sg.clinic + '</div></div>',
       '</div>',
       '<div class="po-ctx-card">',
-        '<div class="po-ctx-ic" style="background:#0080C7">' + sg.initials + '</div>',
+        '<div class="po-ctx-ic" style="background:#0071B0">' + sg.initials + '</div>',
         '<div><div class="po-ctx-k">Surgeon</div><div class="po-ctx-v">' + sg.name + '</div></div>',
       '</div>',
       '<div class="po-ctx-card po-ctx-date">',
@@ -325,7 +325,7 @@ function renderPtPostop(pt) {
                   'Q ' + (x + 8 + badgeW) + ' ' + (y + badgeH/2) + ' ' + (x + 8 + badgeW - 8) + ' ' + (y + badgeH/2) + ' ',
                   'L ' + (x + 8) + ' ' + (y + badgeH/2) + ' ',
                   'L ' + x + ' ' + y + ' Z" ',
-                'fill="#0080C7"/>',
+                'fill="#0071B0"/>',
           '<text x="' + (x + 8 + badgeW/2) + '" y="' + (y + 4) + '" text-anchor="middle" font-family="Inter" font-size="11" font-weight="800" fill="#fff">' + value + ' µm</text>',
         '</g>'
       ].join('');
@@ -347,7 +347,7 @@ function renderPtPostop(pt) {
         // Y-axis scale (centered between the two bars)
         [1500,1000,900,800,700,600,500,400,300,200,0].map(function(val){
           var y = py(val);
-          return '<text x="' + axisCenter + '" y="' + (y+3) + '" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#94A0B8">' + val + '</text>';
+          return '<text x="' + axisCenter + '" y="' + (y+3) + '" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#63708A">' + val + '</text>';
         }).join(''),
     ];
 
@@ -407,7 +407,7 @@ function renderPtPostop(pt) {
     notCapturedBanner,
     '<div class="po-data-grid">',
       '<div class="po-data-card">',
-        '<div class="po-data-head"><span>SURGICAL DATA</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#94A0B8;cursor:pointer;"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L7 21H3v-4z"/></svg></div>',
+        '<div class="po-data-head"><span>SURGICAL DATA</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#63708A;cursor:pointer;"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L7 21H3v-4z"/></svg></div>',
         '<div class="po-implant">',
           '<div class="po-implant-size">',
             '<div class="pis-num">' + v.implantedSize + ' mm</div>',
@@ -431,7 +431,7 @@ function renderPtPostop(pt) {
         '</div>',
       '</div>',
       '<div class="po-data-card">',
-        '<div class="po-data-head"><span>POST-OP DATA</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#94A0B8;cursor:pointer;"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L7 21H3v-4z"/></svg></div>',
+        '<div class="po-data-head"><span>POST-OP DATA</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;color:#63708A;cursor:pointer;"><path d="M12 20h9"/><path d="M16.5 3.5l4 4L7 21H3v-4z"/></svg></div>',
         '<div class="po-pop-section"><div class="po-pop-section-lbl">VAULT</div>',
           '<div class="po-cell-row">',
             '<div class="po-cell po-cell-lg"><div class="po-cell-k">CENTRAL</div><div class="po-cell-v">' + editableVal(v.vault, 'µm', 'vault') + '</div></div>',
@@ -506,7 +506,7 @@ function renderPtPostop(pt) {
         showOctImage
           ? '<img src="' + octImg.url + '" alt="AS-OCT scan ' + CURRENT_PT_POSTOP_EYE + '" class="po-oct-img" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"/>'
           : '',
-        '<div class="po-img-fallback" style="' + (showOctImage ? 'display:none;' : 'display:flex;') + 'flex-direction:column;align-items:center;gap:10px;color:#94A0B8;padding:40px;">',
+        '<div class="po-img-fallback" style="' + (showOctImage ? 'display:none;' : 'display:flex;') + 'flex-direction:column;align-items:center;gap:10px;color:#63708A;padding:40px;">',
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>',
           '<div style="font-size:13px;font-weight:700;text-align:center;">No OCT scan attached yet</div>',
           '<div style="font-size:11px;color:#5A6478;text-align:center;max-width:300px;line-height:1.5;">Click <b>Import scan</b> above to bring it from the EHR or upload from this device.</div>',

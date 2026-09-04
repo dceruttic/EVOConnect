@@ -11,7 +11,7 @@
 .po-cell-edit:hover { border-bottom-color: #CBD2DD; }
 .po-cell-edit:focus { border-bottom-color: #08B1C2; background: rgba(8,177,194,.04); }
 .po-cell-edit::placeholder { color: #CBD2DD; font-weight: 600; }
-.po-cell-unit { font-size: 10px; color: #5A6478; font-weight: 600; flex-shrink: 0; }
+.po-cell-unit { font-size: 11px; color: #5A6478; font-weight: 600; flex-shrink: 0; }
 
 /* Auto-fill flash — applied to cells when populated by OCT auto-parse */
 .po-cell-flash {
@@ -78,7 +78,7 @@
 }
 .po-vev-legend {
   display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  font-size: 10.5px; font-weight: 700; color: #5A6478;
+  font-size: 11px; font-weight: 700; color: #5A6478;
 }
 .po-vev-legend-item {
   display: inline-flex; align-items: center; gap: 5px;
@@ -117,7 +117,7 @@
   gap: 12px; flex-wrap: wrap;
 }
 .po-eyephoto-eyebrow {
-  font-size: 9.5px; font-weight: 800; letter-spacing: .14em;
+  font-size: 11px; font-weight: 800; letter-spacing: .14em;
   text-transform: uppercase; color: #5C18AB; margin-bottom: 3px;
 }
 .po-eyephoto-card h4 { font-size: 13.5px; font-weight: 800; color: #001E60; margin: 0; letter-spacing: -.005em; }
@@ -133,7 +133,7 @@
 .po-eyephoto-clear {
   width: 26px; height: 26px; border-radius: 6px;
   background: #fff; border: 1px solid var(--line);
-  color: #94A0B8; cursor: pointer;
+  color: #63708A; cursor: pointer;
   display: grid; place-items: center;
   transition: all .14s;
 }
@@ -185,7 +185,7 @@
 .po-eyephoto-credit { color: #5A6478; font-weight: 600; }
 .po-eyephoto-tag {
   padding: 3px 9px; border-radius: 999px;
-  font-size: 10px; font-weight: 800; letter-spacing: .04em;
+  font-size: 11px; font-weight: 800; letter-spacing: .04em;
 }
 .po-eyephoto-tag.default { background: #F4F0FF; color: #5C18AB; }
 .po-eyephoto-tag.uploaded { background: rgba(22,179,134,.14); color: #117A57; }
@@ -214,7 +214,7 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   width: 100%;
   padding: 12px 18px;
-  background: linear-gradient(135deg, #001E60 0%, #0080C7 100%);
+  background: linear-gradient(135deg, #001E60 0%, #0071B0 100%);
   color: #fff; border: 0; border-radius: 10px;
   font-size: 13px; font-weight: 800; letter-spacing: -.005em;
   cursor: pointer; font-family: inherit;
@@ -233,7 +233,7 @@
   background: rgba(255,196,67,.22);
   border: 1px solid rgba(255,196,67,.45);
   border-radius: 999px;
-  font-size: 10.5px; font-weight: 800;
+  font-size: 11px; font-weight: 800;
   color: #FFC443;
   letter-spacing: .04em;
 }
@@ -245,8 +245,8 @@
 .po-calc-list { padding: 0 14px 12px; display: flex; flex-direction: column; gap: 8px; }
 .po-calc-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 12px; background: #F5F8FB; border-radius: 8px; font-size: 11.5px; }
 .po-calc-item b { color: #001E60; font-weight: 800; }
-.po-calc-sub { color: #5A6478; margin-top: 2px; font-size: 10.5px; }
-.po-calc-date { color: #94A0B8; font-size: 10.5px; font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.po-calc-sub { color: #5A6478; margin-top: 2px; font-size: 11px; }
+.po-calc-date { color: #63708A; font-size: 11px; font-weight: 700; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 
 /* Right column: AS-OCT image card */
 .po-image-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
@@ -262,14 +262,14 @@
   transition: all .14s;
 }
 .po-img-import-btn:hover { background: #001E60; color: #fff; border-color: #001E60; }
-.po-image-sub { font-size: 10.5px; color: #5A6478; margin-top: 2px; font-weight: 600; }
-.po-image-meta { font-size: 10.5px; color: #5A6478; font-weight: 700; font-variant-numeric: tabular-nums; }
+.po-image-sub { font-size: 11px; color: #5A6478; margin-top: 2px; font-weight: 600; }
+.po-image-meta { font-size: 11px; color: #5A6478; font-weight: 700; font-variant-numeric: tabular-nums; }
 .po-image-body { position: relative; background: #000; min-height: 300px; display: flex; align-items: center; justify-content: center; }
 .po-image-body.po-image-body-light { background: #F4F6FA; }
 .po-oct-img { width: 100%; height: auto; display: block; max-height: 540px; object-fit: contain; }
 .po-img-overlay { position: absolute; inset: 0; pointer-events: none; }
-.po-img-tag { position: absolute; padding: 3px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 800; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); white-space: nowrap; }
-.po-image-foot { display: flex; justify-content: space-between; padding: 8px 14px; font-size: 10px; color: #94A0B8; font-weight: 600; background: #F5F8FB; border-top: 1px solid var(--line); }
+.po-img-tag { position: absolute; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.35); white-space: nowrap; }
+.po-image-foot { display: flex; justify-content: space-between; padding: 8px 14px; font-size: 11px; color: #63708A; font-weight: 600; background: #F5F8FB; border-top: 1px solid var(--line); }
 
 @media (max-width: 720px) {
   .po-context-row { grid-template-columns: 1fr; }

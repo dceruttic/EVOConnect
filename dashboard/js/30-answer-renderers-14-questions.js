@@ -100,7 +100,7 @@ function dchAnsTraits(){
   const typeItems = ['cataract','icl','lasik','smile'].map(t => ({
     label: t.toUpperCase(),
     value: typeBreak[t]||0,
-    color: ({cataract:'#5C18AB',icl:'#0080C7',lasik:'#08B1C2',smile:'#F6BF2C'})[t]
+    color: ({cataract:'#5C18AB',icl:'#0071B0',lasik:'#08B1C2',smile:'#F6BF2C'})[t]
   }));
 
   // Build insight bullets
@@ -164,7 +164,7 @@ function dchTraitGroupBar(traits){
       <text x="${w}" y="${cy+27}" fill="#7d6fa3" font-size="10" font-weight="700" text-anchor="end">${t.b.toFixed(0)}%</text>`;
   }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">${rows}</svg>
-    <div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:10.5px;color:#5b5478;font-weight:700">
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:6px;font-size:11px;color:#5b5478;font-weight:700">
       <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:#D12C4A"></span>Dissatisfied</span>
       <span style="display:inline-flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:#8b86a0"></span>Satisfied baseline</span>
     </div>`;
@@ -174,7 +174,7 @@ function dchAnsMix(){
   const t = CLINIC_DATA_SUMMARY.types;
   const parts = [
     { label:'Cataract', value: t.cataract||0, color:'#5C18AB' },
-    { label:'ICL',      value: t.icl||0,      color:'#0080C7' },
+    { label:'ICL',      value: t.icl||0,      color:'#0071B0' },
     { label:'LASIK',    value: t.lasik||0,    color:'#08B1C2' },
     { label:'SMILE',    value: t.smile||0,    color:'#F6BF2C' },
   ];
@@ -629,7 +629,7 @@ function dchAnsNps(){
   const peerNps = 58;
   const items = [
     { label:'Your clinic', value: myNps, color:'#5C18AB' },
-    { label:'Peer median (EVO net)', value: peerNps, color:'#0080C7' },
+    { label:'Peer median (EVO net)', value: peerNps, color:'#0071B0' },
     { label:'Top decile', value: 81, color:'#03A180' },
   ];
   return `
@@ -658,7 +658,7 @@ function dchAnsOutcomesByType(){
   const groups = labels.map(l => ({label:l}));
   const series = [
     { name:'A1 satisfaction (/10)', color:'#5C18AB', values: a1Vals },
-    { name:'A2 lens indep. (lower is better)', color:'#0080C7', values: indVals },
+    { name:'A2 lens indep. (lower is better)', color:'#0071B0', values: indVals },
     { name:'Disturb sum (A7+8+9)', color:'#F6BF2C', values: distVals },
   ];
   return `
@@ -695,7 +695,7 @@ function dchAnsRefractiveOutcomes(){
     </div>
     <div class="dch-chart"><div class="dch-chart-title">% within ±0.5D and ±1.0D of refractive target</div>
       ${dchBarChart([
-        {label:'LASIK ±0.5D', value: parseInt(sL.in05), suffix:'%', color:'#0080C7'},
+        {label:'LASIK ±0.5D', value: parseInt(sL.in05), suffix:'%', color:'#0071B0'},
         {label:'LASIK ±1.0D', value: parseInt(sL.in10), suffix:'%', color:'#3FA8DC'},
         {label:'SMILE ±0.5D', value: parseInt(sS.in05), suffix:'%', color:'#F6BF2C'},
         {label:'SMILE ±1.0D', value: parseInt(sS.in10), suffix:'%', color:'#fcd76b'},

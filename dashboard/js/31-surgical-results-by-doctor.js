@@ -48,14 +48,14 @@ function dchAnsByDoctor(){
 
   // Surgeon-color palette (one per doctor)
   const colorById = {
-    'roger':'#5C18AB','diego':'#0080C7','cummings':'#08B1C2','roberto':'#03B496','trancon':'#F6BF2C'
+    'roger':'#5C18AB','diego':'#0071B0','cummings':'#08B1C2','roberto':'#03B496','trancon':'#F6BF2C'
   };
 
   // Mix pills (cataract / icl / lasik / smile)
   const mixPills = (mix, total) => {
     const items = [
       {l:'ICL',  v:mix.icl,      c:'#5C18AB'},
-      {l:'Cat',  v:mix.cataract, c:'#0080C7'},
+      {l:'Cat',  v:mix.cataract, c:'#0071B0'},
       {l:'LSK',  v:mix.lasik,    c:'#08B1C2'},
       {l:'SMI',  v:mix.smile,    c:'#03B496'},
     ].filter(i=>i.v>0);
@@ -65,13 +65,13 @@ function dchAnsByDoctor(){
       return `<span title="${i.l}: ${i.v} (${pct.toFixed(0)}%)" style="display:inline-block;height:10px;width:${Math.max(6,pct*0.9)}px;background:${i.c};border-radius:3px;margin-right:2px;vertical-align:middle"></span>`;
     }).join('');
     const labels = items.map(i => `<span style="color:${i.c};font-weight:700">${i.l}&nbsp;${total?(i.v/total*100).toFixed(0):0}%</span>`).join(' · ');
-    return `<div style="display:flex;flex-direction:column;gap:3px"><div>${segs}</div><div style="font-size:10.5px;line-height:1.2">${labels}</div></div>`;
+    return `<div style="display:flex;flex-direction:column;gap:3px"><div>${segs}</div><div style="font-size:11px;line-height:1.2">${labels}</div></div>`;
   };
 
   const rowsHtml = rows.map(r => `
     <tr>
-      <td><b>${dchEsc(r.name)}</b><div style="font-size:10.5px;color:#7d6fa3;font-weight:600">${dchEsc(r.specialty)}</div></td>
-      <td><b>${dchScaled(r.cases)}</b><div style="font-size:10.5px;color:#7d6fa3">${totalCases?(r.cases/totalCases*100).toFixed(0):0}%</div></td>
+      <td><b>${dchEsc(r.name)}</b><div style="font-size:11px;color:#7d6fa3;font-weight:600">${dchEsc(r.specialty)}</div></td>
+      <td><b>${dchScaled(r.cases)}</b><div style="font-size:11px;color:#7d6fa3">${totalCases?(r.cases/totalCases*100).toFixed(0):0}%</div></td>
       <td>${mixPills(r.mix, r.cases)}</td>
       <td><b style="color:${r.avgA1>=9?'#03A180':r.avgA1>=8?'#5C18AB':'#cf8a13'}">${r.avgA1.toFixed(1)}</b>/10</td>
       <td><b style="color:${r.nps>=60?'#03A180':r.nps>=40?'#5C18AB':'#D12C4A'}">${r.nps>=0?'+':''}${r.nps}</b></td>

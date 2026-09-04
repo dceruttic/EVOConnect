@@ -22,7 +22,7 @@
 .ord-alert-item .lot .sku { margin-left: 8px; font-size: 11.5px; color: var(--mute); font-weight: 500; }
 .ord-alert-item .flags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
 .ord-alert-item .flag-pill {
-  font-size: 10.5px; padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; padding: 2px 8px; border-radius: 4px;
   background: var(--cream); color: var(--ink); font-weight: 600;
 }
 .ord-alert-item.critical .flag-pill { background: rgba(228,81,103,.14); color: #B03144; }
@@ -30,7 +30,7 @@
 .ord-alert-item .meta { font-size: 11.5px; color: var(--mute); margin-top: 5px; font-variant-numeric: tabular-nums; }
 .ord-alert-item .meta b { color: var(--ink); font-weight: 700; }
 
-.ord-alert { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+.ord-alert { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
 .ord-alert.critical { background: rgba(228,81,103,.14); color: #B03144; }
 .ord-alert.warn     { background: rgba(231,138,39,.16); color: #A1641A; }
 .ord-alert svg { width: 11px; height: 11px; }
@@ -55,7 +55,7 @@
 .ord-bucket .bucket-head .nm { color: var(--ink); }
 .ord-bucket .bucket-head .ct {
   padding: 2px 7px; border-radius: 999px; background: #fff;
-  font-size: 10px; font-weight: 700;
+  font-size: 11px; font-weight: 700;
 }
 .ord-bucket .bucket-item {
   background: #fff; border: 1px solid var(--line); border-radius: 8px;
@@ -65,15 +65,15 @@
 .ord-bucket .bucket-item.warn { border-color: rgba(231,138,39,.35); background: rgba(231,138,39,.03); }
 .ord-bucket .bucket-item .b-lot { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); font-size: 11.5px; }
 .ord-bucket .bucket-item .b-pt { font-weight: 600; color: var(--ink); margin-top: 2px; }
-.ord-bucket .bucket-item .b-sku { color: var(--mute); font-size: 10.5px; margin-top: 2px; }
+.ord-bucket .bucket-item .b-sku { color: var(--mute); font-size: 11px; margin-top: 2px; }
 .ord-bucket .bucket-item .b-foot {
   display: flex; justify-content: space-between; margin-top: 6px;
-  font-size: 10px; color: var(--mute); font-variant-numeric: tabular-nums;
+  font-size: 11px; color: var(--mute); font-variant-numeric: tabular-nums;
 }
 .ord-bucket .bucket-item .b-foot .b-sx { font-weight: 700; color: var(--purple); }
 
 .ord-table .eta-delta, .ord-table .sx-delta {
-  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 4px;
+  font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 4px;
   font-variant-numeric: tabular-nums;
 }
 .ord-table .eta-delta.ok, .ord-table .sx-delta.ok { background: rgba(0,156,118,.12); color: #00754F; }
@@ -102,7 +102,7 @@
   gap: 16px; flex-wrap: wrap;
   margin-top: 18px;
   padding: 16px 20px;
-  background: linear-gradient(135deg, #001E60 0%, #0080C7 60%, #08B1C2 100%);
+  background: linear-gradient(135deg, #001E60 0%, #0071B0 60%, #08B1C2 100%);
   border-radius: 12px;
   color: #fff;
   box-shadow: 0 8px 24px -10px rgba(0,30,96,.32);
@@ -115,7 +115,7 @@
 }
 .stage-advance-card .sa-info { position: relative; z-index: 1; min-width: 0; flex: 1; }
 .sa-eyebrow {
-  font-size: 9.5px; font-weight: 800; letter-spacing: .14em;
+  font-size: 11px; font-weight: 800; letter-spacing: .14em;
   text-transform: uppercase; color: rgba(255,255,255,.72);
   margin-bottom: 4px;
 }
@@ -167,7 +167,7 @@
   box-shadow: 0 1px 3px rgba(0,30,96,.04);
 }
 .ipa-card-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
-.ipa-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #5C18AB; margin-bottom: 4px; }
+.ipa-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #5C18AB; margin-bottom: 4px; }
 .ipa-card-head h4 { font-size: 16px; font-weight: 800; color: #001E60; margin: 0; letter-spacing: -.01em; }
 .ipa-cohort-pill {
   display: inline-flex; align-items: center; padding: 5px 12px;
@@ -267,7 +267,7 @@
 .ipa-pair-row .ipa-vault-card .ipa-kpi { padding: 10px 12px; }
 .ipa-pair-row .ipa-vault-card .ipa-kpi-num { font-size: 22px; }
 .ipa-pair-row .ipa-vault-card .ipa-kpi-num em { font-size: 11px; margin-left: 2px; }
-.ipa-pair-row .ipa-vault-card .ipa-kpi-lbl { font-size: 10px; margin-top: 4px; line-height: 1.25; }
+.ipa-pair-row .ipa-vault-card .ipa-kpi-lbl { font-size: 11px; margin-top: 4px; line-height: 1.25; }
 .ipa-pair-row .ipa-vault-card .ipa-legend-col { padding: 0 6px; }
 .ipa-pair-row .ipa-vault-card .ipa-legend-head { font-size: 11.5px; }
 .ipa-pair-row .ipa-vault-card .ipa-legend-row { font-size: 11px; padding: 3px 0; }
@@ -335,7 +335,7 @@
 .ca-unsat-body { flex: 1; min-width: 0; }
 .ca-unsat-nm { font-size: 13px; color: var(--ink); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .ca-unsat-nm b { font-weight: 700; }
-.ca-unsat-meta { font-size: 10.5px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.ca-unsat-meta { font-size: 11px; color: var(--mute); font-variant-numeric: tabular-nums; }
 .ca-unsat-reason { font-size: 12px; color: var(--ink); margin-top: 4px; line-height: 1.45; }
 .ca-unsat-reco { font-size: 11.5px; color: var(--teal); margin-top: 3px; font-weight: 600; }
 .ca-unsat-cta {
@@ -363,7 +363,7 @@
 .ca-missed-ic svg { width: 14px; height: 14px; }
 .ca-missed-body { flex: 1; min-width: 0; }
 .ca-missed-nm { font-size: 13px; color: var(--ink); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.ca-missed-meta { font-size: 10.5px; color: var(--mute); }
+.ca-missed-meta { font-size: 11px; color: var(--mute); }
 .ca-missed-exp { font-size: 12px; color: var(--ink); margin-top: 4px; }
 .ca-missed-last { font-size: 11px; color: var(--mute); margin-top: 2px; }
 
@@ -386,9 +386,9 @@
 }
 .proms-legend-item .pl-body { flex: 1; min-width: 0; }
 .proms-legend-item .pl-nm { font-size: 12.5px; font-weight: 700; color: var(--ink); letter-spacing: -0.1px; }
-.proms-legend-item .pl-meta { font-size: 10.5px; color: var(--mute); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.proms-legend-item .pl-meta { font-size: 11px; color: var(--mute); margin-top: 2px; font-variant-numeric: tabular-nums; }
 .proms-legend-item .pl-code {
-  font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
+  font-size: 11px; font-weight: 700; padding: 1px 5px; border-radius: 3px;
   background: rgba(127,33,224,.1); color: var(--purple);
 }
 .proms-band-key {
@@ -431,7 +431,7 @@
 }
 .proms-lens-legend-item .pll-dot { width: 10px; height: 10px; border-radius: 3px; flex: 0 0 10px; }
 .proms-lens-legend-item .pll-nm { font-size: 12.5px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
-.proms-lens-legend-item .pll-meta { font-size: 10px; color: var(--mute); }
+.proms-lens-legend-item .pll-meta { font-size: 11px; color: var(--mute); }
 
 .proms-q-picker {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
@@ -444,7 +444,7 @@
   font-family: inherit; text-align: left; min-width: 0;
 }
 .proms-q-chip:hover { border-color: var(--purple); background: rgba(127,33,224,.04); }
-.proms-q-chip .qc-code { font-size: 10.5px; font-weight: 800; color: var(--purple); letter-spacing: 0.4px; }
+.proms-q-chip .qc-code { font-size: 11px; font-weight: 800; color: var(--purple); letter-spacing: 0.4px; }
 .proms-q-chip .qc-nm {
   font-size: 11px; font-weight: 600; color: var(--ink);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
@@ -461,7 +461,7 @@
   border-radius: 8px; padding: 10px 12px; margin-bottom: 10px;
 }
 .proms-q-current .pqc-label {
-  font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
   color: var(--mute); margin-bottom: 3px;
 }
 .proms-q-current .pqc-q { font-size: 12.5px; color: var(--ink); font-weight: 600; line-height: 1.35; }
@@ -484,7 +484,7 @@
 }
 .proms-q-body { min-width: 0; }
 .proms-q-txt { font-size: 13px; color: var(--ink); line-height: 1.4; }
-.proms-q-scale { font-size: 10.5px; color: var(--mute); margin-top: 3px; font-style: italic; }
+.proms-q-scale { font-size: 11px; color: var(--mute); margin-top: 3px; font-style: italic; }
 .proms-q-score {
   font-size: 18px; font-weight: 800; color: var(--green);
   font-variant-numeric: tabular-nums; padding: 0 8px;

@@ -365,7 +365,7 @@
     var sec = el('<div class="pd-section sh-decision" id="ptDecision">' +
       '<div class="sf-step-head"><div class="sf-step-num sh-num">4</div>' +
       '<div class="sf-step-info"><h4 style="margin:0">Your decision</h4>' +
-      '<p style="margin:2px 0 0;font-size:12px;color:#7B879E">What you are ordering, which method influenced you, and why. Recorded against this case.</p></div></div>' +
+      '<p style="margin:2px 0 0;font-size:12px;color:#5D6A82">What you are ordering, which method influenced you, and why. Recorded against this case.</p></div></div>' +
       '<div id="ptDecisionBody"></div></div>');
     res.insertAdjacentElement('afterend', sec);
     render(CURRENT_PT);

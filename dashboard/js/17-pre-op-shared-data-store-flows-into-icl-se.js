@@ -52,7 +52,7 @@ function filterPreopEhrPatients(q){
         '<div class="rxi-name">' + p.name + '</div>' +
         '<div class="rxi-sub">REV-' + p.id + ' · ' + (p.age||'-') + 'y · ' + (p.eye||'-') + ' · ' + (p.power||'-') + ' D</div>' +
       '</div>' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#94A0B8;flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#63708A;flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>' +
     '</button>';
   }).join('');
   var listEl = document.getElementById('preopEhrModalList');
@@ -68,7 +68,7 @@ function _renderPreopEhrModalBody(){
       '<div class="pmd-prev-icon" style="background:#fff;">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:42px;height:42px;color:#5C18AB;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
         '<div class="pmd-prev-cap" style="font-weight:800;color:#001E60;">' + p.name + ' · clinical record</div>' +
-        '<div style="font-size:10.5px;color:#5A6478;margin-top:-4px;">REV-' + p.id + ' · last updated ' + new Date().toISOString().slice(0,10) + '</div>' +
+        '<div style="font-size:11px;color:#5A6478;margin-top:-4px;">REV-' + p.id + ' · last updated ' + new Date().toISOString().slice(0,10) + '</div>' +
       '</div>' +
       '<div class="pmd-vals" style="width:100%;max-width:320px;margin-top:14px;">' +
         '<div class="pmd-vrow"><span>AL</span><b>' + b.AL.v.toFixed(2) + ' mm</b></div>' +
@@ -280,7 +280,7 @@ function _renderPreopEhrListItems(filter){
         '<div class="rxi-name">' + p.name + '</div>' +
         '<div class="rxi-sub">REV-' + p.id + ' · ' + (p.age||'-') + 'y · ' + (p.eye||'-') + ' · ' + (p.power||'-') + ' D</div>' +
       '</div>' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#94A0B8;flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:#63708A;flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>' +
     '</button>';
   }).join('');
   return rows || '<div style="padding:18px;text-align:center;color:#5A6478;font-size:12px;">No patients match.</div>';
@@ -354,7 +354,7 @@ function _renderPreopAttachModalBody(){
           '<input type="file" id="preopFileInput" accept="' + ext + '" style="display:none;" onchange="simulatePreopUpload(this)"/>' +
         '</div>'
       : '<div class="pmd-upload-drop" onclick="document.getElementById(\'preopFileInput\').click()">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;color:#94A0B8;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;color:#63708A;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
           '<div class="pmd-up-drop-ttl">Drop your ' + label + ' file here</div>' +
           '<div class="pmd-up-drop-sub">or click to browse · ' + ext.replace(/,/g,' ') + '</div>' +
           '<input type="file" id="preopFileInput" accept="' + ext + '" style="display:none;" onchange="simulatePreopUpload(this)"/>' +
@@ -368,7 +368,7 @@ function _renderPreopAttachModalBody(){
   if (canShowValues) {
     preview = asset
       ? '<div class="pmd-prev-img-wrap"><img src="' + asset + '" alt="' + label + ' scan" class="pmd-prev-img"/></div>'
-      : '<div class="pmd-prev-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:42px;height:42px;color:#94A0B8;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><div class="pmd-prev-cap">' + label + ' report · auto-parsed</div></div>';
+      : '<div class="pmd-prev-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:42px;height:42px;color:#63708A;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><div class="pmd-prev-cap">' + label + ' report · auto-parsed</div></div>';
   } else {
     preview = '<div class="pmd-prev-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:42px;height:42px;color:#CBD2DD;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><div class="pmd-prev-cap">Pick a source to preview the ' + label + ' values.</div></div>';
   }

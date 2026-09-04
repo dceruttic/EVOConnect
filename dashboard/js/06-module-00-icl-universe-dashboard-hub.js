@@ -3,7 +3,7 @@
 ================================================================ */
 function renderDashboard() {
   const evTypeColor = {
-    congress:  "#0080C7",  // STAAR blue — major events
+    congress:  "#0071B0",  // STAAR blue — major events
     launch:    "#2472D3",  // teal — product launches
     training:  "#E78A27",  // orange — CME / webinar
     community: "#00D5E1",  // aqua — community
@@ -32,7 +32,7 @@ function renderDashboard() {
       <!-- ============ MY PATIENTS (left 2/3) ============ -->
       <section class="dash-patients-col">
         <div class="dash-eyebrow">
-          <span class="eb-ico" style="background:linear-gradient(135deg,#001E60,#0080C7)">
+          <span class="eb-ico" style="background:linear-gradient(135deg,#001E60,#0071B0)">
             <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M17 11a4 4 0 100-8 4 4 0 000 8zM2 21v-2a4 4 0 014-4h6a4 4 0 014 4v2M21 21v-2a4 4 0 00-3-3.87"/></svg>
           </span>
           <div>
@@ -108,7 +108,7 @@ function renderDashboard() {
         <!-- Quick-access tiles -->
         <div class="mod-grid cols-3" style="margin-top:16px;">
           <button class="panel qa-tile" onclick="renderModule('order')">
-            <div class="qa-ico" style="background:linear-gradient(135deg,#E78A27 0%,#0080C7 100%)">
+            <div class="qa-ico" style="background:linear-gradient(135deg,#E78A27 0%,#0071B0 100%)">
               <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 118 0v2"/></svg>
             </div>
             <div><div class="qa-ttl">Order · STAAR</div><div class="qa-sub">Lens pipeline · alerts · ETAs</div></div>

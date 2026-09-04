@@ -27,7 +27,7 @@
 }
 .risk-agent h3 { font-size: 15px; font-weight: 700; color: white; }
 .risk-agent .risk-eyebrow {
-  font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--warn-lt);
+  font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--warn-lt);
   text-transform: uppercase;
 }
 .risk-score {
@@ -39,7 +39,7 @@
 .risk-score .val {
   font-size: 40px; font-weight: 800; color: var(--warn-lt); letter-spacing: -.02em;
 }
-.risk-score .lbl { font-size: 10.5px; color: var(--warn-lt); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+.risk-score .lbl { font-size: 11px; color: var(--warn-lt); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
 .risk-score .msg { font-size: 12.5px; color: #C7CBFF; margin-top: 4px; line-height: 1.45; }
 
 .risk-alerts { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
@@ -52,7 +52,7 @@
 .risk-alert.med  { border-left-color: var(--gold-lt); }
 .risk-alert.low  { border-left-color: var(--teal-a); }
 .risk-alert .sev {
-  font-size: 9.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
   padding: 3px 8px; border-radius: 100px; flex-shrink: 0; align-self: flex-start;
 }
 .risk-alert.high .sev { background: rgba(231,138,39,.25); color: var(--warn-lt); }
@@ -102,7 +102,7 @@
   display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
 }
 .risk-case .sev-badge {
-  font-size: 9.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
   padding: 3px 10px; border-radius: 100px;
 }
 .risk-case.high .sev-badge { background: rgba(231,138,39,.25); color: var(--warn-lt); }
@@ -233,7 +233,7 @@
   margin-top: 3px;
 }
 .evo-toast-sub {
-  font-size: 10.5px; color: rgba(255,255,255,.72); font-weight: 500;
+  font-size: 11px; color: rgba(255,255,255,.72); font-weight: 500;
   margin-top: 1px;
 }
 .evo-toast-balance {
@@ -243,7 +243,7 @@
   flex-shrink: 0;
 }
 .evo-toast-balance .etb-lbl {
-  font-size: 9px; font-weight: 800; letter-spacing: .12em;
+  font-size: 11px; font-weight: 800; letter-spacing: .12em;
   color: rgba(255,255,255,.62); text-transform: uppercase;
 }
 .evo-toast-balance .etb-val {
@@ -265,5 +265,5 @@
 .dropzone svg { width: 36px; height: 36px; color: var(--teal); margin-bottom: 10px; display: block; flex: 0 0 auto; }
 .dropzone h4 { font-size: 13px; font-weight: 700; margin: 0 0 4px; }
 .dropzone p { font-size: 11.5px; color: var(--mute); margin: 0; }
-.dropzone .supp { font-size: 10.5px; color: var(--mute); margin-top: 10px; }
+.dropzone .supp { font-size: 11px; color: var(--mute); margin-top: 10px; }
 .dropzone input[type="file"] { display: none !important; }

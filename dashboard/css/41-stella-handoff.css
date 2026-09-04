@@ -889,26 +889,49 @@ body.shx-open .demo-stamp { z-index: 9999; }
 /* Accepting the recommendation is not a case to justify: the planned lens,
    the influencing method and the reason are implied by the acceptance, so
    those steps leave the form and only the optional comment stays. */
-.sh-form[data-choice="accept"] .sh-fs[data-branch="prefer"] { display: none; }
+.sh-form[data-choice="accept"] [data-branch="prefer"] { display: none; }
 
-/* The three fields only STAAR can fill. They sit at the foot of the transfer
-   modal, deliberately empty: who builds this zone, under which quality system
-   and by when is the question the screen is meant to raise on its own. */
-.shx-blanks { border-top: 1px solid var(--shx-line); padding-top: 14px; }
-.shx-blanks .shx-lbl { color: #A16207; }
-.shx-brow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.shx-b {
-  border-bottom: 2px dashed #E0A93C; padding-bottom: 6px; min-width: 0;
+/* Step 2 as one panel: the lens beside the method, the reason beside the
+   note. Four stacked cards became four cells, so the width carries what the
+   height was carrying. */
+.pd-grid {
+  display: grid; gap: 12px 24px;
+  /* four tracks, so each group gets the share its content actually needs:
+     an `auto` first column would be stretched by the widest thing in it (the
+     reason chips) and push the method chips off to the right. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
 }
-.shx-b span {
-  display: block; font-size: 10px; font-weight: 700; letter-spacing: .06em;
-  text-transform: uppercase; color: #A16207; margin-bottom: 3px;
+.pd-cell { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.pd-sub {
+  font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #7B879E;
 }
-.shx-b b { font-size: 17px; font-weight: 800; color: #92660A; line-height: 1; }
-.shx-bcap { margin: 11px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--shx-dim); }
-@media (max-width: 560px) { .shx-brow { grid-template-columns: 1fr; } }
+.pd-cell-lens   { grid-column: 1 / span 2; grid-row: 1; }
+.pd-cell-method { grid-column: 3 / span 2; grid-row: 1; }
+.pd-cell-reason { grid-column: 1 / span 3; grid-row: 2; }
+.pd-cell-note   { grid-column: 4 / span 1; grid-row: 2; }
+/* accepting leaves only the note, which then owns the row — and the legend
+   already names it, so the cell label would just say it twice */
+.sh-form[data-choice="accept"] .pd-cell-note { grid-column: 1 / -1; grid-row: 1; }
+.sh-form[data-choice="accept"] .pd-cell-note .pd-sub { display: none; }
+.pd-detail .sh-delta-line { font-size: 11.5px; }
+/* inside the panel the three fields share their cell and shrink with it,
+   rather than overflowing into the column next door */
+.pd-detail .sh-lens-grid {
+  gap: 8px; max-width: 440px;
+  /* minmax(0,…): a bare fr cannot shrink past the label's min-content, which
+     is what pushed the axis field out of its column */
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr);
+}
 
-/* Values that reached the ordering form through the STAAR layer are labelled
-   for what they are, so the form never claims STELLA typed them. */
-.sh-otag.via { background: #EEF6FD; color: #0064A0; border: 1px solid #BEDCF5; }
-.sh-oseed.via { color: #0F2440; font-weight: 600; }
+@media (max-width: 1240px) {
+  /* the note drops below the reason before either of them starts wrapping */
+  .pd-cell-reason { grid-column: 1 / -1; }
+  .pd-cell-note   { grid-column: 1 / -1; grid-row: 3; }
+}
+@media (max-width: 880px) {
+  .pd-grid { grid-template-columns: minmax(0, 1fr); }
+  .pd-cell-lens, .pd-cell-method, .pd-cell-reason, .pd-cell-note {
+    grid-column: 1; grid-row: auto;
+  }
+}

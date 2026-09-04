@@ -83,39 +83,56 @@
         '</div>' +
         '<div class="sh-err" data-err="choice" hidden>Choose one.</div></fieldset>' +
 
-      '<fieldset class="sh-fs pd-lens" id="pdLensFs" data-step="2" data-branch="prefer"><legend class="sh-lg">2 · Planned lens</legend>' +
-        '<div class="sh-lens-grid">' +
-          '<label><span>Size (mm)</span><select name="pd-size"><option value="">—</option>' +
-            SIZES.map(function (x) { return '<option value="' + x + '"' + sel(pl.size, x) + '>' + x + '</option>'; }).join('') +
-          '</select></label>' +
-          '<label><span>Power (D)</span><input type="text" name="pd-power" inputmode="decimal" value="' + esc(pl.power || '') + '" placeholder="—"></label>' +
-          '<label><span>Axis (°, optional)</span><input type="text" name="pd-axis" inputmode="numeric" value="' + esc(pl.axis || '') + '" placeholder="—"></label>' +
-        '</div>' +
-        '<div class="sh-delta-line" id="pdDelta"></div>' +
-        '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div></fieldset>' +
+      /* Step 2 is one panel, not four stacked cards: the lens sits beside the
+         method, the reason beside the note, so the width does the work the
+         height was doing. Accepting the recommendation hides everything in it
+         except the comment — there is nothing left to justify. */
+      '<fieldset class="sh-fs pd-detail" id="pdDetailFs" data-step="2"><legend class="sh-lg" id="pdDetailLg">2 · Your lens and why</legend>' +
+        '<div class="pd-grid">' +
 
-      '<fieldset class="sh-fs" data-step="3" data-branch="prefer"><legend class="sh-lg">3 · Influencing method</legend><div class="sh-chips">' +
-        ran.map(function (r) {
-          return '<label class="sh-chip"><input type="radio" name="pd-method" value="' + esc(r.code) + '"' + chk(d0.influencingMethod, r.code) + '>' +
-                 '<span>' + esc(METHOD_LABEL[r.code] || r.name) + '</span></label>'; }).join('') +
-        '<label class="sh-chip"><input type="radio" name="pd-method" value="OTHER"' + chk(d0.influencingMethod, 'OTHER') + '><span>Other / custom</span></label>' +
-        '</div>' +
-        '<input class="sh-other" type="text" name="pd-method-other" maxlength="60" placeholder="Which calculator did you use?" value="' + esc(d0.otherMethodName || '') + '" aria-label="Other / custom method name" hidden>' +
-        '<div class="sh-err" data-err="method" hidden>Select the method that influenced you.</div>' +
-        '<div class="sh-err" data-err="other" hidden>Name the calculator.</div></fieldset>' +
+          '<div class="pd-cell pd-cell-lens" data-branch="prefer" id="pdLensFs">' +
+            '<span class="pd-sub">Planned lens</span>' +
+            '<div class="sh-lens-grid">' +
+              '<label><span>Size (mm)</span><select name="pd-size"><option value="">—</option>' +
+                SIZES.map(function (x) { return '<option value="' + x + '"' + sel(pl.size, x) + '>' + x + '</option>'; }).join('') +
+              '</select></label>' +
+              '<label><span>Power (D)</span><input type="text" name="pd-power" inputmode="decimal" value="' + esc(pl.power || '') + '" placeholder="—"></label>' +
+              '<label><span>Axis (°)</span><input type="text" name="pd-axis" inputmode="numeric" value="' + esc(pl.axis || '') + '" placeholder="—"></label>' +
+            '</div>' +
+            '<div class="sh-delta-line" id="pdDelta"></div>' +
+            '<div class="sh-err" data-err="size" hidden>Select the planned lens size.</div>' +
+          '</div>' +
 
-      '<fieldset class="sh-fs" data-step="4" data-branch="prefer"><legend class="sh-lg">4 · Reason</legend><div class="sh-chips">' +
-        REASONS.map(function (r) {
-          return '<label class="sh-chip"><input type="radio" name="pd-reason" value="' + r[0] + '"' + chk(d0.reason && d0.reason.code, r[0]) + '>' +
-                 '<span>' + esc(r[1]) + '</span></label>'; }).join('') +
-        '</div>' +
-        '<div class="sh-src" id="pdReasonSrc" hidden></div>' +
-        '<div class="sh-err" data-err="reason" hidden>Select a reason.</div></fieldset>' +
+          '<div class="pd-cell pd-cell-method" data-branch="prefer">' +
+            '<span class="pd-sub">Influencing method</span>' +
+            '<div class="sh-chips">' +
+              ran.map(function (r) {
+                return '<label class="sh-chip"><input type="radio" name="pd-method" value="' + esc(r.code) + '"' + chk(d0.influencingMethod, r.code) + '>' +
+                       '<span>' + esc(METHOD_LABEL[r.code] || r.name) + '</span></label>'; }).join('') +
+              '<label class="sh-chip"><input type="radio" name="pd-method" value="OTHER"' + chk(d0.influencingMethod, 'OTHER') + '><span>Other / custom</span></label>' +
+            '</div>' +
+            '<input class="sh-other" type="text" name="pd-method-other" maxlength="60" placeholder="Which calculator did you use?" value="' + esc(d0.otherMethodName || '') + '" aria-label="Other / custom method name" hidden>' +
+            '<div class="sh-err" data-err="method" hidden>Select the method that influenced you.</div>' +
+            '<div class="sh-err" data-err="other" hidden>Name the calculator.</div>' +
+          '</div>' +
 
-      /* Kept out of the branch: accepting the recommendation asks for nothing
-         except, if the surgeon wants it, a note. */
-      '<fieldset class="sh-fs" data-step="note"><legend class="sh-lg">Comment (optional)</legend>' +
-        '<input class="sh-text" type="text" name="pd-reason-text" maxlength="140" placeholder="text ≤ 140 (optional)" value="' + esc((d0.reason && d0.reason.text) || '') + '" aria-label="Comment, optional"></fieldset>' +
+          '<div class="pd-cell pd-cell-reason" data-branch="prefer">' +
+            '<span class="pd-sub">Reason</span>' +
+            '<div class="sh-chips">' +
+              REASONS.map(function (r) {
+                return '<label class="sh-chip"><input type="radio" name="pd-reason" value="' + r[0] + '"' + chk(d0.reason && d0.reason.code, r[0]) + '>' +
+                       '<span>' + esc(r[1]) + '</span></label>'; }).join('') +
+            '</div>' +
+            '<div class="sh-src" id="pdReasonSrc" hidden></div>' +
+            '<div class="sh-err" data-err="reason" hidden>Select a reason.</div>' +
+          '</div>' +
+
+          '<div class="pd-cell pd-cell-note">' +
+            '<span class="pd-sub">Comment (optional)</span>' +
+            '<input class="sh-text" type="text" name="pd-reason-text" maxlength="140" placeholder="text ≤ 140" value="' + esc((d0.reason && d0.reason.text) || '') + '" aria-label="Comment, optional">' +
+          '</div>' +
+
+        '</div></fieldset>' +
 
       '<div class="sh-form-actions"><button type="submit" class="sh-btn">Save decision</button></div></form>';
   }
@@ -164,6 +181,8 @@
     function syncChoice() {
       var c = (form.querySelector('[name="pd-choice"]:checked') || {}).value;
       form.dataset.choice = c || '';
+      var lg = form.querySelector('#pdDetailLg');
+      if (lg) lg.textContent = c === 'accept' ? '2 · Comment (optional)' : '2 · Your lens and why';
       form.querySelector('#pdLensFs').classList.toggle('accept', c === 'accept');
       if (c === 'accept' && refSize) { sizeSel.value = refSize; sizeSel.disabled = true; }
       else sizeSel.disabled = false;
@@ -202,9 +221,8 @@
        answered, so the form reads as four decisions, not one wall. */
     function gate() {
       var g = function (n) { return !!form.querySelector('[name="' + n + '"]:checked'); };
-      var accepted = (form.querySelector('[name="pd-choice"]:checked') || {}).value === 'accept';
-      var done = { '1': true, '2': g('pd-choice'), '3': g('pd-choice') && !!sizeSel.value,
-                   '4': g('pd-method'), 'note': accepted || g('pd-reason') };
+      /* Two steps, not four: decide first, then everything the decision needs. */
+      var done = { '1': true, '2': g('pd-choice') };
       form.querySelectorAll('.sh-fs').forEach(function (fs) {
         fs.classList.toggle('pending', !done[fs.getAttribute('data-step')]);
       });

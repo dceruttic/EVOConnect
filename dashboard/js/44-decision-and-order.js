@@ -74,7 +74,7 @@
     var pl = d0.plannedLens || {};
     return '<form class="sh-form" id="ptDecisionForm" novalidate>' +
 
-      '<fieldset class="sh-fs" data-step="1"><legend class="sh-lg">1 · Decision</legend>' +
+      '<fieldset class="sh-fs" data-step="1"><legend class="sh-lg">Decision</legend>' +
         /* the two options are short: one row, not two full-width bars */
         '<div class="sh-choices">' +
           '<label class="sh-radio"><input type="radio" name="pd-choice" value="accept"' + chk(d0.choice, 'accept') + (refSize ? '' : ' disabled') + '>' +
@@ -87,7 +87,7 @@
          method, the reason beside the note, so the width does the work the
          height was doing. Accepting the recommendation hides everything in it
          except the comment — there is nothing left to justify. */
-      '<fieldset class="sh-fs pd-detail" id="pdDetailFs" data-step="2"><legend class="sh-lg" id="pdDetailLg">2 · Your lens and why</legend>' +
+      '<fieldset class="sh-fs pd-detail" id="pdDetailFs" data-step="2"><legend class="sh-lg" id="pdDetailLg">Your lens and why</legend>' +
         '<div class="pd-grid">' +
 
           '<div class="pd-cell pd-cell-lens" data-branch="prefer" id="pdLensFs">' +
@@ -182,7 +182,7 @@
       var c = (form.querySelector('[name="pd-choice"]:checked') || {}).value;
       form.dataset.choice = c || '';
       var lg = form.querySelector('#pdDetailLg');
-      if (lg) lg.textContent = c === 'accept' ? '2 · Comment (optional)' : '2 · Your lens and why';
+      if (lg) lg.textContent = c === 'accept' ? 'Comment (optional)' : 'Your lens and why';
       form.querySelector('#pdLensFs').classList.toggle('accept', c === 'accept');
       if (c === 'accept' && refSize) { sizeSel.value = refSize; sizeSel.disabled = true; }
       else sizeSel.disabled = false;
@@ -364,7 +364,7 @@
     if (document.getElementById('ptDecision')) { render(CURRENT_PT); return; }
     var sec = el('<div class="pd-section sh-decision" id="ptDecision">' +
       '<div class="sf-step-head"><div class="sf-step-num sh-num">4</div>' +
-      '<div class="sf-step-info"><h4 style="margin:0">Your decision</h4>' +
+      '<div class="sf-step-info"><h2 style="margin:0">Your decision</h2>' +
       '<p style="margin:2px 0 0;font-size:12px;color:#5D6A82">What you are ordering, which method influenced you, and why. Recorded against this case.</p></div></div>' +
       '<div id="ptDecisionBody"></div></div>');
     res.insertAdjacentElement('afterend', sec);

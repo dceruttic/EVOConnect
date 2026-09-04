@@ -981,7 +981,7 @@ function renderPtSizingFormulas(pt) {
       <div class="sf-step-head">
         <div class="sf-step-num">1</div>
         <div class="sf-step-info">
-          <h4 style="margin:0">Input Data</h4>
+          <h2 style="margin:0">Input Data</h2>
           <p class="muted" style="margin:2px 0 0;font-size:12px">Load refractions, keratometry and biometry. Each block can also be imported from EHR / UBM / OCT / Pentacam individually.</p>
         </div>
       </div>
@@ -993,7 +993,7 @@ function renderPtSizingFormulas(pt) {
       <div class="sf-step-head">
         <div class="sf-step-num">2</div>
         <div class="sf-step-info">
-          <h4 style="margin:0">Choose which formulas to run</h4>
+          <h2 style="margin:0">Choose which formulas to run</h2>
           <p class="muted" style="margin:2px 0 0;font-size:12px">Pick the sizing algorithms you want to compare. <b id="sfSelectedCount">${SELECTED_SIZING_FORMULAS.size}</b> selected.</p>
         </div>
       </div>
@@ -1005,7 +1005,7 @@ function renderPtSizingFormulas(pt) {
       <div class="sf-step-head">
         <div class="sf-step-num">3</div>
         <div class="sf-step-info">
-          <h4 style="margin:0">Calculate</h4>
+          <h2 style="margin:0">Calculate</h2>
           <p class="muted" style="margin:2px 0 0;font-size:12px">Run all selected formulas and compare results side-by-side.</p>
         </div>
       </div>
@@ -1019,7 +1019,7 @@ function renderPtSizingFormulas(pt) {
 
     <div class="pd-section" id="sfResults" style="display:none">
       <h4>Formula comparator <span class="tag" id="sfResultTag">—</span></h4>
-      <p class="muted" style="margin-bottom:10px">Results from every selected sizing algorithm. Select the formula you want to use — this will flow downstream to Surgical Planner and Surgery.</p>
+      <p class="muted" style="margin-bottom:10px">Results from every selected sizing algorithm. Choose the one you are using — it is recorded with the decision on this case.</p>
       <div class="sf-results-list" id="sfResultsList"></div>
       <div class="sf-chosen-banner" id="sfChosenBanner" style="display:none"></div>
     </div>

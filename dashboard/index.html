@@ -734,6 +734,16 @@
           };
         }
       }catch(e){}
+      /* A screen nobody can reach must also be unreachable by keyboard and
+         invisible to a screen reader: hidden-but-focusable put the clinic
+         home's headings and controls into the outline of every page (A-07). */
+      try{
+        var dash = document.getElementById('dashboardView');
+        if (dash && window.CLINIC_HOME_ENABLED === false) {
+          dash.setAttribute('aria-hidden','true');
+          dash.setAttribute('inert','');
+        }
+      }catch(e){}
       /* No affordance that suggests a screen the demo never shows. */
       if (window.CLINIC_HOME_ENABLED === false) {
         try{

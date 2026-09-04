@@ -24,6 +24,31 @@
 
   window.PT_DECISIONS = window.PT_DECISIONS || {};   // patientId -> decision
 
+  /* The decision outlives the session, the same as the order it justifies:
+     both live in localStorage, keyed by case and eye. CASE_DECISIONS (js/35)
+     is the shared store, so a case decided here and a case that arrived from
+     STELLA keep their record in one place. */
+  function caseId(pt) { return 'REV-' + pt.id; }
+  function eyeOf() {
+    return (typeof EYE_SCOPE !== 'undefined' && (EYE_SCOPE === 'OD' || EYE_SCOPE === 'OS')) ? EYE_SCOPE : 'OD';
+  }
+  function loadDecision(pt) {
+    if (PT_DECISIONS[pt.id]) return PT_DECISIONS[pt.id];
+    var d = window.CASE_DECISIONS ? CASE_DECISIONS.get(caseId(pt), eyeOf()) : null;
+    if (d) PT_DECISIONS[pt.id] = d;
+    return d || null;
+  }
+  function storeDecision(pt, d) {
+    PT_DECISIONS[pt.id] = d;
+    if (window.CASE_DECISIONS) CASE_DECISIONS.set(caseId(pt), eyeOf(), d);
+  }
+  function dropDecision(pt) {
+    var d = PT_DECISIONS[pt.id];
+    delete PT_DECISIONS[pt.id];
+    if (window.CASE_DECISIONS) CASE_DECISIONS.set(caseId(pt), eyeOf(), null);
+    return d;
+  }
+
   function el(h) { var d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstElementChild; }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -198,14 +223,14 @@
       bad = err('reason', !reason) || bad;
       if (bad) { var f = form.querySelector('.sh-err:not([hidden])'); if (f) f.scrollIntoView({ block: 'center' }); return; }
 
-      PT_DECISIONS[pt.id] = {
-        choice: choice,
+      storeDecision(pt, {
+        eye: eyeOf(), choice: choice,
         plannedLens: { size: size, power: form.querySelector('[name="pd-power"]').value.trim() || null,
                        axis: form.querySelector('[name="pd-axis"]').value.trim() || null },
         influencingMethod: method, otherMethodName: method === 'OTHER' ? other : null,
         reason: { code: reason, text: form.querySelector('[name="pd-reason-text"]').value.trim().slice(0, 140) },
         reasonSource: source, recordedAt: new Date().toISOString()
-      };
+      });
       render(pt);
       if (typeof showToast === 'function') showToast('Decision recorded in EVO Connect — nothing was sent to STELLA');
     });
@@ -213,7 +238,7 @@
 
   /* ---------- order box ---------- */
   function orderBox(pt) {
-    var d = PT_DECISIONS[pt.id];
+    var d = loadDecision(pt);
     var box = el('<section class="sh-return-box" id="ptOrder">' +
       '<div class="sh-return-boundary">Ordering happens in STELLA · STAAR system of record</div>' +
       '<div class="sh-return-body"><div class="sh-return-cta"></div>' +
@@ -272,11 +297,11 @@
   /* ---------- mount ---------- */
   function render(pt) {
     var body = document.getElementById('ptDecisionBody'); if (!body) return;
-    var d = PT_DECISIONS[pt.id];
+    var d = loadDecision(pt);
     body.innerHTML = d ? summary(pt, d) : decisionForm(pt);
     if (d) {
       body.querySelector('#ptEditDecision').addEventListener('click', function () {
-        var draft = PT_DECISIONS[pt.id]; delete PT_DECISIONS[pt.id];
+        var draft = dropDecision(pt);
         body.innerHTML = decisionForm(pt, draft); wire(body, pt, draft);
         refreshOrder(pt);
       });

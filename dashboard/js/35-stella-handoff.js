@@ -133,7 +133,7 @@
   var STELLA_CODE = 'STELLA';
   var HANDOFF_SET = [STELLA_CODE, 'ICL_GURU', 'ICL_FIT', 'CASIA2'];
   var HIDDEN_CHIPS = ['STAAR_NOM'];                                     // DR-0004 §6
-  var STORE_KEY = 'stella_handoff', DECISION_KEY = 'stella_handoff_decision', PENDING_KEY = 'stella_handoff_pending';
+  var STORE_KEY = 'stella_handoff', DECISION_KEY = 'case_decision_record', PENDING_KEY = 'stella_handoff_pending';
   var PENDING_TTL = 10 * 60 * 1000;
   var STELLA_LOGO = '/assets/marketplace/stella_logo_official.svg';   // asset only, not a navigation target
   var EVO_LOGO = '/assets/marketplace/evo_connect_global.svg';
@@ -853,19 +853,41 @@
         reasonSource: reasonSource,
         recordedAt: new Date().toISOString()
       };
-      try { sessionStorage.setItem(DECISION_KEY, JSON.stringify({ key: decisionKey(rec), decisions: rec.decisions })); } catch (x) {}
+      saveDecision(rec, curEye(rec));
       renderDecision(body, rec);
       toast(COPY.J8);
     });
   }
-  function decisionKey(rec) { return rec.caseId + '|' + rec.laterality + '|' + (rec.sentAt || ''); }
+  /* ---------- decision record ----------
+     The decision has to outlive nothing less than the order it justifies, so
+     it is stored the way the order is: localStorage, keyed by case and eye.
+     It used to sit in sessionStorage under a key that also carried `sentAt`,
+     which meant a closed tab or a re-send from STELLA left an order on record
+     with no decision behind it. `sentAt` is data on the record now, not part
+     of its identity — a later send shows a new recommendation beside the
+     decision already taken, which is what an audit trail should do. */
+  function decStore() {
+    try { return JSON.parse(localStorage.getItem(DECISION_KEY) || '{}') || {}; } catch (e) { return {}; }
+  }
+  function decisionKey(caseId, E) { return caseId + '|' + E; }
+  window.CASE_DECISIONS = {
+    get: function (caseId, E) { var d = decStore()[decisionKey(caseId, E)]; return d && d.choice ? d : null; },
+    set: function (caseId, E, d) {
+      try {
+        var all = decStore();
+        if (d) all[decisionKey(caseId, E)] = d; else delete all[decisionKey(caseId, E)];
+        localStorage.setItem(DECISION_KEY, JSON.stringify(all));
+      } catch (e) {}
+    }
+  };
+  function saveDecision(rec, E) {
+    CASE_DECISIONS.set(rec.caseId, E, rec.decisions[E]);
+  }
   function restoreDecision(rec) {
-    try {
-      var s = JSON.parse(sessionStorage.getItem(DECISION_KEY) || 'null');
-      if (!s || s.key !== decisionKey(rec)) return;
-      var src = s.decisions || (s.decision ? { OD: s.decision } : {});
-      rec.eyes.forEach(function (E) { if (src[E] && src[E].choice) rec.decisions[E] = src[E]; });
-    } catch (e) {}
+    rec.eyes.forEach(function (E) {
+      var d = CASE_DECISIONS.get(rec.caseId, E);
+      if (d) rec.decisions[E] = d;
+    });
   }
 
   /* ---------- return block (US-7) + steps 6-8 ---------- */

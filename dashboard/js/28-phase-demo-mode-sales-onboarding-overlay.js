@@ -25,7 +25,7 @@
   const DEFAULT_PHASE_MAP = {
     // Sidebar nav (data-mod values, verified in #usNav)
     'dashboard':       3,  // Home dashboard — Phase 3 (lands together with Clinic Analytics + EVO Credits)
-    'copilot':         5,  // EVO Copilot — clinic-level AI chat (Phase 5 & 6: STAAR Intelligence Center)
+    'copilot':         4,  // EVO Copilot — clinic-level AI chat: the floating assistant and the dashboard hero, both (Phase 4)
     'patients':        1,
     'order':           4,  // STAAR Order Follow-up Center — full tracking workflow is Phase 4. In Phase 1, ordering is just a one-way "push" from inside the patient sizing flow (no dedicated module).
     'simulator':       0,  // AI Lens Simulator — out of scope · not part of any contracted phase
@@ -58,7 +58,7 @@
   // Human-readable labels for the mapping editor
   const FEATURE_LABELS = {
     'dashboard':       'Dashboard (home)',
-    'copilot':         'EVO Copilot · Dashboard hero',
+    'copilot':         'EVO Copilot · AI chat',
     'patients':        'Patients',
     'order':           'STAAR Order Follow-up Center',
     'simulator':       'AI Lens Simulator (out of scope)',

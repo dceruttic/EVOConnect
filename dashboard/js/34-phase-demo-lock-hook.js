@@ -1,6 +1,36 @@
 /* ============== PHASE DEMO LOCK HOOK ============== */
+/* EVO Copilot is one feature with two faces — the dashboard hero and the
+   floating assistant — so one phase governs both. A locked hero still reads as
+   a feature that exists and is coming; a floating button that opens a working
+   chat does not, so that one is hidden outright until its phase arrives. */
+function _copilotLocked(){
+  const st = window.PHASE_DEMO;
+  if (!st || !st.enabled) return false;
+  const phase = st.map ? st.map['copilot'] : 4;
+  if (phase === 0) return true;
+  return !st.showAllPhases && phase > st.currentPhase;
+}
+window.copilotLockedByPhase = _copilotLocked;
+
+window.applyCopilotFabLock = function(){
+  const locked = _copilotLocked();
+  const fab = document.querySelector('.copilot-fab');
+  /* .copilot-fab sets display:flex, which outranks the hidden attribute — the
+     inline style is what actually removes it. */
+  if (fab){
+    fab.hidden = locked;
+    fab.style.display = locked ? 'none' : '';
+    fab.setAttribute('aria-hidden', locked ? 'true' : 'false');
+  }
+  if (locked){
+    const panel = document.getElementById('copilotPanel');
+    if (panel) panel.classList.remove('open');
+  }
+};
+
 // When PHASE_DEMO is enabled and copilot's phase > currentPhase, lock the CTA.
 window.applyDashCopilotHeroLock = function(){
+  window.applyCopilotFabLock();
   const hero = document.getElementById('dashCopilotHero');
   if (!hero) return;
   const st = window.PHASE_DEMO;
@@ -10,7 +40,7 @@ window.applyDashCopilotHeroLock = function(){
     hero.title = 'Ask EVO · your clinical AI copilot';
     return;
   }
-  const phase = st.map ? st.map['copilot'] : 5;
+  const phase = st.map ? st.map['copilot'] : 4;
   const showAll = st.showAllPhases;
   let locked = false;
   let lockMsg = '';

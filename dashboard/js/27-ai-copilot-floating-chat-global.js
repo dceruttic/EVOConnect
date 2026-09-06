@@ -15,6 +15,14 @@ const SUGGESTED_PROMPTS = [
 ];
 
 function openCopilot() {
+  /* The '/' shortcut reaches the assistant even with its button hidden, so the
+     phase gate is checked here too. */
+  if (typeof window.copilotLockedByPhase === 'function' && window.copilotLockedByPhase()) {
+    var ph = (window.PHASE_DEMO && window.PHASE_DEMO.map) ? window.PHASE_DEMO.map['copilot'] : 4;
+    var name = (window.PROJECT_PHASES && window.PROJECT_PHASES[ph]) ? window.PROJECT_PHASES[ph].name : 'a later phase';
+    if (typeof showToast === 'function') showToast('EVO Copilot unlocks in ' + name);
+    return;
+  }
   document.getElementById("copilotPanel").classList.add("open");
   document.getElementById("copilotInput").focus();
 }

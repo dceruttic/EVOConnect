@@ -983,13 +983,133 @@
      recommendation only when there is no decision yet. Seeding it from the
      reference instead meant a surgeon who planned 13.2 was shown 13.7 to
      confirm — the divergence they had just recorded, silently undone. */
+
+  /* ================================================================
+     STELLA ORDERING — the real circuit
+     ----------------------------------------------------------------
+     Verified against the live platform (stella.staar.com, Calculator
+     V8.00 OUS) on a test record. The sequence is NOT lock → look up →
+     order. It is:
+
+       1. "Calculation complete. / Select a target lens."  (green)
+          A full power ladder; the surgeon picks a row, and the length
+          and cylinder power compose a target lens string.
+       2. "Lens Inventory Lookup"                          (teal)
+          Stock at STAAR CH, or In Transit. The lookup does NOT lock
+          anything — it can be cancelled and reopened.
+       3. "Calculation locked."                            (black)
+          Reached only once a physical lens has been taken.
+
+     The point the replica used to miss: STELLA never lets a surgeon
+     order a lens that does not exist. The inventory answers with the
+     lenses STAAR actually holds, which are rarely the exact target —
+     so every row carries its own Exp Ref and Exp SEQ, the refraction
+     that lens would actually leave the patient with. Choosing is a
+     trade-off, not a match. When nothing is returned, the only way
+     forward is to have one made.
+  ================================================================ */
+  var LENS_LENGTHS = ['12.1', '12.6', '13.2', '13.7'];
+  var CYL_POWERS = ['+0.50','+1.00','+1.50','+2.00','+2.50','+3.00','+3.50','+4.00','+4.50','+5.00','+5.50','+6.00'];
+
+  /* Deterministic per case, so the same case always shows the same shelf. */
+  function _sHash(s) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  function _sRand(seed, i) { return ((_sHash(seed + '|' + i) % 10000) / 10000); }
+  function _sgn(n) { return (n >= 0 ? '+' : '-') + Math.abs(n).toFixed(2).padStart(5, '0'); }
+
+  /* The ladder STELLA prints: every orderable sphere, and the refraction each
+     one is expected to leave. Slope and the SEQ identity were read off the live
+     table (0.50 D of lens ≈ 0.39 D at the spectacle plane; SEQ = sphere + cyl/2). */
+  function powerLadder(anchorSph, cylPower) {
+    var s0 = parseFloat(anchorSph) || -16.50;
+    var cyl = parseFloat(cylPower) || 1.00;
+    var r0 = -0.11;                       // the anchor row sits nearest plano
+    var rows = [];
+    for (var s = -19.00; s <= -0.50 + 1e-9; s += 0.50) {
+      var sph = Math.round(s * 100) / 100;
+      var exp = r0 + (s0 - sph) * 0.78;
+      var eCyl = Math.max(0.08, 0.11 + (s0 - sph) * 0.004) * (cyl / 1.00);
+      var axis = Math.round(48 + (s0 - sph) * 0.31);
+      rows.push({ sel: sph.toFixed(2), cyl: cyl.toFixed(2), exp: exp,
+                  expCyl: eCyl, axis: Math.max(0, Math.min(180, axis)),
+                  seq: exp + eCyl / 2 });
+    }
+    return rows.reverse();                // most myopic first, as STELLA prints it
+  }
+  function ladderRow(rows, sel) {
+    for (var i = 0; i < rows.length; i++) if (rows[i].sel === sel) return rows[i];
+    return null;
+  }
+  function targetLensStr(model, len, sph, cyl, axis) {
+    return model + ' ' + len + ' mm ' + sph + ' ' + cyl + (axis !== '' && axis != null ? ' x' + String(axis).padStart(3, '0') : '');
+  }
+  function lensModelCode(model, len) {
+    return (/toric/i.test(model) ? 'VTICMO' : 'VICMO') + len;
+  }
+
+  /* What STAAR has on the shelf for this target. Neighbours of the target
+     sphere, not the target itself most of the time — which is the whole reason
+     Exp Ref and Exp SEQ are printed per row. */
+  function inventoryFor(rec, E, ord, source) {
+    var seed = rec.caseId + '|' + E + '|' + ord.size + '|' + ord.cyl + '|' + source;
+    var rows = powerLadder(ord.selSphere, ord.cyl);
+    var model = lensModelCode(rec.stella[E].model, ord.size);
+    var base = parseFloat(ord.selSphere);
+    if (source === 'TRANSIT') {
+      /* In transit is usually empty — that is what the live platform showed,
+         and it is the state that makes Manufacture Lens the only way on. */
+      if (_sRand(seed, 1) > 0.28) return [];
+      var off = (_sRand(seed, 2) > 0.5 ? 0.5 : -0.5);
+      return [_stockRow(rows, base + off, model, seed, 9)];
+    }
+    var offsets = (_sHash(seed) % 3 === 0)
+      ? [0, -0.5, 0.5, 1.0]              // sometimes the exact lens is there
+      : [-0.5, -0.5, -0.5, 0.5, 0.5, 0.5];
+    var out = [];
+    for (var i = 0; i < offsets.length; i++) {
+      var r = _stockRow(rows, base + offsets[i], model, seed, i);
+      if (r) out.push(r);
+    }
+    return out;
+  }
+  function _stockRow(rows, sph, model, seed, i) {
+    var row = ladderRow(rows, (Math.round(sph * 2) / 2).toFixed(2));
+    if (!row) return null;
+    /* A physical lens has the axis it was made with, which is rarely the axis
+       the calculation asked for. */
+    var axis = Math.max(1, Math.min(180, row.axis + Math.round((_sRand(seed, 'a' + i) - 0.5) * 60)));
+    return {
+      model: model, version: 'EVO Visian ICL',
+      sphere: row.sel, cyl: '+' + parseFloat(row.cyl).toFixed(2), axis: axis,
+      expRef: _sgn(row.exp) + ' ' + _sgn(row.expCyl) + ' x' + String(row.axis).padStart(3, '0'),
+      expSeq: _sgn(row.seq),
+      serial: 'T' + String(2000000 + (_sHash(seed + i) % 7999999)),
+      qty: 1 + (_sHash(seed + 'q' + i) % 2)
+    };
+  }
+
   function stellaSeed(rec) {
     var R = rec.stellaRecommendation;
     var d = rec.decisions ? rec.decisions[curEye(rec)] : null;
     var pl = d && d.plannedLens ? d.plannedLens : null;
+    var sph = String((pl && pl.power) || (R.power && R.power.sph != null ? R.power.sph : '') || '-16.50');
+    var sphNum = parseFloat(sph);
+    if (isNaN(sphNum)) sphNum = -16.50;
+    sphNum = Math.max(-19, Math.min(-0.5, Math.round(sphNum * 2) / 2));
+    var len = String((pl && pl.size) || R.size);
+    if (LENS_LENGTHS.indexOf(len) < 0) len = '13.2';
     return {
-      size: String((pl && pl.size) || R.size),
-      power: String((pl && pl.power) || (R.power && R.power.sph != null ? R.power.sph : '')),
+      step: 'target',                 // target → inventory → done
+      size: len,
+      selSphere: sphNum.toFixed(2),
+      cyl: '+1.00',
+      diffLength: len !== String(R.size),
+      source: 'CH',
+      reserved: null, manufactured: false,
+      power: sph,
       axis: String((pl && pl.axis) || (R.power && R.power.axis != null ? R.power.axis : '')),
       ack: false, err: null,
       touched: { size: false, power: false, axis: false }
@@ -1154,7 +1274,7 @@
   /* `fresh` is what the Order Lens CTA passes: the surgeon asked to place an
      order, so the modal opens on STELLA's ordering form even when this eye
      already carries one. The existing order is not duplicated — confirming
-     keeps its number (see placeOrder), which is the idempotency the
+     keeps its number (see takeLens), which is the idempotency the
      integration layer promises. */
   function openOrderModal(rec, fresh) {
     stellaTransfer(rec, function () { mountOrderModal(rec, fresh); });
@@ -1175,114 +1295,222 @@
   }
   function paintOrderModal(rec) {
     var host = document.getElementById('shOrderModal'); if (!host) return;
-    var E = curEye(rec), R = rec.stellaRecommendation, d = rec.decisions[E], done = orderFor(rec, E);
-    if (done && rec.ui && rec.ui.newOrder) done = null;   // the surgeon asked to order
+    var E = curEye(rec), R = rec.stellaRecommendation, done = orderFor(rec, E);
+    if (done && rec.ui && rec.ui.newOrder && ord && ord.step !== 'done') done = null;
 
-    if (done) {
-      host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, true) +
-        '<div class="sh-obody"><div class="sh-oreceipt">' +
-          '<div class="sh-ok">Order number</div><div class="sh-ono">' + esc(done.orderNo) + '</div>' +
-          orderRow('Case · eye', done.caseId + ' · ' + done.eye) +
-          orderRow('Ordered lens', done.lens.size + ' mm' + (done.lens.power ? ' · ' + done.lens.power + ' D' : '') + (done.lens.axis ? ' · ' + done.lens.axis + '°' : '')) +
-          orderRow(rec.local ? 'STAAR nomogram reference' : 'STELLA recommendation', done.stella.size + ' mm · ' + done.stella.model) +
-          orderRow('Divergence', done.divergent ? done.delta + ' mm — confirmed by the surgeon' : 'none — recommendation accepted') +
-          /* audit AHA-2: the receipt used to omit the why, which is the half
-             of the record that makes the other half defensible */
-          (function () {
-            var d = rec.decisions[E]; if (!d) return '';
-            var meth = ({ ICL_GURU:'ICL Guru', ICL_FIT:'ICLFIT', CASIA2:'CASIA2', REINSTEIN:'Reinstein',
-                          LASSO:'Lasso', KS:'KS', STAAR_NOM:'STAAR nomogram', OTHER: d.otherMethodName || 'Other' })[d.influencingMethod] || d.influencingMethod;
-            var why = d.reason ? (({ VAULT_BAND:'Vault prediction', WTW_DISC:'WTW discrepancy',
-                          ANATOMY_ASOCT:'AS-OCT anatomy', EXPERIENCE:'Surgeon experience', OTHER:'Other',
-                          ACCEPTED:'Recommendation accepted' })[d.reason.code] || d.reason.code) : '';
-            return orderRow('Influenced by', meth) +
-                   (why ? orderRow('Reason', why + (d.reason.text ? ' — ' + d.reason.text : '')) : '');
-          })() +
-          orderRow('Confirmed', utc(done.confirmedAt)) +
-          '<div class="sh-oaudit">' + esc(COPY.L11) + '</div>' +
-        '</div></div>' +
-        '<div class="sh-ofoot"><span class="sh-oapi">' + esc(COPY.L17) + '</span><div class="sh-ogrow"></div>' +
-        '<button type="button" class="sh-obtn" data-o="close">Done ✓</button></div></div>';
-      wireOrderModal(rec);
-      return;
-    }
+    if (done) return paintLocked(host, rec, E, done);
+    if (ord.step === 'inventory') return paintInventory(host, rec, E, R);
+    return paintTarget(host, rec, E, R);
+  }
 
-    var diverges = ord.size && ord.size !== String(R.size);
-    var delta = diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '';
-    var local = !!rec.local;
-    var tag = function (k) { return ord.touched[k] ? '' : '<em class="sh-otag">' + esc(local ? COPY.LOC5 : COPY.L5) + '</em>'; };
+  /* ---------- 1. Calculation complete · select a target lens ---------- */
+  function paintTarget(host, rec, E, R) {
+    var rows = powerLadder(ord.selSphere, ord.cyl);
+    var d = rec.decisions[E];
+    var sel = ladderRow(rows, ord.selSphere) || rows[0];
+    var target = targetLensStr(R.model, ord.size, ord.selSphere, ord.cyl, sel ? sel.axis : '');
+    var diverges = ord.size !== String(R.size);
 
-    host.innerHTML = '<div class="sh-omodal">' + orderHead(rec, E, false) +
-      '<div class="sh-obody">' +
-        '<div class="sh-oseed">' + esc(local ? COPY.LOC6 : COPY.L6) + '</div>' +
-        '<div class="sh-orec"><div class="sh-ok">' + esc(local ? COPY.LOC15 : COPY.L15) + '</div>' +
-          '<div class="sh-orec-v">' + esc(R.size) + ' mm</div>' +
-          '<div class="sh-orec-m">' + esc(R.model) + (R.power && R.power.sph != null ? ' · ' + esc(R.power.sph) + ' D' : '') +
-            (R.power && R.power.axis != null ? ' · axis ' + esc(R.power.axis) + '°' : '') + ' · ' + esc(R.formula) + '</div></div>' +
-        '<div class="sh-ogrid">' +
-          '<label><span>Size (mm) ' + tag('size') + '</span><select data-of="size">' +
-            ORDER_SIZES.map(function (v) { return '<option value="' + v + '"' + (ord.size === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') +
-          '</select></label>' +
-          '<label><span>Power (D) ' + tag('power') + '</span><input data-of="power" value="' + esc(ord.power) + '" placeholder="—"></label>' +
-          '<label><span>Axis (°, optional) ' + tag('axis') + '</span><input data-of="axis" value="' + esc(ord.axis) + '" placeholder="—"></label>' +
-        '</div>' +
-        (d ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
-              (d.plannedLens.power ? ' · <b>' + esc(d.plannedLens.power) + ' D</b>' : '') +
-              '. It is not carried into STELLA — enter it here yourself.</div>' : '') +
-        (diverges ? '<div class="sh-odiff"><div class="t">' + esc(COPY.L7) + '</div>' +
-          '<div class="x">' + esc(fmt(COPY.L8, { rec: R.size, got: ord.size, d: delta })) + '</div>' +
-          '<label><input type="checkbox" data-of="ack"' + (ord.ack ? ' checked' : '') + '><span>' +
-            esc(fmt(COPY.L9, { got: ord.size, rec: R.size })) + '</span></label></div>' : '') +
-        (ord.err ? '<div class="sh-oerr">' + esc(ord.err) + '</div>' : '') +
+    host.innerHTML = '<div class="sh-omodal sh-ocalc">' +
+      '<div class="sh-oboundary">' + esc(COPY.L3) + '</div>' +
+      '<div class="sh-ochead ok">' +
+        '<div class="sh-och-eye">' + esc(E) + '</div>' +
+        '<div class="sh-och-main"><div class="t">Calculation complete.</div>' +
+          '<div class="s">Select a target lens.</div></div>' +
+        '<div class="sh-och-meta"><div>' + esc((R.calculatedAt || '').slice(0, 10)) + '</div>' +
+          '<div>Calculated with <b>8.00 OUS</b></div></div>' +
       '</div>' +
-      '<div class="sh-ofoot"><span class="sh-odemo">Demonstration only — no lens is ordered.</span>' +
+      '<div class="sh-oladder-wrap"><table class="sh-oladder"><thead><tr>' +
+        '<th>Sel Sphere</th><th>Sel Cylinder</th><th>Exp Sphere</th>' +
+        '<th>Exp Cylinder</th><th>Exp Axis</th><th>Exp SEQ</th></tr></thead><tbody>' +
+        rows.map(function (r) {
+          return '<tr class="' + (r.sel === ord.selSphere ? 'on' : '') + '" data-sel="' + esc(r.sel) + '" tabindex="0">' +
+            '<td>' + esc(r.sel) + '</td><td>+' + esc(parseFloat(r.cyl).toFixed(2)) + '</td>' +
+            '<td>' + esc(_sgn(r.exp)) + '</td><td>' + esc(_sgn(r.expCyl)) + '</td>' +
+            '<td>' + String(r.axis).padStart(3, '0') + '</td><td>' + esc(_sgn(r.seq)) + '</td></tr>';
+        }).join('') +
+      '</tbody></table></div>' +
+      '<div class="sh-otargetbar">' +
+        '<label class="sh-otoggle"><input type="checkbox" data-of="difflen"' + (ord.diffLength ? ' checked' : '') + '>' +
+          '<span class="sh-osw"></span><span>Different Length Selected</span></label>' +
+        '<select data-of="len"' + (ord.diffLength ? '' : ' disabled') + '>' +
+          LENS_LENGTHS.map(function (v) { return '<option value="' + v + '"' + (ord.size === v ? ' selected' : '') + '>' + v + ' mm</option>'; }).join('') +
+        '</select>' +
         '<div class="sh-ogrow"></div>' +
+        '<span class="sh-olbl">Cylinder Power</span>' +
+        '<select data-of="cyl">' + CYL_POWERS.map(function (v) {
+          return '<option value="' + v + '"' + (ord.cyl === v ? ' selected' : '') + '>' + v + '</option>'; }).join('') +
+        '</select>' +
+      '</div>' +
+      '<div class="sh-otargetrow">' +
+        '<span class="sh-olbl">Target<br>Lens</span>' +
+        '<input class="sh-otarget" value="' + esc(target) + '" readonly aria-label="Target lens">' +
         '<button type="button" class="sh-obtn ghost" data-o="close">Cancel</button>' +
-        '<button type="button" class="sh-obtn" data-o="place">' + esc(COPY.L10) + '</button></div></div>';
+        '<button type="button" class="sh-obtn" data-o="lookup">Inventory Lookup</button>' +
+      '</div>' +
+      (d ? '<div class="sh-odec">Your decision in EVO Connect was <b>' + esc(d.plannedLens.size) + ' mm</b>' +
+            (d.plannedLens.power ? ' · <b>' + esc(d.plannedLens.power) + ' D</b>' : '') +
+            '. It is not carried into STELLA — select it here yourself.</div>' : '') +
+      (diverges ? '<div class="sh-odiff compact"><b>' + esc(ord.size) + ' mm</b> differs from the ' +
+        (rec.local ? 'STAAR nomogram reference' : 'STELLA recommendation') + ' of <b>' + esc(R.size) + ' mm</b>.</div>' : '') +
+      '<div class="sh-ofoot"><span class="sh-odemo">Demonstration only — no lens is ordered.</span></div>' +
+    '</div>';
+    wireOrderModal(rec);
+    var on = host.querySelector('.sh-oladder tr.on');
+    if (on) try { on.scrollIntoView({ block: 'center' }); } catch (e) {}
+  }
+
+  /* ---------- 2. Lens Inventory Lookup ---------- */
+  function paintInventory(host, rec, E, R) {
+    var rows = powerLadder(ord.selSphere, ord.cyl);
+    var sel = ladderRow(rows, ord.selSphere) || rows[0];
+    var target = targetLensStr(R.model, ord.size, ord.selSphere, ord.cyl, sel ? sel.axis : '');
+    var stock = inventoryFor(rec, E, ord, ord.source);
+
+    host.innerHTML = '<div class="sh-omodal sh-oinv">' +
+      '<div class="sh-oinvhead">' +
+        '<div class="sh-och-eye">' + esc(E) + '</div>' +
+        '<div class="sh-oinv-t">Lens Inventory Lookup</div>' +
+        '<div class="sh-ogrow"></div>' +
+        '<button type="button" class="sh-osrc' + (ord.source === 'CH' ? ' on' : '') + '" data-src="CH">STAAR CH</button>' +
+        '<button type="button" class="sh-osrc' + (ord.source === 'TRANSIT' ? ' on' : '') + '" data-src="TRANSIT">In Transit</button>' +
+      '</div>' +
+      '<div class="sh-oinv-target"><span>Target Lens</span>' +
+        '<input value="' + esc(target) + '" readonly aria-label="Target lens"></div>' +
+      '<div class="sh-oinv-wrap">' +
+        (stock.length
+          ? '<table class="sh-oinvtable"><thead><tr><th>Model</th><th>Version</th><th>Sphere</th>' +
+            '<th>Cylinder</th><th>Axis</th><th>Exp Ref</th><th>Exp SEQ</th><th>Quantity</th><th></th></tr></thead><tbody>' +
+            stock.map(function (l, i) {
+              var exact = l.sphere === ord.selSphere;
+              return '<tr' + (exact ? ' class="exact"' : '') + '><td>' + esc(l.model) + '</td>' +
+                '<td class="v">' + esc(l.version) + '</td><td>' + esc(l.sphere) + '</td><td>' + esc(l.cyl) + '</td>' +
+                '<td>' + esc(l.axis) + '</td><td>' + esc(l.expRef) + '</td><td>' + esc(l.expSeq) + '</td>' +
+                '<td><input class="sh-oqty" type="number" min="1" max="' + l.qty + '" value="1" aria-label="Quantity"></td>' +
+                '<td><button type="button" class="sh-obtn small" data-reserve="' + i + '">Reserve</button></td></tr>';
+            }).join('') + '</tbody></table>'
+          : '<div class="sh-oinv-empty">No lenses were returned</div>') +
+      '</div>' +
+      '<div class="sh-oinv-foot">' +
+        (stock.length ? '' : '<button type="button" class="sh-obtn mfg" data-o="manufacture">Manufacture Lens</button>') +
+        '<div class="sh-ogrow"></div>' +
+        '<span class="sh-olbl">Select Different Length</span>' +
+        '<select data-of="len">' + LENS_LENGTHS.map(function (v) {
+          return '<option value="' + v + '"' + (ord.size === v ? ' selected' : '') + '>' + v + ' mm</option>'; }).join('') + '</select>' +
+        '<button type="button" class="sh-obtn ghost" data-o="back">Done ✓</button>' +
+      '</div>' +
+      (stock.length ? '<div class="sh-oinv-note">These are the lenses STAAR holds. Exp Ref and Exp SEQ are the refraction each one would actually leave — the target lens is rarely on the shelf.</div>' : '') +
+    '</div>';
     wireOrderModal(rec);
   }
-  function orderHead(rec, E, done) {
-    return '<div class="sh-oboundary">' + esc(COPY.L3) + '</div>' +
-      '<div class="sh-ohead"><img src="' + STELLA_LOGO + '" alt="STELLA">' +
-      '<div><div class="t">' + esc(done ? 'Order confirmed' : COPY.L4) + '</div>' +
-      '<div class="s">' + esc(rec.caseId) + ' · ' + esc(E) + ' · STELLA — STAAR system of record</div></div></div>';
+
+  /* ---------- 3. Calculation locked ---------- */
+  function paintLocked(host, rec, E, done) {
+    var d = rec.decisions[E];
+    var lens = done.lens;
+    host.innerHTML = '<div class="sh-omodal">' +
+      '<div class="sh-oboundary">' + esc(COPY.L3) + '</div>' +
+      '<div class="sh-ochead locked">' +
+        '<div class="sh-och-eye">' + esc(E) + '</div>' +
+        '<div class="sh-och-main"><div class="t">' + lockSvg() + ' Calculation locked.</div>' +
+          '<div class="s">' + esc(done.manufactured ? 'Lens sent to manufacture.' : 'Lens reserved from STAAR stock.') + '</div></div>' +
+        '<div class="sh-och-meta"><div>' + esc((done.confirmedAt || '').slice(0, 10)) + '</div>' +
+          '<div>Calculated with <b>8.00 OUS</b></div></div>' +
+      '</div>' +
+      '<div class="sh-obody"><div class="sh-oreceipt">' +
+        '<div class="sh-ok">Order number</div><div class="sh-ono">' + esc(done.orderNo) + '</div>' +
+        orderRow('Case · eye', done.caseId + ' · ' + done.eye) +
+        orderRow('Target lens', done.target || '—') +
+        orderRow(done.manufactured ? 'To be manufactured' : 'Reserved lens',
+          lens.size + ' mm · ' + lens.power + (lens.axis ? ' x' + String(lens.axis).padStart(3, '0') : '')) +
+        (done.serial ? orderRow('Serial number', done.serial) : '') +
+        (done.expRef ? orderRow('Expected refraction', done.expRef + ' · SEQ ' + (done.expSeq || '—')) : '') +
+        orderRow('Source', done.manufactured ? 'Made to order' : (done.source === 'TRANSIT' ? 'In transit to STAAR CH' : 'STAAR CH stock')) +
+        (function () {
+          if (!d) return '';
+          var meth = ({ ICL_GURU:'ICL Guru', ICL_FIT:'ICLFIT', CASIA2:'CASIA2', REINSTEIN:'Reinstein',
+                        LASSO:'Lasso', KS:'KS', STAAR_NOM:'STAAR nomogram', OTHER: d.otherMethodName || 'Other' })[d.influencingMethod] || d.influencingMethod;
+          var why = d.reason ? (({ VAULT_BAND:'Vault prediction', WTW_DISC:'WTW discrepancy',
+                        ANATOMY_ASOCT:'AS-OCT anatomy', EXPERIENCE:'Surgeon experience', OTHER:'Other',
+                        ACCEPTED:'Recommendation accepted' })[d.reason.code] || d.reason.code) : '';
+          return orderRow('Influenced by', meth) +
+                 (why ? orderRow('Reason', why + (d.reason.text ? ' — ' + d.reason.text : '')) : '');
+        })() +
+        orderRow('Confirmed', utc(done.confirmedAt)) +
+        '<div class="sh-oaudit">' + esc(COPY.L11) + '</div>' +
+      '</div></div>' +
+      '<div class="sh-ofoot"><span class="sh-oapi">' + esc(COPY.L17) + '</span><div class="sh-ogrow"></div>' +
+      '<button type="button" class="sh-obtn" data-o="close">Done ✓</button></div></div>';
+    wireOrderModal(rec);
   }
+
   function orderRow(k, v) { return '<div class="sh-orow"><span>' + esc(k) + '</span><b>' + esc(v) + '</b></div>'; }
+
   function wireOrderModal(rec) {
     var host = document.getElementById('shOrderModal'); if (!host) return;
+    var E = curEye(rec);
+
     host.querySelectorAll('[data-o]').forEach(function (b) {
       b.addEventListener('click', function () {
-        if (b.getAttribute('data-o') === 'close') return closeOrderModal();
-        placeOrder(rec);
+        var a = b.getAttribute('data-o');
+        if (a === 'close') return closeOrderModal();
+        if (a === 'lookup') { ord.step = 'inventory'; ord.source = 'CH'; return paintOrderModal(rec); }
+        if (a === 'back') { ord.step = 'target'; return paintOrderModal(rec); }
+        if (a === 'manufacture') return takeLens(rec, null, true);
       });
+    });
+    host.querySelectorAll('[data-src]').forEach(function (b) {
+      b.addEventListener('click', function () { ord.source = b.getAttribute('data-src'); paintOrderModal(rec); });
+    });
+    host.querySelectorAll('[data-reserve]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var stock = inventoryFor(rec, E, ord, ord.source);
+        takeLens(rec, stock[parseInt(b.getAttribute('data-reserve'), 10)], false);
+      });
+    });
+    host.querySelectorAll('.sh-oladder tbody tr').forEach(function (tr) {
+      var pick = function () { ord.selSphere = tr.getAttribute('data-sel'); paintOrderModal(rec); };
+      tr.addEventListener('click', pick);
+      tr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
     });
     host.addEventListener('change', function (e) {
       var k = e.target.getAttribute && e.target.getAttribute('data-of'); if (!k || !ord) return;
-      if (k === 'ack') { ord.ack = e.target.checked; ord.err = null; paintOrderModal(rec); return; }
-      if (k === 'size') { ord.size = e.target.value; ord.touched.size = true; ord.ack = false; ord.err = null; paintOrderModal(rec); }
+      if (k === 'difflen') { ord.diffLength = e.target.checked; if (!ord.diffLength) ord.size = String(rec.stellaRecommendation.size); }
+      if (k === 'len') { ord.size = e.target.value; ord.diffLength = true; }
+      if (k === 'cyl') ord.cyl = e.target.value;
+      paintOrderModal(rec);
     });
-    host.addEventListener('input', function (e) {
-      var k = e.target.getAttribute && e.target.getAttribute('data-of'); if (!k || !ord) return;
-      if (k === 'power' || k === 'axis') { ord[k] = e.target.value; ord.touched[k] = true; }
-    });
-    var first = host.querySelector('select,button'); if (first) first.focus();
+    var first = host.querySelector('button[data-o], .sh-oladder tr.on'); if (first) first.focus();
   }
-  function placeOrder(rec) {
+  /* Taking a lens is what ends the calculation: either a physical one off the
+     shelf (with its serial and its own expected refraction, which is rarely the
+     target's) or one made to order when the shelf came back empty. Only here
+     does the calculation lock. */
+  function takeLens(rec, stockLens, manufactured) {
     var E = curEye(rec), R = rec.stellaRecommendation;
-    if (!ord.size) { ord.err = 'Select the lens size you are ordering.'; return paintOrderModal(rec); }
-    if (!ord.power) { ord.err = 'Enter the lens power.'; return paintOrderModal(rec); }
+    var rows = powerLadder(ord.selSphere, ord.cyl);
+    var sel = ladderRow(rows, ord.selSphere) || rows[0];
+    var target = targetLensStr(R.model, ord.size, ord.selSphere, ord.cyl, sel ? sel.axis : '');
     var prev = orderFor(rec, E);          // a repeat confirmation updates it, never doubles it
     var diverges = ord.size !== String(R.size);
-    if (diverges && !ord.ack) { ord.err = 'Confirm the difference with the STELLA recommendation before placing the order.'; return paintOrderModal(rec); }
     var rc = {
       caseId: rec.caseId, eye: E,
       orderNo: (prev && prev.orderNo) || String(760000 + Math.floor(Math.random() * 9000)),
-      lens: { size: ord.size, power: ord.power, axis: ord.axis || null },
+      lens: manufactured
+        ? { size: ord.size, power: ord.selSphere + ' ' + ord.cyl, axis: sel ? sel.axis : null }
+        : { size: ord.size, power: stockLens.sphere + ' ' + stockLens.cyl, axis: stockLens.axis },
+      target: target,
+      serial: manufactured ? null : stockLens.serial,
+      expRef: manufactured ? null : stockLens.expRef,
+      expSeq: manufactured ? null : stockLens.expSeq,
+      source: manufactured ? 'MANUFACTURE' : ord.source,
+      manufactured: !!manufactured,
       stella: { size: String(R.size), model: R.model, formula: R.formula },
       divergent: diverges,
       delta: diverges ? ((parseFloat(ord.size) - parseFloat(R.size) >= 0 ? '+' : '') + (parseFloat(ord.size) - parseFloat(R.size)).toFixed(1)) : '0.0',
       confirmedAt: new Date().toISOString(), system: 'STELLA', returnedTo: 'EVO_CONNECT', via: 'API'
     };
+    ord.step = 'done';
     try {
       var all = JSON.parse(localStorage.getItem(ORDER_KEY) || '{}');
       all[rc.caseId + '|' + rc.eye] = rc;

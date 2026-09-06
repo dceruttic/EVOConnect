@@ -213,6 +213,8 @@ td a{font-size:13.008px}
 /* results */
 .res{background:#fff;border-radius:8px;overflow:hidden;box-shadow:var(--sh-card)}
 .reshead{background:var(--green);border-bottom:1px solid var(--green-edge);color:#fff;padding:7px 14px}
+/* Once a lens has been taken the calculation is locked and the bar goes black. */
+.reshead.locked{background:#1C1C1C;border-bottom-color:#1C1C1C}
 .reshead .l1{display:flex;align-items:center;gap:12px}
 .reshead .e{font-size:34px;font-weight:900;line-height:1}
 .reshead .m{font-size:21px;line-height:32px}
@@ -717,12 +719,12 @@ function recommendLength(ww){
 
 const INVENTORY = {
   '13.2':[
-    {model:'VTICMO13.2',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'25',ref:'-0.75 +0.15 x040',sec:'-00.67'},
-    {model:'VTICMO13.2',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'26',ref:'-0.75 +0.15 x040',sec:'-00.67'},
-    {model:'VTICMO13.2',version:'EVO Visian ICL',sph:'-17.00',cyl:'+0.50',axis:'51',ref:'+0.04 +0.14 x040',sec:'+00.11'}
+    {model:'VTICMO13.2',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'25',ref:'-0.75 +0.15 x040',sec:'-00.67',serial:'T2826908'},
+    {model:'VTICMO13.2',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'26',ref:'-0.75 +0.15 x040',sec:'-00.67',serial:'T2549812'},
+    {model:'VTICMO13.2',version:'EVO Visian ICL',sph:'-17.00',cyl:'+0.50',axis:'51',ref:'+0.04 +0.14 x040',sec:'+00.11',serial:'T2131447'}
   ],
   '13.7':[
-    {model:'VTICMO13.7',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'28',ref:'-0.75 +0.15 x040',sec:'-00.67'}
+    {model:'VTICMO13.7',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'28',ref:'-0.75 +0.15 x040',sec:'-00.67',serial:'T2460551'}
   ],
   '12.6':[], '12.1':[]
 };
@@ -871,9 +873,16 @@ const deepOrder = (() => {
 if(deepPid){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
 function openDeepOrder(){
   if(!deepOrder) return false;
+  /* EVO Connect hands the case back here: STELLA opens on this patient's lens
+     tab and the surgeon runs STELLA's own circuit — pick the target lens off
+     the ladder, then Inventory Lookup, then reserve or manufacture. When the
+     calculation already carries a saved target, the lookup opens straight
+     away, because that is the step the surgeon came back for. */
   S.pid = deepPid; S.tab = 'lens'; loadFields();
-  S.order = { eye:deepOrder, size:'', power:'', axis:'', ack:false, err:null };
   go('patient');
+  setTimeout(function(){
+    if(S.savedTarget && S.savedTarget[deepOrder]){ S.inv = { eye: deepOrder, tab: 'stock' }; render(); }
+  }, 0);
   return true;
 }
 
@@ -927,6 +936,7 @@ function toast(title, msg, ok){
    ICONS + CHROME
    ================================================================== */
 const icoEye = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>`;
+const icoLock = `<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`;
 const icoPrint = `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6 3h12v4H6zM4 8h16a2 2 0 012 2v6h-4v5H6v-5H2v-6a2 2 0 012-2zm4 9h8v3H8z"/></svg>`;
 const icoSearch = `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>`;
 const icoClip = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z" fill="currentColor"/><path d="M12 11v6M9 14h6"/></svg>`;
@@ -1669,13 +1679,18 @@ function resultPanel(eye){
   const target = pick!=null
     ? `Toric Myopic ${len} mm ${rows[pick].sph} ${rows[pick].cyl} x${rows[pick].axExp}` : '';
   const c = ['16%','18%','16%','17%','13%','20%'];
+  /* Taking a lens is what locks the calculation — the black bar with the
+     padlock. Before that it stays green and the target can still be changed. */
+  const locked = S.orders[eye];
   return `<div class="res">
-    <div class="reshead">
+    <div class="reshead${locked?' locked':''}">
       <div class="l1"><span class="e">${eye.toUpperCase()}</span>
         <span class="grpicons" style="opacity:.9"><span>${icoEye}</span><span style="opacity:.55">${icoEye}</span></span>
-        <span class="m">Calculation complete.</span>
+        <span class="m">${locked?`${icoLock} Calculation locked.`:'Calculation complete.'}</span>
         <span class="r">${patient().act}&nbsp;&nbsp;Calculated with<br>8.00 OUS</span></div>
-      <div class="l2">Select a target lens.</div>
+      <div class="l2">${locked
+        ? `${locked.manufactured?'Lens sent to manufacture':'Lens reserved'} · Order ${locked.orderNo}${locked.serial?' · Serial '+locked.serial:''}`
+        : 'Select a target lens.'}</div>
     </div>
     <table><thead><tr>
       <th style="width:${c[0]}">Sel Sphere</th><th style="width:${c[1]}">Sel Cylinder</th>
@@ -1707,8 +1722,6 @@ function resultPanel(eye){
         ? `<button class="b b-primary" style="height:32px" data-inv="${eye}">Inventory Lookup</button>`
         : `<button class="b ${pick!=null?'b-primary':'b-grey'}" style="height:32px"
             ${pick!=null?`data-save="${eye}"`:'disabled'}>Save</button>`}
-      <button class="b ${S.orders[eye]?'b-outline':'b-primary'}" style="height:32px"
-        data-neworder="${eye}">${S.orders[eye]?`Order ${S.orders[eye].orderNo} ✓`:'Order lens'}</button>
     </div>
   </div>`;
 }
@@ -1867,17 +1880,17 @@ function inventory(){
     <div class="mbody">
       <table><thead><tr>
         ${head.map(h=>`<th class="${stock.length?'':'off'}">${h}</th>`).join('')}<th></th></tr></thead>
-        ${stock.length?`<tbody>${stock.map(s=>`<tr>
+        ${stock.length?`<tbody>${stock.map((s,i)=>`<tr>
           <td>${s.model}</td><td style="color:var(--green-ok)">${s.version}</td>
           <td>${s.sph}</td><td>${s.cyl}</td><td>${s.axis}</td><td>${s.ref}</td><td>${s.sec}</td>
           <td><span class="qty">1 <span class="ar"><button>▲</button><button>▼</button></span></span></td>
-          <td><button class="b b-primary" style="height:34px;border-radius:8px" data-act="reserve">Reserve</button></td>
+          <td><button class="b b-primary" style="height:34px;border-radius:8px" data-reserve="${eye}:${i}">Reserve</button></td>
         </tr>`).join('')}</tbody>`:''}
       </table>
       ${stock.length?'':`<div class="empty">No lenses were returned</div>`}
     </div>
     <div class="mfoot">
-      ${tab==='transit'?`<button class="b b-purple" style="height:37px;border-radius:8px" data-act="make">Manufacture Lens ⚙</button>`:''}
+      ${tab==='transit'?`<button class="b b-purple" style="height:37px;border-radius:8px" data-make="${eye}">Manufacture Lens ⚙</button>`:''}
       <span style="font-size:16px;margin-left:${tab==='transit'?'22px':'0'}">Select Different Length</span>
       <div class="step live" style="height:34px"><span>${len} mm</span>
         <span class="ar"><button data-len="${eye}:1">▲</button><button data-len="${eye}:-1">▼</button></span></div>
@@ -1889,14 +1902,15 @@ function inventory(){
 }
 
 /* ==================================================================
-   ORDER MODAL — circuit 1, step 7
+   TAKING A LENS — circuit 1, step 7
    STELLA creates, validates, records and audits the official order and is
-   the only ordering system. Nothing arrives here from REVAI: the surgeon
-   types the lens by hand, and any divergence from the STELLA recommendation
-   has to be confirmed explicitly before the order can be placed.
+   the only ordering system. There is no order field: the surgeon selects a
+   target lens, looks up what STAAR actually holds, and reserves a physical
+   lens — or has one manufactured when nothing comes back. The replica had
+   invented an "Order lens" button and a confirm-order modal; neither exists
+   in STELLA, and both are gone.
    ================================================================== */
 const ORDER_KEY = 'stella_order_confirmed';
-const ORDER_SIZES = ['12.1','12.6','13.2','13.7'];
 
 function stellaRec(eye){
   const rows = S.results && S.results[eye], pick = S.pick[eye];
@@ -1904,89 +1918,27 @@ function stellaRec(eye){
   return { size:S.targetLength[eye], model:S.mode[eye]==='TORIC'?'Toric Myopic':'Myopic',
            power:r?r.sph:null, cyl:r?r.cyl:null, axis:r?r.axExp:null, formula:'Calculator V8.00 OUS' };
 }
-function orderModal(){
-  const o = S.order; if(!o) return '';
-  const eye = o.eye, R = stellaRec(eye), p = patient();
-  const done = S.orders[eye];
-  const head = `<div class="ohead">
-      <div class="t">${done?'Order confirmed':'Confirm ICL order'}</div>
-      <div class="s">${p.pid} · ${eye.toUpperCase()} · STELLA — STAAR system of record</div></div>`;
-
-  if(done){
-    return `<div class="scrim" data-oscrim="1"><div class="omodal">${head}
-      <div class="obody"><div class="oreceipt">
-        <div class="k" style="font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:700">Order number</div>
-        <div class="no">${done.orderNo}</div>
-        <div class="rows">
-          <div class="r"><span>Case · eye</span><b>${p.pid} · ${eye.toUpperCase()}</b></div>
-          <div class="r"><span>Ordered lens</span><b>${done.lens.size} mm${done.lens.power?' · '+done.lens.power+' D':''}${done.lens.axis?' · '+done.lens.axis+'°':''}</b></div>
-          <div class="r"><span>STELLA recommendation</span><b>${done.stella.size} mm · ${done.stella.model}</b></div>
-          <div class="r"><span>Divergence</span><b>${done.divergent?done.delta+' mm — confirmed by the surgeon':'none — recommendation accepted'}</b></div>
-          <div class="r"><span>Confirmed</span><b>${done.confirmedAt.replace('T',' ').slice(0,16)} UTC</b></div>
-          <div class="r"><span>Confirmed by</span><b>${SURGEON.full}</b></div>
-        </div>
-        <div class="oaudit">Created, validated, recorded and audited in STELLA. The confirmed order is
-          returned to the linked analytical record in EVO Connect — that return carries the order only,
-          never a clinical recommendation into STELLA.</div>
-      </div></div>
-      <div class="ofoot"><div class="grow"></div>
-        <button class="b b-primary b-lg" data-act="closeorder">Done ✓</button></div>
-    </div></div>`;
-  }
-
-  const size = o.size||'', power = o.power||'', axis = o.axis||'';
-  const diverges = size && size !== String(R.size);
-  const delta = diverges ? ((parseFloat(size)-parseFloat(R.size)>=0?'+':'')+(parseFloat(size)-parseFloat(R.size)).toFixed(1)) : '';
-  return `<div class="scrim" data-oscrim="1"><div class="omodal">${head}
-    <div class="obody">
-      <div class="orec">
-        <div class="k">STELLA recommendation</div>
-        <div class="v">${R.size} mm</div>
-        <div class="m">${R.model}${R.power?' · '+R.power+' D':''}${R.axis?' · axis '+R.axis+'°':''} · ${R.formula}</div>
-      </div>
-      <div class="ogrid">
-        <label>Size (mm)<select data-o="size">
-          <option value="">—</option>
-          ${ORDER_SIZES.map(v=>`<option value="${v}" ${size===v?'selected':''}>${v}</option>`).join('')}
-        </select></label>
-        <label>Power (D)<input data-o="power" value="${power}" placeholder="—"></label>
-        <label>Axis (°, optional)<input data-o="axis" value="${axis}" placeholder="—"></label>
-      </div>
-      <div class="ohint">Enter the lens you are ordering. Nothing is pre-filled from an external
-        service — STELLA does not receive lens selections from outside.</div>
-      ${diverges?`<div class="odiff">
-        <div class="t">The lens you entered differs from the STELLA recommendation</div>
-        <div class="x">STELLA recommends ${R.size} mm; you entered ${size} mm (${delta} mm).
-          You can order the lens you entered, but the difference has to be confirmed.</div>
-        <label><input type="checkbox" data-o="ack" ${o.ack?'checked':''}>
-          <span>I confirm I am ordering ${size} mm instead of the ${R.size} mm recommended by STELLA.</span></label>
-      </div>`:''}
-      ${o.err?`<div class="oerr">${o.err}</div>`:''}
-    </div>
-    <div class="ofoot">
-      <span style="font-size:12px;color:var(--muted)">Demonstration only — no lens is ordered.</span>
-      <div class="grow"></div>
-      <button class="b b-outline" data-act="closeorder">Cancel</button>
-      <button class="b b-primary" data-act="placeorder">Place order</button>
-    </div>
-  </div></div>`;
-}
-function placeOrder(){
-  const o = S.order, eye = o.eye, R = stellaRec(eye);
-  if(!o.size){ o.err = 'Select the lens size you are ordering.'; render(); return; }
-  if(!o.power){ o.err = 'Enter the lens power.'; render(); return; }
-  const diverges = o.size !== String(R.size);
-  if(diverges && !o.ack){ o.err = 'Confirm the difference with the STELLA recommendation before placing the order.'; render(); return; }
-  o.err = null;
+function takeLens(eye, lens, manufactured){
+  const R = stellaRec(eye), p = patient();
+  const rows = S.results[eye], pick = S.pick[eye];
+  const r = (pick!=null && rows) ? rows[pick] : null;
+  const target = r ? `${R.model} ${S.targetLength[eye]} mm ${r.sph} ${r.cyl} x${r.axExp}` : '';
   const rec = {
-    caseId: patient().pid, eye: eye.toUpperCase(),
+    caseId: p.pid, eye: eye.toUpperCase(),
     orderNo: String(760000 + Math.floor(Math.random()*9000)),
-    lens: { size:o.size, power:o.power, axis:o.axis||null },
+    lens: manufactured
+      ? { size:S.targetLength[eye], power:(r?r.sph+' '+r.cyl:''), axis:(r?r.axExp:null) }
+      : { size:S.targetLength[eye], power:lens.sph+' '+lens.cyl, axis:lens.axis },
+    target, serial: manufactured ? null : lens.serial,
+    expRef: manufactured ? null : lens.ref, expSeq: manufactured ? null : lens.sec,
+    source: manufactured ? 'MANUFACTURE' : (S.inv && S.inv.tab==='transit' ? 'TRANSIT' : 'CH'),
+    manufactured: !!manufactured,
     stella: { size:String(R.size), model:R.model, formula:R.formula },
-    divergent: diverges, delta: diverges ? ((parseFloat(o.size)-parseFloat(R.size)>=0?'+':'')+(parseFloat(o.size)-parseFloat(R.size)).toFixed(1)) : '0.0',
+    divergent: false, delta: '0.0',
     confirmedBy: SURGEON.full, confirmedAt: new Date().toISOString(), system: 'STELLA'
   };
   S.orders[eye] = rec;
+  S.inv = null;
   /* step 8 — the confirmed order travels STELLA → REVAI. One direction only. */
   try {
     const all = JSON.parse(localStorage.getItem(ORDER_KEY) || '{}');
@@ -1994,6 +1946,8 @@ function placeOrder(){
     localStorage.setItem(ORDER_KEY, JSON.stringify(all));
   } catch(e){}
   render();
+  toast(manufactured ? 'Lens sent to manufacture' : 'Lens reserved',
+        `Order ${rec.orderNo}${rec.serial?' · Serial '+rec.serial:''} · demonstration only.`, true);
 }
 
 /* ==================================================================
@@ -2195,7 +2149,7 @@ const VIEWS = {
   surgeons:viewSurgeons, 'patient-new':viewNewPatient, login:viewLogin
 };
 function render(){
-  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector() + orderModal();
+  app.innerHTML = (VIEWS[S.route]||viewDashboard)() + inventory() + selector();
   if(S.route==='preop' && S.calculated) centreRows();
   if(S.focus){
     const el = document.querySelector(`[data-f="${S.focus.eye}:${S.focus.key}"]`);
@@ -2244,20 +2198,6 @@ document.addEventListener('input', e => {
   document.querySelectorAll('.bbtn').forEach(b => { b.disabled = !ready || S.calculated; });
 });
 
-/* order modal: size and the divergence acknowledgement re-render (they drive the
-   confirmation panel); power and axis are kept silently so the caret stays put */
-document.addEventListener('change', e => {
-  const k = e.target.dataset && e.target.dataset.o;
-  if(!k || !S.order) return;
-  if(k === 'ack'){ S.order.ack = e.target.checked; S.order.err = null; render(); return; }
-  if(k === 'size'){ S.order.size = e.target.value; S.order.ack = false; S.order.err = null; render(); return; }
-});
-document.addEventListener('input', e => {
-  const k = e.target.dataset && e.target.dataset.o;
-  if(!k || !S.order) return;
-  if(k === 'power' || k === 'axis') S.order[k] = e.target.value;
-});
-
 /* new-patient form: update the model and the live banner, keep the caret */
 document.addEventListener('input', e => {
   const k = e.target.dataset && e.target.dataset.np;
@@ -2284,13 +2224,11 @@ document.addEventListener('click', e => {
   const sel = '[data-go],[data-patient],[data-order],[data-tab],[data-pop],[data-act],[data-editeye],'
             + '[data-exp],[data-refr],[data-mode],[data-tg],[data-flip],[data-reset],[data-pick],'
             + '[data-alt],[data-len],[data-cyl],[data-save],[data-cancel],[data-inv],[data-mtab],'
-            + '[data-scrim],[data-selscrim],[data-np-sex],[data-np-tg],[data-neworder],[data-oscrim],[data-page]';
+            + '[data-scrim],[data-selscrim],[data-np-sex],[data-np-tg],[data-reserve],[data-make],[data-page]';
   const t = e.target.closest(sel);
   if(!t){ if(S.pop || S.usermenu){ S.pop=null; S.usermenu=false; render(); } return; }
   const d = t.dataset;
   if((d.scrim!==undefined || d.selscrim!==undefined || d.oscrim!==undefined) && e.target !== t) return;
-  if(d.oscrim!==undefined){ S.order = null; render(); return; }
-  if(d.neworder){ S.order = { eye:d.neworder, size:'', power:'', axis:'', ack:false, err:null }; render(); return; }
   if(d.page){ const [id, n] = d.page.split(':'); S.page[id] = parseInt(n,10) || 1;
               const y = window.scrollY; render(); window.scrollTo(0, y); return; }
 
@@ -2315,7 +2253,6 @@ document.addEventListener('click', e => {
       case 'selector': S.selector = true; render(); return;
       case 'closesel': S.selector = false; render(); return;
       case 'nologin':  toast('Sign-in disabled','This is a demonstration reproduction.'); return;
-      case 'closeorder': S.order = null; render(); return;
       case 'placeorder': placeOrder(); return;
       case 'newpreop':
       case 'opencalc': loadFields(); go('preop'); return;
@@ -2339,8 +2276,6 @@ document.addEventListener('click', e => {
       case 'rv-dismiss': S.rv.banner = 'min'; render(); return;
       case 'rv-reopen':  S.rv.banner = 'open'; S.rv.entered = false; render(); return;
       case 'print':    toast('Printing disabled','Report generation is not part of this demonstration.'); return;
-      case 'reserve':  toast('Reservation blocked','Reservations and official orders are created inside STELLA only.'); return;
-      case 'make':     toast('Manufacture request disabled','Not part of this demonstration.'); return;
       case 'closeinv': S.inv = null; render(); return;
       case 'cancelnew': S.newp = NEW_BLANK(); S.newpTried = false; go('patients'); return;
       case 'savenew': {
@@ -2404,6 +2339,16 @@ document.addEventListener('click', e => {
     S.pick[eye]=null; S.savedTarget[eye]=false; S.altLength[eye]=false;
     S.targetLength[eye]=recommendLength(S.fields[eye].ww); render(); return;
   }
+  /* An order is born here and nowhere else: STELLA has no "order lens" field.
+     You take a physical lens off the shelf — with its serial and its own
+     expected refraction, which is rarely the target's — or, when the shelf
+     came back empty, you have one made. Either way the calculation locks. */
+  if(d.reserve){
+    const [eye, i] = d.reserve.split(':');
+    const stock = INVENTORY[S.targetLength[eye]] || [];
+    takeLens(eye, stock[parseInt(i,10)], false); return;
+  }
+  if(d.make){ takeLens(d.make, null, true); return; }
   if(d.inv){ S.inv = {eye:d.inv, tab:'stock'}; render(); return; }
   if(d.mtab){ S.inv.tab = d.mtab; render(); return; }
   if(d.scrim!==undefined){ S.inv = null; render(); return; }

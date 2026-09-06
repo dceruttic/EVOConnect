@@ -411,14 +411,12 @@ function selectSizingFormula(patientId, code, size, vault, color) {
   document.querySelectorAll('.sf-comp-card').forEach(card => {
     card.classList.toggle('selected', card.getAttribute('data-formula') === code);
   });
+  /* Every method behaves the same on Select: mark the card, name the choice.
+     ICL Guru used to swap the whole comparison for its full inline report,
+     which took the surgeon out of the comparison they were in the middle of —
+     that report is still one click away on View PDF. */
   const banner = document.getElementById('sfChosenBanner');
   if (banner) {
-    // For ICL Guru we already render a sticky dual action bar around the report —
-    // suppress the redundant "Chosen formula" banner in that case.
-    if (code === 'ICL_GURU') {
-      banner.style.display = 'none';
-      banner.innerHTML = '';
-    } else {
       banner.style.display = '';
       banner.style.borderColor = color;
       banner.style.background = color + '14';
@@ -432,47 +430,6 @@ function selectSizingFormula(patientId, code, size, vault, color) {
             vault ? ` · vault <b style="color:${color}">${vault} µm</b>` : ''}</div>
         </div>
       `;
-    }
-  }
-
-  // === Special: when ICL Guru is chosen, expand the full ICL Guru PRO report inline ===
-  if (code === 'ICL_GURU') {
-    const pt = DATA.patients.find(p => p.id === patientId);
-    if (!pt) return;
-    const gPt = pt.iclGuru ? pt : { ...pt, iclGuru: _synthesizeIclGuruFromForm(pt, vault, parseFloat(size)) };
-    const list = document.getElementById('sfResultsList');
-    const el = document.getElementById('sfResults');
-    if (list) {
-      list.classList.add('sf-guru-mounted');
-      const guruHtml = renderPtSizingGuru(gPt);
-
-      /* Sticky bar — back + case recap, mounted at the TOP and BOTTOM of the
-         report. No ordering CTA lives here: the order is placed from the
-         decision section, which is the one place that validates the case. */
-      const actionBar = (position) => `
-        <div class="sf-guru-actionbar ${position}" data-position="${position}">
-          <button class="sf-guru-back" type="button" onclick="runSizingFormulas('${patientId}')" title="Back to formula comparator">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          </button>
-          <div class="sf-guru-summary">
-            <div class="sga-tag">ICL Guru · selected</div>
-            <div class="sga-recap">
-              <span class="sga-pill"><b>${size}</b> mm</span>
-              <span class="sga-pill"><b>${vault}</b> µm vault</span>
-              <span class="sga-pill"><b>${pt.name}</b> · ${pt.eye || 'OD'}</span>
-            </div>
-          </div>
-        </div>
-      `;
-
-      list.innerHTML = `
-        ${actionBar('top')}
-        <div class="sf-guru-report">${guruHtml}</div>
-        ${actionBar('bottom')}
-      `;
-    }
-    if (el) el.classList.add('sf-guru-mode');
-    try { el && el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) {}
   }
 }
 

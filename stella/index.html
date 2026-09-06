@@ -726,7 +726,14 @@ const INVENTORY = {
   '13.7':[
     {model:'VTICMO13.7',version:'EVO Visian ICL',sph:'-16.00',cyl:'+0.50',axis:'28',ref:'-0.75 +0.15 x040',sec:'-00.67',serial:'T2460551'}
   ],
-  '12.6':[], '12.1':[]
+  '12.6':[
+    {model:'VTICMO12.6',version:'EVO Visian ICL',sph:'-09.00',cyl:'+0.50',axis:'99',ref:'-0.06 +0.13 x105',sec:'+00.01',serial:'T2260355'},
+    {model:'VTICMO12.6',version:'EVO Visian ICL',sph:'-08.50',cyl:'+0.50',axis:'112',ref:'-0.45 +0.13 x105',sec:'-00.39',serial:'T2549805'},
+    {model:'VTICMO12.6',version:'EVO Visian ICL',sph:'-09.50',cyl:'+1.00',axis:'96',ref:'+0.33 +0.12 x105',sec:'+00.39',serial:'T2131380'}
+  ],
+  '12.1':[
+    {model:'VTICMO12.1',version:'EVO Visian ICL',sph:'-06.50',cyl:'+0.50',axis:'88',ref:'-0.21 +0.12 x111',sec:'-00.15',serial:'T2461745'}
+  ]
 };
 const BLANK_EYE = () => ({sph:'',cyl:'',axis:'',bvd:'12.00',k1:'',k1a:'',k2:'',k2a:'',acd:'',cct:'',ww:'',
                           sphCL:'',cylCL:'',axisCL:'',bvdCL:'12.00',sphCLx:''});
@@ -873,16 +880,33 @@ const deepOrder = (() => {
 if(deepPid){ try { history.replaceState(null, '', location.pathname + location.hash); } catch(e){} }
 function openDeepOrder(){
   if(!deepOrder) return false;
-  /* EVO Connect hands the case back here: STELLA opens on this patient's lens
-     tab and the surgeon runs STELLA's own circuit — pick the target lens off
-     the ladder, then Inventory Lookup, then reserve or manufacture. When the
-     calculation already carries a saved target, the lookup opens straight
-     away, because that is the step the surgeon came back for. */
+  /* EVO Connect hands the case back to STELLA to be ordered, so STELLA opens on
+     the thing the surgeon came back for: this patient's calculation, with its
+     own recommended row already the target, and the Lens Inventory Lookup
+     open on it. From there the circuit is STELLA's — reserve a lens off the
+     shelf, or manufacture one.
+
+     What does NOT cross is the lens the surgeon decided in EVO Connect. STELLA
+     preselects its OWN recommendation; changing it to the decided lens is the
+     surgeon's job here, by hand. That is the whole point of the boundary. */
   S.pid = deepPid; S.tab = 'lens'; loadFields();
-  go('patient');
-  setTimeout(function(){
-    if(S.savedTarget && S.savedTarget[deepOrder]){ S.inv = { eye: deepOrder, tab: 'stock' }; render(); }
-  }, 0);
+  const eye = deepOrder;
+  const od = eyeReady('od') ? computeSeries(S.fields.od, S.cylPower.od, S.mode.od==='TORIC') : null;
+  const os = eyeReady('os') ? computeSeries(S.fields.os, S.cylPower.os, S.mode.os==='TORIC') : null;
+  if(!(eye==='od' ? od : os)){ go('patient'); return true; }   // nothing to order against
+  S.results = { od, os };
+  S.targetLength = { od:recommendLength(S.fields.od.ww), os:recommendLength(S.fields.os.ww) };
+  S.calculated = true; S.calculatedAt = new Date().toISOString(); S.focus = null;
+  S.pick = {od:null,os:null}; S.savedTarget = {od:false,os:false};
+  /* STELLA's own recommended row: the one whose expected refraction lands
+     nearest plano — the same row it highlights when a calculation is opened. */
+  const rows = eye==='od' ? od : os;
+  let best = 0;
+  rows.forEach((r,i)=>{ if(Math.abs(parseFloat(r.sec)) < Math.abs(parseFloat(rows[best].sec))) best = i; });
+  S.pick[eye] = best;
+  S.savedTarget[eye] = true;
+  S.inv = { eye, tab:'stock' };
+  go('preop');
   return true;
 }
 
@@ -1890,8 +1914,8 @@ function inventory(){
       ${stock.length?'':`<div class="empty">No lenses were returned</div>`}
     </div>
     <div class="mfoot">
-      ${tab==='transit'?`<button class="b b-purple" style="height:37px;border-radius:8px" data-make="${eye}">Manufacture Lens ⚙</button>`:''}
-      <span style="font-size:16px;margin-left:${tab==='transit'?'22px':'0'}">Select Different Length</span>
+      ${stock.length?'':`<button class="b b-purple" style="height:37px;border-radius:8px" data-make="${eye}">Manufacture Lens ⚙</button>`}
+      <span style="font-size:16px;margin-left:${stock.length?'0':'22px'}">Select Different Length</span>
       <div class="step live" style="height:34px"><span>${len} mm</span>
         <span class="ar"><button data-len="${eye}:1">▲</button><button data-len="${eye}:-1">▼</button></span></div>
       <div class="grow"></div>
@@ -2253,7 +2277,6 @@ document.addEventListener('click', e => {
       case 'selector': S.selector = true; render(); return;
       case 'closesel': S.selector = false; render(); return;
       case 'nologin':  toast('Sign-in disabled','This is a demonstration reproduction.'); return;
-      case 'placeorder': placeOrder(); return;
       case 'newpreop':
       case 'opencalc': loadFields(); go('preop'); return;
 

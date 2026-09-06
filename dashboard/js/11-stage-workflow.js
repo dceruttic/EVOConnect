@@ -296,11 +296,14 @@ function renderPatientPage(pt) {
         <div class="pt-ph-av">${patientAvatar(pt)}</div>
         <div class="pt-ph-info">
           <h1>${pt.name}</h1>
-          <div class="pt-ph-sub">REV-${pt.id} · ${pt.age}y · ${pt.sex} · eye ${pt.eye} · ${pt.power} D</div>
+          <div class="pt-ph-sub">REV-${pt.id} · ${pt.age}y · ${pt.sex} · eye ${pt.eye}${
+            String(pt.power || '').trim() && String(pt.power).trim() !== '\u2014' ? ` · ${pt.power} D` : ''}</div>
           <div class="pt-ph-chips">
             <span class="c stage">Stage: ${pt.stage === 'Sizing' ? 'ICL selection' : pt.stage}</span>
             <span class="c eye">${pt.eye}</span>
-            <span class="c pwr">${pt.power} D</span>
+            ${String(pt.power || '').trim() && String(pt.power).trim() !== '\u2014'
+                ? `<span class="c pwr">${pt.power} D</span>`
+                : `<span class="c pwr muted">No refraction yet</span>`}
             ${pt.risk ? `<span class="c risk-${pt.risk.level}">${pt.risk.level.toUpperCase()} risk · ${pt.risk.score}</span>` : ''}
             ${typeof ptOrderChip === 'function' ? ptOrderChip(pt) : ''}
           </div>

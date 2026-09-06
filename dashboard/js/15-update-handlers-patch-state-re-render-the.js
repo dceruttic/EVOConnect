@@ -738,16 +738,31 @@ function importSizingFromEHR() {
   showToast("Imported 6 biometry fields from Clinic EHR · 2.3s");
 }
 
+/* A record with nothing in it yet. The demo patients carry a refraction, so
+   every derived value below has something to derive from; a patient created
+   this minute has none, and biometry seeded from a fallback would be worse
+   than an empty field — it would look like measurements nobody took. */
+function ptIsBlank(pt) {
+  var hasRx = pt.power && String(pt.power).trim() !== '\u2014' && String(pt.power).trim() !== '';
+  if (hasRx) return false;
+  var store = (typeof PT_PREOP_DATA !== 'undefined') ? PT_PREOP_DATA[pt.id] : null;
+  var imported = !!(store && (store.ehrImported || (store.attachments || []).length));
+  return !imported;
+}
+
 function renderPtSizingFormulas(pt) {
   const b = patientBiometry(pt);
+  const blank = ptIsBlank(pt);
+  /* every seeded value passes through here, so an empty case stays empty */
+  const V = (x) => (blank ? '' : x);
   const power = parseFloat(String(pt.power).split('/')[0]) || -6;
-  const ata = (b.WTW.v - 0.15).toFixed(2);
-  const sts = (b.WTW.v + 0.3).toFixed(2);
-  const wtw = b.WTW.v.toFixed(2);
-  const acd = b.ACD.v.toFixed(2);
-  const clr = (170 + Math.round(ptRand(pt.id,41,-50,80)));
-  const kMean = ((b.K1.v + b.K2.v) / 2).toFixed(2);
-  const al = (b.AL && b.AL.v ? b.AL.v : (24.0 + ptRand(pt.id, 43, -1.4, 3.2))).toFixed(2);
+  const ata = V((b.WTW.v - 0.15).toFixed(2));
+  const sts = V((b.WTW.v + 0.3).toFixed(2));
+  const wtw = V(b.WTW.v.toFixed(2));
+  const acd = V(b.ACD.v.toFixed(2));
+  const clr = V(170 + Math.round(ptRand(pt.id,41,-50,80)));
+  const kMean = V(((b.K1.v + b.K2.v) / 2).toFixed(2));
+  const al = V((b.AL && b.AL.v ? b.AL.v : (24.0 + ptRand(pt.id, 43, -1.4, 3.2))).toFixed(2));
   const eye = pt.eye.split('/')[0].trim() || 'OD';
   const firstName = pt.name.split(' ').slice(-1)[0] || 'Patient';
 
@@ -796,7 +811,7 @@ function renderPtSizingFormulas(pt) {
             <div class="seb-eye-meta">
               <div class="seb-eye-nickname">"${firstName}" · ${pt.age}y · ${pt.sex}</div>
               <div class="seb-eye-rx">
-                <span><b>${power.toFixed(2)} D</b> sphere</span>
+                <span>${blank ? '<b>—</b> no refraction on record' : '<b>' + power.toFixed(2) + ' D</b> sphere'}</span>
                 <span class="dot">·</span>
                 <span class="muted">vault not yet calculated</span>
               </div>
@@ -826,19 +841,19 @@ function renderPtSizingFormulas(pt) {
         </div>
       </div>
       <div class="seb-kpi-strip">
-        <div class="seb-kpi"><span class="kpi-lbl">AL</span><span class="kpi-val">${b.AL.v.toFixed(2)}<em>mm</em></span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">K-mean</span><span class="kpi-val">${_kpiKMean}<em>D</em></span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">ACD</span><span class="kpi-val">${b.ACD.v.toFixed(2)}<em>mm</em></span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">WTW</span><span class="kpi-val">${b.WTW.v.toFixed(2)}<em>mm</em></span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">CCT</span><span class="kpi-val">548<em>µm</em></span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">Pupil</span><span class="kpi-val">6.1<em>mm</em></span></div>
+        <div class="seb-kpi"><span class="kpi-lbl">AL</span><span class="kpi-val">${blank ? '—' : b.AL.v.toFixed(2) + '<em>mm</em>'}</span></div>
+        <div class="seb-kpi"><span class="kpi-lbl">K-mean</span><span class="kpi-val">${blank ? '—' : _kpiKMean + '<em>D</em>'}</span></div>
+        <div class="seb-kpi"><span class="kpi-lbl">ACD</span><span class="kpi-val">${blank ? '—' : b.ACD.v.toFixed(2) + '<em>mm</em>'}</span></div>
+        <div class="seb-kpi"><span class="kpi-lbl">WTW</span><span class="kpi-val">${blank ? '—' : b.WTW.v.toFixed(2) + '<em>mm</em>'}</span></div>
+        <div class="seb-kpi"><span class="kpi-lbl">CCT</span><span class="kpi-val">${blank ? '—' : '548<em>µm</em>'}</span></div>
+        <div class="seb-kpi"><span class="kpi-lbl">Pupil</span><span class="kpi-val">${blank ? '—' : '6.1<em>mm</em>'}</span></div>
       </div>
     </div>
   `;
 
-  const sphMan = power.toFixed(2);
-  const sphCyc = (power + 0.25).toFixed(2);
-  const sphAuto = (power + 0.12).toFixed(2);
+  const sphMan = V(power.toFixed(2));
+  const sphCyc = V((power + 0.25).toFixed(2));
+  const sphAuto = V((power + 0.12).toFixed(2));
 
   const inputsHtml = `
     <!-- Sub-group A: Lens power calculation (refractions) -->
@@ -865,14 +880,14 @@ function renderPtSizingFormulas(pt) {
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
             <div class="sf-rx-cell"><label for="sf-rx-man-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-man-sph" value="${sphMan}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-man-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-man-cyl" value="-0.50"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-man-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-ax" value="178"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-man-cyl" value="${V('-0.50')}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-ax" value="${V('178')}"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label for="sf-rx-man-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1" value="${(b.K1.v).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-man-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1ax" value="178"/><span class="sf-unit">°</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-man-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k2" value="${(b.K2.v).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1" value="${V((b.K1.v).toFixed(2))}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k1ax" value="${V('178')}"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-man-k2" value="${V((b.K2.v).toFixed(2))}"/><span class="sf-unit">D</span></div></div>
           </div>
         </div>
         <div class="sf-rx-card">
@@ -880,14 +895,14 @@ function renderPtSizingFormulas(pt) {
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
             <div class="sf-rx-cell"><label for="sf-rx-cyc-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-sph" value="${sphCyc}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-cyc-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-cyl" value="-0.50"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-cyc-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-ax" value="180"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-cyl" value="${V('-0.50')}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-ax" value="${V('180')}"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label for="sf-rx-cyc-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1" value="${(b.K1.v - 0.05).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-cyc-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1ax" value="180"/><span class="sf-unit">°</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-cyc-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k2" value="${(b.K2.v - 0.04).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1" value="${V((b.K1.v - 0.05).toFixed(2))}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k1ax" value="${V('180')}"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-cyc-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-cyc-k2" value="${V((b.K2.v - 0.04).toFixed(2))}"/><span class="sf-unit">D</span></div></div>
           </div>
         </div>
         <div class="sf-rx-card">
@@ -895,14 +910,14 @@ function renderPtSizingFormulas(pt) {
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
             <div class="sf-rx-cell"><label for="sf-rx-aut-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-sph" value="${sphAuto}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-aut-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-cyl" value="-0.62"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-aut-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-ax" value="175"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-cyl" value="${V('-0.62')}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-ax" value="${V('175')}"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label for="sf-rx-aut-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1" value="${(b.K1.v + 0.03).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-aut-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1ax" value="176"/><span class="sf-unit">°</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-aut-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k2" value="${(b.K2.v + 0.06).toFixed(2)}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-k1">K1</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1" value="${V((b.K1.v + 0.03).toFixed(2))}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-k1ax">K1 axis</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k1ax" value="${V('176')}"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-aut-k2">K2</label><div class="sf-input-row"><input type="text" id="sf-rx-aut-k2" value="${V((b.K2.v + 0.06).toFixed(2))}"/><span class="sf-unit">D</span></div></div>
           </div>
         </div>
       </div>

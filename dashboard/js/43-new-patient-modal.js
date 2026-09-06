@@ -63,8 +63,6 @@
               '<em class="np-err" data-err="age" hidden>18 to 60</em></label>' +
             '<label class="np-f"><span>Sex</span>' +
               '<select name="sex"><option value="F">Female</option><option value="M">Male</option><option value="Other">Other</option></select></label>' +
-            '<label class="np-f"><span>Eye</span>' +
-              '<select name="eye"><option value="OD/OS">OD / OS</option><option value="OD">OD</option><option value="OS">OS</option></select></label>' +
             '<label class="np-f np-wide np-check"><input type="checkbox" name="open" checked>' +
               '<span>Open the patient file after creating</span></label>' +
           '</form>' +
@@ -101,11 +99,12 @@
     bad = err('age', !(age >= 18 && age <= 60)) || bad;
     if (bad) { var first = f.querySelector('.np-err:not([hidden])'); if (first) first.scrollIntoView({ block: 'center' }); return; }
 
-    var sex = v('sex'), eye = v('eye');
-    /* Refraction is not asked for here — it is entered in the pre-op step, which
-       is exactly where a new case starts. */
+    var sex = v('sex');
+    /* Neither refraction nor laterality is asked for here: both are established
+       in the pre-op step, which is exactly where a new case starts. A case
+       begins on both eyes until the workup says otherwise. */
     var pt = {
-      id: v('id'), name: name, age: age, sex: sex, eye: eye, power: '\u2014',
+      id: v('id'), name: name, age: age, sex: sex, eye: 'OD/OS', power: '\u2014',
       stage: 'Consult', risk: null, iclGuru: null, portrait: portraitFor(sex),
       surgeryDate: null, createdAt: new Date().toISOString()
     };

@@ -1573,7 +1573,12 @@
         (drift ? '<em>' + esc(fmt(COPY.E2s, { rec: R.size, got: reran.recSize.toFixed(1) })) + '</em>' : '') +
         '</div>' : '') +
       '<div class="sh-meta"><div>' + esc(R.formula) + '</div><div>' + esc(rec.caseId) + ' · ' + esc(E) + '</div></div>' +
-      '<div class="sf-comp-foot"><span class="sh-locked-lbl">' + esc(COPY.P3) + '</span></div></div>';
+      /* STELLA's card selects like any other — it is the one whose Select means
+         "accept the recommendation", the way the STAAR nomogram does natively. */
+      '<div class="sf-comp-foot"><span class="sh-locked-lbl">' + esc(COPY.P3) + '</span>' +
+        '<div class="actions"><button class="btn btn-primary small" onclick="event.stopPropagation();' +
+        'selectSizingFormula(\'' + esc(rec.caseId) + '\',\'' + STELLA_CODE + '\',\'' + esc(R.size) + '\',0,\'#0071B0\')">Select</button></div>' +
+      '</div></div>';
   }
   /* The vault scale is always drawn so every card reads the same; only a method
      that actually predicts vault gets a marker and a number. Today that is ICL
@@ -1638,6 +1643,42 @@
         (opts.foot != null ? opts.foot : '<span class="sh-goto">' + esc(COPY.J1) + ' \u2193</span>') +
       '</div></div>';
   }
+  /* The same footer the native comparator draws (js/19): both journeys offer
+     View PDF where there is one, and Select on every method. */
+  function cardActions(r, rec) {
+    var bc = r.predictsVault === false ? '#63708A'
+      : (VAULT_BANDS[r.band] || '#5A6478');
+    var pdf = r.code === 'ICL_GURU'
+      ? '<button class="sf-comp-pdf" type="button" title="Open the original ICL Guru PDF report"' +
+        ' onclick="event.stopPropagation();openIclGuruPdf(\'' + esc(rec.caseId) + '\', ' + parseFloat(r.recSize) + ')">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+        'View PDF</button>' : '';
+    return '<div class="actions">' + pdf +
+      '<button class="btn btn-primary small" onclick="event.stopPropagation();selectSizingFormula(\'' + esc(rec.caseId) + '\',\'' + esc(r.code) + '\',\'' + parseFloat(r.recSize).toFixed(1) + '\',' + (r.vault || 0) + ',\'' + bc + '\')">Select</button></div>';
+  }
+
+  /* Selecting a method is the surgeon saying which lens they are going with, so
+     step 4 opens with that answer already in place rather than asking again —
+     the same as the native journey (js/44). It fills the form; it does not save
+     the decision. Nothing is recorded until Save decision. */
+  function shApplyFormulaChoice(code, size) {
+    var form = document.getElementById('shDecisionForm');
+    if (!form) return false;
+    var fire = function (n) { n.dispatchEvent(new Event('change', { bubbles: true })); };
+    var accept = code === STELLA_CODE;
+    var r = form.querySelector('[name="sh-choice"][value="' + (accept ? 'accept' : 'prefer') + '"]');
+    if (!r || r.disabled) return false;
+    r.checked = true; fire(r);
+    if (!accept) {
+      var sel = form.querySelector('[name="sh-size"]');
+      var v = (size == null || size === '') ? '' : parseFloat(size).toFixed(1);
+      if (sel && v && [].some.call(sel.options, function (o) { return o.value === v; })) { sel.value = v; fire(sel); }
+      var m = form.querySelector('[name="sh-method"][value="' + code + '"]');
+      if (m) { m.checked = true; fire(m); }
+    }
+    return true;
+  }
+
   /* Shared with the native EVO Connect comparator (js/19), so both journeys
      render the same card instead of two designs that drift apart. */
   window.SH_CARDS = { methodCard: extCard, vaultBar: vaultBar, bandLabel: function (b) { return bandLabel(b); } };
@@ -1769,7 +1810,7 @@
       var ran = results.length + (withStella ? 1 : 0);
       if (tag) tag.textContent = fmt(COPY.N1, { N: ran });
       list.innerHTML = '<div class="sf-comp-grid sh-grid">' + (withStella ? stellaCard(rec) : '') +
-        results.map(function (r) { return extCard(r, rec); }).join('') + '</div>' +
+        results.map(function (r) { return extCard(r, rec, { foot: cardActions(r, rec) }); }).join('') + '</div>' +
         (ran ? '' : '<div class="sh-none">' + esc(COPY.N2) + '</div>');
       rec.ui.methodsRun = codes.slice();
       refreshSizeOptions(rec);
@@ -1777,9 +1818,13 @@
       try { box.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
     };
     var _select = window.selectSizingFormula;
-    window.selectSizingFormula = function (patientId, code) {
+    window.selectSizingFormula = function (patientId, code, size) {
       if (!isHandoff(patientId)) return _select.apply(this, arguments);
-      if (H) H.ui.selectedCard = code;                                   // never writes decision.*
+      if (H) H.ui.selectedCard = code;
+      document.querySelectorAll('#sfResultsList .sf-comp-card').forEach(function (c) {
+        c.classList.toggle('selected', c.getAttribute('data-formula') === code);
+      });
+      shApplyFormulaChoice(code, size);                  // fills the form; saves nothing
       scrollToDecision();
     };
     var _scope = window.setSizingEyeScope;

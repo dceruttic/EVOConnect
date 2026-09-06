@@ -78,6 +78,37 @@ Abrí http://localhost:8080
 Push a GitHub → auto-deploy en Vercel (proyecto `revai-staar-demo`, team REVAI).
 Sin build step: HTML/CSS/JS estático.
 
+## Responsive (tablet y teléfono)
+
+Todo el sitio se usa también en tablet y teléfono. El escritorio (≥1181 px) no cambia: la capa
+responsive **sólo estrecha**, nunca toca el layout de escritorio.
+
+- **`/ecosystem`** — el film del hero es 16:9 y su copy ocupa casi todo el cuadro, así que no se
+  recorta. En **vertical** (teléfono o tablet en portrait) el film pasa a ser una banda de ancho
+  completo debajo del header, el titular se lee debajo y visible desde el principio (no hay nada
+  que ocultar), y el film hace loop completo. En **horizontal más angosto que 16:9** (iPad
+  apaisado, teléfono de costado) el film se ve entero letterboxeado sobre su propio negro
+  (`#05070D`, invisible) y el titular entra después de la primera pasada limpia, como en
+  escritorio. La clase `fit-contain` la mide un ResizeObserver sobre la caja del hero, no sobre el
+  viewport. Fuente por pantalla: teléfono ≤1300 px físicos → 720p30; teléfono/tablet → 1080p30;
+  HiDPI ≥1200 px → 1440p60; resto → 1080p60. Si el autoplay se rechaza (Low Power Mode) queda el
+  póster con un botón de play (sólo en vertical).
+- **`/dashboard`** (EVO Connect) — `css/44-responsive.css` (carga última) + `js/47-responsive-shell.js`.
+  Tablet (≤1180): la sidebar se colapsa sola al riel de íconos (el usuario puede expandirla).
+  Teléfono (≤767): sidebar off-canvas desde la barra superior móvil (`.us-mobilebar`, hamburguesa
+  + módulo actual), grillas a una columna, paneles/copilot como bottom sheet. Toda `<table>`
+  renderizada en `#usMain` se envuelve en `.rs-table-wrap` (scroll horizontal dentro de su card)
+  por un MutationObserver; no hace falta tocar los templates.
+- **`/intelligence`** — `css/responsive.css`; viewport real (antes fijo en 1440). ≤900 px la
+  sidebar es una tira horizontal arriba y las grillas apilan. Sigue bloqueado con "Coming Soon".
+- **`/stella`** — ya tenía media queries; `render()` envuelve en `.scrollx` las tablas que no
+  lo estaban, y la toolbar de búsqueda hace wrap en teléfono.
+- **`/investors`** — menú móvil propio (`.nav-toggle`) en `assets/site/staar-site.css`; el resto
+  de las páginas corporativas usan el header responsive de staar.com (`css/main.css`).
+
+Chequeo rápido: ninguna página debe scrollear horizontalmente a 375 px; sólo scrollean por
+dentro las tablas anchas, el stepper del paciente y las tiras de chips.
+
 ## Notas
 
 - Toda la data clínica es **mockeada**. No hay PHI real.

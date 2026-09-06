@@ -54,6 +54,8 @@
   <link rel="stylesheet" href="/dashboard/css/43-ftu.css">
   <!-- loads last: the keyboard-focus and reduced-motion floor (audit A-01, A-06) -->
   <link rel="stylesheet" href="/dashboard/css/42-a11y-focus.css">
+  <!-- loads after everything: tablet (≤1180px) and phone (≤767px) layout — desktop untouched -->
+  <link rel="stylesheet" href="/dashboard/css/44-responsive.css">
 
   <!-- STELLA handoff: land straight on the patient case, never flash the REVAI home -->
   <style>html.sh-direct #dashboardView{visibility:hidden}html.sh-direct body{background:var(--cream,#fff)}html.sh-direct .universe{animation:none!important}
@@ -589,9 +591,26 @@
     </div>
   </aside>
 
+  <!-- phones: tap outside the drawer to close it (css/43) -->
+  <div class="us-scrim" id="usScrim" onclick="closeMobileNav()" aria-hidden="true"></div>
+
   <!-- The phase banner sits OUTSIDE the scrolling column, so it never travels
        with the content. #usMain keeps its own scroll. -->
   <div class="universe-col">
+    <!-- phones only (css/43): hamburger + where you are. Hidden from 768px up. -->
+    <div class="us-mobilebar" id="usMobileBar">
+      <button class="us-menu-btn" id="usMenuBtn" type="button" onclick="toggleMobileNav()" aria-label="Open navigation" aria-controls="universeSidebar" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div class="us-mobilebar-brand">
+        <span class="us-mobilebar-eyebrow">EVO Connect</span>
+        <span class="us-mobilebar-mod" id="usMobileMod">Patients</span>
+      </div>
+      <!-- the floating copilot button would sit on top of every full-screen dialog on a phone: on phones it lives here instead -->
+      <button class="us-mobilebar-copilot" type="button" onclick="openCopilot()" aria-label="Open EVO Copilot" title="EVO Copilot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
     <div id="pdBannerSlot"></div>
     <main class="universe-main" id="usMain">
       <!-- Module content injected by JS -->
@@ -779,6 +798,9 @@
 
 <!-- Modal focus containment (audit A-05) -->
 <script src="/dashboard/js/45-focus-trap.js"></script>
+
+<!-- Tablet / phone shell behaviour (drawer, auto-collapse, table scroll) — pairs with css/43 -->
+<script src="/dashboard/js/47-responsive-shell.js"></script>
 
 <!-- Permanent demonstration label (brief limit 6) — every screen, always visible. -->
 <div class="demo-stamp" role="note">Demonstration only – synthetic data – not for clinical use</div>

@@ -1,0 +1,92 @@
+/* ================================================================
+   STAAR Intelligence Center — tablet and phone layer
+   Loads after styles.css. Desktop (≥1181px) is untouched; below that the
+   sidebar first tightens, then (≤900px) turns into a horizontal strip
+   above the content, and the dense HQ grids stack. The surface is still
+   behind the "Coming Soon" lock, so the goal is a preview that reads
+   well on any screen, plus a lock card that fits a phone.
+================================================================ */
+
+/* never let a chart or picture widen the page */
+.main svg[viewBox] { max-width: 100%; }
+.main img { max-width: 100%; }
+
+/* ---------- ≤1180px: tighter sidebar and gutters ---------- */
+@media (max-width: 1180px) {
+  .app { grid-template-columns: 210px minmax(0, 1fr); }
+  .sidebar { padding: 18px 12px; }
+  .main { padding: 18px 20px 60px; }
+  .kpi-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .kanban { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .search { width: 220px; }
+}
+
+/* ---------- ≤900px: sidebar becomes a strip, everything single column ---------- */
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .sidebar {
+    position: static; height: auto; overflow: visible;
+    flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 10px;
+    padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line);
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .sidebar::-webkit-scrollbar { display: none; }
+  .brand { flex: none; flex-direction: row; align-items: center; gap: 10px; padding-right: 10px; border-right: 1px solid var(--line); }
+  .brand-wordmark { width: 120px; height: 18px; }
+  .brand-text .t2 { display: none; }
+  .nav-group { flex-direction: row; flex: none; gap: 4px; align-items: center; }
+  .nav-label { display: none; }
+  .nav-item { white-space: nowrap; padding: 8px 10px; font-size: 12.5px; }
+  .nav-item .badge, .nav-item .dot { margin-left: 4px; }
+  .side-card { display: none; }
+
+  .main { padding: 16px 16px 60px; }
+  .topbar { flex-wrap: wrap; gap: 10px; }
+  .top-actions { margin-left: 0; flex-wrap: wrap; width: 100%; }
+  .search { width: 100%; }
+  .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); }
+  .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .continent-counters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .map-wrap { height: 380px; }
+  .map-wrap.big { height: 440px; }
+  .map-legend { top: auto; bottom: 12px; right: 12px; padding: 8px 10px; gap: 4px; max-width: 46%; }
+  .map-stats { flex-wrap: wrap; max-width: 50%; }
+  .kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cmty-wrap { grid-template-columns: minmax(0, 1fr); }
+  .agents-grid { grid-template-columns: minmax(0, 1fr); }
+  .cl-filterbar { grid-template-columns: minmax(0, 1fr); }
+  .cl-grid-vault, .cl-grid-toric, .cl-grid-evo, .cl-grid-proms { grid-template-columns: minmax(0, 1fr); }
+  .cl-q-grid { grid-template-columns: minmax(0, 1fr); }
+  .eq-breakdown { grid-template-columns: minmax(0, 1fr); }
+  .drawer, .drawer.wide { width: 100vw; }
+  #soon-lock { padding: 20px; }
+  #soon-lock .soon-card { padding: 28px 22px; }
+  #soon-lock h2 { font-size: 30px; }
+  #soon-lock p { font-size: 15px; }
+}
+
+/* ---------- ≤600px: phones ---------- */
+@media (max-width: 600px) {
+  .main { padding: 14px 12px 60px; }
+  .kpi-row { gap: 8px; }
+  .kpi-size-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kanban { grid-template-columns: minmax(0, 1fr); }
+  .map-wrap, .map-wrap.big { height: 300px; }
+  .map-legend { display: none; }
+  .continent-counters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dr-surg-head, .dr-surg-row { grid-template-columns: 24px minmax(0, 1.4fr) minmax(0, 1fr) 48px; font-size: 11px; }
+  .dr-surg-head > :last-child, .dr-surg-row > :last-child { display: none; }
+  .agent-card .hdr { grid-template-columns: 36px minmax(0, 1fr); }
+  .agent-card .hdr > :last-child { grid-column: 1 / -1; }
+  .cp-wrap { padding: 6px 0 40px; }
+  #soon-lock h2 { font-size: 26px; }
+  #soon-lock .soon-back { width: 100%; justify-content: center; }
+}
+
+/* ---------- ≤420px ---------- */
+@media (max-width: 420px) {
+  .kpi-row { grid-template-columns: minmax(0, 1fr); }
+  .sent-grid { grid-template-columns: minmax(0, 1fr); }
+}

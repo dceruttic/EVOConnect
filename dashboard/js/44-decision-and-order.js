@@ -371,6 +371,32 @@
     render(CURRENT_PT);
   }
 
+  /* ---------- prefill from the comparison ----------
+     Selecting a method in step 3 is already the surgeon saying which lens
+     they are going with, so step 4 opens with that answer in place instead
+     of asking for it a second time. Picking the STAAR nomogram checks
+     "Accept"; picking anything else checks "Prefer another lens" and fills
+     in the size and the influencing method (which in turn infers the
+     reason). Everything stays editable, and a decision already on record is
+     never touched — the surgeon reopens it with Edit. */
+  window.pdApplyFormulaChoice = function (code, size) {
+    var form = document.getElementById('ptDecisionForm');
+    if (!form) return false;
+    var fire = function (n) { n.dispatchEvent(new Event('change', { bubbles: true })); };
+    var accept = code === 'STAAR_NOM';
+    var r = form.querySelector('[name="pd-choice"][value="' + (accept ? 'accept' : 'prefer') + '"]');
+    if (!r || r.disabled) return false;
+    r.checked = true; fire(r);
+    if (!accept) {
+      var sel = form.querySelector('[name="pd-size"]');
+      var v = (size == null || size === '') ? '' : parseFloat(size).toFixed(1);
+      if (sel && v && [].some.call(sel.options, function (o) { return o.value === v; })) { sel.value = v; fire(sel); }
+      var m = form.querySelector('[name="pd-method"][value="' + code + '"]');
+      if (m) { m.checked = true; fire(m); }
+    }
+    return true;
+  };
+
   /* Runs after every comparison and every tab render. */
   function install() {
     var _run = window.runSizingFormulas;

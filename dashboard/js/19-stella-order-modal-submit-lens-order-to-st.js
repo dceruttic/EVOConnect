@@ -431,6 +431,11 @@ function selectSizingFormula(patientId, code, size, vault, color) {
         </div>
       `;
   }
+
+  /* Step 3 and step 4 are one thought: choosing a method here is the surgeon
+     saying which lens they are going with, so the decision form opens with
+     that answer already in place rather than asking for it again. */
+  if (typeof window.pdApplyFormulaChoice === 'function') window.pdApplyFormulaChoice(code, size);
 }
 
 // Build a plausible iclGuru data block from form inputs + selected formula result

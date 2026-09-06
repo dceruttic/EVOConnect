@@ -63,8 +63,53 @@ const SURGEON_POOL = [
   { name: "Dr. Gregory Parkhurst", short: "Dr. Parkhurst", initials: "GP", clinic: "Parkhurst NuVision · San Antonio, USA" },
   { name: "Dr. Arthur Cummings",   short: "Dr. Cummings",  initials: "AC", clinic: "Wellington Eye Clinic · Dublin, IE" },
 ];
+/* A case created in this session belongs to whoever is running the demo, not
+   to one of the three reference surgeons the seeded patients are spread
+   across — so it opens on its own clinic and its own surgeon, and either can
+   be corrected. */
+var NEW_CASE_SURGEON = { name: "Dr. Diego Cerutti", short: "Dr. Cerutti", initials: "DC",
+                         clinic: "Centro Oftalmológico Cuyo · Mendoza, AR" };
+
+/* The surgeon is a property of the case, so it lives where the case's decision
+   and order live: localStorage, under the case key. */
+var SURGEON_KEY = 'case_surgeon';
+function _surgeonStore(){ try { return JSON.parse(localStorage.getItem(SURGEON_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function _surgeonCaseKey(pt){ return (typeof ptCaseId === 'function') ? ptCaseId(pt) : ('REV-' + pt.id); }
+window.PATIENT_SURGEON = {
+  get: function (pt) { return (pt && _surgeonStore()[_surgeonCaseKey(pt)]) || null; },
+  set: function (pt, s) {
+    if (!pt) return;
+    try {
+      var all = _surgeonStore(), k = _surgeonCaseKey(pt);
+      if (s) all[k] = s; else delete all[k];
+      localStorage.setItem(SURGEON_KEY, JSON.stringify(all));
+    } catch (e) {}
+  }
+};
+
+/* A typed name that matches a reference surgeon brings that surgeon's clinic
+   with it; any other name keeps the clinic the case already had — renaming the
+   surgeon is not a claim about where the surgery happened. */
+function surgeonFromName(name, base) {
+  name = String(name == null ? '' : name).trim();
+  if (!name) return null;
+  for (var i = 0; i < SURGEON_POOL.length; i++) {
+    if (SURGEON_POOL[i].name.toLowerCase() === name.toLowerCase()) return SURGEON_POOL[i];
+  }
+  if (name.toLowerCase() === NEW_CASE_SURGEON.name.toLowerCase()) return NEW_CASE_SURGEON;
+  var bare = name.replace(/^(Dr|Dra|Mr|Ms|Prof)\.?\s*/i, '').trim();
+  var parts = bare.split(/\s+/).filter(Boolean);
+  var last = parts.length ? parts[parts.length - 1] : bare;
+  var initials = ((parts[0] || '?').charAt(0) + (parts.length > 1 ? last.charAt(0) : '')).toUpperCase();
+  return { name: name, short: 'Dr. ' + last, initials: initials || '?',
+           clinic: (base && base.clinic) || NEW_CASE_SURGEON.clinic };
+}
+
 function patientSurgeon(pt){
   if (!pt || !pt.id) return SURGEON_POOL[0];
+  var over = window.PATIENT_SURGEON ? PATIENT_SURGEON.get(pt) : null;
+  if (over && over.name) return over;
+  if (pt.caseKey || pt.createdAt) return NEW_CASE_SURGEON;
   // Hash on id digits → pick one of 3
   var n = 0; for (var i = 0; i < pt.id.length; i++) n += pt.id.charCodeAt(i);
   return SURGEON_POOL[n % SURGEON_POOL.length];

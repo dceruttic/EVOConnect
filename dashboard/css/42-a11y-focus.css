@@ -105,3 +105,16 @@
 }
 .sf-input.sf-missing label,
 .sf-rx-cell.sf-missing label { color: #B91C1C; }
+
+/* ---- Post-op · editable surgeon --------------------------------------
+   Reads as the value it replaces until it is touched, so the card keeps
+   its shape and the field does not shout "form" in a context strip. */
+.po-ctx-input {
+  font: inherit; font-size: 12.5px; font-weight: 700; color: #001E60;
+  margin-top: 1px; width: 100%; max-width: 220px;
+  border: 1px solid transparent; border-radius: 6px;
+  background: transparent; padding: 1px 5px; margin-left: -5px;
+}
+.po-ctx-input:hover { border-color: #D6DEEA; background: #F7F9FC; }
+.po-ctx-input:focus { border-color: #00A6DC; background: #fff; outline: none; }
+.po-ctx-surgeon { align-items: center; }

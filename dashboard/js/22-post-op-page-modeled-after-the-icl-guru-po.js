@@ -56,6 +56,18 @@ function setPostopEye(eye){
   _refreshPostopMain();
 }
 
+/* Records the surgeon against the case. An emptied field falls back to whatever
+   the case would have shown on its own rather than leaving the surgery
+   unattributed. */
+function setPostopSurgeon(name){
+  if (typeof CURRENT_PT === 'undefined' || !CURRENT_PT) return;
+  var next = (typeof surgeonFromName === 'function')
+    ? surgeonFromName(name, patientSurgeon(CURRENT_PT)) : null;
+  if (window.PATIENT_SURGEON) PATIENT_SURGEON.set(CURRENT_PT, next);
+  _refreshPostopMain();
+  if (typeof showToast === 'function' && next) showToast('Surgeon set to ' + next.name);
+}
+
 /* EVO Credits is a later-phase module: while it is locked, no screen may show
    or promise EVO points. Defaults to locked-off if the helper is not loaded. */
 function _evoLocked(){
@@ -217,9 +229,16 @@ function renderPtPostop(pt) {
         '<div class="po-ctx-ic" style="background:#001E60">' + sg.initials + '</div>',
         '<div><div class="po-ctx-k">Clinic</div><div class="po-ctx-v">' + sg.clinic + '</div></div>',
       '</div>',
-      '<div class="po-ctx-card">',
+      /* The surgeon on a case is not fixed by the record it was seeded from —
+         the person entering the follow-up corrects it here. */
+      '<div class="po-ctx-card po-ctx-surgeon">',
         '<div class="po-ctx-ic" style="background:#0071B0">' + sg.initials + '</div>',
-        '<div><div class="po-ctx-k">Surgeon</div><div class="po-ctx-v">' + sg.name + '</div></div>',
+        '<div style="flex:1;min-width:0"><div class="po-ctx-k">Surgeon</div>',
+          '<input class="po-ctx-input" id="poSurgeonInput" value="' + String(sg.name).replace(/"/g, '&quot;') + '"',
+            ' aria-label="Surgeon" placeholder="Surgeon name" spellcheck="false"',
+            ' onchange="setPostopSurgeon(this.value)"',
+            ' onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}">',
+        '</div>',
       '</div>',
       '<div class="po-ctx-card po-ctx-date">',
         '<div><div class="po-ctx-k">Date of surgery</div><div class="po-ctx-v"><b>' + (pt.surgeryDate || 'Mar 28, 2026') + '</b></div></div>',

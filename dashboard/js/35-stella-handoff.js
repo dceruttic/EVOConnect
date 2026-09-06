@@ -56,7 +56,7 @@
     R1: 'Order Lens (in Stella)',
     R5: 'Go back to STELLA',
     ORD1: 'Order Lens',
-    ORD1h: 'Leaves for STELLA and opens this case in its ordering screen. You enter and confirm the lens there — the STAAR system of record.',
+    ORD1h: 'Opens this case in STELLA\u2019s ordering screen: select the target lens, look up what STAAR holds, and take one. The order is created in STELLA \u2014 the STAAR system of record.',
     R6: 'Opens STELLA on this same patient. Nothing is sent — STELLA stays the system of record.',
     V1: 'Cannot order yet — {n} item{s} still missing',
     V2: 'Record your decision for {eye} first (step 4).',
@@ -588,15 +588,16 @@
       run();
     };
   }
-  function stellaOrderHref() {
-    if (!H) return '/stella';
-    return '/stella?patient=' + encodeURIComponent(H.caseId) + '&order=' + encodeURIComponent(curEye(H));
-  }
   function orderInStellaBtn(compact) {
     /* The primary — and only — way to order on this journey, so it carries the
-       primary treatment. */
+       primary treatment.
+
+       It opens STELLA's real ordering circuit: select a target lens from the
+       power ladder, look up what STAAR actually holds, take a lens. A case that
+       arrived FROM STELLA skips the STAAR transfer layer — it never left STELLA,
+       so there is no handover to stage. */
     var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD1h) + '">' + esc(COPY.ORD1) + '</button>');
-    b.addEventListener('click', guard(b, compact, function () { window.open(stellaOrderHref(), '_blank', 'noopener'); }));
+    b.addEventListener('click', guard(b, compact, function () { mountOrderModal(H, true); }));
     return b;
   }
   function orderBtn(compact) { return orderInStellaBtn(compact); }

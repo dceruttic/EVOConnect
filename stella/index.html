@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stella — STAAR Surgical</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ==================================================================
    STELLA replica — REVAI / ESCRS demonstration build (v3, English UI)
@@ -534,6 +534,52 @@ img,svg{max-width:100%}
   background:linear-gradient(90deg,var(--rv-navy),var(--rv-purple) 70%,var(--rv-blue))}
 .rv-top-min:focus-visible{outline:3px solid #fff;outline-offset:-4px}
 @media (prefers-reduced-motion:reduce){ .rv-top.enter{animation:none} }
+/* ---------- EVO Connect first-time coach marks (FTU) — three beats: the top
+     banner, the launch block under the results, the eye picker. Non-modal
+     (no scrim), a cyan ring on the anchor and one card; same card language
+     as the guide inside EVO Connect so both read as one product. Sits under
+     the modal scrim (60) and the toasts (90). ---------- */
+.sc-ring{position:fixed;z-index:56;pointer-events:none;border-radius:12px;
+  box-shadow:0 0 0 2px #00A6DC,0 0 0 7px rgba(0,166,220,.28);transition:top .28s cubic-bezier(.2,.8,.2,1),left .28s cubic-bezier(.2,.8,.2,1),width .28s cubic-bezier(.2,.8,.2,1),height .28s cubic-bezier(.2,.8,.2,1)}
+.sc-ring.no-anim{transition:none}
+.sc-card{position:fixed;z-index:57;width:360px;max-width:calc(100vw - 24px);max-height:calc(100vh - 80px);overflow:auto;background:#fff;color:#001E60;
+  border-radius:14px;padding:18px 20px 16px;box-shadow:0 20px 50px rgba(0,30,96,.35),0 0 0 1px rgba(0,30,96,.08);
+  font-family:'Inter',var(--font);text-align:left;opacity:0;transform:translateY(6px);
+  transition:opacity .22s cubic-bezier(.2,.8,.2,1),transform .22s cubic-bezier(.2,.8,.2,1)}
+.sc-card.in{opacity:1;transform:none}
+.sc-card:focus{outline:none}
+.sc-card:focus-visible{outline:3px solid #00A6DC;outline-offset:2px}
+.sc-arrow{position:absolute;width:14px;height:14px;background:#fff;transform:rotate(45deg)}
+.sc-card.p-bottom .sc-arrow{top:-7px;box-shadow:-2px -2px 4px rgba(0,20,60,.08)}
+.sc-card.p-top .sc-arrow{bottom:-7px;box-shadow:2px 2px 4px rgba(0,20,60,.08)}
+.sc-card.p-right .sc-arrow{left:-7px;box-shadow:-2px 2px 4px rgba(0,20,60,.08)}
+.sc-card.p-left .sc-arrow{right:-7px;box-shadow:2px -2px 4px rgba(0,20,60,.08)}
+.sc-eyebrow{display:flex;align-items:center;gap:8px;padding-right:36px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#0071B0}
+.sc-eyebrow .sc-count{color:#5A6478;font-weight:700;letter-spacing:.06em}
+.sc-eyebrow .sc-dot{width:4px;height:4px;border-radius:50%;background:#B8C4D9}
+.sc-title{margin:8px 0 8px;font-size:18px;line-height:1.25;font-weight:800;letter-spacing:-.01em;color:#001E60}
+.sc-body{font-size:15px;line-height:1.5;color:#354052}
+.sc-body b{color:#001E60;font-weight:700}
+.sc-note{margin-top:12px;padding:9px 12px 10px;border-left:3px solid #00A6DC;background:#F1F8FD;border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.45;color:#0B2C6B}
+.sc-close{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:8px;display:grid;place-items:center;border:0;background:transparent;color:#5A6478;cursor:pointer;font-size:0}
+.sc-close:hover{background:#EEF2F8;color:#001E60}
+.sc-close svg{width:18px;height:18px}
+.sc-close:focus-visible{outline:2px solid #00A6DC;outline-offset:2px}
+.sc-foot{display:flex;align-items:center;gap:8px;margin-top:16px}
+.sc-foot .sc-bar{flex:1;height:4px;border-radius:2px;background:#E6ECF5;overflow:hidden}
+.sc-foot .sc-bar i{display:block;height:100%;background:#0071B0;border-radius:2px;transition:width .3s}
+.sc-btn{font-family:inherit;min-height:40px;padding:0 14px;border-radius:8px;border:0;cursor:pointer;font-size:14px;font-weight:700;line-height:1;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.sc-btn.primary{background:#001E60;color:#fff}
+.sc-btn.primary:hover{background:#0B2E85}
+.sc-btn.ghost{background:transparent;color:#0071B0}
+.sc-btn.ghost:hover{background:#EEF4FB}
+.sc-btn:focus-visible{outline:2px solid #00A6DC;outline-offset:2px}
+.sc-btn svg{width:16px;height:16px}
+.rv-help{font-family:inherit;font-size:12px;font-weight:700;color:#fff;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.45);padding:0 0 1px;cursor:pointer;min-height:auto}
+.rv-help:hover{border-bottom-color:#fff}
+.rv-help:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){ .sc-ring,.sc-card,.sc-foot .sc-bar i{transition:none} }
+@media (max-width:760px){ .sc-card{width:calc(100vw - 24px)} }
 @media (max-width:760px){
   .rv-top-in{flex-wrap:wrap;gap:10px;padding:10px 60px 10px 14px;position:relative}
   .rv-top-l{flex:1 1 100%}
@@ -843,6 +889,13 @@ const setSession = on => { try { on ? localStorage.setItem(SESSION_KEY,'1') : lo
    `/stella?signin` drops the stored session and shows the login; navigation inside the app
    and the return from EVO Connect keep it, so the handoff journey is not interrupted.
    The parameter is stripped from the URL so the address bar stays clean for the demo. */
+/* First-time coach marks for the EVO Connect banner (see EVO CONNECT COACH MARKS below).
+   `?ftu=1` forgets that this browser has seen them, `?ftu=0` keeps them quiet for this
+   load. Read here, before the `signin` / `patient` handling cleans the address bar. */
+const SC_FLAG = (() => { try { return new URLSearchParams(location.search).get('ftu'); } catch(e){ return null; } })();
+if(SC_FLAG === '1'){ try { localStorage.removeItem('stella_ftu_evo_v1'); } catch(e){} }
+if(SC_FLAG !== null){ try { const u = new URL(location.href); u.searchParams.delete('ftu'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch(e){} }
+
 const forceLogin = (() => { try { return new URLSearchParams(location.search).has('signin'); } catch(e){ return false; } })();
 if(forceLogin){
   setSession(false);
@@ -1771,7 +1824,7 @@ function rvHero(compact){
       <div class="rv-sub">${RV_HERO.sub}</div>
       <div class="rv-cta"><button type="button" class="rv-btn" data-act="rv-pick" aria-expanded="${S.rv.pick}">Open in EVO Connect →</button></div>
       ${picker}
-      <div class="rv-foot"><span>${RV_HERO.foot}</span>${compact?'':`<span class="rv-demo">${RV_HERO.demo}</span>`}</div>
+      <div class="rv-foot"><span>${RV_HERO.foot}</span><button type="button" class="rv-help" data-act="rv-help">How does this work?</button>${compact?'':`<span class="rv-demo">${RV_HERO.demo}</span>`}</div>
     </div>`;
 }
 function revaiLaunchSlot(){
@@ -1842,6 +1895,149 @@ function launchRevai(lat){
   try { localStorage.setItem('stella_handoff_pending', JSON.stringify({p:payload, ts:Date.now()})); } catch(e){}
   window.open('/dashboard?handoff=' + payload, '_blank', 'noopener');
   S.rv.pick = false; S.rv.eye = null; render();
+}
+
+/* ==================================================================
+   EVO CONNECT COACH MARKS (FTU) — first time the banner appears
+   ------------------------------------------------------------------
+   Three beats, non-modal: the top banner, the launch block under the
+   results, the OD · OS · OU picker. Shown once per browser, the first
+   time "Save and Calculate" makes the banner appear; "How does this
+   work?" in the launch block brings it back. Lives outside #app, so
+   STELLA's full re-render on every state change does not tear it down:
+   the anchor is re-queried every frame and the card follows it.
+   Keyboard: → / Enter next, Esc closes. Reads nothing back, writes only
+   the "seen" flag.
+   ================================================================== */
+const SC_KEY = 'stella_ftu_evo_v1';
+const scSeen = () => { try { return localStorage.getItem(SC_KEY) === '1'; } catch(e){ return false; } };
+const scMark = () => { try { localStorage.setItem(SC_KEY, '1'); } catch(e){} };
+const scReduced = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } };
+const SC_ICON = {
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>'
+};
+const SC_BEATS = [
+  { anchor: () => document.querySelector('.rv-top'), place:'bottom', align:'end', scroll:false,
+    eyebrow:'New · EVO Connect', title:'Compare this result in EVO Connect',
+    body:'STELLA’s recommendation is done. This banner opens <b>EVO Connect</b>, an external service, where <b>ICL Guru, ICLFIT and CASIA2</b> are shown next to the STELLA result for this same case.',
+    note:'One way only: nothing is written back to STELLA. The decision, and the order, stay here.' },
+  { anchor: () => document.querySelector('.rv-launch'), place:'top', align:'start', scroll:true,
+    eyebrow:'Below the results', title:'The same door, at the end',
+    body:'Once you have reviewed both eyes, the block under the result panels takes you across as well. Same case, same inputs, same rule.' },
+  { anchor: () => document.querySelector('.rv-launch .rv-seg') || document.querySelector('.rv-top .rv-seg'), place:'right', align:'start', scroll:true,
+    rect: el => scUnion(el.querySelectorAll('button')) || el.getBoundingClientRect(),   // the three buttons, not the stretched row
+    prep: () => { if(!S.rv.pick){ S.rv.pick = true; render(); } },
+    eyebrow:'Choose the eye', title:'OD, OS or both — then confirm',
+    body:'Only calculated eyes are enabled. <b>Confirm · open in a new tab</b>, just below, opens EVO Connect with this case, its inputs and the STELLA recommendation already loaded. This tab stays exactly where it is.',
+    note:'In EVO Connect a short guide takes over from here and walks the whole circuit — compare, decide, and come back to STELLA to order.' }
+];
+/* the smallest box around a set of elements (viewport coordinates) */
+function scUnion(nodes){
+  const rs = Array.from(nodes).map(n => n.getBoundingClientRect()).filter(r => r.width && r.height);
+  if(!rs.length) return null;
+  const l = Math.min(...rs.map(r => r.left)), t = Math.min(...rs.map(r => r.top));
+  const rgt = Math.max(...rs.map(r => r.right)), btm = Math.max(...rs.map(r => r.bottom));
+  return { left:l, top:t, right:rgt, bottom:btm, width:rgt - l, height:btm - t };
+}
+let SC = null;
+function scStart(){
+  if(SC) scEnd(true);
+  const ring = document.createElement('div'); ring.className = 'sc-ring no-anim';
+  const card = document.createElement('div'); card.className = 'sc-card';
+  card.setAttribute('role','dialog'); card.setAttribute('aria-labelledby','scTitle'); card.setAttribute('aria-describedby','scBody'); card.tabIndex = -1;
+  document.body.appendChild(ring); document.body.appendChild(card);
+  const onKey = e => {
+    if(!SC) return;
+    if(e.key === 'Escape'){ e.preventDefault(); scEnd(); return; }
+    if(e.key === 'ArrowRight' || (e.key === 'Enter' && !(e.target.closest && e.target.closest('button')))){ e.preventDefault(); scNext(); }
+  };
+  document.addEventListener('keydown', onKey);
+  SC = { i:-1, ring, card, raf:0, key:'', onKey, restore: document.activeElement };
+  scShow(0);
+}
+function scEnd(silent){
+  if(!SC) return;
+  const c = SC; SC = null;
+  document.removeEventListener('keydown', c.onKey);
+  cancelAnimationFrame(c.raf);
+  c.card.classList.remove('in');
+  setTimeout(()=>{ c.ring.remove(); c.card.remove(); }, scReduced() ? 0 : 160);
+  scMark();
+  if(!silent){ try { (document.querySelector('.rv-help') || c.restore || document.body).focus({preventScroll:true}); } catch(e){} }
+}
+function scNext(){ if(!SC) return; scShow(SC.i + 1); }
+function scShow(i){
+  if(!SC) return;
+  const b = SC_BEATS[i];
+  if(!b){ scEnd(); return; }
+  if(b.prep) b.prep();
+  const a = b.anchor();
+  if(!a){ scShow(i + 1); return; }
+  SC.i = i; SC.key = '';
+  const last = i === SC_BEATS.length - 1;
+  SC.card.className = 'sc-card';
+  SC.card.innerHTML = `<div class="sc-arrow"></div>
+    <button type="button" class="sc-close" aria-label="Close" title="Close (Esc)">${SC_ICON.close}</button>
+    <div class="sc-eyebrow"><span>${b.eyebrow}</span><span class="sc-dot" aria-hidden="true"></span><span class="sc-count">${i+1} of ${SC_BEATS.length}</span></div>
+    <div class="sc-title" id="scTitle">${b.title}</div>
+    <div class="sc-body" id="scBody">${b.body}</div>
+    ${b.note ? `<div class="sc-note">${b.note}</div>` : ''}
+    <div class="sc-foot">
+      ${last ? '' : `<button type="button" class="sc-btn ghost" data-sc="done">Got it</button>`}
+      <div class="sc-bar" aria-hidden="true"><i style="width:${Math.round((i+1)/SC_BEATS.length*100)}%"></i></div>
+      <button type="button" class="sc-btn primary" data-sc="${last ? 'done' : 'next'}">${last ? 'Got it' + SC_ICON.check : 'Next' + SC_ICON.next}</button>
+    </div>`;
+  SC.card.querySelectorAll('[data-sc]').forEach(btn => btn.addEventListener('click', () => btn.dataset.sc === 'next' ? scNext() : scEnd()));
+  SC.card.querySelector('.sc-close').addEventListener('click', () => scEnd());
+  SC.card.classList.remove('in');
+  if(b.scroll){ try { a.scrollIntoView({block:'center', behavior: scReduced() ? 'auto' : 'smooth'}); } catch(e){ a.scrollIntoView(); } }
+  cancelAnimationFrame(SC.raf);
+  let settled = 0, lastKey = '';
+  const tick = () => {
+    if(!SC || SC.i !== i) return;
+    const el = b.anchor();
+    if(!el){ scEnd(true); return; }                 // the anchor left the screen (route change, dismissed banner)
+    const r = b.rect ? b.rect(el) : el.getBoundingClientRect();
+    const key = [r.top, r.left, r.width, r.height, innerWidth, innerHeight].map(Math.round).join(',');
+    if(key !== SC.key){ SC.key = key; scPlace(el, b); }
+    settled = key === lastKey ? settled + 1 : 0; lastKey = key;
+    if(settled === 3 && !SC.card.classList.contains('in')){
+      SC.ring.classList.remove('no-anim'); SC.card.classList.add('in');
+      try { SC.card.focus({preventScroll:true}); } catch(e){}
+    }
+    SC.raf = requestAnimationFrame(tick);
+  };
+  SC.raf = requestAnimationFrame(tick);
+}
+function scPlace(el, b){
+  const PAD = 8, GAP = 14, M = 12, vw = innerWidth, vh = innerHeight;
+  const r = b.rect ? b.rect(el) : el.getBoundingClientRect();
+  const h = { x:r.left - PAD, y:Math.max(r.top, 53) - PAD, w:r.width + PAD*2, h:Math.min(r.bottom, vh) - Math.max(r.top, 53) + PAD*2 };
+  Object.assign(SC.ring.style, { left:h.x+'px', top:h.y+'px', width:h.w+'px', height:h.h+'px' });
+  const card = SC.card, cw = card.offsetWidth, ch = card.offsetHeight;
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const fits = { bottom: h.y + h.h + GAP + ch <= vh - M - 26, top: h.y - GAP - ch >= M, right: h.x + h.w + GAP + cw <= vw - M, left: h.x - GAP - cw >= M };
+  const order = { bottom:['bottom','top','right','left'], top:['top','bottom','right','left'], right:['right','left','bottom','top'], left:['left','right','bottom','top'] }[b.place];
+  const p = order.filter(k => fits[k])[0] || 'bottom';
+  let x, y, ax = null, ay = null;
+  const cx = h.x + h.w/2, cy = h.y + h.h/2;
+  if(p === 'bottom' || p === 'top'){
+    y = p === 'bottom' ? h.y + h.h + GAP : h.y - GAP - ch;
+    const want = b.align === 'end' ? h.x + h.w - cw : (b.align === 'start' ? h.x : cx - cw/2);
+    x = clamp(want, M, vw - M - cw);
+    const tip = b.align === 'end' ? Math.min(cx, h.x + h.w - 60) : (b.align === 'start' ? Math.max(cx, h.x + 60) : cx);
+    ax = clamp(tip - x - 7, 14, cw - 28);
+  } else {
+    x = p === 'right' ? h.x + h.w + GAP : h.x - GAP - cw;
+    y = clamp(cy - ch/2, M, vh - M - 26 - ch);
+    ay = clamp(cy - y - 7, 14, ch - 28);
+  }
+  card.classList.remove('p-bottom','p-top','p-right','p-left'); card.classList.add('p-' + p);
+  card.style.left = Math.round(x) + 'px'; card.style.top = Math.round(y) + 'px';
+  const arrow = card.querySelector('.sc-arrow');
+  if(ax !== null){ arrow.style.left = Math.round(ax) + 'px'; arrow.style.top = ''; } else { arrow.style.top = Math.round(ay) + 'px'; arrow.style.left = ''; }
 }
 
 /* ==================================================================
@@ -2331,6 +2527,8 @@ document.addEventListener('click', e => {
         S.pick = {od:null,os:null}; S.savedTarget = {od:false,os:false};
         render();
         setTimeout(()=>{const el=document.querySelector('.reshead'); if(el) el.scrollIntoView({behavior:'smooth',block:'center'});},80);
+        /* first calculation in this browser: the banner has just appeared — explain it once */
+        if(!scSeen() && SC_FLAG !== '0') setTimeout(()=>{ if(S.route==='preop' && S.calculated) scStart(); }, 700);
         return;
       }
       case 'rv-pick':  S.rv.pick = !S.rv.pick; render(); return;
@@ -2338,6 +2536,7 @@ document.addEventListener('click', e => {
       case 'rv-go':    if(S.rv.eye) launchRevai(S.rv.eye); return;
       case 'rv-dismiss': S.rv.banner = 'min'; render(); return;
       case 'rv-reopen':  S.rv.banner = 'open'; S.rv.entered = false; render(); return;
+      case 'rv-help':    scStart(); return;
       case 'print':    toast('Printing disabled','Report generation is not part of this demonstration.'); return;
       case 'reserve':  toast('Reservation blocked','Reservations and official orders are created inside STELLA only.'); return;
       case 'make':     toast('Manufacture request disabled','Not part of this demonstration.'); return;

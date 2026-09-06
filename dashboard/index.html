@@ -50,6 +50,8 @@
   <link rel="stylesheet" href="/dashboard/css/39-phase-demo-panel-docked-side-drawer-non-bl.css">
   <link rel="stylesheet" href="/dashboard/css/40-revai-copilot-clinic-level-ai-chat-phase-5.css">
   <link rel="stylesheet" href="/dashboard/css/41-stella-handoff.css">
+  <!-- first-time-user guide: spotlight tour + "Guide" beacon (js/46) -->
+  <link rel="stylesheet" href="/dashboard/css/43-ftu.css">
   <!-- loads last: the keyboard-focus and reduced-motion floor (audit A-01, A-06) -->
   <link rel="stylesheet" href="/dashboard/css/42-a11y-focus.css">
 
@@ -785,7 +787,11 @@
      the handoff wrapper installs on top and wins for handoff cases. -->
 <script src="/dashboard/js/44-decision-and-order.js"></script>
 
-<!-- STELLA → EVO Connect handoff (Journey 1). Must stay LAST: wraps globals defined above. -->
+<!-- STELLA → EVO Connect handoff (Journey 1). Must stay LAST among the wrappers: wraps globals defined above. -->
 <script src="/dashboard/js/35-stella-handoff.js"></script>
+
+<!-- First-time-user guide. A pure consumer of everything above (reads the DOM and
+     STELLA_HANDOFF, wraps nothing), so it is the only script allowed after js/35. -->
+<script src="/dashboard/js/46-ftu-tour.js"></script>
 </body>
 </html>

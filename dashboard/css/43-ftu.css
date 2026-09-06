@@ -1,0 +1,140 @@
+/* ================================================================
+   FTU — first-time-user guide (spotlight tour) + the "Guide" beacon
+   ----------------------------------------------------------------
+   Design basis (ui-ux-pro-max, "Accessible & Ethical" on the STAAR /
+   EVO Connect tokens): body copy 15 px, titles 19 px, contrast ≥ 7:1,
+   44 px targets, visible focus, Skip always one click away, one
+   moving element per step (the spotlight) and the card entering from
+   its source, 150–300 ms ease-out in / ease-in out, reduced-motion
+   honoured. No new fonts, no new palette: navy ink, clinical blue,
+   cyan ring — the same three colours the rest of the app is built on.
+
+   Layering: the tour sits above the phase-demo FAB (9000) and every
+   modal, but BELOW the permanent demo stamp (9998), which must stay
+   readable on every screen (brief limit 6).
+================================================================ */
+:root {
+  --ftu-navy: #001E60;
+  --ftu-teal: #0071B0;
+  --ftu-cyan: #00A6DC;
+  --ftu-ink: #001E60;
+  --ftu-body: #354052;
+  --ftu-mute: #5A6478;
+  --ftu-line: #E1E5EE;
+  --ftu-scrim: rgba(0, 30, 96, .62);
+  --ftu-z: 9500;
+  --ftu-ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ftu-ease-in: cubic-bezier(.4, 0, 1, 1);
+}
+
+/* ---- root + click blockers (four panels around the hole; a fifth
+        covers the hole itself on non-interactive steps) ---- */
+.ftu-root { position: fixed; inset: 0; z-index: var(--ftu-z); font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--ftu-ink); pointer-events: none; }
+.ftu-root[hidden] { display: none; }
+.ftu-block { position: fixed; pointer-events: auto; background: transparent; }
+.ftu-block.hole { cursor: default; }
+
+/* ---- the spotlight: one box whose shadow darkens everything else ---- */
+.ftu-spot {
+  position: fixed; border-radius: 12px; pointer-events: none;
+  box-shadow: 0 0 0 200vmax var(--ftu-scrim), 0 0 0 2px var(--ftu-cyan), 0 0 0 7px rgba(0, 166, 220, .28);
+  transition: top .28s var(--ftu-ease-out), left .28s var(--ftu-ease-out), width .28s var(--ftu-ease-out), height .28s var(--ftu-ease-out), box-shadow .28s var(--ftu-ease-out);
+}
+.ftu-spot.no-anim { transition: none; }
+.ftu-spot.center { box-shadow: 0 0 0 200vmax var(--ftu-scrim); }
+
+/* ---- the card ---- */
+.ftu-card {
+  position: fixed; width: 380px; max-width: calc(100vw - 32px); max-height: calc(100vh - 56px);
+  overflow: auto; background: #fff; border-radius: 14px; padding: 20px 22px 18px;
+  box-shadow: 0 24px 60px rgba(0, 20, 60, .38), 0 0 0 1px rgba(0, 30, 96, .06);
+  pointer-events: auto; outline: none;
+  opacity: 0; transform: translateY(6px) scale(.985);
+  transition: opacity .22s var(--ftu-ease-out), transform .22s var(--ftu-ease-out);
+}
+.ftu-card.in { opacity: 1; transform: none; }
+.ftu-card.out { opacity: 0; transform: translateY(4px); transition: opacity .15s var(--ftu-ease-in), transform .15s var(--ftu-ease-in); }
+.ftu-card:focus-visible { outline: 3px solid var(--ftu-cyan); outline-offset: 2px; }
+.ftu-card.center { left: 50%; top: 50%; transform: translate(-50%, -50%) translateY(6px) scale(.985); }
+.ftu-card.center.in { transform: translate(-50%, -50%); }
+.ftu-card.center.out { transform: translate(-50%, -50%) translateY(4px); }
+
+/* the pointer: a rotated square on the edge that faces the target */
+.ftu-arrow { position: absolute; width: 14px; height: 14px; background: #fff; transform: rotate(45deg); }
+.ftu-card.p-right .ftu-arrow  { left: -7px;  box-shadow: -2px 2px 4px rgba(0, 20, 60, .08); }
+.ftu-card.p-left .ftu-arrow   { right: -7px; box-shadow: 2px -2px 4px rgba(0, 20, 60, .08); }
+.ftu-card.p-bottom .ftu-arrow { top: -7px;   box-shadow: -2px -2px 4px rgba(0, 20, 60, .08); }
+.ftu-card.p-top .ftu-arrow    { bottom: -7px; box-shadow: 2px 2px 4px rgba(0, 20, 60, .08); }
+.ftu-card.center .ftu-arrow   { display: none; }
+
+.ftu-eyebrow { display: flex; align-items: center; gap: 8px; padding-right: 40px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--ftu-teal); }
+.ftu-eyebrow .ftu-count { color: var(--ftu-mute); font-weight: 700; letter-spacing: .06em; }
+.ftu-eyebrow .ftu-dot { width: 4px; height: 4px; border-radius: 50%; background: #B8C4D9; }
+.ftu-title { margin: 8px 0 8px; font-size: 19px; line-height: 1.25; font-weight: 800; letter-spacing: -.01em; color: var(--ftu-navy); }
+.ftu-body { font-size: 15px; line-height: 1.5; color: var(--ftu-body); }
+.ftu-body b { color: var(--ftu-navy); font-weight: 700; }
+.ftu-body p + p { margin-top: 8px; }
+.ftu-why { margin-top: 12px; padding: 9px 12px 10px; border-left: 3px solid var(--ftu-cyan); background: #F1F8FD; border-radius: 0 8px 8px 0; font-size: 13.5px; line-height: 1.45; color: #0B2C6B; }
+.ftu-why-l { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ftu-teal); margin-bottom: 2px; }
+.ftu-why b { color: var(--ftu-navy); font-weight: 700; }
+
+.ftu-close {
+  position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 8px;
+  display: grid; place-items: center; color: var(--ftu-mute); background: transparent; border: 0; cursor: pointer;
+  transition: background .15s var(--ftu-ease-out), color .15s var(--ftu-ease-out);
+}
+.ftu-close:hover { background: #EEF2F8; color: var(--ftu-navy); }
+.ftu-close svg { width: 18px; height: 18px; }
+
+.ftu-foot { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+.ftu-progress { flex: 1; height: 4px; border-radius: 2px; background: #E6ECF5; overflow: hidden; }
+.ftu-progress i { display: block; height: 100%; background: var(--ftu-teal); border-radius: 2px; transition: width .3s var(--ftu-ease-out); }
+.ftu-btn {
+  min-height: 40px; padding: 0 14px; border-radius: 8px; border: 0; cursor: pointer;
+  font-family: inherit; font-size: 14px; font-weight: 700; letter-spacing: .01em; line-height: 1;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  transition: background .15s var(--ftu-ease-out), color .15s var(--ftu-ease-out), transform .15s var(--ftu-ease-out);
+}
+.ftu-btn.primary { background: var(--ftu-navy); color: #fff; }
+.ftu-btn.primary:hover { background: #0B2E85; }
+.ftu-btn.primary:active { transform: translateY(1px); }
+.ftu-btn.ghost { background: transparent; color: var(--ftu-teal); }
+.ftu-btn.ghost:hover { background: #EEF4FB; }
+.ftu-btn.skip { color: var(--ftu-mute); padding-left: 8px; }
+.ftu-btn.skip:hover { color: var(--ftu-navy); }
+.ftu-btn[disabled] { opacity: .45; cursor: not-allowed; }
+.ftu-btn[hidden], .ftu-why[hidden] { display: none; }
+.ftu-btn svg { width: 16px; height: 16px; }
+.ftu-btn.primary.busy { pointer-events: none; opacity: .8; }
+
+/* screen-reader-only live region */
+.ftu-live { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---- the "Guide" beacon: relaunches the tour for the current screen.
+        Sits above the copilot orb; hidden while a tour is running. ---- */
+.ftu-beacon {
+  position: fixed; right: 22px; bottom: 106px; z-index: 205;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px;
+  border-radius: 999px; background: #fff; color: var(--ftu-navy); border: 1px solid var(--ftu-line);
+  box-shadow: 0 4px 12px rgba(10, 16, 40, .10), 0 2px 4px rgba(10, 16, 40, .05);
+  font-family: 'Inter', 'Poppins', -apple-system, sans-serif; font-size: 13.5px; font-weight: 700; cursor: pointer;
+  transition: background .15s var(--ftu-ease-out), border-color .15s var(--ftu-ease-out), box-shadow .15s var(--ftu-ease-out);
+}
+.ftu-beacon:hover { background: #F1F8FD; border-color: #BBDDFC; box-shadow: 0 6px 16px rgba(10, 16, 40, .14); }
+.ftu-beacon svg { width: 20px; height: 20px; flex: none; }
+.ftu-beacon[hidden] { display: none; }
+/* a STELLA case keeps its recommendation panel pinned on the right: the beacon
+   moves inward with the copilot orb (css/41) so neither covers the panel */
+body.sh-handoff-active .ftu-beacon { right: 344px; }
+@media (max-width: 1100px) { body.sh-handoff-active .ftu-beacon { right: 22px; } }
+body.ftu-active .ftu-beacon { visibility: hidden; }
+body.ftu-active.ftu-peek .ftu-beacon { visibility: visible; }
+
+@media (max-width: 760px) {
+  .ftu-card { width: calc(100vw - 24px); padding: 18px 18px 16px; }
+  .ftu-beacon { padding: 0; width: 44px; justify-content: center; bottom: 100px; }
+  .ftu-beacon span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ftu-spot, .ftu-card, .ftu-progress i, .ftu-btn, .ftu-close, .ftu-beacon { transition: none !important; }
+}

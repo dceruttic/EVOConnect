@@ -57,8 +57,6 @@
     R5: 'Go back to STELLA',
     ORD1: 'Order Lens',
     ORD1h: 'Leaves for STELLA and opens this case in its ordering screen. You enter and confirm the lens there — the STAAR system of record.',
-    ORD2: 'Order Lens (in Stella)',
-    ORD2h: 'Opens STELLA\u2019s ordering surface here, pre-loaded with STELLA\u2019s own case data. The order is created in STELLA and returns over the API.',
     R6: 'Opens STELLA on this same patient. Nothing is sent — STELLA stays the system of record.',
     V1: 'Cannot order yet — {n} item{s} still missing',
     V2: 'Record your decision for {eye} first (step 4).',
@@ -573,11 +571,14 @@
     if (t) { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); if (t.focus) try { t.focus({ preventScroll: true }); } catch (e) {} }
     toast(fmt(COPY.V1, { n: n, s: n === 1 ? '' : 's' }));
   }
-  /* Two ways to order, both validated first:
-       · "Order in STELLA →" leaves for STELLA and lands inside its ordering screen
-         for this case — the MVP path of the brief, where the surgeon types it himself.
-       · "Order in the STELLA modal" opens the STELLA ordering surface here,
-         seeded only with STELLA's own case data. */
+  /* One way to order, validated first: leave for STELLA and land inside its
+     ordering screen for this case — the MVP path of the brief, where the
+     surgeon enters and confirms the lens himself.
+
+     A case that arrived FROM STELLA does not take the STAAR transfer layer:
+     that layer exists to hand a native EVO Connect case over to STELLA, and
+     this case never left STELLA in the first place. Offering it here would
+     stage a handover that has already happened. */
   function guard(btn, compact, run) {
     return function () {
       if (!H) return;
@@ -592,13 +593,10 @@
     return '/stella?patient=' + encodeURIComponent(H.caseId) + '&order=' + encodeURIComponent(curEye(H));
   }
   function orderInStellaBtn(compact) {
-    var b = el('<button type="button" class="sh-return alt' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD1h) + '">' + esc(COPY.ORD1) + '</button>');
+    /* The primary — and only — way to order on this journey, so it carries the
+       primary treatment. */
+    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD1h) + '">' + esc(COPY.ORD1) + '</button>');
     b.addEventListener('click', guard(b, compact, function () { window.open(stellaOrderHref(), '_blank', 'noopener'); }));
-    return b;
-  }
-  function orderModalBtn(compact) {
-    var b = el('<button type="button" class="sh-return' + (compact ? ' compact' : '') + '" title="' + esc(COPY.ORD2h) + '">' + esc(COPY.ORD2) + '</button>');
-    b.addEventListener('click', guard(b, compact, function () { openOrderModal(H, true); }));
     return b;
   }
   function orderBtn(compact) { return orderInStellaBtn(compact); }
@@ -610,12 +608,11 @@
       esc(COPY.R5) + '</a>');
     return a;
   }
-  /* Both ordering paths sit together, top and bottom, with the plain return to
-     STELLA as the secondary control beside them. */
+  /* Order Lens, top and bottom, with the plain return to STELLA as the
+     secondary control beside it. */
   function ctaGroup(compact) {
     var f = document.createDocumentFragment();
     f.appendChild(orderInStellaBtn(compact));
-    f.appendChild(orderModalBtn(compact));
     f.appendChild(backToStella(compact));
     return f;
   }

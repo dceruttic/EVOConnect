@@ -108,6 +108,11 @@
       stage: 'Consult', risk: null, iclGuru: null, portrait: portraitFor(sex),
       surgeryDate: null, createdAt: new Date().toISOString()
     };
+    /* The case this record's decision and order hang off. Patient ids are
+       reused (highest + 1, recomputed after every reload), so the key carries
+       the moment of creation as well — otherwise a new patient opens with the
+       decision and the order of the one that held that id before it. */
+    pt.caseKey = 'REV-' + pt.id + '-' + Date.now().toString(36);
     DATA.patients.unshift(pt);
     var openIt = (f.querySelector('[name="open"]') || {}).checked;
     closeNewPatientModal();

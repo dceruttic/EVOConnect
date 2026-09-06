@@ -28,7 +28,7 @@
      both live in localStorage, keyed by case and eye. CASE_DECISIONS (js/35)
      is the shared store, so a case decided here and a case that arrived from
      STELLA keep their record in one place. */
-  function caseId(pt) { return 'REV-' + pt.id; }
+  function caseId(pt) { return (typeof ptCaseId === 'function') ? ptCaseId(pt) : ('REV-' + pt.id); }
   function eyeOf() {
     return (typeof EYE_SCOPE !== 'undefined' && (EYE_SCOPE === 'OD' || EYE_SCOPE === 'OS')) ? EYE_SCOPE : 'OD';
   }
@@ -285,12 +285,10 @@
     b.addEventListener('click', function () {
       clearAlert();
       if (!d) { alertInto(box, ['Record your decision first (step 4).'], '#ptDecision'); return; }
-      var missing = [];
-      [['sf-rx-man-sph', 'Manifest sphere'], ['sf-rx-man-cyl', 'Manifest cylinder'], ['sf-rx-man-ax', 'Manifest axis'],
-       ['sf-acd', 'ACD'], ['sf-wtw', 'WTW']].forEach(function (f) {
-        var i = document.getElementById(f[0]);
-        if (!i || String(i.value).trim() === '') missing.push('Missing input: ' + f[1]);
-      });
+      /* The same list step 3 enforces before it will calculate (js/15), so the
+         order can no longer ask for an input the comparison was happy without. */
+      var missing = (typeof sfMissingRequired === 'function' ? sfMissingRequired() : [])
+        .map(function (f) { return 'Missing input: ' + f[1]; });
       if (missing.length) { alertInto(box, missing, null); return; }
       /* The STELLA ordering surface — the same modal, in STELLA's own design
          system, that a case arriving from STELLA opens. */
@@ -306,7 +304,7 @@
         });
         openStellaLensModal({
           inputs: inp,
-          caseId: 'REV-' + pt.id,
+          caseId: caseId(pt),
           eye: (typeof EYE_SCOPE !== 'undefined' && EYE_SCOPE !== 'BOTH') ? EYE_SCOPE : 'OD',
           refSize: ref ? parseFloat(ref.recSize).toFixed(1) : d.plannedLens.size,
           model: 'Toric Myopic',

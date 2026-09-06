@@ -87,3 +87,21 @@
   font-size: 15px; font-weight: 800; line-height: 1.25; letter-spacing: -.01em;
   color: var(--ink, #001E60); margin: 0;
 }
+
+/* ---- Required inputs -------------------------------------------------
+   The fields a case cannot be calculated or ordered without are marked
+   before the surgeon starts, not after the comparison has already run. */
+.sf-req {
+  color: #C2410C;
+  font-weight: 800;
+  text-decoration: none;
+  margin-left: 3px;
+  cursor: help;
+}
+.sf-input.sf-missing input,
+.sf-rx-cell.sf-missing input {
+  border-color: #DC2626 !important;
+  background: #FEF2F2;
+}
+.sf-input.sf-missing label,
+.sf-rx-cell.sf-missing label { color: #B91C1C; }

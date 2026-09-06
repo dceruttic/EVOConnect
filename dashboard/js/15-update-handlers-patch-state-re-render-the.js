@@ -805,6 +805,53 @@ document.addEventListener('input', function (e) {
   sebSyncStrip();
 });
 
+/* The inputs a case cannot be calculated or ordered without. One list, used
+   by the Calculate button (js/19) and by the order gate (js/44), so the two
+   can never ask for different things — which is how a surgeon ended up being
+   asked for WTW only after the comparison had already run. */
+window.SF_REQUIRED = [
+  ['sf-rx-man-sph', 'Manifest sphere'],
+  ['sf-rx-man-cyl', 'Manifest cylinder'],
+  ['sf-rx-man-ax',  'Manifest axis'],
+  ['sf-acd',        'ACD'],
+  ['sf-wtw',        'WTW']
+];
+function sfMissingRequired() {
+  return SF_REQUIRED.filter(function (f) {
+    var i = document.getElementById(f[0]);
+    return !i || String(i.value == null ? '' : i.value).trim() === '';
+  });
+}
+function sfCheckRequired(announce) {
+  var missing = sfMissingRequired();
+  document.querySelectorAll('.sf-missing').forEach(function (n) { n.classList.remove('sf-missing'); });
+  if (!missing.length) return true;
+  missing.forEach(function (f) {
+    var i = document.getElementById(f[0]);
+    var cell = i && i.closest('.sf-input, .sf-rx-cell');
+    if (cell) cell.classList.add('sf-missing');
+  });
+  if (announce) {
+    var first = document.getElementById(missing[0][0]);
+    if (first) {
+      try { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+      first.focus();
+    }
+    if (typeof showToast === 'function') {
+      showToast('Cannot calculate yet — ' + missing.length + ' required input' +
+                (missing.length === 1 ? '' : 's') + ' missing: ' +
+                missing.map(function (f) { return f[1]; }).join(', '));
+    }
+  }
+  return false;
+}
+document.addEventListener('input', function (e) {
+  var id = e.target && e.target.id;
+  if (!id || !SF_REQUIRED.some(function (f) { return f[0] === id; })) return;
+  var cell = e.target.closest('.sf-input, .sf-rx-cell');
+  if (cell && String(e.target.value).trim() !== '') cell.classList.remove('sf-missing');
+});
+
 function renderPtSizingFormulas(pt) {
   const b = patientBiometry(pt);
   const blank = ptIsBlank(pt);
@@ -943,9 +990,9 @@ function renderPtSizingFormulas(pt) {
           <div class="sf-rx-head"><span class="sf-rx-tag manifest">Manifest</span><span class="sf-rx-sub">Subjective refraction</span></div>
           <div class="sf-rx-section-lbl">Refraction</div>
           <div class="sf-rx-row">
-            <div class="sf-rx-cell"><label for="sf-rx-man-sph">Sphere</label><div class="sf-input-row"><input type="text" id="sf-rx-man-sph" value="${sphMan}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-man-cyl">Cylinder</label><div class="sf-input-row"><input type="text" id="sf-rx-man-cyl" value="${V('-0.50')}"/><span class="sf-unit">D</span></div></div>
-            <div class="sf-rx-cell"><label for="sf-rx-man-ax">Axis</label><div class="sf-input-row"><input type="text" id="sf-rx-man-ax" value="${V('178')}"/><span class="sf-unit">°</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-sph">Sphere<abbr class="sf-req" title="Required to calculate and to order">*</abbr></label><div class="sf-input-row"><input type="text" id="sf-rx-man-sph" aria-required="true" value="${sphMan}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-cyl">Cylinder<abbr class="sf-req" title="Required to calculate and to order">*</abbr></label><div class="sf-input-row"><input type="text" id="sf-rx-man-cyl" aria-required="true" value="${V('-0.50')}"/><span class="sf-unit">D</span></div></div>
+            <div class="sf-rx-cell"><label for="sf-rx-man-ax">Axis<abbr class="sf-req" title="Required to calculate and to order">*</abbr></label><div class="sf-input-row"><input type="text" id="sf-rx-man-ax" aria-required="true" value="${V('178')}"/><span class="sf-unit">°</span></div></div>
           </div>
           <div class="sf-rx-section-lbl">Keratometry</div>
           <div class="sf-rx-row">
@@ -1016,10 +1063,10 @@ function renderPtSizingFormulas(pt) {
         </div>
       </div>
       <div class="sf-inputs-grid">
-        <div class="sf-input"><label for="sf-wtw">WTW (white-to-white)</label><div class="sf-input-row"><input type="text" id="sf-wtw" value="${wtw}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-wtw">WTW (white-to-white)<abbr class="sf-req" title="Required to calculate and to order">*</abbr></label><div class="sf-input-row"><input type="text" id="sf-wtw" aria-required="true" value="${wtw}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-ata">ATA (angle-to-angle)</label><div class="sf-input-row"><input type="text" id="sf-ata" value="${ata}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-sts">STS (sulcus-to-sulcus)</label><div class="sf-input-row"><input type="text" id="sf-sts" value="${sts}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label for="sf-acd">ACD</label><div class="sf-input-row"><input type="text" id="sf-acd" value="${acd}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-acd">ACD<abbr class="sf-req" title="Required to calculate and to order">*</abbr></label><div class="sf-input-row"><input type="text" id="sf-acd" aria-required="true" value="${acd}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-arise">aRISE</label><div class="sf-input-row"><input type="text" id="sf-arise" value="${arise}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-clr">Crystalline lens rise</label><div class="sf-input-row"><input type="text" id="sf-clr" value="${clr}" /><span class="sf-unit">µm</span></div></div>
         <div class="sf-input"><label for="sf-kmean">K-mean</label><div class="sf-input-row"><input type="text" id="sf-kmean" value="${kMean}" /><span class="sf-unit">D</span></div></div>
@@ -1063,7 +1110,7 @@ function renderPtSizingFormulas(pt) {
         <div class="sf-step-num">1</div>
         <div class="sf-step-info">
           <h2 style="margin:0">Input Data</h2>
-          <p class="muted" style="margin:2px 0 0;font-size:12px">Load refractions, keratometry and biometry. Each block can also be imported from EHR / UBM / OCT / Pentacam individually.</p>
+          <p class="muted" style="margin:2px 0 0;font-size:12px">Load refractions, keratometry and biometry. Each block can also be imported from EHR / UBM / OCT / Pentacam individually. Fields marked <abbr class="sf-req">*</abbr> are required to calculate and to order.</p>
         </div>
       </div>
       ${inputsHtml}

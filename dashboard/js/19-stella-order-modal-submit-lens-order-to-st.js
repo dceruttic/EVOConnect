@@ -243,6 +243,11 @@ function runSizingFormulas(patientId) {
     showToast("Select at least one formula to run");
     return;
   }
+  /* The inputs the order will demand are demanded here instead: a comparison
+     run on an incomplete case would only be blocked at the order, after the
+     surgeon has already chosen a lens from it. */
+  if (typeof sfCheckRequired === 'function' && !sfCheckRequired(true)) return;
+
   /* Every method is computed from the case inputs by the sizing engine
      (js/42): same inputs, one engine, no hard-coded sizes. */
   const raw = (window.SIZING_ENGINE ? window.SIZING_ENGINE.readInputs() : {});
@@ -256,6 +261,14 @@ function runSizingFormulas(patientId) {
                target: e.target, basis: e.basis, approx: e.approx,
                derived: e.derived, inputs: e.inputs };
     });
+
+  /* The STAAR nomogram is the one method that is always in the comparison and
+     can never be deselected, so it is the reference every other card is read
+     against — it holds the first position, whatever order the formula list
+     happens to be in. */
+  results.sort(function (a, b) {
+    return (b.code === MANDATORY_FORMULA ? 1 : 0) - (a.code === MANDATORY_FORMULA ? 1 : 0);
+  });
 
   // Cache for selectSizingFormula() / Guru promotion
   window._SF_LAST_RESULTS = { patientId, results };

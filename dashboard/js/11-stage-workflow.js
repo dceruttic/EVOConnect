@@ -248,11 +248,33 @@ function renderJourneyTimeline(journey) {
    journey was gone from the screen. An order is the case's state, so it
    belongs on the patient, next to stage and risk, on every tab.
 ================================================================ */
+/* The key everything on record — the decision, the order — hangs off.
+
+   'REV-' + pt.id alone was not enough: patient ids are handed out as the
+   highest existing number plus one, so a patient created after a reload takes
+   the id of one created before it, and inherited that case's decision and
+   order. A patient created here carries the moment it was created in its key,
+   which is never handed out twice. The demo patients keep the bare key so
+   their existing records still resolve. */
+function ptCaseId(pt) {
+  if (!pt) return '';
+  if (pt.caseKey) return pt.caseKey;
+  if (pt.createdAt) {
+    var t = Date.parse(pt.createdAt);
+    if (t) return 'REV-' + pt.id + '-' + t.toString(36);
+  }
+  return 'REV-' + pt.id;
+}
+
 function ptOrdersFor(pt) {
   var out = [];
   try {
     var all = JSON.parse(localStorage.getItem('stella_order_confirmed') || '{}');
-    var ids = ['REV-' + pt.id, pt.id, pt.caseId].filter(Boolean);
+    /* A patient created in this session answers only to its own case key —
+       never to the bare 'REV-<id>' another patient may have left behind. */
+    var ids = (pt.caseKey || pt.createdAt)
+      ? [ptCaseId(pt)]
+      : ['REV-' + pt.id, pt.id, pt.caseId].filter(Boolean);
     Object.keys(all).forEach(function (k) {
       var caseId = k.split('|')[0];
       if (ids.indexOf(caseId) >= 0) out.push(all[k]);

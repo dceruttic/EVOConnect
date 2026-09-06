@@ -167,7 +167,13 @@ function openPatientFile(id) {
 }
 function closePatientFile() {
   CURRENT_PT = null;
-  const target = PREV_MOD || "dashboard";
+  /* Back never lands on a module this phase does not ship — the clinic home is
+     hidden in Phase 1, so the registry is where a case came from and where it
+     returns to. */
+  let target = PREV_MOD || "patients";
+  if (window.PhaseDemo && typeof PhaseDemo.moduleAllowed === 'function' && !PhaseDemo.moduleAllowed(target)) {
+    target = "patients";
+  }
   renderModule(target);
 }
 function setPatientTab(tab, postopSub) {
@@ -208,9 +214,15 @@ function ptTabMode(pt, tab) {
 }
 const PT_TABS = ["preop", "sizing", "planner", "surgery", "postop"];
 const PT_TAB_LABELS = { preop: "Pre-op", sizing: "ICL selection", planner: "Surgical planner", surgery: "Surgery", postop: "Post-op" };
+/* Every module the back button can return to. A module missing from here used
+   to fall through to the bare word "Back", which read as "Back to Back" — and
+   Patients, the module a case is almost always opened from, was the one
+   missing. */
 const PREV_MOD_LABELS = {
-  dashboard: "Dashboard", preop: "Pre-op", sizing: "Sizing", order: "Order", surgery: "Surgery",
-  postop: "Post-op", community: "Community", training: "Training", support: "Support", analytics: "Analytics",
+  dashboard: "Dashboard", patients: "Patients", simulator: "AI Lens Simulator",
+  preop: "Pre-op", sizing: "Sizing", order: "Order", surgery: "Surgery",
+  postop: "Post-op", community: "Community", training: "Training", support: "Support",
+  analytics: "Analytics", 'evo-credits': "EVO Credits",
 };
 
 function renderJourneyTimeline(journey) {
@@ -300,7 +312,7 @@ function renderPatientPage(pt) {
   const activeStep = journey.find(s => s.status === "active");
   const totalSteps = journey.length;
   const pct = Math.round(doneCount / totalSteps * 100);
-  const backLabel = PREV_MOD_LABELS[PREV_MOD] || "Back";
+  const backLabel = PREV_MOD_LABELS[PREV_MOD] || PREV_MOD_LABELS.patients;
   const modeNow = ptTabMode(pt, CURRENT_PT_TAB);
   const modeLabel = modeNow === "read" ? "Read mode · historical record" : modeNow === "edit" ? "Edit mode · current step" : "Locked · not yet reached";
   return `

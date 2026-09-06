@@ -176,4 +176,4 @@ function patientJourney(pt) {
 
 let CURRENT_PT = null;
 let CURRENT_PT_TAB = "preop";
-let PREV_MOD = "dashboard";
+let PREV_MOD = "patients";   // the registry, not the clinic home Phase 1 does not ship

@@ -148,7 +148,14 @@ function applyScanImport(){
   var p = (DATA.patients || []).find(x => x.id === SCAN_IMPORT_SELECTED);
   if (!p) return;
   var v = _scanValuesForPatient(p, SCAN_IMPORT_MODE);
-  function setVal(id, val){ var el = document.getElementById(id); if (el){ el.value = val; _highlightImportedField(id); } }
+  /* Write the value to the field AND to the case, so the import outlives the
+     current render the same way a typed value does. */
+  function setVal(id, val){
+    var el = document.getElementById(id); if (el){ el.value = val; _highlightImportedField(id); }
+    if (typeof sfSetCaseValue === 'function' && typeof SF_FIELD_KEY !== 'undefined' && SF_FIELD_KEY[id]) {
+      sfSetCaseValue(SF_FIELD_KEY[id], val);
+    }
+  }
   if (SCAN_IMPORT_MODE === 'PENTACAM') {
     setVal('sf-wtw', v.wtw); setVal('sf-acd', v.acd); setVal('sf-kmean', v.kmean); setVal('sf-clr', v.clr);
   } else if (SCAN_IMPORT_MODE === 'UBM') {
@@ -156,6 +163,9 @@ function applyScanImport(){
   } else {
     setVal('sf-ata', v.ata); setVal('sf-arise', v.arise); setVal('sf-acd', v.acd);
   }
+  /* The header strip mirrors these fields, and a programmatic value change
+     fires no input event of its own. */
+  if (typeof sebSyncStrip === 'function') sebSyncStrip();
   // Determine which eye(s) the scan applies to based on current scope
   var eyes = EYE_SCOPE === 'BOTH' ? ['OD', 'OS'] : [EYE_SCOPE];
   eyes.forEach(function(eye){
@@ -170,6 +180,22 @@ function applyScanImport(){
       values: v,
     });
   });
+  /* Keep the import on the case, not just in the DOM: a scan attached here has
+     to survive a tab switch and show up in the pre-op record, the same as one
+     attached from the pre-op step. The owner is the open patient — SCAN_IMPORT_SELECTED
+     is only the record the values were pulled from. */
+  try {
+    if (typeof CURRENT_PT !== 'undefined' && CURRENT_PT && typeof _ensurePreopStore === 'function') {
+      var _store = _ensurePreopStore(CURRENT_PT.id);
+      eyes.forEach(function (eye) {
+        _store.attachments.push({
+          id: 'sf-' + SCAN_IMPORT_MODE + '-' + eye + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+          type: SCAN_IMPORT_MODE, eye: eye, date: new Date().toISOString().slice(0, 10),
+          src: _scanImagePath(SCAN_IMPORT_MODE, SCAN_IMPORT_SELECTED), values: v, fileName: ''
+        });
+      });
+    }
+  } catch (e) { /* the import itself still stands */ }
   _renderScanAttachments();
   closeScanImportModal();
   if (typeof showToast === 'function') showToast((SCAN_IMPORT_MODE === 'PENTACAM' ? 'Pentacam report' : SCAN_IMPORT_MODE + ' scan') + ' attached · values imported from ' + p.name + (eyes.length>1 ? ' · OD + OS' : ' · ' + eyes[0]));

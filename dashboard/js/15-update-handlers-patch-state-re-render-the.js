@@ -735,6 +735,7 @@ function importSizingFromEHR() {
     el.classList.add('ehr-flash');
     setTimeout(() => el.classList.remove('ehr-flash'), 1400);
   });
+  if (typeof sebSyncStrip === 'function') sebSyncStrip();
   showToast("Imported 6 biometry fields from Clinic EHR · 2.3s");
 }
 
@@ -743,12 +744,66 @@ function importSizingFromEHR() {
    this minute has none, and biometry seeded from a fallback would be worse
    than an empty field — it would look like measurements nobody took. */
 function ptIsBlank(pt) {
-  var hasRx = pt.power && String(pt.power).trim() !== '\u2014' && String(pt.power).trim() !== '';
-  if (hasRx) return false;
-  var store = (typeof PT_PREOP_DATA !== 'undefined') ? PT_PREOP_DATA[pt.id] : null;
-  var imported = !!(store && (store.ehrImported || (store.attachments || []).length));
-  return !imported;
+  return !(pt.power && String(pt.power).trim() !== '\u2014' && String(pt.power).trim() !== '');
 }
+
+/* Everything that was actually measured for this case, whatever brought it in:
+   the EHR pull, or any scan attached afterwards (a later attachment wins over
+   an earlier one). This is what a new patient fills up with — nothing here is
+   invented, so a field with no measurement behind it stays empty. */
+function sfImportedVals(pt) {
+  var out = {};
+  var store = (typeof PT_PREOP_DATA !== 'undefined') ? PT_PREOP_DATA[pt.id] : null;
+  if (!store) return out;
+  var KEYS = ['al','k1','k2','kmean','acd','wtw','cct','pupil','ata','sts','clr','arise'];
+  var take = function (src) {
+    if (!src) return;
+    KEYS.forEach(function (k) {
+      if (src[k] != null && String(src[k]).trim() !== '') out[k] = String(src[k]).trim();
+    });
+  };
+  take(store.ehrValues);
+  (store.attachments || []).forEach(function (a) { take(a.values); });
+  take(store.values);                    // what was typed or imported here, last word
+  if (!out.kmean && out.k1 && out.k2) out.kmean = ((parseFloat(out.k1) + parseFloat(out.k2)) / 2).toFixed(2);
+  return out;
+}
+
+/* The header strip is not a second source of truth — it mirrors the six input
+   fields below it, so typing a value or importing a scan is visible up top the
+   moment it lands. */
+function sebSyncStrip() {
+  var spec = { al: ['sf-al', 'mm'], kmean: ['sf-kmean', 'D'], acd: ['sf-acd', 'mm'],
+               wtw: ['sf-wtw', 'mm'], cct: ['sf-cct', '\u00b5m'], pupil: ['sf-pupil', 'mm'] };
+  Object.keys(spec).forEach(function (k) {
+    var cell = document.querySelector('.seb-kpi[data-kpi="' + k + '"] .kpi-val');
+    var inp = document.getElementById(spec[k][0]);
+    if (!cell || !inp) return;
+    var v = String(inp.value == null ? '' : inp.value).trim();
+    cell.innerHTML = v ? (v + '<em>' + spec[k][1] + '</em>') : '\u2014';
+  });
+}
+/* Which measurement each input in step 1 holds. Typing in one is the surgeon
+   entering that measurement for this case, so it is written to the case the
+   same way an import is — otherwise the value would live only in the DOM and
+   die on the next tab switch. */
+var SF_FIELD_KEY = { 'sf-al':'al', 'sf-kmean':'kmean', 'sf-acd':'acd', 'sf-wtw':'wtw',
+                     'sf-cct':'cct', 'sf-pupil':'pupil', 'sf-ata':'ata', 'sf-sts':'sts',
+                     'sf-clr':'clr', 'sf-arise':'arise' };
+function sfSetCaseValue(key, val) {
+  if (typeof CURRENT_PT === 'undefined' || !CURRENT_PT) return;
+  if (typeof _ensurePreopStore !== 'function') return;
+  var store = _ensurePreopStore(CURRENT_PT.id);
+  store.values = store.values || {};
+  var v = String(val == null ? '' : val).trim();
+  if (v === '') delete store.values[key]; else store.values[key] = v;
+}
+document.addEventListener('input', function (e) {
+  var id = e.target && e.target.id;
+  if (!id || !SF_FIELD_KEY[id]) return;
+  sfSetCaseValue(SF_FIELD_KEY[id], e.target.value);
+  sebSyncStrip();
+});
 
 function renderPtSizingFormulas(pt) {
   const b = patientBiometry(pt);
@@ -756,13 +811,23 @@ function renderPtSizingFormulas(pt) {
   /* every seeded value passes through here, so an empty case stays empty */
   const V = (x) => (blank ? '' : x);
   const power = parseFloat(String(pt.power).split('/')[0]) || -6;
-  const ata = V((b.WTW.v - 0.15).toFixed(2));
-  const sts = V((b.WTW.v + 0.3).toFixed(2));
-  const wtw = V(b.WTW.v.toFixed(2));
-  const acd = V(b.ACD.v.toFixed(2));
-  const clr = V(170 + Math.round(ptRand(pt.id,41,-50,80)));
-  const kMean = V(((b.K1.v + b.K2.v) / 2).toFixed(2));
-  const al = V((b.AL && b.AL.v ? b.AL.v : (24.0 + ptRand(pt.id, 43, -1.4, 3.2))).toFixed(2));
+  /* A measured value always beats a seeded one: what the EHR or a scan actually
+     brought in is used as-is, and only a case with no measurement falls back to
+     the demo seed (which V() blanks for a patient created this minute). */
+  const IV = sfImportedVals(pt);
+  const pick = (k, fb) => (IV[k] != null ? IV[k] : fb);
+  const ata = pick('ata', V((b.WTW.v - 0.15).toFixed(2)));
+  const sts = pick('sts', V((b.WTW.v + 0.3).toFixed(2)));
+  const wtw = pick('wtw', V(b.WTW.v.toFixed(2)));
+  const acd = pick('acd', V(b.ACD.v.toFixed(2)));
+  const clr = pick('clr', V(170 + Math.round(ptRand(pt.id,41,-50,80))));
+  const kMean = pick('kmean', V(((b.K1.v + b.K2.v) / 2).toFixed(2)));
+  const al = pick('al', V((b.AL && b.AL.v ? b.AL.v : (24.0 + ptRand(pt.id, 43, -1.4, 3.2))).toFixed(2)));
+  const cct = pick('cct', V('548'));
+  const pupil = pick('pupil', V('6.1'));
+  /* aRISE is derived from ACD — with no ACD there is nothing to derive, and an
+     empty field is the honest answer (it used to print NaN). */
+  const arise = pick('arise', (blank || acd === '') ? '' : (parseFloat(acd) - 0.62).toFixed(2));
   const eye = pt.eye.split('/')[0].trim() || 'OD';
   const firstName = pt.name.split(' ').slice(-1)[0] || 'Patient';
 
@@ -778,7 +843,8 @@ function renderPtSizingFormulas(pt) {
     .map(m => ({ OCT:'OCT', UBM:'UBM', PENTACAM:'Pentacam', IOLM:'IOL Master' }[m]));
   // Completeness: 1 (EHR) + 1 per modality attached, max 5 → ring %
   const _completeness = Math.min(100, Math.round(((_ehrIn ? 1 : 0) + _modSet.size) / 5 * 100));
-  const _kpiKMean = ((b.K1.v + b.K2.v) / 2).toFixed(2);
+  /* The strip shows exactly what the six fields in step 1 hold. */
+  const _kpi = { al: al, kmean: kMean, acd: acd, wtw: wtw, cct: cct, pupil: pupil };
   const _riskBadge = pt.risk
     ? `<span class="seb-risk ${pt.risk.level}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;"><path d="M12 2L4 6v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4z"/></svg>${pt.risk.level === 'high' ? 'HIGH' : pt.risk.level === 'med' ? 'MED' : 'LOW'} risk · ${pt.risk.score}</span>`
     : '';
@@ -841,12 +907,10 @@ function renderPtSizingFormulas(pt) {
         </div>
       </div>
       <div class="seb-kpi-strip">
-        <div class="seb-kpi"><span class="kpi-lbl">AL</span><span class="kpi-val">${blank ? '—' : b.AL.v.toFixed(2) + '<em>mm</em>'}</span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">K-mean</span><span class="kpi-val">${blank ? '—' : _kpiKMean + '<em>D</em>'}</span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">ACD</span><span class="kpi-val">${blank ? '—' : b.ACD.v.toFixed(2) + '<em>mm</em>'}</span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">WTW</span><span class="kpi-val">${blank ? '—' : b.WTW.v.toFixed(2) + '<em>mm</em>'}</span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">CCT</span><span class="kpi-val">${blank ? '—' : '548<em>µm</em>'}</span></div>
-        <div class="seb-kpi"><span class="kpi-lbl">Pupil</span><span class="kpi-val">${blank ? '—' : '6.1<em>mm</em>'}</span></div>
+        ${[['al','AL','mm'],['kmean','K-mean','D'],['acd','ACD','mm'],
+            ['wtw','WTW','mm'],['cct','CCT','µm'],['pupil','Pupil','mm']]
+          .map(([k, lbl, unit]) => `<div class="seb-kpi" data-kpi="${k}"><span class="kpi-lbl">${lbl}</span>` +
+            `<span class="kpi-val">${_kpi[k] ? _kpi[k] + '<em>' + unit + '</em>' : '—'}</span></div>`).join('')}
       </div>
     </div>
   `;
@@ -956,10 +1020,12 @@ function renderPtSizingFormulas(pt) {
         <div class="sf-input"><label for="sf-ata">ATA (angle-to-angle)</label><div class="sf-input-row"><input type="text" id="sf-ata" value="${ata}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-sts">STS (sulcus-to-sulcus)</label><div class="sf-input-row"><input type="text" id="sf-sts" value="${sts}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-acd">ACD</label><div class="sf-input-row"><input type="text" id="sf-acd" value="${acd}" /><span class="sf-unit">mm</span></div></div>
-        <div class="sf-input"><label for="sf-arise">aRISE</label><div class="sf-input-row"><input type="text" id="sf-arise" value="${(parseFloat(acd) - 0.62).toFixed(2)}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-arise">aRISE</label><div class="sf-input-row"><input type="text" id="sf-arise" value="${arise}" /><span class="sf-unit">mm</span></div></div>
         <div class="sf-input"><label for="sf-clr">Crystalline lens rise</label><div class="sf-input-row"><input type="text" id="sf-clr" value="${clr}" /><span class="sf-unit">µm</span></div></div>
         <div class="sf-input"><label for="sf-kmean">K-mean</label><div class="sf-input-row"><input type="text" id="sf-kmean" value="${kMean}" /><span class="sf-unit">D</span></div></div>
         <div class="sf-input"><label for="sf-al">Axial length</label><div class="sf-input-row"><input type="text" id="sf-al" value="${al}" /><span class="sf-unit">mm</span></div></div>
+        <div class="sf-input"><label for="sf-cct">CCT</label><div class="sf-input-row"><input type="text" id="sf-cct" value="${cct}" /><span class="sf-unit">µm</span></div></div>
+        <div class="sf-input"><label for="sf-pupil">Pupil (scotopic)</label><div class="sf-input-row"><input type="text" id="sf-pupil" value="${pupil}" /><span class="sf-unit">mm</span></div></div>
       </div>
       <div class="sf-attachments" id="sfAttachments" style="display:none;">
         <div class="sf-att-lbl">Attached scans</div>

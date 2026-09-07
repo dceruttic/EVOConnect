@@ -119,9 +119,11 @@
   }
   /* ---------- hero on tablets and phones ----------
      The film is 16:9 and its copy spans almost the whole frame, so it cannot be cropped
-     to a portrait screen. Landscape narrower than 16:9 (iPad, phone on its side): the
-     film is letterboxed on its own black (#05070D, invisible) and the headline still
-     comes in after the first clean pass. Portrait: the film becomes a full-width band
+     at all. Any landscape window that is not 16:9 — narrower on an iPad or a phone on its
+     side, wider on a desktop or an ultrawide — letterboxes the film on its own black
+     (#05070D, invisible) rather than cutting into it: cropping the top is what used to
+     push the film's upper row under the floating header. The headline still comes in
+     after the first clean pass. Portrait: the film becomes a full-width band
      under the header and the headline reads below it, visible from the start — nothing
      overlaps, so there is nothing to hide, and the whole film loops. */
   .hero.fit-contain .film-video{object-fit:contain}
@@ -540,7 +542,7 @@
   function reveal(){ if(revealed) return; revealed=true; content.classList.remove('pre'); hero.classList.add('film-behind'); }
   /* landscape but narrower than 16:9 (iPad, phone on its side): letterbox on the film's own black
      instead of cropping its copy; the class is measured on the hero box, not the viewport */
-  function fit(){ if(stacked()){ hero.classList.remove('fit-contain'); return; } var r=hero.clientWidth/Math.max(1,hero.clientHeight); hero.classList.toggle('fit-contain', r < 16/9-0.02); }
+  function fit(){ if(stacked()){ hero.classList.remove('fit-contain'); return; } var r=hero.clientWidth/Math.max(1,hero.clientHeight); hero.classList.toggle('fit-contain', Math.abs(r - 16/9) > 0.02); }
   fit(); if('ResizeObserver' in window){ new ResizeObserver(fit).observe(hero); } else { window.addEventListener('resize',fit); }
   if(reduce){ reveal(); return; }
   /* portrait: the film is a band above the headline, nothing overlaps -> headline from the start, whole film on loop */

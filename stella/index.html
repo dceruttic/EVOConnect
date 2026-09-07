@@ -3119,14 +3119,17 @@ document.addEventListener('click', e => {
     switch(d.act){
       case 'usermenu': S.usermenu = !S.usermenu; render(); return;
       case 'logout':   S.loginErr = false; setSession(false); go('login'); return;
-      case 'login':    S.ack = true; render(); return;                            /* A30: Acknowledgement first */
-      case 'ack': {
-        S.ack = false; S.loginErr = false; S.timer = 59*60+52; setSession(true);
+      /* A30. Signing in lands you where you were going and the Acknowledgement is drawn
+         on top of it — in STELLA the dialog sits over the dashboard, not over the login
+         screen. Accepting it only closes the dialog; the navigation already happened. */
+      case 'login': {
+        S.loginErr = false; S.timer = 59*60+52; setSession(true); S.ack = true;
         /* a deep link waited for the sign-in: honour it now */
         if(deepOrder && openDeepOrder()) return;
         if(deepPid){ S.pid = deepPid; S.tab = 'lens'; loadSet(null); go('patient'); return; }
         go('dashboard', null, {noLoad:true}); return;
       }
+      case 'ack':      S.ack = false; render(); return;
       case 'menu':     S.menu = !S.menu; render(); return;
       case 'selall':   S.selAll = true; render(); return;
       case 'printinv': openInventoryReport(); return;

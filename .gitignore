@@ -5,3 +5,7 @@ node_modules/
 
 # Cowork download folder (not part of the site)
 Claude outputs/
+
+# local Vercel CLI install, not part of the site
+package.json
+package-lock.json

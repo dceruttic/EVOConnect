@@ -1,0 +1,11 @@
+# The Vercel CLI is installed locally in this folder (node_modules/.bin/vercel).
+# The site itself is plain static files — nothing here is built — so keep the
+# package manifest out of the upload, or Vercel treats the demo as a Node app
+# and runs an install step it does not need.
+node_modules
+package.json
+package-lock.json
+
+# working files, never part of the site
+Claude outputs/
+*.tgz

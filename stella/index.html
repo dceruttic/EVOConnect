@@ -2122,7 +2122,8 @@ function openReport(){
   if(!w){ go('report'); return; }
   const css = document.querySelector('style').textContent;
   w.document.open();
-  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Calculation/Order report — ${S.pid}</title><style>${css}</style></head><body class="reportbody">${reportHtml(patient(), set)}</body></html>`);
+  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Calculation/Order report — ${S.pid}</title><style>${css}</style></head><body class="reportbody">${reportHtml(patient(), set)}  <script defer src="/_vercel/insights/script.js"></script>
+</body></html>`);
   w.document.close();
 }
 function viewPatient(){

@@ -336,7 +336,7 @@
 <!-- HERO -->
 <section class="hero" id="ecosystem">
   <div class="film" aria-hidden="true">
-    <video id="heroFilm" class="film-video" autoplay muted loop playsinline preload="auto" poster="/assets/film/film_poster.jpg">
+    <video id="heroFilm" class="film-video" autoplay muted loop playsinline preload="auto">
     </video>
     <button class="film-play" type="button" aria-label="Play the film" tabindex="-1"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
   </div>
@@ -557,7 +557,7 @@
   v.addEventListener('error',reveal);
   /* autoplay refused (iOS Low Power Mode, data saver): in portrait the poster stays and one tap starts the film */
   var tap=hero.querySelector('.film'); if(tap){ tap.addEventListener('click',function(){ var q=v.play&&v.play(); if(q&&q.catch) q.catch(function(){}); }); }
-  var p=v.play&&v.play(); if(p&&p.catch){ p.catch(function(){ reveal(); hero.classList.add('needs-tap'); }); }
+  var p=v.play&&v.play(); if(p&&p.catch){ p.catch(function(){ v.poster='/assets/film/film_poster.jpg'; reveal(); hero.classList.add('needs-tap'); }); }
   setTimeout(function(){ if(!started&&(v.paused||v.readyState<2)) reveal(); },15000);
   setTimeout(reveal,40000);
 })();

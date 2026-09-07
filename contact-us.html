@@ -491,5 +491,31 @@
 function OptanonWrapper() { }
 </script>
 <!-- OneTrust Cookies Consent Notice end for staar.com -->
+<!-- Warm the ecosystem film on intent. The hero at /ecosystem opens on black and lights
+     up; if the file is still downloading, that opening is spent waiting. Hovering (or
+     touching) "Digital ecosystem" says the visit is coming, so the exact file that page
+     will choose is fetched at low priority now and is already in cache on arrival.
+     The picker below must stay in step with the one inline in ecosystem.html. -->
+<script>(function(){
+  var a=document.querySelector('a.ecosystem-link'); if(!a||!window.matchMedia) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;   /* that page plays no film */
+  var c=navigator.connection||{};
+  if(c.saveData) return;                                                      /* never spend data on a guess */
+  if(/(^|-)2g$/.test(c.effectiveType||'')||c.effectiveType==='3g') return;    /* too slow to pay off */
+  var done=false;
+  function warm(){
+    if(done) return; done=true;
+    var dpr=window.devicePixelRatio||1, dw=Math.round(window.innerWidth*dpr), src;
+    if(window.matchMedia('(max-width:720px)').matches){ src=dw<=1300?'film_720p30.mp4':'film_1080p30.mp4'; }
+    else if(window.matchMedia('(max-width:1100px)').matches){ src='film_1080p30.mp4'; }
+    else if(dpr>=1.5&&window.matchMedia('(min-width:1200px)').matches){ src='film_1440p60.mp4'; }
+    else{ src='film_1080p60.mp4'; }
+    var l=document.createElement('link'); l.rel='prefetch';   /* no as=: prefetch needs none, and an unknown destination gets the link dropped */
+    l.href='/assets/film/'+src; document.head.appendChild(l);
+  }
+  a.addEventListener('pointerenter',warm,{once:true});
+  a.addEventListener('pointerdown',warm,{once:true});
+  a.addEventListener('focus',warm,{once:true});
+})();</script>
 </body>
 </html>

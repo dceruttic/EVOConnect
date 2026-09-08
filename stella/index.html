@@ -2122,7 +2122,13 @@ function openReport(){
   if(!w){ go('report'); return; }
   const css = document.querySelector('style').textContent;
   w.document.open();
-  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Calculation/Order report — ${S.pid}</title><style>${css}</style></head><body class="reportbody">${reportHtml(patient(), set)}</body></html>`);
+  /* The closing body and html tags are deliberately absent: document.close()
+     ends the document for us. Writing them here would put a closing body tag
+     inside JavaScript, which is a trap for any tooling that inserts before the
+     first one it finds in the file — exactly how the analytics tag ended up
+     inside this string and took the page down with it. Do not add them back,
+     here or in the inventory report below. */
+  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Calculation/Order report — ${S.pid}</title><style>${css}</style></head><body class="reportbody">${reportHtml(patient(), set)}`);
   w.document.close();
 }
 function viewPatient(){
@@ -2660,7 +2666,7 @@ function openInventoryReport(){
   const w = window.open('', '_blank'); if(!w) return;
   const css = document.querySelector('style').textContent;
   w.document.open();
-  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Inventory Lookup Report — ${S.pid}</title><style>${css}</style></head><body class="reportbody">${html}</body></html>`);
+  w.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Inventory Lookup Report — ${S.pid}</title><style>${css}</style></head><body class="reportbody">${html}`);
   w.document.close();
 }
 
